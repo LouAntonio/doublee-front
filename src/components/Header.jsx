@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { IoLocationOutline, IoSearchOutline, IoCartOutline, IoMenuOutline, IoCloseOutline, IoChevronForward } from 'react-icons/io5';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import { IoLocationOutline, IoSearchOutline, IoCartOutline, IoMenuOutline, IoCloseOutline, IoChevronForward, IoPricetagOutline, IoStorefrontOutline, IoShirtOutline, IoPlayCircleOutline, IoCashOutline, IoChatbubbleOutline, IoPersonAddOutline, IoLogInOutline, IoBagOutline, IoTicketOutline } from 'react-icons/io5';
+import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 
 const Header = () => {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [categoriesOpen, setCategoriesOpen] = useState(false);
 	const [activeCategory, setActiveCategory] = useState(null);
+	const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+	const [mobileActiveCategory, setMobileActiveCategory] = useState(null);
 
 	const categories = [
 		{
@@ -106,14 +108,15 @@ const Header = () => {
 
 					{/* Mobile Menu Button (moved to the right) */}
 					<button
-						className="lg:hidden text-gray-700 hover:text-gray-900 ml-2"
+						className="lg:hidden text-gray-700 hover:text-gray-900 hover:bg-yellow-200 p-1.5 rounded transition-colors flex items-center justify-center"
 						onClick={() => setMenuOpen(!menuOpen)}
 						aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
 					>
-						<div className={`transform transition-transform duration-300 ${menuOpen ? 'rotate-90 scale-110' : 'rotate-0'}`}>
-							<IoMenuOutline className={`w-7 h-7 ${menuOpen ? 'opacity-0 absolute' : 'opacity-100'}`} />
-							<IoCloseOutline className={`w-7 h-7 ${menuOpen ? 'opacity-100' : 'opacity-0'}`} />
-						</div>
+						{menuOpen ? (
+							<IoCloseOutline className="w-6 h-6" />
+						) : (
+							<IoMenuOutline className="w-6 h-6" />
+						)}
 					</button>
 
 					{/* Promo Banner (Desktop) */}
@@ -149,7 +152,7 @@ const Header = () => {
 									onMouseEnter={() => setCategoriesOpen(true)}
 									className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 font-light py-2"
 								>
-									Categorias
+									<span>Categorias</span>
 									<MdKeyboardArrowDown className="w-4 h-4" />
 								</button>
 								{/* Categories Dropdown */}
@@ -279,40 +282,123 @@ const Header = () => {
 							<IoLocationOutline className="w-4 h-4" />
 							<span className="text-xs">Informe seu CEP</span>
 						</button>
-						<button className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+					<button 
+						onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+						className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100"
+					>
+						<div className="flex items-center gap-2">
+							<MdCategory className="w-5 h-5 text-gray-500" />
 							<span>Categorias</span>
-							<MdKeyboardArrowDown className="w-4 h-4" />
-						</button>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Ofertas
+						</div>
+						<MdKeyboardArrowDown className={`w-4 h-4 transition-transform ${mobileCategoriesOpen ? 'rotate-180' : ''}`} />
+					</button>
+					
+					{/* Mobile Categories Submenu */}
+					{mobileCategoriesOpen && (
+						<div className="bg-gray-50">
+							{mobileActiveCategory ? (
+								<div className="animate-slideIn">
+									{/* Back button */}
+									<button 
+										onClick={() => setMobileActiveCategory(null)}
+										className="flex items-center gap-2 px-4 py-3 text-sm text-blue-600 hover:bg-gray-100 border-b border-gray-200 w-full"
+									>
+										<MdKeyboardArrowDown className="w-4 h-4 -rotate-90" />
+										<span className="font-medium">Voltar</span>
+									</button>
+									
+									{/* Category title */}
+									<div className="px-4 py-2 bg-white border-b border-gray-200">
+										<h3 className="font-semibold text-gray-800">{mobileActiveCategory}</h3>
+									</div>
+									
+									{/* Subcategories */}
+									{categories
+										.find(cat => cat.name === mobileActiveCategory)
+										?.columns.map((col) => (
+											<div key={col.title} className="border-b border-gray-200 bg-white">
+												<div className="px-4 py-2 bg-gray-100">
+													<h4 className="font-medium text-gray-700 text-sm">{col.title}</h4>
+												</div>
+												{col.items.map((item, index) => {
+													const itemText = typeof item === 'string' ? item : item.text;
+													return (
+														<a
+															key={index}
+															href="#"
+															className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+														>
+															{itemText}
+														</a>
+													);
+												})}
+											</div>
+										))}
+								</div>
+							) : (
+								<div>
+									{categories.map((category) => (
+										<button
+											key={category.name}
+											onClick={() => {
+												if (category.columns && category.columns.length > 0) {
+													setMobileActiveCategory(category.name);
+												}
+											}}
+											className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-white border-b border-gray-200 w-full"
+										>
+											<span>{category.name}</span>
+											{category.columns && category.columns.length > 0 && (
+												<IoChevronForward className="w-4 h-4 text-gray-400" />
+											)}
+										</button>
+									))}
+								</div>
+							)}
+						</div>
+					)}
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoPricetagOutline className="w-5 h-5 text-gray-500" />
+							<span>Ofertas</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Cupons
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoTicketOutline className="w-5 h-5 text-gray-500" />
+							<span>Cupons</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Supermercado
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoStorefrontOutline className="w-5 h-5 text-gray-500" />
+							<span>Supermercado</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Moda
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoShirtOutline className="w-5 h-5 text-gray-500" />
+							<span>Moda</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100 flex items-center gap-2">
-							<span>Mercado Play</span>
-							<span className="bg-green-500 text-white text-[9px] px-1 rounded font-bold">GRÁTIS</span>
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoPlayCircleOutline className="w-5 h-5 text-gray-500" />
+							<div className="flex items-center gap-2">
+								<span>Mercado Play</span>
+								<span className="bg-green-500 text-white text-[9px] px-1 rounded font-bold">GRÁTIS</span>
+							</div>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Vender
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoCashOutline className="w-5 h-5 text-gray-500" />
+							<span>Vender</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Contato
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoChatbubbleOutline className="w-5 h-5 text-gray-500" />
+							<span>Contato</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-blue-600 hover:bg-gray-50 border-b border-gray-100 font-medium">
-							Crie a sua conta
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-gray-50 border-b border-gray-100 font-medium">
+							<IoPersonAddOutline className="w-5 h-5 text-blue-600" />
+							<span>Crie a sua conta</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							Entre
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+							<IoLogInOutline className="w-5 h-5 text-gray-500" />
+							<span>Entre</span>
 						</a>
-						<a href="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
-							Compras
+						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
+							<IoBagOutline className="w-5 h-5 text-gray-500" />
+							<span>Compras</span>
 						</a>
 					</nav>
 				</div>
