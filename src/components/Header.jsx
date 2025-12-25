@@ -13,27 +13,61 @@ const Header = () => {
 			columns: [
 				{
 					title: 'Celulares e Telefones',
-					items: ['Acessórios para Celulares', 'Peças para Celular']
+					items: [
+						{ text: 'Acessórios para Celulares' },
+						{ text: 'Peças para Celular' }
+					]
 				},
 				{
 					title: 'Informática',
-					items: ['Componentes para PC', 'Computadores', 'Tablets e Acessórios']
+					items: [
+						{ text: 'Componentes para PC' },
+						{ text: 'Computadores' },
+						{ text: 'Tablets e Acessórios' }
+					]
 				},
 				{
 					title: 'Eletrônicos, Áudio e Vídeo',
-					items: ['Acessórios para Áudio e Vídeo', 'Áudio Portátil e Acessórios']
+					items: [
+						{ text: 'Acessórios para Áudio e Vídeo' },
+						{ text: 'Áudio Portátil e Acessórios' }
+					]
 				}
 			]
 		},
 		{
 			name: 'Casa e Móveis',
 			columns: [
-				{ title: 'Móveis', items: ['Sofás', 'Camas', 'Mesas'] },
-				{ title: 'Decoração', items: ['Quadros', 'Tapetes'] }
+				{ 
+					title: 'Móveis', 
+					items: [
+						{ text: 'Sofás' },
+						{ text: 'Camas' },
+						{ text: 'Mesas' }
+					]
+				},
+				{ 
+					title: 'Decoração', 
+					items: [
+						{ text: 'Quadros' },
+						{ text: 'Tapetes' }
+					]
+				}
 			]
 		},
-		{ name: 'Esportes e Fitness', columns: [{ title: 'Fitness', items: ['Esteiras', 'Halteres'] }] },
-		{ name: 'Beleza e Saúde', columns: []}
+		{ 
+			name: 'Esportes e Fitness', 
+			columns: [
+				{ 
+					title: 'Fitness', 
+					items: [
+						{ text: 'Esteiras' },
+						{ text: 'Halteres' }
+					]
+				}
+			]
+		},
+		{ name: 'Beleza e Saúde', columns: [] }
 	];
 
 	return (
@@ -45,10 +79,10 @@ const Header = () => {
 					<div className="flex items-center gap-4 lg:gap-12 flex-1">
 						{/* Logo */}
 						<div className="flex items-center gap-3">
-							<img 
-								src="/images/logo/dbe.png" 
-								alt="Mercado Livre" 
-								className="h-7 lg:h-9 w-auto" 
+							<img
+								src="/images/logo/dbe.png"
+								alt="Mercado Livre"
+								className="h-7 lg:h-9 w-auto"
 							/>
 						</div>
 
@@ -56,7 +90,7 @@ const Header = () => {
 						<div className="relative flex-1 max-w-[600px]">
 							<input
 								type="text"
-								placeholder="Buscar produtos..."
+								placeholder="Buscar produtos,marcas e muito mais..."
 								className="w-full bg-white px-3 lg:px-4 py-2 lg:py-2.5 pr-10 lg:pr-12 rounded shadow-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-300 text-xs lg:text-sm text-gray-600 placeholder-gray-400"
 							/>
 							<button className="absolute right-2 lg:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -125,68 +159,70 @@ const Header = () => {
 										<div className="absolute top-full left-0 w-full h-3 bg-transparent" />
 										<div
 											className={`absolute top-[calc(100%+0.5rem)] -left-20 ${
-											activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
-												? 'w-[700px]'
-												: 'w-[250px]'
-										} bg-white shadow-lg rounded-md flex z-20 transition-all duration-200`}
+												activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
+													? 'w-[700px]'
+													: 'w-[250px]'
+											} bg-white shadow-lg rounded-md flex z-20 transition-all duration-200`}
 										>
-										{/* Main Categories */}
-									<div className={`${
-										activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
-											? 'w-1/3'
-											: 'w-full'
-									} bg-gray-800 text-white rounded-l-md ${
-										!(activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0) && 'rounded-r-md'
-									}`}>
-											<ul>
-												{categories.map((category) => (
-													<li
-														key={category.name}
-													className={`px-4 py-3 cursor-pointer text-sm flex items-center justify-between ${
-														activeCategory === category.name
-															? 'bg-blue-500 text-white'
-															: 'hover:bg-gray-700'
-													}`}
-													onMouseEnter={() => setActiveCategory(category.name)}
-												>
-													<span>{category.name}</span>
-													{category.columns && category.columns.length > 0 && (
-														<IoChevronForward className="w-4 h-4" />
-													)}
-													</li>
-												))}
-											</ul>
-										</div>
-										{/* Sub Categories */}
-									{activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0 && (
-											<div className="w-2/3 p-6">
-												<h3 className="text-lg font-semibold text-gray-800 mb-4">
-													{activeCategory}
-												</h3>
-												<div className="grid grid-cols-2 gap-x-8 gap-y-4">
-													{categories
-														.find((cat) => cat.name === activeCategory)
-														?.columns.map((col) => (
-															<div key={col.title}>
-																<h4 className="font-semibold text-gray-700 mb-2 text-sm">
-																	{col.title}
-																</h4>
-																<ul>
-																	{col.items.map((item) => (
-																		<li
-																			key={item}
-																			className="text-xs text-gray-600 hover:text-blue-500 cursor-pointer mb-1"
-																		>
-																			{item}
-																		</li>
-																	))}
-																</ul>
-															</div>
-														))}
-												</div>
+											{/* Main Categories */}
+										<div className={`${
+											activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
+												? 'w-1/3'
+												: 'w-full'
+										} bg-gray-800 text-white rounded-l-md ${
+											!(activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0) && 'rounded-r-md'
+										}`}>
+												<ul>
+													{categories.map((category) => (
+														<li
+															key={category.name}
+														className={`px-4 py-3 cursor-pointer text-sm flex items-center justify-between ${activeCategory === category.name
+																? 'bg-blue-500 text-white'
+																: 'hover:bg-gray-700'
+															}`}
+														onMouseEnter={() => setActiveCategory(category.name)}
+													>
+														<span>{category.name}</span>
+														{category.columns && category.columns.length > 0 && (
+															<IoChevronForward className="w-4 h-4" />
+														)}
+														</li>
+													))}
+												</ul>
 											</div>
-										)}
-									</div>
+											{/* Sub Categories */}
+										{activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0 && (
+												<div className="w-2/3 p-6">
+													<h3 className="text-lg font-semibold text-gray-800 mb-4">
+														{activeCategory}
+													</h3>
+													<div className="grid grid-cols-2 gap-x-8 gap-y-4">
+														{categories
+															.find((cat) => cat.name === activeCategory)
+															?.columns.map((col) => (
+																<div key={col.title}>
+																	<h4 className="font-semibold text-gray-700 mb-2 text-sm">
+																		{col.title}
+																	</h4>
+																	<ul>
+																		{col.items.map((item, index) => {
+																				const itemText = typeof item === 'string' ? item : item.text;
+																				return (
+																					<li
+																						key={index}
+																						className="text-xs text-gray-600 hover:text-blue-500 cursor-pointer mb-2"
+																					>
+																						<span>{itemText}</span>
+																					</li>
+																					);
+																				})}
+																	</ul>
+																</div>
+															))}
+													</div>
+												</div>
+											)}
+										</div>
 									</>
 								)}
 							</div>
