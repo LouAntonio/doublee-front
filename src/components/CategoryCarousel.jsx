@@ -31,7 +31,7 @@ const CategoryCarousel = () => {
 		{
 			id: 4,
 			icon: '💳',
-			title: 'Meios de pagamento',
+			title: 'Pagamento',
 			description: 'Pague suas compras com rapidez e segurança.',
 			caption: 'Saiba mais'
 		},
@@ -119,27 +119,30 @@ const CategoryCarousel = () => {
 						{categories.map((category) => (
 							<div
 								key={category.id}
-								className="flex-shrink-0 w-[200px] bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer overflow-hidden group"
+								className="flex-shrink-0 w-[200px] bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer overflow-hidden group flex flex-col h-[320px] items-center"
 							>
-								<div className="p-6">
+								<div className="p-6 flex flex-col flex-1 items-center text-center w-full">
+									{/* Title */}
+									<h3 className="font-semibold text-gray-900 mb-3 text-base">
+										{category.title}
+									</h3>
 									{/* Icon */}
-									<div className="text-5xl mb-4 flex items-center justify-center h-24">
+									<div className="mb-3 flex items-center justify-center h-24">
 										<div className="w-20 h-20 bg-[#fff159] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
 											<span className="text-4xl">{category.icon}</span>
 										</div>
 									</div>
-									{/* Content */}
-									<div className="text-center">
-										<h3 className="font-semibold text-gray-900 mb-2 text-base">
-											{category.title}
-										</h3>
-										<p className="text-sm text-gray-600 leading-snug">
-											{category.description}
-										</p>
-									</div>
-									{/* caption */}
-									<div className="text-center">
-										<button className="mt-4 text-sm text-blue-600 font-medium ">
+									{/* Description */}
+									<p className="text-sm text-gray-600 leading-snug px-2">
+										{category.description}
+									</p>
+									{/* caption - aligned to bottom */}
+									<div className="mt-auto w-full flex justify-center">
+										<button
+											type="button"
+											className="mt-4 inline-flex items-center justify-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-full text-sm font-medium shadow-sm transition-colors"
+											aria-label={category.caption}
+										>
 											{category.caption}
 										</button>
 									</div>
