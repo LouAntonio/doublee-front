@@ -40,3 +40,57 @@
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
+
+/* OffersSection responsive adjustments */
+.offers-section .offers-row {
+	align-items: flex-start;
+}
+
+.offers-section .offers-deal {
+	flex: 0 0 320px;
+}
+
+.offers-section .offers-carousel {
+	flex: 1;
+	min-width: 0;
+}
+
+/* Small screens: stack panels */
+@media (max-width: 767px) {
+	.offers-section .offers-row {
+		flex-direction: column;
+	}
+	.offers-section .offers-deal,
+	.offers-section .offers-carousel {
+		flex: 0 0 100% !important;
+		width: 100% !important;
+	}
+	.offers-section .offers-container {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	.offers-section .nav-left,
+	.offers-section .nav-right {
+		left: 8px !important;
+		right: 8px !important;
+		bottom: 8px !important;
+		top: auto !important;
+		transform: none !important;
+		width: 36px !important;
+		height: 36px !important;
+	}
+	.offers-section .nav-left { left: 8px !important; }
+	.offers-section .nav-right { right: 8px !important; }
+}
+
+/* Medium screens: slightly smaller deal column */
+@media (min-width: 768px) and (max-width: 999px) {
+	.offers-section .offers-deal {
+		flex: 0 0 280px;
+	}
+}
+
+/* Large screens: ensure proper spacing */
+@media (min-width: 1000px) {
+	.offers-section .offers-container { padding-left: 16px; padding-right: 16px; }
+}

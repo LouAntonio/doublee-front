@@ -120,11 +120,11 @@ const OffersSection = () => {
 	};
 
 	return (
-		<section style={{ backgroundColor: '#ededed', padding: '20px 0' }}>
-			<div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
-				<div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+		<section className="offers-section" style={{ backgroundColor: '#ededed', padding: '20px 0' }}>
+			<div className="offers-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
+				<div className="offers-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
 					{/* Deal of the Day - Left Side */}
-					<div style={{
+					<div className="offers-deal" style={{
 						flex: '0 0 320px',
 						backgroundColor: '#fff',
 						borderRadius: '6px',
@@ -239,7 +239,7 @@ const OffersSection = () => {
 					</div>
 
 					{/* Offers Carousel - Right Side */}
-					<div style={{
+					<div className="offers-carousel" style={{
 						flex: '1',
 						backgroundColor: '#fff',
 						borderRadius: '6px',
@@ -302,6 +302,7 @@ const OffersSection = () => {
 							{/* Navigation Arrows */}
 							{currentOfferIndex > 0 && (
 								<button
+									className="nav-left"
 									onClick={prevOffers}
 									style={{
 										position: 'absolute',
@@ -332,6 +333,7 @@ const OffersSection = () => {
 
 							{currentOfferIndex < totalPages - 1 && (
 								<button
+									className="nav-right"
 									onClick={nextOffers}
 									style={{
 										position: 'absolute',
