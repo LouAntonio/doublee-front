@@ -11,49 +11,57 @@ const CategoryCarousel = () => {
 			id: 1,
 			icon: '🎁',
 			title: 'Frete grátis',
-			description: 'Benefício por ser sua primeira compra.'
+			description: 'Benefício por ser sua primeira compra.',
+			caption: 'Conheça as condições'
 		},
 		{
 			id: 2,
 			icon: '👤',
 			title: 'Entre na sua conta',
-			description: 'Aproveite ofertas para comprar tudo que quiser.'
+			description: 'Aproveite ofertas para comprar tudo que quiser.',
+			caption: 'Cadastre-se'
 		},
 		{
 			id: 3,
 			icon: '📍',
 			title: 'Insira sua localização',
-			description: 'Confira os custos e prazos de entrega.'
+			description: 'Confira os custos e prazos de entrega.',
+			caption: 'Definir endereço'
 		},
 		{
 			id: 4,
 			icon: '💳',
 			title: 'Meios de pagamento',
-			description: 'Pague suas compras com rapidez e segurança.'
+			description: 'Pague suas compras com rapidez e segurança.',
+			caption: 'Saiba mais'
 		},
 		{
 			id: 5,
 			icon: '💰',
 			title: 'Menos de R$100',
-			description: 'Confira produtos com preços baixos.'
+			description: 'Confira produtos com preços baixos.',
+			caption: 'Ver ofertas'
 		},
 		{
 			id: 6,
 			icon: '🛍️',
 			title: 'Mais vendidos',
-			description: 'Explore os produtos que são sucesso.'
+			description: 'Explore os produtos que são sucesso.',
+			caption: 'Veja mais'
 		},
 		{
 			id: 7,
 			icon: '⚡',
 			title: 'Ofertas do dia',
-			description: 'Descontos imperdíveis todos os dias.'
+			description: 'Descontos imperdíveis todos os dias.',
+			caption: 'Confira as ofertas'
 		},
 		{
 			id: 8,
 			icon: '🏆',
 			title: 'Top Sellers',
-			description: 'Os vendedores mais bem avaliados.'
+			description: 'Os vendedores mais bem avaliados.',
+			caption: 'Saiba mais'
 		}
 	];
 
@@ -111,7 +119,7 @@ const CategoryCarousel = () => {
 						{categories.map((category) => (
 							<div
 								key={category.id}
-								className="flex-shrink-0 w-[260px] bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer overflow-hidden group"
+								className="flex-shrink-0 w-[200px] bg-white rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer overflow-hidden group"
 							>
 								<div className="p-6">
 									{/* Icon */}
@@ -128,6 +136,12 @@ const CategoryCarousel = () => {
 										<p className="text-sm text-gray-600 leading-snug">
 											{category.description}
 										</p>
+									</div>
+									{/* caption */}
+									<div className="text-center">
+										<button className="mt-4 text-sm text-blue-600 font-medium ">
+											{category.caption}
+										</button>
 									</div>
 								</div>
 							</div>
