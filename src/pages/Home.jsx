@@ -1,13 +1,20 @@
 import React from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import Header from '../components/Header';
+import BannerCarousel from '../components/BannerCarousel';
+import CategoryCarousel from '../components/CategoryCarousel';
 
 const Home = () => {
 	useDocumentTitle('Home - Double E');
 	return (
-		<div className="container mx-auto px-4 py-8">
-			<h1 className="text-3xl font-bold mb-6">Bem-vindo à Home</h1>
-			<p className="text-gray-600">Página inicial com destaques e ofertas.</p>
-		</div>
+		<>
+			<Header />
+			{/* Banner Carousel */}
+			<BannerCarousel />
+			{/* Category Cards Carousel - Sobrepõe o Banner */}
+			<CategoryCarousel />
+			
+		</>
 	);
 };
 
