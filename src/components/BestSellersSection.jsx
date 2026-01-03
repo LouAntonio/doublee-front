@@ -107,14 +107,19 @@ const BestSellersSection = () => {
 
 	return (
 		<section style={{
-			backgroundColor: '#fff',
+			backgroundColor: 'transparent',
+			display: 'flex',
+			justifyContent: 'center',
 			padding: '24px 0',
 			marginBottom: '16px'
 		}}>
 			<div style={{
-				maxWidth: '1200px',
-				margin: '0 auto',
-				padding: '0 16px'
+				width: 'calc(100% - 48px)',
+				maxWidth: '1180px',
+				backgroundColor: '#fff',
+				borderRadius: '10px',
+				padding: '20px 20px 8px 20px',
+				boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
 			}}>
 				{/* Header */}
 				<div style={{
@@ -376,27 +381,7 @@ const BestSellersSection = () => {
 					</div>
 				</div>
 
-				{/* Indicator Dots */}
-				<div style={{
-					display: 'flex',
-					justifyContent: 'center',
-					gap: '6px',
-					marginTop: '16px'
-				}}>
-					{Array.from({ length: Math.ceil(products.length / 4) }).map((_, index) => (
-						<div
-							key={index}
-							style={{
-								width: '8px',
-								height: '8px',
-								borderRadius: '50%',
-								backgroundColor: index === 0 ? '#3483fa' : '#ddd',
-								cursor: 'pointer',
-								transition: 'all 0.2s'
-							}}
-						/>
-					))}
-				</div>
+
 			</div>
 
 			<style>{`
