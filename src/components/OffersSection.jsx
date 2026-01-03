@@ -156,8 +156,8 @@ const OffersSection = () => {
 								overflow: 'hidden',
 								position: 'relative'
 							}}>
-								<img 
-									src={dealOfTheDay.image} 
+								<img
+									src={dealOfTheDay.image}
 									alt={dealOfTheDay.title}
 									style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
 								/>
@@ -249,25 +249,53 @@ const OffersSection = () => {
 					}}>
 						<div style={{
 							display: 'flex',
-							justifyContent: 'space-between',
 							alignItems: 'center',
+							justifyContent: 'space-between',
+							gap: '12px',
 							marginBottom: '20px'
 						}}>
-							<h2 style={{
-								fontSize: '24px',
-								fontWeight: '600',
-								color: '#333'
-							}}>
-								Ofertas
-							</h2>
-							<a href="#" style={{
-								fontSize: '14px',
-								color: '#3483fa',
-								textDecoration: 'none',
-								fontWeight: '600'
-							}}>
-								Mostrar todas as ofertas
-							</a>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+								<h2 style={{
+									fontSize: '24px',
+									fontWeight: '600',
+									color: '#333',
+									margin: 0,
+									display: 'flex',
+									alignItems: 'center',
+									gap: '8px'
+								}}>
+									Ofertas
+								</h2>
+								<a href="/ofertas" style={{
+									fontSize: '14px',
+									color: '#3483fa',
+									textDecoration: 'none',
+									fontWeight: '600'
+								}}>
+									Mostrar todas as ofertas
+								</a>
+							</div>
+
+							{/* Pagination Dots aligned right on same line as title */}
+							<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+								{Array.from({ length: totalPages }).map((_, idx) => (
+									<button
+										key={idx}
+										onClick={() => setCurrentOfferIndex(idx)}
+										style={{
+											width: '8px',
+											height: '8px',
+											borderRadius: '50%',
+											border: 'none',
+											backgroundColor: idx === currentOfferIndex ? '#3483fa' : '#d9d9d9',
+											cursor: 'pointer',
+											padding: 0,
+											transition: 'background-color 0.3s'
+										}}
+										aria-label={`Página ${idx + 1}`}
+									/>
+								))}
+							</div>
 						</div>
 
 						<div style={{ position: 'relative' }}>
@@ -297,11 +325,11 @@ const OffersSection = () => {
 									onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'}
 								>
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-										<path d="M15 18l-6-6 6-6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+										<path d="M15 18l-6-6 6-6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 									</svg>
 								</button>
 							)}
-							
+
 							{currentOfferIndex < totalPages - 1 && (
 								<button
 									onClick={nextOffers}
@@ -327,7 +355,7 @@ const OffersSection = () => {
 									onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'}
 								>
 									<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-										<path d="M9 18l6-6-6-6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+										<path d="M9 18l6-6-6-6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 									</svg>
 								</button>
 							)}
@@ -340,151 +368,127 @@ const OffersSection = () => {
 									alignItems: 'stretch',
 									flexWrap: 'nowrap'
 								}}>
-								{getCurrentOffers().map((offer) => (
-									<div
-										key={offer.id}
-										style={{
-											cursor: 'pointer',
-											transition: 'transform 0.2s',
-											padding: '12px',
-											borderRadius: '4px',
-											flex: `0 0 ${100 / itemsPerPage}%`,
-											maxWidth: `${100 / itemsPerPage}%`,
-											boxSizing: 'border-box'
-										}}
-										onMouseEnter={(e) => {
-											e.currentTarget.style.transform = 'translateY(-4px)';
-											e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-										}}
-										onMouseLeave={(e) => {
-											e.currentTarget.style.transform = 'translateY(0)';
-											e.currentTarget.style.boxShadow = 'none';
-										}}
-									>
-										<div style={{
-											width: '100%',
-											aspectRatio: '1',
-											backgroundColor: '#f5f5f5',
-											borderRadius: '4px',
-											marginBottom: '12px',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											overflow: 'hidden'
-										}}>
-											<img 
-												src={offer.image} 
-												alt={offer.title}
-												style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-											/>
-										</div>
-										<h3 style={{
-											fontSize: '13px',
-											color: '#666',
-											marginBottom: '8px',
-											fontWeight: '400',
-											display: '-webkit-box',
-											WebkitLineClamp: 2,
-											WebkitBoxOrient: 'vertical',
-											overflow: 'hidden',
-											minHeight: '2.6em'
-										}}>
-											{offer.title}
-										</h3>
-										{offer.oldPrice && (
+									{getCurrentOffers().map((offer) => (
+										<div
+											key={offer.id}
+											style={{
+												cursor: 'pointer',
+												transition: 'transform 0.2s',
+												padding: '12px',
+												borderRadius: '4px',
+												flex: `0 0 ${100 / itemsPerPage}%`,
+												maxWidth: `${100 / itemsPerPage}%`,
+												boxSizing: 'border-box'
+											}}
+											onMouseEnter={(e) => {
+												e.currentTarget.style.transform = 'translateY(-4px)';
+												e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+											}}
+											onMouseLeave={(e) => {
+												e.currentTarget.style.transform = 'translateY(0)';
+												e.currentTarget.style.boxShadow = 'none';
+											}}
+										>
 											<div style={{
-												fontSize: '13px',
-												color: '#999',
-												textDecoration: 'line-through',
-												marginBottom: '4px'
+												width: '100%',
+												aspectRatio: '1',
+												backgroundColor: '#f5f5f5',
+												borderRadius: '4px',
+												marginBottom: '12px',
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												overflow: 'hidden'
 											}}>
-												R$ {offer.oldPrice}
+												<img
+													src={offer.image}
+													alt={offer.title}
+													style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+												/>
 											</div>
-										)}
-										<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
-											<span style={{
-												fontSize: '24px',
+											<h3 style={{
+												fontSize: '13px',
+												color: '#666',
+												marginBottom: '8px',
 												fontWeight: '400',
-												color: '#333'
+												display: '-webkit-box',
+												WebkitLineClamp: 2,
+												WebkitBoxOrient: 'vertical',
+												overflow: 'hidden',
+												minHeight: '2.6em'
 											}}>
-												R$ {offer.price.toLocaleString('pt-BR')}
-											</span>
-											{offer.discount && (
+												{offer.title}
+											</h3>
+											{offer.oldPrice && (
+												<div style={{
+													fontSize: '13px',
+													color: '#999',
+													textDecoration: 'line-through',
+													marginBottom: '4px'
+												}}>
+													R$ {offer.oldPrice}
+												</div>
+											)}
+											<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
 												<span style={{
+													fontSize: '24px',
+													fontWeight: '400',
+													color: '#333'
+												}}>
+													R$ {offer.price.toLocaleString('pt-BR')}
+												</span>
+												{offer.discount && (
+													<span style={{
+														fontSize: '13px',
+														color: '#00a650',
+														fontWeight: '600'
+													}}>
+														{offer.discount}% OFF
+													</span>
+												)}
+											</div>
+											{offer.installments && (
+												<p style={{
+													fontSize: '12px',
+													color: '#666',
+													marginBottom: '4px'
+												}}>
+													{offer.installments}
+												</p>
+											)}
+											{offer.installmentsNoInterest && (
+												<p style={{
+													fontSize: '12px',
+													color: '#666',
+													marginBottom: '4px'
+												}}>
+													{offer.installmentsNoInterest}
+												</p>
+											)}
+											{offer.pix && (
+												<p style={{
+													fontSize: '12px',
+													color: '#00a650',
+													marginBottom: '4px'
+												}}>
+													{offer.pix}
+												</p>
+											)}
+											{offer.freeShipping && (
+												<div style={{
 													fontSize: '13px',
 													color: '#00a650',
 													fontWeight: '600'
 												}}>
-													{offer.discount}% OFF
-												</span>
+													Frete grátis <span style={{ fontWeight: '400', color: '#666' }}>por ser sua primeira compra</span>
+												</div>
 											)}
 										</div>
-										{offer.installments && (
-											<p style={{
-												fontSize: '12px',
-												color: '#666',
-												marginBottom: '4px'
-											}}>
-												{offer.installments}
-											</p>
-										)}
-										{offer.installmentsNoInterest && (
-											<p style={{
-												fontSize: '12px',
-												color: '#666',
-												marginBottom: '4px'
-											}}>
-												{offer.installmentsNoInterest}
-											</p>
-										)}
-										{offer.pix && (
-											<p style={{
-												fontSize: '12px',
-												color: '#00a650',
-												marginBottom: '4px'
-											}}>
-												{offer.pix}
-											</p>
-										)}
-										{offer.freeShipping && (
-											<div style={{
-												fontSize: '13px',
-												color: '#00a650',
-												fontWeight: '600'
-											}}>
-												Frete grátis <span style={{ fontWeight: '400', color: '#666' }}>por ser sua primeira compra</span>
-											</div>
-										)}
-									</div>
-								))}
+									))}
 								</div>
 							</div>
 
-							{/* Pagination Dots */}
-							<div style={{
-								display: 'flex',
-								justifyContent: 'center',
-								gap: '8px',
-								marginTop: '20px'
-							}}>
-								{Array.from({ length: totalPages }).map((_, idx) => (
-									<button
-										key={idx}
-										onClick={() => setCurrentOfferIndex(idx)}
-										style={{
-											width: '8px',
-											height: '8px',
-											borderRadius: '50%',
-											border: 'none',
-											backgroundColor: idx === currentOfferIndex ? '#3483fa' : '#d9d9d9',
-											cursor: 'pointer',
-											padding: 0,
-											transition: 'background-color 0.3s'
-										}}
-										aria-label={`Página ${idx + 1}`}
-									/>
-								))}
-							</div>
+
 						</div>
 					</div>
 				</div>
