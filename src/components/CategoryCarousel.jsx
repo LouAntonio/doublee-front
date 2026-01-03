@@ -83,7 +83,7 @@ const CategoryCarousel = () => {
 	};
 
 	return (
-		<div className="relative bg-[#ededed] -mt-16 pt-2 pb-8">
+		<div className="relative bg-transparent -mt-[20vh] pt-2 pb-8">
 			<div className="max-w-[1200px] mx-auto px-4">
 				{/* Carrossel Container */}
 				<div className="relative">
