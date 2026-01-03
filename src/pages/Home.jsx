@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import BannerCarousel from '../components/BannerCarousel';
 import CategoryCarousel from '../components/CategoryCarousel';
 import OffersSection from '../components/OffersSection';
+import BestSellersSection from '../components/BestSellersSection';
 
 const Home = () => {
 	useDocumentTitle('Home - Double E');
@@ -14,6 +15,7 @@ const Home = () => {
 			<BannerCarousel />
 			<CategoryCarousel />
 			<OffersSection />
+			<BestSellersSection />
 		</div>
 	);
 };
