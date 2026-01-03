@@ -5,30 +5,29 @@ const BannerCarousel = () => {
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-	// Banners de exemplo (você pode substituir pelas suas imagens)
 	const banners = [
 		{
 			id: 1,
-			image: 'https://http2.mlstatic.com/D_NQ_931890-MLA80628622454_112024-OO.webp',
-			alt: 'Casas Bahia no Mercado Livre',
+			image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80&auto=format&fit=crop',
+			alt: 'Eletrônicos em destaque',
 			bgColor: '#FFE600'
 		},
 		{
 			id: 2,
-			image: 'https://http2.mlstatic.com/D_NQ_934551-MLA80738476886_112024-OO.webp',
-			alt: 'Ofertas em Eletrônicos',
+			image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1600&q=80&auto=format&fit=crop',
+			alt: 'Ofertas e promoções',
 			bgColor: '#2968C8'
 		},
 		{
 			id: 3,
-			image: 'https://http2.mlstatic.com/D_NQ_660523-MLA80738477147_112024-OO.webp',
-			alt: 'Moda e Acessórios',
+			image: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd28?w=1600&q=80&auto=format&fit=crop',
+			alt: 'Moda e acessórios',
 			bgColor: '#FF6F00'
 		},
 		{
 			id: 4,
-			image: 'https://http2.mlstatic.com/D_NQ_822196-MLA80738477001_112024-OO.webp',
-			alt: 'Casa e Decoração',
+			image: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=1600&q=80&auto=format&fit=crop',
+			alt: 'Casa e decoração',
 			bgColor: '#00A650'
 		}
 	];
@@ -77,7 +76,7 @@ const BannerCarousel = () => {
 								alt={banner.alt}
 								className="w-full h-full object-cover"
 								onError={(e) => {
-									e.target.src = 'https://via.placeholder.com/1600x400/FFE600/000000?text=Banner+' + (index + 1);
+									e.target.src = 'https://images.unsplash.com/photo-1503602642458-232111445657?w=1600&q=80&auto=format&fit=crop';
 								}}
 							/>
 						</div>
