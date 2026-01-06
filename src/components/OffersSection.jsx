@@ -9,7 +9,7 @@ const OffersSection = () => {
 	const dealOfTheDay = {
 		id: 1,
 		title: 'Bicicleta Ergométrica Fitness Para Cardio E Musculação 6kg Inercia Com Base Cor...',
-		oldPrice: 1094,
+		oldPrice: 1115600,
 		price: 1115500,
 		discount: 43,
 		freeShipping: false,
@@ -194,7 +194,7 @@ const OffersSection = () => {
 								</div>
 								<div style={{ marginBottom: '8px' }}>
 									<span style={{
-										fontSize: '32px',
+										fontSize: '22px',
 										fontWeight: '400',
 										color: '#333'
 									}}>
@@ -398,7 +398,7 @@ const OffersSection = () => {
 											</h3>
 											{offer.oldPrice && (
 												<div style={{
-													fontSize: '13px',
+													fontSize: '12px',
 													color: '#999',
 													textDecoration: 'line-through',
 													marginBottom: '4px'
@@ -408,7 +408,7 @@ const OffersSection = () => {
 										)}
 										<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
 											<span style={{
-												fontSize: '24px',
+												fontSize: '18px',
 												fontWeight: '400',
 												color: '#333'
 											}}>

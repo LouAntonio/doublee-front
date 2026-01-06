@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import Contato from './pages/Contato';
 import Sobre from './pages/Sobre';
 import NotFound from './pages/NotFound';
+import Footer from '../src/components/Footer';
 
 function App() {
 	return (
@@ -21,6 +22,7 @@ function App() {
 				<Route path="/sobre" element={<Sobre />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
+			<Footer />
 		</BrowserRouter>
 	)
 }

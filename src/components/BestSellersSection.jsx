@@ -299,7 +299,7 @@ const BestSellersSection = () => {
 									{/* Old Price */}
 									{product.oldPrice && (
 										<div style={{
-											fontSize: '12px',
+											fontSize: '11px',
 											color: '#999',
 											textDecoration: 'line-through',
 											marginBottom: '4px'
@@ -316,7 +316,7 @@ const BestSellersSection = () => {
 										marginBottom: '4px'
 									}}>
 										<span style={{
-											fontSize: '24px',
+											fontSize: '18px',
 											fontWeight: '400',
 											color: '#333'
 										}}>
