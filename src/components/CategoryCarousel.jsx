@@ -10,9 +10,9 @@ const CategoryCarousel = () => {
 		{
 			id: 1,
 			icon: '🎁',
-			title: 'Frete grátis',
-			description: 'Benefício por ser sua primeira compra.',
-			caption: 'Conheça as condições'
+			title: 'Entrega',
+			description: 'Condições de entrega para Angola.',
+			caption: 'Ver condições'
 		},
 		{
 			id: 2,
@@ -38,7 +38,7 @@ const CategoryCarousel = () => {
 		{
 			id: 5,
 			icon: '💰',
-			title: 'Menos de R$100',
+			title: 'Menos de Kz100',
 			description: 'Confira produtos com preços baixos.',
 			caption: 'Ver ofertas'
 		},

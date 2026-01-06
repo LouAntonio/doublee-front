@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { formatCurrency } from '../utils/currency';
 
 const OffersSection = () => {
 	const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
@@ -9,10 +10,9 @@ const OffersSection = () => {
 		id: 1,
 		title: 'Bicicleta Ergométrica Fitness Para Cardio E Musculação 6kg Inercia Com Base Cor...',
 		oldPrice: 1094,
-		price: 619.99,
+		price: 1115500,
 		discount: 43,
-		installments: '12x R$ 59,95',
-		freeShipping: true,
+		freeShipping: false,
 		image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Produto+Destaque'
 	};
 
@@ -23,7 +23,7 @@ const OffersSection = () => {
 			oldPrice: 339,
 			price: 192,
 			discount: 43,
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Camera+IP'
 		},
 		{
@@ -32,8 +32,7 @@ const OffersSection = () => {
 			oldPrice: 2399,
 			price: 1499,
 			discount: 37,
-			installments: '10x R$ 149,90 sem juros',
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Bicicleta'
 		},
 		{
@@ -42,10 +41,7 @@ const OffersSection = () => {
 			oldPrice: 3284,
 			price: 2089,
 			discount: 36,
-			installments: 'ou R$ 2.199 em 10x',
-			installmentsNoInterest: 'R$ 219,90 sem juros',
-			pix: 'ou R$ 2.089 em Pix',
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Smart+TV'
 		},
 		{
@@ -54,10 +50,7 @@ const OffersSection = () => {
 			oldPrice: 1999,
 			price: 1079,
 			discount: 46,
-			installments: 'ou R$ 1.199 em 10x R$ 119,90',
-			installmentsNoInterest: 'sem juros',
-			pix: 'ou R$ 1.079 em Pix',
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Tablet'
 		},
 		{
@@ -66,7 +59,7 @@ const OffersSection = () => {
 			oldPrice: 3499,
 			price: 2299,
 			discount: 34,
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Notebook'
 		},
 		{
@@ -75,7 +68,7 @@ const OffersSection = () => {
 			oldPrice: 299,
 			price: 179,
 			discount: 40,
-			freeShipping: true,
+			freeShipping: false,
 			image: 'https://via.placeholder.com/200x200/f5f5f5/666?text=Fone+JBL'
 		}
 	];
@@ -87,7 +80,7 @@ const OffersSection = () => {
 			if (w >= 1200) return 4;
 			if (w >= 900) return 3;
 			if (w >= 600) return 2;
-			return 1;
+			return 2;
 		};
 
 		const update = () => {
@@ -196,7 +189,7 @@ const OffersSection = () => {
 										color: '#999',
 										textDecoration: 'line-through'
 									}}>
-										R$ {dealOfTheDay.oldPrice}
+										{formatCurrency(dealOfTheDay.oldPrice)}
 									</span>
 								</div>
 								<div style={{ marginBottom: '8px' }}>
@@ -205,7 +198,7 @@ const OffersSection = () => {
 										fontWeight: '400',
 										color: '#333'
 									}}>
-										R$ {dealOfTheDay.price.toFixed(2).replace('.', ',')}
+										{formatCurrency(dealOfTheDay.price)}
 									</span>
 									<span style={{
 										fontSize: '14px',
@@ -216,24 +209,6 @@ const OffersSection = () => {
 										{dealOfTheDay.discount}% OFF
 									</span>
 								</div>
-								{dealOfTheDay.installments && (
-									<p style={{
-										fontSize: '14px',
-										color: '#666',
-										marginBottom: '8px'
-									}}>
-										{dealOfTheDay.installments}
-									</p>
-								)}
-								{dealOfTheDay.freeShipping && (
-									<div style={{
-										fontSize: '14px',
-										color: '#00a650',
-										fontWeight: '600'
-									}}>
-										Frete grátis <span style={{ fontWeight: '400', color: '#666' }}>por ser sua primeira compra</span>
-									</div>
-								)}
 							</div>
 						</div>
 					</div>
@@ -428,16 +403,16 @@ const OffersSection = () => {
 													textDecoration: 'line-through',
 													marginBottom: '4px'
 												}}>
-													R$ {offer.oldPrice}
-												</div>
-											)}
-											<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
-												<span style={{
-													fontSize: '24px',
-													fontWeight: '400',
-													color: '#333'
-												}}>
-													R$ {offer.price.toLocaleString('pt-BR')}
+												{formatCurrency(offer.oldPrice)}
+											</div>
+										)}
+										<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
+											<span style={{
+												fontSize: '24px',
+												fontWeight: '400',
+												color: '#333'
+											}}>
+												{formatCurrency(offer.price)}
 												</span>
 												{offer.discount && (
 													<span style={{
@@ -449,42 +424,9 @@ const OffersSection = () => {
 													</span>
 												)}
 											</div>
-											{offer.installments && (
-												<p style={{
-													fontSize: '12px',
-													color: '#666',
-													marginBottom: '4px'
-												}}>
-													{offer.installments}
-												</p>
-											)}
-											{offer.installmentsNoInterest && (
-												<p style={{
-													fontSize: '12px',
-													color: '#666',
-													marginBottom: '4px'
-												}}>
-													{offer.installmentsNoInterest}
-												</p>
-											)}
-											{offer.pix && (
-												<p style={{
-													fontSize: '12px',
-													color: '#00a650',
-													marginBottom: '4px'
-												}}>
-													{offer.pix}
-												</p>
-											)}
-											{offer.freeShipping && (
-												<div style={{
-													fontSize: '13px',
-													color: '#00a650',
-													fontWeight: '600'
-												}}>
-													Frete grátis <span style={{ fontWeight: '400', color: '#666' }}>por ser sua primeira compra</span>
-												</div>
-											)}
+											{/* Parcelamento removido para contexto Angola */}
+											{/* Pix removido no contexto de Angola */}
+											{/* Frete grátis removido no contexto de Angola */}
 										</div>
 									))}
 								</div>

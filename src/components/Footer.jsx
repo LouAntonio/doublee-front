@@ -33,16 +33,13 @@ const Footer = () => {
 				{ name: 'Configurações', url: '/configuracoes' }
 			]
 		},
-		{
-			title: 'Pagamento',
-			links: [
-				{ name: 'Formas de pagamento', url: '/pagamento' },
-				{ name: 'Parcelamento', url: '/parcelamento' },
-				{ name: 'Cartão Double E', url: '/cartao' },
-				{ name: 'Pix', url: '/pix' },
-				{ name: 'Boleto', url: '/boleto' }
-			]
-		}
+				{
+					title: 'Pagamento',
+					links: [
+						{ name: 'Formas de pagamento', url: '/pagamento' },
+						{ name: 'Cartão Double E', url: '/cartao' }
+					]
+				}
 	];
 
 	const socialLinks = [
@@ -277,7 +274,7 @@ const Footer = () => {
 				color: '#999'
 			}}>
 				<div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-					Double E Comércio Eletrônico S.A. - CNPJ: 00.000.000/0001-00 | Endereço: Rua Exemplo, 1234 - São Paulo, SP
+					Double E Comércio Eletrônico Angola - NUIT: 000000000 | Endereço: Luanda, Angola
 				</div>
 			</div>
 		</footer>

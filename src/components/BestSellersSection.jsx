@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { formatCurrency } from '../utils/currency';
 
 const BestSellersSection = () => {
 	const scrollContainerRef = useRef(null);
@@ -14,7 +15,7 @@ const BestSellersSection = () => {
 			price: 159.90,
 			discount: 42,
 			installments: null,
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/4169E1/fff?text=Piscina'
 		},
 		{
@@ -25,7 +26,7 @@ const BestSellersSection = () => {
 			discount: 12,
 			installments: null,
 			coupon: 'Cupom 6% OFF',
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/00A650/fff?text=Mangueira'
 		},
 		{
@@ -35,7 +36,7 @@ const BestSellersSection = () => {
 			price: 67.80,
 			discount: 39,
 			installments: null,
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/1E90FF/fff?text=Banheira'
 		},
 		{
@@ -44,8 +45,8 @@ const BestSellersSection = () => {
 			oldPrice: 181.44,
 			price: 154.22,
 			discount: 15,
-			installments: '5x R$ 30,84 sem juros',
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			installments: null,
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/008B8B/fff?text=Lona'
 		},
 		{
@@ -55,7 +56,7 @@ const BestSellersSection = () => {
 			price: 199.90,
 			discount: null,
 			installments: null,
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/FFD700/333?text=Genco'
 		},
 		{
@@ -64,8 +65,8 @@ const BestSellersSection = () => {
 			oldPrice: null,
 			price: 232.99,
 			discount: null,
-			installments: '12x R$ 23,01',
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			installments: null,
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/87CEEB/333?text=Piscina+Infantil'
 		},
 		{
@@ -74,8 +75,8 @@ const BestSellersSection = () => {
 			oldPrice: 289.90,
 			price: 189.90,
 			discount: 34,
-			installments: '12x R$ 18,32',
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			installments: null,
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/4682B4/fff?text=Kit+Limpeza'
 		},
 		{
@@ -84,8 +85,8 @@ const BestSellersSection = () => {
 			oldPrice: 349,
 			price: 259.90,
 			discount: 25,
-			installments: '12x R$ 25,08',
-			freeShipping: 'Frete grátis por ser sua primeira compra',
+			installments: null,
+			freeShipping: null,
 			image: 'https://via.placeholder.com/200x200/5F9EA0/fff?text=Bomba'
 		}
 	];
@@ -303,7 +304,7 @@ const BestSellersSection = () => {
 											textDecoration: 'line-through',
 											marginBottom: '4px'
 										}}>
-											R$ {product.oldPrice.toFixed(2).replace('.', ',')}
+											{formatCurrency(product.oldPrice)}
 										</div>
 									)}
 
@@ -319,13 +320,7 @@ const BestSellersSection = () => {
 											fontWeight: '400',
 											color: '#333'
 										}}>
-											R$ {Math.floor(product.price)}
-										</span>
-										<span style={{
-											fontSize: '14px',
-											color: '#333'
-										}}>
-											{(product.price % 1).toFixed(2).split('.')[1]}
+											{formatCurrency(product.price)}
 										</span>
 										{product.discount && (
 											<span style={{
@@ -339,15 +334,7 @@ const BestSellersSection = () => {
 									</div>
 
 									{/* Installments */}
-									{product.installments && (
-										<div style={{
-											fontSize: '13px',
-											color: '#00a650',
-											marginBottom: '8px'
-										}}>
-											{product.installments}
-										</div>
-									)}
+									{/* Parcelamento removido para contexto de Angola */}
 
 									{/* Coupon */}
 									{product.coupon && (
@@ -366,15 +353,7 @@ const BestSellersSection = () => {
 									)}
 
 									{/* Free Shipping */}
-									{product.freeShipping && (
-										<div style={{
-											fontSize: '12px',
-											color: '#00a650',
-											fontWeight: '400'
-										}}>
-											{product.freeShipping}
-										</div>
-									)}
+									{/* Frete grátis removido no contexto de Angola */}
 								</div>
 							</div>
 						))}
