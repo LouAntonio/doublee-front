@@ -8,10 +8,12 @@ import Contato from './pages/Contato';
 import Sobre from './pages/Sobre';
 import NotFound from './pages/NotFound';
 import Footer from '../src/components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
 	return (
 		<BrowserRouter>
+			<ScrollToTop />
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/ofertas" element={<Ofertas />} />
