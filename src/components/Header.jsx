@@ -235,18 +235,18 @@ const Header = () => {
 							<NavLink to="/cupoes" className="text-sm text-gray-700 hover:text-gray-900 font-light">
 								Cupões
 							</NavLink>
-							<a href="#" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							<button type="button" className="text-sm text-gray-700 hover:text-gray-900 font-light">
 								Supermercado
-							</a>
-							<a href="#" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							</button>
+							<button type="button" className="text-sm text-gray-700 hover:text-gray-900 font-light">
 								Moda
-							</a>
-							<a href="#" className="text-sm text-gray-700 hover:text-gray-900 font-light badge relative">
+							</button>
+							<button type="button" className="text-sm text-gray-700 hover:text-gray-900 font-light badge relative">
 								Mercado Play
 								<span className="absolute -top-1 -right-4 bg-green-500 text-white text-[9px] px-1 rounded font-bold">
 									GRÁTIS
 								</span>
-							</a>
+							</button>
 							<NavLink to="/sobre" className="text-sm text-gray-700 hover:text-gray-900 font-light">
 								Sobre
 							</NavLink>
@@ -263,9 +263,9 @@ const Header = () => {
 						<NavLink to="/auth" className="text-gray-700 hover:text-gray-900 font-light">
 							Entre
 						</NavLink>
-							<a href="#" className="text-gray-700 hover:text-gray-900 font-light">
+							<button type="button" className="text-gray-700 hover:text-gray-900 font-light">
 								Compras
-							</a>
+							</button>
 							<button className="relative hover:bg-yellow-200 p-1.5 rounded transition-colors">
 								<IoCartOutline className="w-5 h-5 text-gray-700" />
 							</button>
@@ -301,21 +301,21 @@ const Header = () => {
 						<IoTicketOutline className="w-5 h-5 text-gray-500" />
 						<span>Cupões</span>
 					</NavLink>
-						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+						<button type="button" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
 							<IoStorefrontOutline className="w-5 h-5 text-gray-500" />
 							<span>Supermercado</span>
-						</a>
-						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+						</button>
+						<button type="button" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
 							<IoShirtOutline className="w-5 h-5 text-gray-500" />
 							<span>Moda</span>
-						</a>
-						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
+						</button>
+						<button type="button" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
 							<IoPlayCircleOutline className="w-5 h-5 text-gray-500" />
 							<div className="flex items-center gap-2">
 								<span>Mercado Play</span>
 								<span className="bg-green-500 text-white text-[9px] px-1 rounded font-bold">GRÁTIS</span>
 							</div>
-						</a>
+						</button>
 					<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
 						<IoCashOutline className="w-5 h-5 text-gray-500" />
 						<span>Sobre</span>
@@ -332,10 +332,10 @@ const Header = () => {
 						<IoLogInOutline className="w-5 h-5 text-gray-500" />
 						<span>Entre</span>
 					</NavLink>
-						<a href="#" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
+						<button type="button" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
 							<IoBagOutline className="w-5 h-5 text-gray-500" />
 							<span>Compras</span>
-						</a>
+						</button>
 					</nav>
 				</div>
 			)}

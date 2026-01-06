@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 
 const BestSellersSection = () => {
@@ -137,14 +138,14 @@ const BestSellersSection = () => {
 					}}>
 						Mais vendidos da semana em Piscinas e Acessórios
 					</h2>
-					<a href="/mais-vendidos" style={{
+					<Link to="/mais-vendidos" style={{
 						color: '#3483fa',
 						fontSize: '14px',
 						textDecoration: 'none',
 						fontWeight: '400'
 					}}>
 						Ir para Mais vendidos
-					</a>
+					</Link>
 				</div>
 
 				{/* Carousel Container */}

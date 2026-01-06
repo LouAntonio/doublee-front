@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../utils/currency';
+import { Link } from 'react-router-dom';
 
 const OffersSection = () => {
 	const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
@@ -241,14 +242,14 @@ const OffersSection = () => {
 								}}>
 									Ofertas
 								</h2>
-								<a href="/ofertas" style={{
+								<Link to="/ofertas" style={{
 									fontSize: '14px',
 									color: '#3483fa',
 									textDecoration: 'none',
 									fontWeight: '600'
 								}}>
 									Mostrar todas as ofertas
-								</a>
+								</Link>
 							</div>
 
 							{/* Pagination Dots aligned right on same line as title */}

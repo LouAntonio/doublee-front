@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from 'react-icons/fa';
 
 const Footer = () => {
@@ -83,8 +84,8 @@ const Footer = () => {
 							}}>
 								{section.links.map((link, linkIndex) => (
 									<li key={linkIndex} style={{ marginBottom: '12px' }}>
-										<a
-											href={link.url}
+										<Link
+											to={link.url}
 											style={{
 												fontSize: '13px',
 												color: '#666',
@@ -95,7 +96,7 @@ const Footer = () => {
 											onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
 										>
 											{link.name}
-										</a>
+										</Link>
 									</li>
 								))}
 							</ul>
@@ -228,8 +229,8 @@ const Footer = () => {
 						gap: '16px',
 						flexWrap: 'wrap'
 					}}>
-						<a
-							href="/termos"
+						<Link
+							to="/termos"
 							style={{
 								color: '#999',
 								textDecoration: 'none'
@@ -238,9 +239,9 @@ const Footer = () => {
 							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
 						>
 							Termos e condições
-						</a>
-						<a
-							href="/privacidade"
+						</Link>
+						<Link
+							to="/privacidade"
 							style={{
 								color: '#999',
 								textDecoration: 'none'
@@ -249,9 +250,9 @@ const Footer = () => {
 							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
 						>
 							Política de privacidade
-						</a>
-						<a
-							href="/cookies"
+						</Link>
+						<Link
+							to="/cookies"
 							style={{
 								color: '#999',
 								textDecoration: 'none'
@@ -260,7 +261,7 @@ const Footer = () => {
 							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
 						>
 							Cookies
-						</a>
+						</Link>
 					</div>
 				</div>
 			</div>

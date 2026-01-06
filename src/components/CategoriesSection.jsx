@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
 const CategoriesSection = () => {
 	const [currentPage, setCurrentPage] = useState(0);
@@ -159,14 +160,14 @@ const CategoriesSection = () => {
 						}}>
 							Categorias
 						</h2>
-						<a href="/categorias" style={{
+						<Link to="/categorias" style={{
 							color: '#3483fa',
 							fontSize: '14px',
 							textDecoration: 'none',
 							fontWeight: '400'
 						}}>
 							Mostrar todas as categorias
-						</a>
+						</Link>
 					</div>
 
 					{/* Pagination Dots */}
@@ -271,9 +272,9 @@ const CategoriesSection = () => {
 						overflow: 'hidden'
 					}}>
 						{getCurrentCategories().map((category) => (
-							<a
+							<Link
 								key={category.id}
-								href={category.link}
+								to={category.link}
 								style={{
 									display: 'flex',
 									alignItems: 'center',
@@ -323,7 +324,7 @@ const CategoriesSection = () => {
 								}}>
 									{category.name}
 								</div>
-							</a>
+							</Link>
 						))}
 					</div>
 				</div>
