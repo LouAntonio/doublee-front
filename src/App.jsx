@@ -10,6 +10,8 @@ import NotFound from './pages/NotFound';
 import Footer from '../src/components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
+import Supermarket from './pages/Supermarket';
+
 function App() {
 	return (
 		<BrowserRouter>
@@ -18,6 +20,7 @@ function App() {
 				<Route path="/" element={<Home />} />
 				<Route path="/ofertas" element={<Ofertas />} />
 				<Route path="/categorias" element={<Categorias />} />
+				<Route path="/supermercado" element={<Supermarket />} />
 				<Route path="/cupoes" element={<Cupoes />} />
 				<Route path="/auth" element={<Auth />} />
 				<Route path="/contato" element={<Contato />} />

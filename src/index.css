@@ -94,3 +94,65 @@
 @media (min-width: 1000px) {
 	.offers-section .offers-container { padding-left: 16px; padding-right: 16px; }
 }
+
+/* NotFound page styles */
+.notfound-wrap {
+	min-height: calc(100vh - 40px);
+	display: flex;
+ 	align-items: center;
+ 	justify-content: center;
+ 	padding: 20px;
+ 	background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+}
+.notfound-card {
+ 	background: #fff;
+ 	padding: 36px 28px;
+ 	max-width: 480px;
+ 	width: 100%;
+ 	text-align: center;
+ 	border-radius: 12px;
+ 	box-shadow: 0 8px 30px rgba(12,25,48,0.06);
+}
+.notfound-emoji {
+ 	font-size: 56px;
+ 	line-height: 1;
+ 	margin-bottom: 12px;
+}
+.notfound-title {
+ 	font-size: 22px;
+ 	font-weight: 700;
+ 	color: #0f1720;
+ 	margin-bottom: 8px;
+}
+.notfound-desc {
+ 	color: #6b7280;
+ 	font-size: 14px;
+ 	margin-bottom: 18px;
+}
+.notfound-actions { 
+ 	display: flex;
+ 	gap: 10px;
+ 	justify-content: center;
+}
+.btn-primary {
+ 	background: #3483fa;
+ 	color: #fff;
+ 	padding: 10px 18px;
+ 	border-radius: 8px;
+ 	text-decoration: none;
+ 	font-weight: 600;
+}
+.btn-outline {
+ 	background: transparent;
+ 	color: #3483fa;
+ 	padding: 10px 18px;
+ 	border-radius: 8px;
+ 	border: 1px solid rgba(52,131,250,0.15);
+ 	text-decoration: none;
+ 	font-weight: 600;
+}
+.small-links { 
+ 	margin-top: 14px;
+ 	font-size: 13px;
+ 	color: #94a3b8;
+}
