@@ -3,10 +3,17 @@ import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
+import FilterSidebar from '../components/FilterSidebar';
+
 const Supermarket = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 16;
 	const [sortOption, setSortOption] = useState('relevance');
+
+	// Filter state
+	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+	const [selectedCategories, setSelectedCategories] = useState([]);
+	const [rating, setRating] = useState(null);
 
 	// Base products data
 	const baseProducts = [
@@ -81,7 +88,9 @@ const Supermarket = () => {
 
 	// Apply sorting before pagination
 	const getSortedProducts = () => {
-		const sorted = [...totalProducts];
+		let sorted = [...totalProducts];
+
+		// Logic to toggle sort options could be added here
 		if (sortOption === 'lowest') {
 			sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
 		} else if (sortOption === 'highest') {
@@ -136,79 +145,15 @@ const Supermarket = () => {
 					gap: '24px',
 					position: 'relative'
 				}}>
-					{/* Sticky Filters Sidebar - Left */}
-					<aside style={{
-						width: '260px',
-						flexShrink: 0
-					}}>
-						<div style={{
-							backgroundColor: '#fff',
-							borderRadius: '8px',
-							padding: '16px',
-							boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-							position: 'sticky',
-							top: '20px', // Stick 20px from top of viewport
-							maxHeight: 'calc(100vh - 40px)', // Prevent overflowing viewport
-							overflowY: 'auto', // Scroll internal if filters are too long
-							scrollbarWidth: 'thin'
-						}}>
-							<h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#333' }}>Filtros</h3>
-
-							{/* Categories Filter */}
-							<div style={{ marginBottom: '24px' }}>
-								<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Categorias</h4>
-								<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-									{['Mercearia', 'Bebidas', 'Higiene', 'Limpeza', 'Hortifruti', 'Carnes', 'Padaria', 'Laticínios', 'Congelados'].map((cat) => (
-										<label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666', cursor: 'pointer' }}>
-											<input type="checkbox" /> {cat}
-										</label>
-									))}
-								</div>
-							</div>
-
-							{/* Price Filter */}
-							<div style={{ marginBottom: '24px' }}>
-								<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Preço</h4>
-								<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-									<input
-										type="number"
-										placeholder="Mín"
-										style={{
-											width: '100%',
-											padding: '8px',
-											border: '1px solid #ddd',
-											borderRadius: '4px'
-										}}
-									/>
-									<span style={{ color: '#999' }}>-</span>
-									<input
-										type="number"
-										placeholder="Máx"
-										style={{
-											width: '100%',
-											padding: '8px',
-											border: '1px solid #ddd',
-											borderRadius: '4px'
-										}}
-									/>
-								</div>
-							</div>
-
-							{/* Marcas removidas conforme solicitado */}
-
-							{/* Review Filter */}
-							<div>
-								<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Avaliação</h4>
-								<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-									{[5, 4, 3, 2, 1].map((stars) => (
-										<label key={stars} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666', cursor: 'pointer' }}>
-											<input type="radio" name="rating" /> {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
-										</label>
-									))}
-								</div>
-							</div>
-						</div>
-					</aside>
+					<FilterSidebar
+						categories={['Mercearia', 'Bebidas', 'Higiene', 'Limpeza', 'Hortifruti', 'Carnes', 'Padaria', 'Laticínios', 'Congelados']}
+						priceRange={priceRange}
+						setPriceRange={setPriceRange}
+						selectedCategories={selectedCategories}
+						setSelectedCategories={setSelectedCategories}
+						rating={rating}
+						setRating={setRating}
+					/>
 
 					{/* Products Grid - Right */}
 					<main style={{ flex: 1 }}>

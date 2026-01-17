@@ -90,7 +90,7 @@ const ProductGrid = ({ products }) => {
 							marginBottom: '4px'
 						}}>
 							<span style={{
-								fontSize: '18px',
+								fontSize: '15px',
 								fontWeight: '400',
 								color: '#333'
 							}}>
