@@ -247,7 +247,9 @@ const BestSellersSection = () => {
 									padding: '16px',
 									cursor: 'pointer',
 									transition: 'all 0.2s',
-									border: '1px solid transparent'
+									border: '1px solid transparent',
+									display: 'flex',
+									flexDirection: 'column'
 								}}
 								onMouseEnter={(e) => {
 									e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
@@ -282,7 +284,11 @@ const BestSellersSection = () => {
 								</div>
 
 								{/* Product Info */}
-								<div>
+								<div style={{
+									display: 'flex',
+									flexDirection: 'column',
+									flex: 1
+								}}>
 									{/* Product Title */}
 									<h3 style={{
 										fontSize: '14px',
@@ -319,7 +325,7 @@ const BestSellersSection = () => {
 										marginBottom: '4px'
 									}}>
 										<span style={{
-											fontSize: '18px',
+											fontSize: '15px',
 											fontWeight: '400',
 											color: '#333'
 										}}>
@@ -371,7 +377,7 @@ const BestSellersSection = () => {
 										}}
 										style={{
 											width: '100%',
-											marginTop: '12px',
+											marginTop: 'auto',
 											padding: '8px 12px',
 											backgroundColor: '#3483fa',
 											color: '#fff',

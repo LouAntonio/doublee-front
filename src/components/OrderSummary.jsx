@@ -48,7 +48,7 @@ const OrderSummary = ({ showPromoCode = true }) => {
 
 				{/* Shipping */}
 				<div className="flex justify-between text-sm">
-					<span className="text-gray-600">Frete</span>
+					<span className="text-gray-600">Entrega</span>
 					<span className="font-medium text-gray-800">
 						{shipping === 0 ? (
 							<span className="text-green-600">Grátis</span>
@@ -103,7 +103,7 @@ const OrderSummary = ({ showPromoCode = true }) => {
 				{shipping > 0 && subtotal < 200 && (
 					<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
 						<p className="text-xs text-blue-800">
-							Falta apenas <strong>{formatCurrency(200 - subtotal)}</strong> para frete grátis!
+							Falta apenas <strong>{formatCurrency(200 - subtotal)}</strong> para entrega grátis!
 						</p>
 					</div>
 				)}

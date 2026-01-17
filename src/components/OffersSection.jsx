@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { formatCurrency } from '../utils/currency';
 import { Link } from 'react-router-dom';
+import { IoCartOutline } from 'react-icons/io5';
+import { useCart } from '../context/CartContext';
 
 const OffersSection = () => {
+	const { addToCart } = useCart();
 	const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
 	const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -137,7 +140,8 @@ const OffersSection = () => {
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'center',
-							gap: '16px'
+							gap: '16px',
+							height: '100%'
 						}}>
 							<div style={{
 								width: '100%',
@@ -171,7 +175,12 @@ const OffersSection = () => {
 									</div>
 								)}
 							</div>
-							<div style={{ width: '100%' }}>
+							<div style={{
+								width: '100%',
+								display: 'flex',
+								flexDirection: 'column',
+								flex: 1
+							}}>
 								<h3 style={{
 									fontSize: '14px',
 									color: '#666',
@@ -195,7 +204,7 @@ const OffersSection = () => {
 								</div>
 								<div style={{ marginBottom: '8px' }}>
 									<span style={{
-										fontSize: '22px',
+										fontSize: '18px',
 										fontWeight: '400',
 										color: '#333'
 									}}>
@@ -210,6 +219,47 @@ const OffersSection = () => {
 										{dealOfTheDay.discount}% OFF
 									</span>
 								</div>
+
+								{/* Add to Cart Button */}
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										addToCart({
+											id: dealOfTheDay.id,
+											name: dealOfTheDay.title,
+											price: dealOfTheDay.price,
+											image: dealOfTheDay.image
+										});
+									}}
+									style={{
+										width: '100%',
+										marginTop: 'auto',
+										padding: '8px 12px',
+										backgroundColor: '#3483fa',
+										color: '#fff',
+										border: 'none',
+										borderRadius: '6px',
+										fontSize: '14px',
+										fontWeight: '600',
+										cursor: 'pointer',
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										gap: '6px',
+										transition: 'all 0.2s'
+									}}
+									onMouseEnter={(e) => {
+										e.currentTarget.style.backgroundColor = '#2968c8';
+										e.currentTarget.style.transform = 'translateY(-1px)';
+									}}
+									onMouseLeave={(e) => {
+										e.currentTarget.style.backgroundColor = '#3483fa';
+										e.currentTarget.style.transform = 'translateY(0)';
+									}}
+								>
+									<IoCartOutline size={16} />
+									Adicionar
+								</button>
 							</div>
 						</div>
 					</div>
@@ -356,7 +406,9 @@ const OffersSection = () => {
 												borderRadius: '4px',
 												flex: `0 0 ${100 / itemsPerPage}%`,
 												maxWidth: `${100 / itemsPerPage}%`,
-												boxSizing: 'border-box'
+												boxSizing: 'border-box',
+												display: 'flex',
+												flexDirection: 'column'
 											}}
 											onMouseEnter={(e) => {
 												e.currentTarget.style.transform = 'translateY(-4px)';
@@ -384,50 +436,94 @@ const OffersSection = () => {
 													style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
 												/>
 											</div>
-											<h3 style={{
-												fontSize: '13px',
-												color: '#666',
-												marginBottom: '8px',
-												fontWeight: '400',
-												display: '-webkit-box',
-												WebkitLineClamp: 2,
-												WebkitBoxOrient: 'vertical',
-												overflow: 'hidden',
-												minHeight: '2.6em'
+											<div style={{
+												display: 'flex',
+												flexDirection: 'column',
+												flex: 1
 											}}>
-												{offer.title}
-											</h3>
-											{offer.oldPrice && (
-												<div style={{
-													fontSize: '12px',
-													color: '#999',
-													textDecoration: 'line-through',
-													marginBottom: '4px'
+												<h3 style={{
+													fontSize: '13px',
+													color: '#666',
+													marginBottom: '8px',
+													fontWeight: '400',
+													display: '-webkit-box',
+													WebkitLineClamp: 2,
+													WebkitBoxOrient: 'vertical',
+													overflow: 'hidden',
+													minHeight: '2.6em'
 												}}>
-												{formatCurrency(offer.oldPrice)}
-											</div>
-										)}
-										<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
-											<span style={{
-												fontSize: '18px',
-												fontWeight: '400',
-												color: '#333'
-											}}>
-												{formatCurrency(offer.price)}
-												</span>
-												{offer.discount && (
-													<span style={{
-														fontSize: '13px',
-														color: '#00a650',
-														fontWeight: '600'
+													{offer.title}
+												</h3>
+												{offer.oldPrice && (
+													<div style={{
+														fontSize: '11px',
+														color: '#999',
+														textDecoration: 'line-through',
+														marginBottom: '4px'
 													}}>
-														{offer.discount}% OFF
-													</span>
+														{formatCurrency(offer.oldPrice)}
+													</div>
 												)}
+												<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '8px' }}>
+													<span style={{
+														fontSize: '15px',
+														fontWeight: '400',
+														color: '#333'
+													}}>
+														{formatCurrency(offer.price)}
+													</span>
+													{offer.discount && (
+														<span style={{
+															fontSize: '15px',
+															color: '#00a650',
+															fontWeight: '600'
+														}}>
+															{offer.discount}% OFF
+														</span>
+													)}
+												</div>
+
+												{/* Add to Cart Button */}
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														addToCart({
+															id: offer.id,
+															name: offer.title,
+															price: offer.price,
+															image: offer.image
+														});
+													}}
+													style={{
+														width: '100%',
+														marginTop: 'auto',
+														padding: '8px 12px',
+														backgroundColor: '#3483fa',
+														color: '#fff',
+														border: 'none',
+														borderRadius: '6px',
+														fontSize: '13px',
+														fontWeight: '600',
+														cursor: 'pointer',
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center',
+														gap: '6px',
+														transition: 'all 0.2s'
+													}}
+													onMouseEnter={(e) => {
+														e.currentTarget.style.backgroundColor = '#2968c8';
+														e.currentTarget.style.transform = 'translateY(-1px)';
+													}}
+													onMouseLeave={(e) => {
+														e.currentTarget.style.backgroundColor = '#3483fa';
+														e.currentTarget.style.transform = 'translateY(0)';
+													}}
+												>
+													<IoCartOutline size={16} />
+													Adicionar
+												</button>
 											</div>
-											{/* Parcelamento removido para contexto Angola */}
-											{/* Pix removido no contexto de Angola */}
-											{/* Frete grátis removido no contexto de Angola */}
 										</div>
 									))}
 								</div>

@@ -21,7 +21,9 @@ const ProductGrid = ({ products }) => {
 						cursor: 'pointer',
 						transition: 'all 0.2s',
 						border: '1px solid transparent',
-						boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+						boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+						display: 'flex',
+						flexDirection: 'column'
 					}}
 					onMouseEnter={(e) => {
 						e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
@@ -56,7 +58,11 @@ const ProductGrid = ({ products }) => {
 					</div>
 
 					{/* Product Info */}
-					<div>
+					<div style={{
+						display: 'flex',
+						flexDirection: 'column',
+						flex: 1
+					}}>
 						{/* Product Title */}
 						<h3 style={{
 							fontSize: '14px',
@@ -139,7 +145,7 @@ const ProductGrid = ({ products }) => {
 							}}
 							style={{
 								width: '100%',
-								marginTop: '12px',
+								marginTop: 'auto',
 								padding: '8px 12px',
 								backgroundColor: '#3483fa',
 								color: '#fff',
