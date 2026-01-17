@@ -16,16 +16,16 @@ const Contato = () => {
 					<div
 						className="relative overflow-hidden py-16 px-6 rounded-2xl"
 						style={{
-							backgroundImage: "url('https://images.unsplash.com/photo-1526244434298-88fcbcb066b5?auto=format&fit=crop&w=1600&q=80')",
+							backgroundImage: "url('https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1600&q=80')",
 							backgroundSize: 'cover',
 							backgroundPosition: 'center'
 						}}
 					>
-						<div className="absolute inset-0 bg-black/45"></div>
+						<div className="absolute inset-0 bg-black/50"></div>
 						<div className="relative z-10 text-center text-white">
-							<h1 className="text-3xl md:text-5xl font-bold mb-4">Fale Conosco</h1>
+							<h1 className="text-3xl md:text-5xl font-bold mb-4">Contacte-nos</h1>
 							<p className="text-lg md:text-xl max-w-2xl mx-auto opacity-95">
-								Estamos aqui para ajudar. Entre em contato para dúvidas, sugestões ou parcerias.
+								Estamos aqui para ajudar. Contacte-nos para dúvidas, sugestões ou parcerias em Angola.
 							</p>
 						</div>
 					</div>
@@ -104,7 +104,7 @@ const Contato = () => {
 									</div>
 									<div>
 										<h3 className="font-semibold text-gray-900 mb-1">Endereço</h3>
-										<p className="text-gray-600">Av. Principal, 1000 - Centro<br />São Paulo - SP, 01000-000</p>
+										<p className="text-gray-600">Av. 4 de Fevereiro, 1000 - Luanda<br />Luanda, Angola</p>
 									</div>
 								</div>
 
@@ -114,9 +114,9 @@ const Contato = () => {
 									</div>
 									<div>
 										<h3 className="font-semibold text-gray-900 mb-1">Telefone</h3>
-										<p className="text-gray-600 mb-2">+55 (11) 99999-9999</p>
-										<a href="tel:+5511999999999" className="text-sm text-blue-600 font-medium hover:underline">
-											Ligar agora
+										<p className="text-gray-600 mb-2">+244 923 000 000</p>
+										<a href="tel:+244923000000" className="text-sm text-blue-600 font-medium hover:underline">
+											Ligue agora
 										</a>
 									</div>
 								</div>
@@ -127,8 +127,8 @@ const Contato = () => {
 									</div>
 									<div>
 										<h3 className="font-semibold text-gray-900 mb-1">E-mail</h3>
-										<p className="text-gray-600 mb-2">contato@doublee.com</p>
-										<a href="mailto:contato@doublee.com" className="text-sm text-blue-600 font-medium hover:underline">
+										<p className="text-gray-600 mb-2">contato@doublee.ao</p>
+										<a href="mailto:contato@doublee.ao" className="text-sm text-blue-600 font-medium hover:underline">
 											Enviar e-mail
 										</a>
 									</div>
@@ -140,8 +140,8 @@ const Contato = () => {
 									</div>
 									<div>
 										<h3 className="font-semibold text-gray-900 mb-1">WhatsApp</h3>
-										<p className="text-gray-600 mb-2">Atendimento rápido via chat</p>
-										<a href="#" className="text-sm text-green-600 font-medium hover:underline">
+										<p className="text-gray-600 mb-2">Atendimento rápido via WhatsApp</p>
+										<a href="https://wa.me/244923000000" target="_blank" rel="noreferrer" className="text-sm text-green-600 font-medium hover:underline">
 											Iniciar conversa
 										</a>
 									</div>
@@ -153,7 +153,7 @@ const Contato = () => {
 						<div className="bg-gray-200 rounded-2xl h-64 w-full flex items-center justify-center text-gray-400">
 							<div className="text-center">
 								<FaMapMarkerAlt className="text-4xl mx-auto mb-2 opacity-50" />
-								<span className="text-sm font-medium">Mapa de Localização</span>
+								<span className="text-sm font-medium">Mapa — Luanda</span>
 							</div>
 						</div>
 					</div>

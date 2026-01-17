@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { IoLocationOutline, IoSearchOutline, IoCartOutline, IoMenuOutline, IoCloseOutline, IoChevronForward, IoPricetagOutline, IoStorefrontOutline, IoShirtOutline, IoPlayCircleOutline, IoCashOutline, IoChatbubbleOutline, IoPersonAddOutline, IoLogInOutline, IoBagOutline, IoTicketOutline } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
+import { useCart } from '../context/CartContext';
 
 const Header = () => {
+	const { getCartCount } = useCart();
+	const cartCount = getCartCount();
+
 	const slugify = (s) =>
 		String(s)
 			.toLowerCase()
@@ -109,6 +113,11 @@ const Header = () => {
 					{/* Cart Icon (Mobile) */}
 					<Link to="/cart" className="lg:hidden relative hover:bg-yellow-200 p-1.5 rounded transition-colors">
 						<IoCartOutline className="w-6 h-6 text-gray-700" />
+						{cartCount > 0 && (
+							<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+								{cartCount > 99 ? '99+' : cartCount}
+							</span>
+						)}
 					</Link>
 
 					{/* Mobile Menu Button */}
@@ -261,6 +270,11 @@ const Header = () => {
 							</NavLink>
 							<Link to="/cart" className="relative hover:bg-yellow-200 p-1.5 rounded transition-colors">
 								<IoCartOutline className="w-5 h-5 text-gray-700" />
+								{cartCount > 0 && (
+									<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+										{cartCount > 99 ? '99+' : cartCount}
+									</span>
+								)}
 							</Link>
 						</div>
 					</div>

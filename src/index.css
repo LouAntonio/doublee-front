@@ -195,3 +195,171 @@
 		backdrop-filter: blur(16px);
 	}
 }
+
+/* Cart and Checkout Styles */
+.cart-item-enter {
+	animation: cartItemEnter 0.3s ease-out;
+}
+
+@keyframes cartItemEnter {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.cart-badge {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	background-color: #ef4444;
+	color: white;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 6px;
+	border-radius: 10px;
+	min-width: 18px;
+	text-align: center;
+	line-height: 1.2;
+}
+
+/* Checkout form input styles */
+.checkout-input {
+	transition: all 0.2s ease;
+}
+
+.checkout-input:focus {
+	border-color: #3483fa;
+	box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.1);
+}
+
+.checkout-input.error {
+	border-color: #ef4444;
+}
+
+.checkout-input.error:focus {
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Checkout steps animation */
+.checkout-step-active {
+	animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		box-shadow: 0 0 0 0 rgba(52, 131, 250, 0.4);
+	}
+	50% {
+		box-shadow: 0 0 0 8px rgba(52, 131, 250, 0);
+	}
+}
+
+/* Order summary sticky behavior */
+.order-summary-sticky {
+	position: sticky;
+	top: 20px;
+}
+
+@media (max-width: 1023px) {
+	.order-summary-sticky {
+		position: relative;
+		top: 0;
+	}
+}
+
+/* Cart button hover effect */
+.add-to-cart-btn {
+	position: relative;
+	overflow: hidden;
+}
+
+.add-to-cart-btn::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.2);
+	transform: translate(-50%, -50%);
+	transition: width 0.4s, height 0.4s;
+}
+
+.add-to-cart-btn:hover::before {
+	width: 300px;
+	height: 300px;
+}
+
+/* Quantity selector styles */
+.quantity-selector button {
+	transition: all 0.2s ease;
+}
+
+.quantity-selector button:active {
+	transform: scale(0.95);
+}
+
+/* Empty cart illustration */
+.empty-cart-icon {
+	animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+/* Payment method selection */
+.payment-method-option {
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.payment-method-option:hover {
+	border-color: #3483fa;
+	background-color: #f0f7ff;
+}
+
+.payment-method-option.selected {
+	border-color: #3483fa;
+	background-color: #e6f2ff;
+	box-shadow: 0 0 0 2px rgba(52, 131, 250, 0.1);
+}
+
+/* Success checkmark animation */
+.success-checkmark {
+	animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+	from {
+		transform: scale(0);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* Responsive cart adjustments */
+@media (max-width: 640px) {
+	.cart-item {
+		padding: 12px;
+	}
+	
+	.cart-item-image {
+		width: 80px;
+		height: 80px;
+	}
+}

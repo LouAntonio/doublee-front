@@ -1,7 +1,10 @@
 import React from 'react';
+import { IoCartOutline } from 'react-icons/io5';
 import { formatCurrency } from '../utils/currency';
+import { useCart } from '../context/CartContext';
 
 const ProductGrid = ({ products }) => {
+	const { addToCart } = useCart();
 	return (
 		<div style={{
 			display: 'grid',
@@ -122,6 +125,45 @@ const ProductGrid = ({ products }) => {
 								🎟️ {product.coupon}
 							</div>
 						)}
+
+						{/* Add to Cart Button */}
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								addToCart({
+									id: product.id,
+									name: product.title,
+									price: product.price,
+									image: product.image
+								});
+							}}
+							style={{
+								width: '100%',
+								marginTop: '12px',
+								padding: '8px 12px',
+								backgroundColor: '#3483fa',
+								color: '#fff',
+								border: 'none',
+								borderRadius: '6px',
+								fontSize: '14px',
+								fontWeight: '600',
+								cursor: 'pointer',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								gap: '6px',
+								transition: 'all 0.2s'
+							}}
+							onMouseEnter={(e) => {
+								e.currentTarget.style.backgroundColor = '#2968c8';
+							}}
+							onMouseLeave={(e) => {
+								e.currentTarget.style.backgroundColor = '#3483fa';
+							}}
+						>
+							<IoCartOutline size={18} />
+							Adicionar
+						</button>
 					</div>
 				</div>
 			))}

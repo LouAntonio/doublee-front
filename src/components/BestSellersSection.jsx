@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { IoChevronBack, IoChevronForward, IoCartOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
+import { useCart } from '../context/CartContext';
 
 const BestSellersSection = () => {
+	const { addToCart } = useCart();
 	const scrollContainerRef = useRef(null);
 	const [showLeftArrow, setShowLeftArrow] = useState(false);
 	const [showRightArrow, setShowRightArrow] = useState(true);
@@ -355,6 +357,47 @@ const BestSellersSection = () => {
 
 									{/* Free Shipping */}
 									{/* Frete grátis removido no contexto de Angola */}
+
+									{/* Add to Cart Button */}
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											addToCart({
+												id: product.id,
+												name: product.title,
+												price: product.price,
+												image: product.image
+											});
+										}}
+										style={{
+											width: '100%',
+											marginTop: '12px',
+											padding: '8px 12px',
+											backgroundColor: '#3483fa',
+											color: '#fff',
+											border: 'none',
+											borderRadius: '6px',
+											fontSize: '14px',
+											fontWeight: '600',
+											cursor: 'pointer',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											gap: '6px',
+											transition: 'all 0.2s'
+										}}
+										onMouseEnter={(e) => {
+											e.currentTarget.style.backgroundColor = '#2968c8';
+											e.currentTarget.style.transform = 'translateY(-1px)';
+										}}
+										onMouseLeave={(e) => {
+											e.currentTarget.style.backgroundColor = '#3483fa';
+											e.currentTarget.style.transform = 'translateY(0)';
+										}}
+									>
+										<IoCartOutline size={16} />
+										Adicionar
+									</button>
 								</div>
 							</div>
 						))}
