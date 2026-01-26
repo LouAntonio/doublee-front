@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import FilterSidebar from '../components/FilterSidebar';
 
 const Supermarket = () => {
+	useDocumentTitle('Supermercado - Double E');
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 16;
 	const [sortOption, setSortOption] = useState('relevance');

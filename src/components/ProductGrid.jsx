@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IoCartOutline } from 'react-icons/io5';
 import { formatCurrency } from '../utils/currency';
 import { useCart } from '../context/CartContext';
 
 const ProductGrid = ({ products }) => {
 	const { addToCart } = useCart();
+	const navigate = useNavigate();
 	return (
 		<div style={{
 			display: 'grid',
@@ -35,7 +37,9 @@ const ProductGrid = ({ products }) => {
 					}}
 				>
 					{/* Product Image */}
-					<div style={{
+					<div 
+						onClick={() => navigate(`/produto/${product.id}`)}
+						style={{
 						width: '100%',
 						aspectRatio: '1',
 						backgroundColor: '#f5f5f5',
@@ -44,7 +48,8 @@ const ProductGrid = ({ products }) => {
 						overflow: 'hidden',
 						display: 'flex',
 						alignItems: 'center',
-						justifyContent: 'center'
+						justifyContent: 'center',
+						cursor: 'pointer'
 					}}>
 						<img
 							src={product.image}
@@ -64,7 +69,9 @@ const ProductGrid = ({ products }) => {
 						flex: 1
 					}}>
 						{/* Product Title */}
-						<h3 style={{
+						<h3 
+							onClick={() => navigate(`/produto/${product.id}`)}
+							style={{
 							fontSize: '14px',
 							fontWeight: '400',
 							color: '#333',
@@ -74,12 +81,11 @@ const ProductGrid = ({ products }) => {
 							overflow: 'hidden',
 							display: '-webkit-box',
 							WebkitLineClamp: 2,
-							WebkitBoxOrient: 'vertical'
+							WebkitBoxOrient: 'vertical',
+							cursor: 'pointer'
 						}}>
 							{product.title}
 						</h3>
-
-						{/* Old Price */}
 						{product.oldPrice && (
 							<div style={{
 								fontSize: '11px',

@@ -10,6 +10,7 @@ import Sobre from './pages/Sobre';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import NotFound from './pages/NotFound';
+import ProductDetails from './pages/ProductDetails';
 import Footer from '../src/components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -31,6 +32,7 @@ function App() {
 					<Route path="/sobre" element={<Sobre />} />
 					<Route path="/cart" element={<Cart />} />
 					<Route path="/checkout" element={<Checkout />} />
+					<Route path="/produto/:id" element={<ProductDetails />} />
 					<Route path="*" element={<NotFound />} />
 				</Routes>
 				<Footer />
