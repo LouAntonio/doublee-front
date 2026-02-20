@@ -125,6 +125,26 @@ const ProductCard = ({ product, onClick }) => {
                         <IoHeartOutline size={18} color="#666" />
                     )}
                 </button>
+
+                {/* Featured Badge */}
+                {product.isFeatured && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '8px',
+                        left: '8px',
+                        backgroundColor: '#3483fa',
+                        color: '#fff',
+                        fontSize: '10px',
+                        fontWeight: '700',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        zIndex: 1
+                    }}>
+                        Destaque
+                    </div>
+                )}
             </div>
 
             {/* Product Info */}
@@ -239,7 +259,7 @@ const ProductCard = ({ product, onClick }) => {
                     Adicionar
                 </button>
             </div>
-        </div>
+        </div >
     );
 };
 

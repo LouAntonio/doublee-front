@@ -153,7 +153,7 @@ const NotFound = () => {
 							flexWrap: 'wrap'
 						}}>
 							<Link
-								to="/ofertas"
+								to="/promocoes"
 								style={{
 									fontSize: '14px',
 									color: '#3483fa',
@@ -163,7 +163,7 @@ const NotFound = () => {
 								onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
 								onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
 							>
-								Ofertas
+								Promoções
 							</Link>
 							<Link
 								to="/categorias"

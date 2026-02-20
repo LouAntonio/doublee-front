@@ -132,7 +132,7 @@ const Supermarket = () => {
 				}}>
 					<img
 						src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&q=80&auto=format&fit=crop"
-						alt="Supermercado Ofertas"
+						alt="Supermercado promoções"
 						style={{
 							width: '100%',
 							height: '250px',

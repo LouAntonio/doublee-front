@@ -201,7 +201,7 @@ const Sobre = () => {
 				<div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-12 text-center shadow-xl">
 					<h2 className="text-3xl md:text-4xl font-bold mb-4">Pronto para começar?</h2>
 					<p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-						Junte-se a milhares de clientes satisfeitos e descubra as melhores ofertas do mercado.
+						Junte-se a milhares de clientes satisfeitos e descubra as melhores promoções do mercado.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4 justify-center">
 						<button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg">

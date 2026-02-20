@@ -18,7 +18,7 @@ const CategoryCarousel = () => {
 			id: 2,
 			icon: '👤',
 			title: 'Entre na sua conta',
-			description: 'Aproveite ofertas para comprar tudo que quiser.',
+			description: 'Aproveite promoções para comprar tudo que quiser.',
 			caption: 'Cadastre-se'
 		},
 		{
@@ -40,7 +40,7 @@ const CategoryCarousel = () => {
 			icon: '💰',
 			title: 'Menos de Kz100',
 			description: 'Confira produtos com preços baixos.',
-			caption: 'Ver ofertas'
+			caption: 'Ver promoções'
 		},
 		{
 			id: 6,
@@ -52,9 +52,9 @@ const CategoryCarousel = () => {
 		{
 			id: 7,
 			icon: '⚡',
-			title: 'Ofertas do dia',
+			title: 'promoções do dia',
 			description: 'Descontos imperdíveis todos os dias.',
-			caption: 'Confira as ofertas'
+			caption: 'Confira as promoções'
 		},
 		{
 			id: 8,
@@ -76,7 +76,7 @@ const CategoryCarousel = () => {
 	const scroll = (direction) => {
 		if (scrollContainerRef.current) {
 			const scrollAmount = 280; // Largura aproximada de um card
-			const newScrollLeft = 
+			const newScrollLeft =
 				direction === 'left'
 					? scrollContainerRef.current.scrollLeft - scrollAmount
 					: scrollContainerRef.current.scrollLeft + scrollAmount;

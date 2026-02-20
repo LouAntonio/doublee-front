@@ -206,22 +206,22 @@ const Header = () => {
 									<div className="absolute top-full left-0 w-full h-2 bg-transparent" />
 									<div
 										className={`absolute top-[calc(100%+0.4rem)] left-0 ${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
-												? 'w-[680px]'
-												: 'w-[240px]'
+											? 'w-[680px]'
+											: 'w-[240px]'
 											} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
 									>
 										{/* Main list */}
 										<div className={`${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
-												? 'w-1/3'
-												: 'w-full'
+											? 'w-1/3'
+											: 'w-full'
 											} bg-gray-800 text-white`}>
 											<ul>
 												{categories.map((category) => (
 													<li
 														key={category.name}
 														className={`cursor-pointer text-sm ${activeCategory === category.name
-																? 'bg-[#F97316]'
-																: 'hover:bg-gray-700'
+															? 'bg-[#F97316]'
+															: 'hover:bg-gray-700'
 															}`}
 														onMouseEnter={() => setActiveCategory(category.name)}
 													>
@@ -280,8 +280,8 @@ const Header = () => {
 
 						{/* Nav links */}
 						<nav className="flex items-center gap-1 flex-1">
-							<NavLink to="/ofertas" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
-								Ofertas
+							<NavLink to="/promocoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
+								Promoções
 							</NavLink>
 							<NavLink to="/cupoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Cupões
@@ -329,9 +329,9 @@ const Header = () => {
 							<MdCategory className="w-5 h-5 text-gray-400" />
 							<span>Categorias</span>
 						</NavLink>
-						<NavLink to="/ofertas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+						<NavLink to="/promocoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
 							<IoPricetagOutline className="w-5 h-5 text-gray-400" />
-							<span>Ofertas</span>
+							<span>Promoções</span>
 						</NavLink>
 						<NavLink to="/cupoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
 							<IoTicketOutline className="w-5 h-5 text-gray-400" />
