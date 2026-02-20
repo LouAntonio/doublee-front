@@ -14,7 +14,6 @@ const Home = () => {
 		<div style={{ backgroundColor: '#ededed' }}>
 			<Header />
 			<BannerCarousel />
-			<CategoryCarousel />
 			<OffersSection />
 			<BestSellersSection />
 			<CategoriesSection />

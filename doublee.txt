@@ -1,0 +1,6 @@
+Marketplace
+Aprovação da loja
+Aprovação do produto
+Validação de vendedores (upload do BI junto com Reconhecimento Facial)
+Comissão por venda
+Entrega depende do vendedor original

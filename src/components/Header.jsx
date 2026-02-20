@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { IoLocationOutline, IoSearchOutline, IoCartOutline, IoMenuOutline, IoCloseOutline, IoChevronForward, IoPricetagOutline, IoStorefrontOutline, IoShirtOutline, IoPlayCircleOutline, IoCashOutline, IoChatbubbleOutline, IoPersonAddOutline, IoLogInOutline, IoBagOutline, IoTicketOutline } from 'react-icons/io5';
+import {
+	IoSearchOutline,
+	IoCartOutline,
+	IoMenuOutline,
+	IoCloseOutline,
+	IoChevronForward,
+	IoPricetagOutline,
+	IoStorefrontOutline,
+	IoShirtOutline,
+	IoCashOutline,
+	IoChatbubbleOutline,
+	IoPersonAddOutline,
+	IoTicketOutline,
+	IoHeartOutline,
+	IoPersonOutline,
+	IoTrendingUpOutline,
+	IoBookOutline,
+} from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import { useCart } from '../context/CartContext';
 
@@ -13,11 +30,10 @@ const Header = () => {
 			.toLowerCase()
 			.replace(/\s+/g, '-')
 			.replace(/[^a-z0-9-]/g, '');
+
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [categoriesOpen, setCategoriesOpen] = useState(false);
 	const [activeCategory, setActiveCategory] = useState(null);
-	const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
-	const [mobileActiveCategory, setMobileActiveCategory] = useState(null);
 
 	const categories = [
 		{
@@ -79,248 +95,276 @@ const Header = () => {
 				}
 			]
 		},
-		{ name: 'Beleza e Saúde', columns: [] }
+		{ name: 'Beleza e Saúde', columns: [] },
+		{ name: 'Moda', columns: [] },
+		{ name: 'Supermercado', columns: [] },
 	];
 
 	return (
-		<header className="bg-[#fff159] shadow-sm">
-			{/* Top Section */}
-			<div className="max-w-[1200px] mx-auto px-4 py-3">
-				<div className="flex items-center gap-4">
-					{/* Logo Section - Fixed Width for Desktop Alignment */}
-					<div className="flex items-center lg:w-60 flex-shrink-0">
-						<Link to="/" className="flex items-center gap-3">
-							<img
-								src="/images/logo/dbe.png"
-								alt="Mercado Livre"
-								className="h-7 lg:h-9 w-auto"
-							/>
-						</Link>
-					</div>
-
-					{/* Search Bar */}
-					<div className="relative flex-1 max-w-[600px]">
-						<input
-							type="text"
-							placeholder="Buscar produtos,marcas e muito mais..."
-							className="w-full bg-white px-3 lg:px-4 py-2 lg:py-2.5 pr-10 lg:pr-12 rounded shadow-sm border-none focus:outline-none focus:ring-2 focus:ring-blue-300 text-xs lg:text-sm text-gray-600 placeholder-gray-400"
+		<header className="shadow-sm">
+			{/* ── Row 1: Orange bar ── */}
+			<div className="bg-[#F97316]">
+				<div className="max-w-[1200px] mx-auto px-4 py-4 flex items-center gap-4">
+					{/* Logo */}
+					<Link to="/" className="flex-shrink-0 mr-2">
+						<img
+							src="/images/logo/dbe.png"
+							alt="Double E"
+							title='Double E'
+							className="h-8 w-auto brightness-0 invert"
 						/>
-						<button className="absolute right-2 lg:right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-							<IoSearchOutline className="w-4 h-4 lg:w-5 lg:h-5" />
-						</button>
-					</div>
-
-					{/* Cart Icon (Mobile) */}
-					<Link to="/cart" className="lg:hidden relative hover:bg-yellow-200 p-1.5 rounded transition-colors">
-						<IoCartOutline className="w-6 h-6 text-gray-700" />
-						{cartCount > 0 && (
-							<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-								{cartCount > 99 ? '99+' : cartCount}
-							</span>
-						)}
 					</Link>
 
-					{/* Mobile Menu Button */}
-					<button
-						className="lg:hidden text-gray-700 hover:text-gray-900 hover:bg-yellow-200 p-1.5 rounded transition-colors flex items-center justify-center"
-						onClick={() => setMenuOpen(!menuOpen)}
-						aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
-					>
-						{menuOpen ? (
-							<IoCloseOutline className="w-6 h-6" />
-						) : (
-							<IoMenuOutline className="w-6 h-6" />
-						)}
-					</button>
-
-					{/* Promo Banner (Desktop) - Pushed to right */}
-					<div className="hidden lg:flex items-center gap-3 ml-auto">
-						<div className="flex items-center gap-2 bg-[#2968C8] text-white px-3 py-1.5 rounded">
-							<span className="text-xs font-semibold whitespace-nowrap">🎁 VALE-TROCA</span>
+					{/* Search Bar */}
+					<div className="flex flex-1 max-w-[700px] mx-auto">
+						<div className="relative flex w-full">
+							<span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+								<IoSearchOutline className="w-4 h-4" />
+							</span>
+							<input
+								type="text"
+								placeholder="Roupas, eletrónicos, gastáveis..."
+								className="w-full bg-white pl-10 pr-4 py-2.5 rounded-l-full text-sm text-gray-700 placeholder-gray-400 border-none focus:outline-none"
+							/>
+							<button className="bg-white border-l border-gray-200 px-5 py-2.5 rounded-r-full text-sm font-semibold text-[#F97316] hover:bg-orange-50 transition-colors whitespace-nowrap focus:outline-none cursor-pointer">
+								Buscar
+							</button>
 						</div>
-						<button className="bg-white text-[#2968C8] px-4 py-2 rounded font-medium text-sm hover:bg-gray-50 transition-colors whitespace-nowrap">
-							ADICIONE AOS SEUS PRESENTES
+					</div>
+
+					{/* Right Icons */}
+					<div className="flex items-center gap-1 ml-auto flex-shrink-0">
+						{/* Wishlist */}
+						<Link
+							to="/wishlist"
+							className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
+							aria-label="Lista de desejos"
+						>
+							<IoHeartOutline className="w-6 h-6" />
+						</Link>
+
+						{/* Cart */}
+						<Link
+							to="/cart"
+							className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
+							aria-label="Carrinho"
+						>
+							<IoCartOutline className="w-6 h-6" />
+							{cartCount > 0 && (
+								<span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
+									{cartCount > 99 ? '99+' : cartCount}
+								</span>
+							)}
+						</Link>
+
+						{/* User */}
+						<Link
+							to="/auth"
+							className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
+							aria-label="Conta"
+						>
+							<IoPersonOutline className="w-6 h-6" />
+						</Link>
+
+						{/* Mobile hamburger */}
+						<button
+							className="lg:hidden p-2 rounded-full text-white hover:bg-orange-500 transition-colors cursor-pointer"
+							onClick={() => setMenuOpen(!menuOpen)}
+							aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+						>
+							{menuOpen ? (
+								<IoCloseOutline className="w-6 h-6" />
+							) : (
+								<IoMenuOutline className="w-6 h-6" />
+							)}
 						</button>
 					</div>
 				</div>
 			</div>
 
-			{/* Bottom Section - Navigation */}
-			<div className="border-t border-yellow-200">
+			{/* ── Row 2: Light bar with categories + nav ── */}
+			<div className="bg-[#FFF7ED] border-b border-orange-100 hidden lg:block">
 				<div className="max-w-[1200px] mx-auto px-4">
-					<div className="hidden lg:flex items-center gap-4 py-2.5 relative">
-						{/* Left - Location - Fixed Width */}
-						<div className="w-60 flex-shrink-0">
-							<button className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 group">
-								<IoLocationOutline className="w-4 h-4" />
-								<span className="text-xs">Informe seu</span>
-								<span className="font-medium text-xs">CEP</span>
-							</button>
-						</div>
-
-						{/* Center - Navigation Links - Aligns with Search */}
-						<nav className="flex items-center gap-5 flex-1">
-							<div
-								className="relative"
-								onMouseLeave={() => setCategoriesOpen(false)}
+					<div className="flex items-center gap-4 py-2 relative">
+						{/* Categories Dropdown Trigger */}
+						<div
+							className="relative"
+							onMouseLeave={() => { setCategoriesOpen(false); setActiveCategory(null); }}
+						>
+							<button
+								onMouseEnter={() => setCategoriesOpen(true)}
+								className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded text-sm font-medium text-gray-700 transition-colors cursor-pointer"
 							>
-								<button
-									onMouseEnter={() => setCategoriesOpen(true)}
-									className="flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900 font-light py-2"
-								>
-									<span>Categorias</span>
-									<MdKeyboardArrowDown className="w-4 h-4" />
-								</button>
-								{/* Categories Dropdown */}
-								{categoriesOpen && (
-									<>
-										{/* Invisible bridge to prevent menu from closing */}
-										<div className="absolute top-full left-0 w-full h-3 bg-transparent" />
-										<div
-											className={`absolute top-[calc(100%+0.5rem)] -left-20 ${activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
-												? 'w-[700px]'
-												: 'w-[250px]'
-												} bg-white shadow-lg rounded-md flex z-20 transition-all duration-200`}
-										>
-											{/* Main Categories */}
-											<div className={`${activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0
+								<IoMenuOutline className="w-4 h-4" />
+								<span>Categorias</span>
+								<MdKeyboardArrowDown className="w-4 h-4" />
+							</button>
+
+							{/* Dropdown */}
+							{categoriesOpen && (
+								<>
+									<div className="absolute top-full left-0 w-full h-2 bg-transparent" />
+									<div
+										className={`absolute top-[calc(100%+0.4rem)] left-0 ${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
+												? 'w-[680px]'
+												: 'w-[240px]'
+											} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
+									>
+										{/* Main list */}
+										<div className={`${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
 												? 'w-1/3'
 												: 'w-full'
-												} bg-gray-800 text-white rounded-l-md ${!(activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0) && 'rounded-r-md'
-												}`}>
-												<ul>
-													{categories.map((category) => (
-														<li
-															key={category.name}
-															className={`px-0 py-0 cursor-pointer text-sm ${activeCategory === category.name
-																? 'bg-blue-500 text-white'
+											} bg-gray-800 text-white`}>
+											<ul>
+												{categories.map((category) => (
+													<li
+														key={category.name}
+														className={`cursor-pointer text-sm ${activeCategory === category.name
+																? 'bg-[#F97316]'
 																: 'hover:bg-gray-700'
-																}`}
-															onMouseEnter={() => setActiveCategory(category.name)}
+															}`}
+														onMouseEnter={() => setActiveCategory(category.name)}
+													>
+														<Link
+															to={`/categorias/${slugify(category.name)}`}
+															className="flex items-center justify-between px-4 py-3 w-full"
 														>
-															<Link to={`/categorias/${slugify(category.name)}`} className="flex items-center justify-between px-4 py-3 text-sm w-full">
-																<span>{category.name}</span>
-																{category.columns && category.columns.length > 0 && (
-																	<IoChevronForward className="w-4 h-4" />
-																)}
-															</Link>
-														</li>
-													))}
-												</ul>
-											</div>
-											{/* Sub Categories */}
-											{activeCategory && categories.find(cat => cat.name === activeCategory)?.columns?.length > 0 && (
-												<div className="w-2/3 p-6">
-													<h3 className="text-lg font-semibold text-gray-800 mb-4">
-														{activeCategory}
-													</h3>
-													<div className="grid grid-cols-2 gap-x-8 gap-y-4">
-														{categories
-															.find((cat) => cat.name === activeCategory)
-															?.columns.map((col) => (
-																<div key={col.title}>
-																	<h4 className="font-semibold text-gray-700 mb-2 text-sm">
-																		{col.title}
-																	</h4>
-																	<ul>
-																		{col.items.map((item, index) => {
-																			const itemText = typeof item === 'string' ? item : item.text;
-																			return (
-																				<li key={index} className="mb-2">
-																					<Link to={`/categorias/${slugify(activeCategory)}/${slugify(itemText)}`} className="text-xs text-gray-600 hover:text-blue-500">
-																						{itemText}
-																					</Link>
-																				</li>
-																			);
-																		})}
-																	</ul>
-																</div>
-															))}
-													</div>
-												</div>
-											)}
+															<span>{category.name}</span>
+															{category.columns?.length > 0 && (
+																<IoChevronForward className="w-3.5 h-3.5 opacity-60" />
+															)}
+														</Link>
+													</li>
+												))}
+											</ul>
 										</div>
-									</>
-								)}
-							</div>
-							<NavLink to="/ofertas" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+
+										{/* Sub-categories */}
+										{activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0 && (
+											<div className="w-2/3 p-5">
+												<h3 className="text-base font-semibold text-gray-800 mb-3">
+													{activeCategory}
+												</h3>
+												<div className="grid grid-cols-2 gap-x-6 gap-y-3">
+													{categories
+														.find((c) => c.name === activeCategory)
+														?.columns.map((col) => (
+															<div key={col.title}>
+																<h4 className="font-semibold text-gray-700 mb-1.5 text-xs uppercase tracking-wide">
+																	{col.title}
+																</h4>
+																<ul className="space-y-1">
+																	{col.items.map((item, i) => {
+																		const text = typeof item === 'string' ? item : item.text;
+																		return (
+																			<li key={i}>
+																				<Link
+																					to={`/categorias/${slugify(activeCategory)}/${slugify(text)}`}
+																					className="text-xs text-gray-500 hover:text-[#F97316] transition-colors"
+																				>
+																					{text}
+																				</Link>
+																			</li>
+																		);
+																	})}
+																</ul>
+															</div>
+														))}
+												</div>
+											</div>
+										)}
+									</div>
+								</>
+							)}
+						</div>
+
+						{/* Nav links */}
+						<nav className="flex items-center gap-1 flex-1">
+							<NavLink to="/ofertas" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Ofertas
 							</NavLink>
-							<NavLink to="/cupoes" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							<NavLink to="/cupoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Cupões
 							</NavLink>
-							<NavLink to="/supermercado" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							<NavLink to="/supermercado" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Supermercado
 							</NavLink>
-							<NavLink to="/moda" className="text-sm text-gray-700 hover:text-gray-900 font-light">
-								Moda
+							<NavLink to="/lojas" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
+								Lojas
 							</NavLink>
-							<NavLink to="/sobre" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							<NavLink to="/sobre" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Sobre
 							</NavLink>
-							<NavLink to="/contato" className="text-sm text-gray-700 hover:text-gray-900 font-light">
+							<NavLink to="/contato" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Contato
 							</NavLink>
 						</nav>
 
-						{/* Right - User Actions - Pushed to right */}
-						<div className="flex items-center gap-4 text-sm ml-auto">
-							<NavLink to="/auth" className="text-gray-700 hover:text-gray-900 font-light">
-								Conta
+						{/* Right utility links */}
+						<div className="flex items-center gap-1 ml-auto">
+							<NavLink
+								to="/vender"
+								className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#F97316] px-3 py-1.5 rounded border border-gray-200 hover:border-orange-300 bg-white transition-colors"
+							>
+								<IoTrendingUpOutline className="w-3.5 h-3.5" />
+								<span>Venda Connosco</span>
 							</NavLink>
-							<Link to="/cart" className="relative hover:bg-yellow-200 p-1.5 rounded transition-colors">
-								<IoCartOutline className="w-5 h-5 text-gray-700" />
-								{cartCount > 0 && (
-									<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-										{cartCount > 99 ? '99+' : cartCount}
-									</span>
-								)}
-							</Link>
+							<NavLink
+								to="/como-funciona"
+								className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#F97316] px-3 py-1.5 rounded border border-gray-200 hover:border-orange-300 bg-white transition-colors"
+							>
+								<IoBookOutline className="w-3.5 h-3.5" />
+								<span>Como Funciona</span>
+							</NavLink>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			{/* Mobile Menu */}
+			{/* ── Mobile Menu ── */}
 			{menuOpen && (
-				<div className="lg:hidden border-t border-yellow-200 bg-white shadow-lg">
+				<div className="lg:hidden border-t border-orange-100 bg-white shadow-lg">
 					<nav className="flex flex-col">
-						<NavLink
-							to="/categorias"
-							className="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100"
-						>
-							<div className="flex items-center gap-2">
-								<MdCategory className="w-5 h-5 text-gray-500" />
-								<span>Categorias</span>
-							</div>
+						<NavLink to="/categorias" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<MdCategory className="w-5 h-5 text-gray-400" />
+							<span>Categorias</span>
 						</NavLink>
-
-						<NavLink to="/ofertas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoPricetagOutline className="w-5 h-5 text-gray-500" />
+						<NavLink to="/ofertas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoPricetagOutline className="w-5 h-5 text-gray-400" />
 							<span>Ofertas</span>
 						</NavLink>
-						<NavLink to="/cupoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoTicketOutline className="w-5 h-5 text-gray-500" />
+						<NavLink to="/cupoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoTicketOutline className="w-5 h-5 text-gray-400" />
 							<span>Cupões</span>
 						</NavLink>
-						<NavLink to="/supermercado" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoStorefrontOutline className="w-5 h-5 text-gray-500" />
+						<NavLink to="/supermercado" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoStorefrontOutline className="w-5 h-5 text-gray-400" />
 							<span>Supermercado</span>
 						</NavLink>
-						<NavLink to="/moda" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoShirtOutline className="w-5 h-5 text-gray-500" />
-							<span>Moda</span>
+						<NavLink to="/lojas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoShirtOutline className="w-5 h-5 text-gray-400" />
+							<span>Lojas</span>
 						</NavLink>
-						<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoCashOutline className="w-5 h-5 text-gray-500" />
+						<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoCashOutline className="w-5 h-5 text-gray-400" />
 							<span>Sobre</span>
 						</NavLink>
-						<NavLink to="/contato" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100">
-							<IoChatbubbleOutline className="w-5 h-5 text-gray-500" />
+						<NavLink to="/contato" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoChatbubbleOutline className="w-5 h-5 text-gray-400" />
 							<span>Contato</span>
 						</NavLink>
-						<NavLink to="/auth" className="flex items-center gap-3 px-4 py-3 text-sm text-blue-600 hover:bg-gray-50 border-b border-gray-100 font-medium">
-							<IoPersonAddOutline className="w-5 h-5 text-blue-600" />
+						<div className="border-t border-gray-100 mt-1">
+							<NavLink to="/vender" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 border-b border-gray-100">
+								<IoTrendingUpOutline className="w-5 h-5 text-gray-400" />
+								<span>Venda Connosco</span>
+							</NavLink>
+							<NavLink to="/como-funciona" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 border-b border-gray-100">
+								<IoBookOutline className="w-5 h-5 text-gray-400" />
+								<span>Como Funciona</span>
+							</NavLink>
+						</div>
+						<NavLink to="/auth" className="flex items-center gap-3 px-4 py-3 text-sm text-[#F97316] hover:bg-orange-50 font-medium">
+							<IoPersonAddOutline className="w-5 h-5 text-[#F97316]" />
 							<span>Conta</span>
 						</NavLink>
 					</nav>
