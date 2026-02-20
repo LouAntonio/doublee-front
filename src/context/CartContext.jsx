@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+import { notyf } from '../utils/notyf';
+
 const CartContext = createContext();
 
 export const useCart = () => {
@@ -22,7 +24,7 @@ export const CartProvider = ({ children }) => {
 		localStorage.setItem('cart', JSON.stringify(cartItems));
 	}, [cartItems]);
 
-	const addToCart = (product) => {
+	const addToCart = (product, quantity = 1, showNotification = true) => {
 		setCartItems((prevItems) => {
 			const existingItem = prevItems.find((item) => item.id === product.id);
 
@@ -30,18 +32,22 @@ export const CartProvider = ({ children }) => {
 				// If item exists, increase quantity
 				return prevItems.map((item) =>
 					item.id === product.id
-						? { ...item, quantity: item.quantity + 1 }
+						? { ...item, quantity: item.quantity + quantity }
 						: item
 				);
 			} else {
-				// Add new item with quantity 1
-				return [...prevItems, { ...product, quantity: 1 }];
+				// Add new item with quantity
+				return [...prevItems, { ...product, quantity }];
 			}
 		});
+		if (showNotification) {
+			notyf.success('Produto adicionado ao carrinho!');
+		}
 	};
 
 	const removeFromCart = (productId) => {
 		setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
+		notyf.error('Produto removido do carrinho');
 	};
 
 	const updateQuantity = (productId, quantity) => {

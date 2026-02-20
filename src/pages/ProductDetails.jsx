@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoCartOutline, IoStar, IoStarOutline, IoHeartOutline, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch } from 'react-icons/io5';
+import { IoCartOutline, IoStar, IoStarOutline, IoHeartOutline, IoHeart, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch } from 'react-icons/io5';
 import Header from '../components/Header';
 import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { notyf } from '../utils/notyf';
 
 const ProductDetails = () => {
 	const { id } = useParams();
@@ -14,6 +15,17 @@ const ProductDetails = () => {
 	const [selectedImage, setSelectedImage] = useState(0);
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
+	const [wishlisted, setWishlisted] = useState(false);
+
+	const handleToggleWishlist = () => {
+		const newState = !wishlisted;
+		setWishlisted(newState);
+		if (newState) {
+			notyf.success('Adicionado à wishlist!');
+		} else {
+			notyf.error('Removido da wishlist');
+		}
+	};
 
 	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
 
@@ -228,10 +240,7 @@ const ProductDetails = () => {
 
 	const handleAddToCart = () => {
 		if (product) {
-			for (let i = 0; i < quantity; i++) {
-				addToCart(product);
-			}
-			alert(`${quantity} unidade(s) adicionada(s) ao carrinho!`);
+			addToCart(product, quantity);
 		}
 	};
 
@@ -251,7 +260,7 @@ const ProductDetails = () => {
 		const stars = [];
 		for (let i = 1; i <= 5; i++) {
 			stars.push(
-				i <= rating 
+				i <= rating
 					? <IoStar key={i} style={{ color: '#FFD700', fontSize: '18px' }} />
 					: <IoStarOutline key={i} style={{ color: '#FFD700', fontSize: '18px' }} />
 			);
@@ -308,7 +317,7 @@ const ProductDetails = () => {
 	return (
 		<div style={{ backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
 			<Header />
-			
+
 			<div style={{
 				maxWidth: '1200px',
 				margin: '0 auto',
@@ -352,6 +361,8 @@ const ProductDetails = () => {
 							position: 'relative'
 						}}>
 							<button
+								onClick={handleToggleWishlist}
+								title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
 								style={{
 									position: 'absolute',
 									top: '20px',
@@ -366,12 +377,17 @@ const ProductDetails = () => {
 									alignItems: 'center',
 									justifyContent: 'center',
 									boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-									transition: 'transform 0.2s'
+									transition: 'transform 0.2s',
+									transform: wishlisted ? 'scale(1.1)' : 'scale(1)'
 								}}
 								onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-								onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+								onMouseLeave={(e) => e.currentTarget.style.transform = wishlisted ? 'scale(1.1)' : 'scale(1)'}
 							>
-								<IoHeartOutline size={22} color="#666" />
+								{wishlisted ? (
+									<IoHeart size={22} color="#e74c3c" />
+								) : (
+									<IoHeartOutline size={22} color="#666" />
+								)}
 							</button>
 							<img
 								src={product.images[selectedImage]}
@@ -567,7 +583,7 @@ const ProductDetails = () => {
 								color: product.stock > 10 ? '#1a6e1a' : '#f57c00',
 								fontWeight: '500'
 							}}>
-								{product.stock > 10 
+								{product.stock > 10
 									? `✓ Estoque disponível`
 									: `⚠ Últimas ${product.stock} unidades!`
 								}
@@ -637,7 +653,7 @@ const ProductDetails = () => {
 									+
 								</button>
 							</div>
-							<div style={{ 
+							<div style={{
 								marginTop: '8px',
 								fontSize: '13px',
 								color: '#666'
@@ -883,7 +899,7 @@ const ProductDetails = () => {
 							))}
 						</ul>
 					</div>
-			)}
+				)}
 				<div style={{
 					backgroundColor: 'white',
 					borderRadius: '8px',
@@ -1013,7 +1029,7 @@ const ProductDetails = () => {
 							marginTop: '24px',
 							padding: '12px 24px',
 							backgroundColor: 'transparent',
-						 color: '#3483fa',
+							color: '#3483fa',
 							border: '1px solid #3483fa',
 							borderRadius: '6px',
 							cursor: 'pointer',

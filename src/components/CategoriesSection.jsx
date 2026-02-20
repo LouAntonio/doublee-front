@@ -151,7 +151,7 @@ const CategoriesSection = () => {
 					alignItems: 'center',
 					marginBottom: '20px'
 				}}>
-					<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+					<div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
 						<h2 style={{
 							fontSize: '24px',
 							fontWeight: '400',
