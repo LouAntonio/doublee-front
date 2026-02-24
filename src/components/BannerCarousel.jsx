@@ -92,12 +92,11 @@ const BannerCarousel = () => {
 		<div
 			className="relative overflow-hidden"
 			style={{
-				backgroundColor: banners[currentSlide].bgColor,
 				height: `calc(80vh - ${headerHeight}px)`
 			}}
 		>
 			{/* Carrossel Container */}
-			<div className="relative max-w-[1600px] mx-auto h-full">
+			<div className="relative mx-auto h-full">
 				{/* Slides */}
 				<div className="relative h-full">
 					{banners.map((banner, index) => (

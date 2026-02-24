@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { IoCartOutline, IoHeartOutline, IoHeart } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import { useCart } from '../context/CartContext';
 import { notyf } from '../utils/notyf';
 
 const ProductCard = ({ product, onClick }) => {
     const { addToCart } = useCart();
+    const navigate = useNavigate();
+    const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));
     const [wishlisted, setWishlisted] = useState(false);
 
     const handleAddToCart = (e) => {
@@ -66,14 +69,14 @@ const ProductCard = ({ product, onClick }) => {
                 }}
             >
                 <div
-                    onClick={onClick}
+                    onClick={handleProductClick}
                     style={{
                         width: '100%',
                         height: '100%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        cursor: onClick ? 'pointer' : 'default'
+                        cursor: 'pointer'
                     }}
                 >
                     <img
@@ -155,7 +158,7 @@ const ProductCard = ({ product, onClick }) => {
             }}>
                 {/* Product Title */}
                 <h3
-                    onClick={onClick}
+                    onClick={handleProductClick}
                     style={{
                         fontSize: '14px',
                         fontWeight: '400',
@@ -167,7 +170,7 @@ const ProductCard = ({ product, onClick }) => {
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
-                        cursor: onClick ? 'pointer' : 'default'
+                        cursor: 'pointer'
                     }}
                 >
                     {product.title}
