@@ -9,7 +9,7 @@ const BannerCarousel = () => {
 	const banners = [
 		{
 			id: 1,
-			image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80&auto=format&fit=crop',
+			image: './images/slider/1.webp',
 			alt: 'Eletrônicos em destaque',
 			bgColor: '#FFE600',
 			badge: 'Kutambula MARKETPLACE',
@@ -19,7 +19,7 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 2,
-			image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1600&q=80&auto=format&fit=crop',
+			image: './images/slider/2.webp',
 			alt: 'promoções e promoção',
 			bgColor: '#2968C8',
 			badge: 'promoções',
@@ -29,7 +29,7 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 3,
-			image: 'https://images.unsplash.com/photo-1521335629791-ce4aec67dd28?w=1600&q=80&auto=format&fit=crop',
+			image: './images/slider/3.webp',
 			alt: 'Moda e acessórios',
 			bgColor: '#FF6F00',
 			badge: 'Moda',
@@ -39,7 +39,27 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 4,
-			image: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=1600&q=80&auto=format&fit=crop',
+			image: './images/slider/4.webp',
+			alt: 'Casa e decoração',
+			bgColor: '#00A650',
+			badge: 'Casa',
+			title: 'Ideias para Sua Casa',
+			subtitle: 'Decoração, utilidades e móveis com estilo.',
+			cta: 'Ver Coleção'
+		},
+		{
+			id: 5,
+			image: './images/slider/5.webp',
+			alt: 'Casa e decoração',
+			bgColor: '#00A650',
+			badge: 'Casa',
+			title: 'Ideias para Sua Casa',
+			subtitle: 'Decoração, utilidades e móveis com estilo.',
+			cta: 'Ver Coleção'
+		},
+		{
+			id: 6,
+			image: './images/slider/6.webp',
 			alt: 'Casa e decoração',
 			bgColor: '#00A650',
 			badge: 'Casa',
@@ -92,7 +112,7 @@ const BannerCarousel = () => {
 		<div
 			className="relative overflow-hidden"
 			style={{
-				height: `calc(80vh - ${headerHeight}px)`
+				height: `calc(70vh - ${headerHeight}px)`
 			}}
 		>
 			{/* Carrossel Container */}
@@ -113,10 +133,10 @@ const BannerCarousel = () => {
 								}}
 							/>
 							{/* Gradient Overlay for better text readability */}
-							<div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent" />
+							<div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent hidden" />
 
 							{/* Content Overlay - badge absolute + centered content */}
-							<div className="absolute inset-0 pointer-events-none">
+							<div className="absolute inset-0 pointer-events-none hidden">
 								{/* Badge absolute (doesn't affect vertical centering) */}
 
 
@@ -177,8 +197,14 @@ const BannerCarousel = () => {
 					<IoChevronForward className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
 				</button>
 
+				{/* Bottom fade overlay */}
+				<div
+					className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10"
+					style={{ background: 'linear-gradient(to bottom, transparent, #ededed)' }}
+				/>
+
 				{/* Dots Indicator */}
-				<div className="absolute bottom-6 sm:bottom-4 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-2.5 z-10 bg-black/20 backdrop-blur-sm px-4 py-2.5 rounded-full">
+				<div className="absolute bottom-6 sm:bottom-4 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-2.5 z-40 bg-black/20 backdrop-blur-sm px-4 py-2.5 rounded-full hidden">
 					{banners.map((_, index) => (
 						<button
 							key={index}
