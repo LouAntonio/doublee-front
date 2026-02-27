@@ -44,7 +44,7 @@ const CouponCard = ({ coupon }) => {
 						<button
 							onClick={handleCopy}
 							className={`
-								flex items-center gap-2 px-3 py-1.5 rounded text-xs font-bold transition-all duration-200
+								flex items-center gap-2 px-3 py-1.5 rounded text-xs font-bold transition-all duration-200 cursor-pointer
 								${copied
 									? 'bg-green-100 text-green-700'
 									: 'bg-blue-100 text-blue-700 hover:bg-blue-200'
@@ -78,14 +78,6 @@ const Cupoes = () => {
 	useDocumentTitle('Cupões - Double E');
 	const [activeCategory, setActiveCategory] = useState('Todos');
 
-	const categories = [
-		{ id: 'Todos', icon: <IoTicketOutline />, label: 'Todos' },
-		{ id: 'Tecnologia', icon: <IoHardwareChipOutline />, label: 'Tecnologia' },
-		{ id: 'Moda', icon: <IoShirtOutline />, label: 'Moda' },
-		{ id: 'Mercado', icon: <IoStorefrontOutline />, label: 'Mercado' },
-		{ id: 'Restaurantes', icon: <IoFastFoodOutline />, label: 'Restaurantes' },
-	];
-
 	const coupons = [
 		{
 			id: 1,
@@ -117,7 +109,7 @@ const Cupoes = () => {
 			id: 3,
 			store: 'Shoprite Angola',
 			discount: '3.000 Kz',
-			description: 'Nas compras acima de 30.000 Kz no supermercado.',
+			description: 'Nas compras acima de 30.000 Kz em produtos.',
 			code: 'SHOPRITE3K',
 			expiry: '15/11',
 			category: 'Mercado',
@@ -196,30 +188,12 @@ const Cupoes = () => {
 						</div>
 				</div>
 
-				{/* Category Filters */}
-					<div className="flex flex-wrap justify-center gap-3 mb-10">
-						{categories.map((cat) => (
-							<button
-								key={cat.id}
-								onClick={() => setActiveCategory(cat.id)}
-								className={`
-									flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300
-									${activeCategory === cat.id
-										? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 transform scale-105'
-										: 'bg-white text-gray-600 hover:bg-gray-100 hover:shadow-md border border-gray-200'
-									}
-								`}
-							>
-								{cat.icon}
-								{cat.label}
-							</button>
-						))}
-					</div>
+
 
 					{/* Coupons Grid */}
-					{filteredCoupons.length > 0 ? (
+					{coupons.length > 0 ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-							{filteredCoupons.map((coupon) => (
+							{coupons.map((coupon) => (
 								<CouponCard key={coupon.id} coupon={coupon} />
 							))}
 						</div>
@@ -230,7 +204,7 @@ const Cupoes = () => {
 							</div>
 							<h3 className="text-xl font-semibold text-gray-800 mb-2">Nenhum cupão encontrado</h3>
 							<p className="text-gray-500">
-								Não temos cupões para esta categoria neste momento.
+								Não temos cupões neste momento.
 								<br />Volte mais tarde!
 							</p>
 						</div>

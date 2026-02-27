@@ -1,104 +1,143 @@
 import React from 'react';
+import { IoSearchOutline, IoRefreshOutline } from 'react-icons/io5';
+import { MdCategory } from 'react-icons/md';
+import { TbCurrencyDollarOff, TbCurrencyDollar } from 'react-icons/tb';
 
 const FilterSidebar = ({
 	categories = [],
 	priceRange = { min: '', max: '' },
-	setPriceRange = () => { },
+	setPriceRange = () => {},
 	selectedCategories = [],
-	setSelectedCategories = () => { },
+	setSelectedCategories = () => {},
 	rating = null,
-	setRating = () => { }
+	setRating = () => {},
+	searchQuery = '',
+	setSearchQuery = () => {},
+	selectedBrand = '',
+	setSelectedBrand = () => {},
+	featuredOnly = false,
+	setFeaturedOnly = () => {},
+	onSearch = () => {},
+	onClear = () => {},
 }) => {
-	return (
-		<aside style={{
-			width: '260px',
-			flexShrink: 0
-		}}>
-			<div style={{
-				backgroundColor: '#fff',
-				borderRadius: '8px',
-				padding: '16px',
-				boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-				position: 'sticky',
-				top: '20px',
-				maxHeight: 'calc(100vh - 40px)',
-				overflowY: 'auto',
-				scrollbarWidth: 'thin'
-			}}>
-				<h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: '#333' }}>Filtros</h3>
+	const brands = ['Todas', 'Double E', 'GenCo', 'AquaFun', 'Marqs', 'Thermocap'];
 
-				{/* Categories Filter */}
-				<div style={{ marginBottom: '24px' }}>
-					<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Categorias</h4>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-						{categories.map((cat) => (
-							<label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666', cursor: 'pointer' }}>
-								<input
-									type="checkbox"
-									checked={selectedCategories.includes(cat)}
-									onChange={(e) => {
-										if (e.target.checked) {
-											setSelectedCategories([...selectedCategories, cat]);
-										} else {
-											setSelectedCategories(selectedCategories.filter(c => c !== cat));
-										}
+	const handleClear = () => {
+		setSearchQuery('');
+		setPriceRange({ min: '', max: '' });
+		setSelectedCategories([]);
+		setRating(null);
+		setSelectedBrand('');
+		setFeaturedOnly(false);
+		onClear();
+	};
+
+	return (
+		<aside className="w-64 flex-shrink-0">
+			<div className="bg-white rounded-lg shadow-sm p-4 sticky top-5">
+				{/* Title */}
+				<h3 className="text-lg font-semibold text-gray-800 mb-4">Filtrar Produtos</h3>
+
+				{/* Search */}
+				<div className="mb-4">
+					<label className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+						<IoSearchOutline size={14} />
+						Pesquisar
+					</label>
+					<input
+						type="text"
+						placeholder="Ex: Piscina, Mangueira..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
+					/>
+				</div>
+
+				{/* Categories (inline, multi-select) */}
+				<div className="mb-4">
+					<label className="flex items-center gap-1 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+						<MdCategory size={13} />
+						Categorias
+					</label>
+					<div className="flex flex-wrap gap-2">
+						{categories.map((cat) => {
+							const selected = selectedCategories.includes(cat);
+							return (
+								<button
+									key={cat}
+									onClick={() => {
+										if (selected) setSelectedCategories(selectedCategories.filter(c => c !== cat));
+										else setSelectedCategories([...selectedCategories, cat]);
 									}}
-								/>
-								{cat}
-							</label>
-						))}
+									className={`text-sm px-3 py-1 rounded-md border transition focus:outline-none ${selected ? 'bg-[#F97316] text-white' : 'bg-white text-gray-700 border-gray-200'}`}
+								>
+									{cat}
+								</button>
+							);
+						})}
 					</div>
 				</div>
 
-				{/* Price Filter */}
-				<div style={{ marginBottom: '24px' }}>
-					<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Preço</h4>
-					<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+				{/* removed Tipo, Marca e Avaliação as requested */}
+
+				{/* Price Min & Max */}
+				<div className="grid grid-cols-2 gap-2 mb-4">
+					<div>
+						<label className="flex items-center gap-1 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+							<TbCurrencyDollarOff size={13} />
+							Preço Mín.
+						</label>
 						<input
 							type="number"
-							placeholder="Mín"
+							placeholder="0 Kz"
 							value={priceRange.min}
 							onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
-							style={{
-								width: '100%',
-								padding: '8px',
-								border: '1px solid #ddd',
-								borderRadius: '4px'
-							}}
+							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
 						/>
-						<span style={{ color: '#999' }}>-</span>
+					</div>
+					<div>
+						<label className="flex items-center gap-1 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+							<TbCurrencyDollar size={13} />
+							Preço Máx.
+						</label>
 						<input
 							type="number"
-							placeholder="Máx"
+							placeholder="Sem limite"
 							value={priceRange.max}
 							onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
-							style={{
-								width: '100%',
-								padding: '8px',
-								border: '1px solid #ddd',
-								borderRadius: '4px'
-							}}
+							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
 						/>
 					</div>
 				</div>
 
-				{/* Review Filter */}
-				<div>
-					<h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>Avaliação</h4>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-						{[5, 4, 3, 2, 1].map((stars) => (
-							<label key={stars} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#666', cursor: 'pointer' }}>
-								<input
-									type="radio"
-									name="rating"
-									checked={rating === stars}
-									onChange={() => setRating(stars)}
-								/>
-								{'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
-							</label>
-						))}
-					</div>
-				</div>
+				{/* Featured only */}
+				<label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer mb-5 select-none">
+					<input
+						type="checkbox"
+						checked={featuredOnly}
+						onChange={(e) => setFeaturedOnly(e.target.checked)}
+						className="w-4 h-4 rounded border-gray-300 accent-[#F97316] cursor-pointer"
+					/>
+					Apenas produtos em destaque
+				</label>
+
+				{/* Search Button */}
+				<button
+					onClick={onSearch}
+					className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-orange-600 active:bg-orange-700 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors mb-2 cursor-pointer"
+				>
+					<IoSearchOutline size={18} />
+					Buscar Produtos
+				</button>
+
+				{/* Clear Button */}
+				<button
+					onClick={handleClear}
+					className="w-full flex items-center justify-center gap-2 text-gray-500 hover:text-[#F97316] text-sm py-2 rounded-lg transition-colors cursor-pointer"
+				>
+					<IoRefreshOutline size={16} />
+					Limpar Filtros
+				</button>
 			</div>
 		</aside>
 	);

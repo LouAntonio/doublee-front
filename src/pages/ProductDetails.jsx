@@ -86,7 +86,7 @@ const ProductDetails = () => {
 					reviews: 128,
 					stock: 45,
 					seller: {
-						name: 'Supermercado Online',
+						name: 'Produtos Online',
 						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
 						rating: 4.8,
 						sales: '+5000 vendas'
@@ -124,7 +124,7 @@ const ProductDetails = () => {
 					reviews: 95,
 					stock: 32,
 					seller: {
-						name: 'Supermercado Online',
+						name: 'Produtos Online',
 						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
 						rating: 4.8,
 						sales: '+5000 vendas'
@@ -161,7 +161,7 @@ const ProductDetails = () => {
 					reviews: 76,
 					stock: 58,
 					seller: {
-						name: 'Supermercado Online',
+						name: 'Produtos Online',
 						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
 						rating: 4.8,
 						sales: '+5000 vendas'

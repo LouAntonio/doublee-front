@@ -97,7 +97,7 @@ const Header = () => {
 		},
 		{ name: 'Beleza e Saúde', columns: [] },
 		{ name: 'Moda', columns: [] },
-		{ name: 'Supermercado', columns: [] },
+		{ name: 'Produtos', columns: [] },
 	];
 
 	return (
@@ -280,17 +280,17 @@ const Header = () => {
 
 						{/* Nav links */}
 						<nav className="flex items-center gap-1 flex-1">
+							<NavLink to="/lojas" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
+								Lojas
+							</NavLink>
+							<NavLink to="/produtos" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
+								Produtos
+							</NavLink>
 							<NavLink to="/promocoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Promoções
 							</NavLink>
 							<NavLink to="/cupoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Cupões
-							</NavLink>
-							<NavLink to="/supermercado" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
-								Supermercado
-							</NavLink>
-							<NavLink to="/lojas" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
-								Lojas
 							</NavLink>
 							<NavLink to="/sobre" className={({ isActive }) => `text-sm px-3 py-1.5 rounded transition-colors ${isActive ? 'text-[#F97316] font-medium' : 'text-gray-600 hover:text-[#F97316]'}`}>
 								Sobre
@@ -329,6 +329,14 @@ const Header = () => {
 							<MdCategory className="w-5 h-5 text-gray-400" />
 							<span>Categorias</span>
 						</NavLink>
+						<NavLink to="/lojas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoShirtOutline className="w-5 h-5 text-gray-400" />
+							<span>Lojas</span>
+						</NavLink>
+						<NavLink to="/produtos" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
+							<IoStorefrontOutline className="w-5 h-5 text-gray-400" />
+							<span>Produtos</span>
+						</NavLink>
 						<NavLink to="/promocoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
 							<IoPricetagOutline className="w-5 h-5 text-gray-400" />
 							<span>Promoções</span>
@@ -336,14 +344,6 @@ const Header = () => {
 						<NavLink to="/cupoes" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
 							<IoTicketOutline className="w-5 h-5 text-gray-400" />
 							<span>Cupões</span>
-						</NavLink>
-						<NavLink to="/supermercado" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
-							<IoStorefrontOutline className="w-5 h-5 text-gray-400" />
-							<span>Supermercado</span>
-						</NavLink>
-						<NavLink to="/lojas" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
-							<IoShirtOutline className="w-5 h-5 text-gray-400" />
-							<span>Lojas</span>
 						</NavLink>
 						<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
 							<IoCashOutline className="w-5 h-5 text-gray-400" />

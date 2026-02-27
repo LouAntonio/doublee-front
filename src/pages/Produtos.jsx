@@ -3,11 +3,10 @@ import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-
 import FilterSidebar from '../components/FilterSidebar';
 
-const Supermarket = () => {
-	useDocumentTitle('Supermercado - Double E');
+const Produtos = () => {
+	useDocumentTitle('Produtos - Double E');
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 16;
 	const [sortOption, setSortOption] = useState('relevance');
@@ -16,6 +15,9 @@ const Supermarket = () => {
 	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [rating, setRating] = useState(null);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedBrand, setSelectedBrand] = useState('');
+	const [featuredOnly, setFeaturedOnly] = useState(false);
 
 	// Base products data
 	const baseProducts = [
@@ -132,7 +134,7 @@ const Supermarket = () => {
 				}}>
 					<img
 						src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&q=80&auto=format&fit=crop"
-						alt="Supermercado promoções"
+						alt="Produtos promoções"
 						style={{
 							width: '100%',
 							height: '250px',
@@ -155,12 +157,20 @@ const Supermarket = () => {
 						setSelectedCategories={setSelectedCategories}
 						rating={rating}
 						setRating={setRating}
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+						selectedBrand={selectedBrand}
+						setSelectedBrand={setSelectedBrand}
+						featuredOnly={featuredOnly}
+						setFeaturedOnly={setFeaturedOnly}
+						onSearch={() => setCurrentPage(1)}
+						onClear={() => setCurrentPage(1)}
 					/>
 
 					{/* Products Grid - Right */}
 					<main style={{ flex: 1 }}>
 						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-							<h2 style={{ fontSize: '24px', color: '#333', margin: 0 }}>Supermercado</h2>
+							<h2 style={{ fontSize: '24px', color: '#333', margin: 0 }}>Produtos</h2>
 							<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
 								<span style={{ fontSize: '14px', color: '#666' }}>
 									Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalProducts.length)} de {totalProducts.length} resultados
@@ -264,4 +274,4 @@ const Supermarket = () => {
 	);
 };
 
-export default Supermarket;
+export default Produtos;

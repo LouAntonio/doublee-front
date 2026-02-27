@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IoCartOutline, IoHeartOutline, IoHeart } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import { useCart } from '../context/CartContext';
 import { notyf } from '../utils/notyf';
@@ -157,9 +157,10 @@ const ProductCard = ({ product, onClick }) => {
                 flex: 1
             }}>
                 {/* Product Title */}
-                <h3
-                    onClick={handleProductClick}
+                <Link 
+                    to={`/produto/${product.id}`}
                     style={{
+                        textDecoration: 'none',
                         fontSize: '14px',
                         fontWeight: '400',
                         color: '#333',
@@ -174,7 +175,7 @@ const ProductCard = ({ product, onClick }) => {
                     }}
                 >
                     {product.title}
-                </h3>
+                </Link>
 
                 {/* Old Price */}
                 {product.oldPrice && (

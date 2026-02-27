@@ -13,8 +13,9 @@ import ProductDetails from './pages/ProductDetails';
 import Footer from '../src/components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import Promocoes from './pages/Promocoes';
-
-import Supermarket from './pages/Supermarket';
+import Produtos from './pages/Produtos';
+import Lojas from './pages/Lojas';
+import LojaDetails from './pages/LojaDetails';
 
 function App() {
     return (
@@ -24,7 +25,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/categorias" element={<Categorias />} />
-                    <Route path="/supermercado" element={<Supermarket />} />
+                    <Route path="/produtos" element={<Produtos />} />
                     <Route path="/cupoes" element={<Cupoes />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/contato" element={<Contato />} />
@@ -33,6 +34,8 @@ function App() {
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/produto/:id" element={<ProductDetails />} />
                     <Route path="/promocoes" element={<Promocoes />} />
+                    <Route path="/lojas" element={<Lojas />} />
+                    <Route path="/loja/:id" element={<LojaDetails />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />
