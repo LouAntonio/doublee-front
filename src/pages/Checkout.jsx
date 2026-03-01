@@ -13,6 +13,7 @@ const Checkout = () => {
 	const { cartItems, clearCart } = useCart();
 	const [currentStep, setCurrentStep] = useState(1);
 	const [orderPlaced, setOrderPlaced] = useState(false);
+	const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
 
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
@@ -121,7 +122,7 @@ const Checkout = () => {
 						</p>
 						<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
 							<p className="text-sm text-blue-800">
-								<strong>Número do Pedido:</strong> #DBE{Math.floor(Math.random() * 1000000)}
+								<strong>Número do Pedido:</strong> #DBE{orderNumber}
 							</p>
 						</div>
 						<Link
@@ -181,7 +182,7 @@ const Checkout = () => {
 													setShippingInfo({ ...shippingInfo, fullName: e.target.value })
 												}
 												className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.fullName ? 'border-red-500' : 'border-gray-300'
-													}`}
+												}`}
 												placeholder="João Silva"
 											/>
 											{errors.fullName && (
@@ -201,7 +202,7 @@ const Checkout = () => {
 														setShippingInfo({ ...shippingInfo, email: e.target.value })
 													}
 													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
-														}`}
+													}`}
 													placeholder="joao@email.com"
 												/>
 												{errors.email && (
@@ -220,8 +221,8 @@ const Checkout = () => {
 														setShippingInfo({ ...shippingInfo, phone: e.target.value })
 													}
 													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'
-														}`}
-												placeholder="+244 923 456 789"
+													}`}
+													placeholder="+244 923 456 789"
 												/>
 												{errors.phone && (
 													<p className="text-xs text-red-500 mt-1">{errors.phone}</p>
@@ -232,160 +233,160 @@ const Checkout = () => {
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-1">
 											Endereço Completo *
-										</label>
-										<input
-											type="text"
-											value={shippingInfo.address}
-											onChange={(e) =>
-												setShippingInfo({ ...shippingInfo, address: e.target.value })
-											}
-											className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.address ? 'border-red-500' : 'border-gray-300'
+											</label>
+											<input
+												type="text"
+												value={shippingInfo.address}
+												onChange={(e) =>
+													setShippingInfo({ ...shippingInfo, address: e.target.value })
+												}
+												className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.address ? 'border-red-500' : 'border-gray-300'
 												}`}
-											placeholder="Rua da Independência, Prédio 123, Apt 4B"
-										/>
-										{errors.address && (
-											<p className="text-xs text-red-500 mt-1">{errors.address}</p>
-										)}
-								</div>
+												placeholder="Rua da Independência, Prédio 123, Apt 4B"
+											/>
+											{errors.address && (
+												<p className="text-xs text-red-500 mt-1">{errors.address}</p>
+											)}
+										</div>
 
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									<div>
-										<label className="block text-sm font-medium text-gray-700 mb-1">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div>
+												<label className="block text-sm font-medium text-gray-700 mb-1">
 											Município *
-										</label>
-										<input
-											type="text"
-											value={shippingInfo.municipality}
-											onChange={(e) =>
-												setShippingInfo({ ...shippingInfo, municipality: e.target.value })
-											}
-											className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.municipality ? 'border-red-500' : 'border-gray-300'
-												}`}
-											placeholder="Luanda"
-										/>
-										{errors.municipality && (
-											<p className="text-xs text-red-500 mt-1">{errors.municipality}</p>
-										)}
-									</div>
+												</label>
+												<input
+													type="text"
+													value={shippingInfo.municipality}
+													onChange={(e) =>
+														setShippingInfo({ ...shippingInfo, municipality: e.target.value })
+													}
+													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.municipality ? 'border-red-500' : 'border-gray-300'
+													}`}
+													placeholder="Luanda"
+												/>
+												{errors.municipality && (
+													<p className="text-xs text-red-500 mt-1">{errors.municipality}</p>
+												)}
+											</div>
 
-									<div>
-										<label className="block text-sm font-medium text-gray-700 mb-1">
+											<div>
+												<label className="block text-sm font-medium text-gray-700 mb-1">
 											Província *
-										</label>
-										<select
-											value={shippingInfo.province}
-											onChange={(e) =>
-												setShippingInfo({ ...shippingInfo, province: e.target.value })
-											}
-											className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.province ? 'border-red-500' : 'border-gray-300'
-												}`}
-										>
-											<option value="">Selecione uma província</option>
-											<option value="Luanda">Luanda</option>
-											<option value="Bengo">Bengo</option>
-											<option value="Benguela">Benguela</option>
-											<option value="Bié">Bié</option>
-											<option value="Cabinda">Cabinda</option>
-											<option value="Cuando Cubango">Cuando Cubango</option>
-											<option value="Cuanza Norte">Cuanza Norte</option>
-											<option value="Cuanza Sul">Cuanza Sul</option>
-											<option value="Cunene">Cunene</option>
-											<option value="Huambo">Huambo</option>
-											<option value="Huíla">Huíla</option>
-											<option value="Lunda Norte">Lunda Norte</option>
-											<option value="Lunda Sul">Lunda Sul</option>
-											<option value="Malanje">Malanje</option>
-											<option value="Moxico">Moxico</option>
-											<option value="Namibe">Namibe</option>
-											<option value="Uíge">Uíge</option>
-											<option value="Zaire">Zaire</option>
-										</select>
-										{errors.province && (
-											<p className="text-xs text-red-500 mt-1">{errors.province}</p>
-										)}
+												</label>
+												<select
+													value={shippingInfo.province}
+													onChange={(e) =>
+														setShippingInfo({ ...shippingInfo, province: e.target.value })
+													}
+													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.province ? 'border-red-500' : 'border-gray-300'
+													}`}
+												>
+													<option value="">Selecione uma província</option>
+													<option value="Luanda">Luanda</option>
+													<option value="Bengo">Bengo</option>
+													<option value="Benguela">Benguela</option>
+													<option value="Bié">Bié</option>
+													<option value="Cabinda">Cabinda</option>
+													<option value="Cuando Cubango">Cuando Cubango</option>
+													<option value="Cuanza Norte">Cuanza Norte</option>
+													<option value="Cuanza Sul">Cuanza Sul</option>
+													<option value="Cunene">Cunene</option>
+													<option value="Huambo">Huambo</option>
+													<option value="Huíla">Huíla</option>
+													<option value="Lunda Norte">Lunda Norte</option>
+													<option value="Lunda Sul">Lunda Sul</option>
+													<option value="Malanje">Malanje</option>
+													<option value="Moxico">Moxico</option>
+													<option value="Namibe">Namibe</option>
+													<option value="Uíge">Uíge</option>
+													<option value="Zaire">Zaire</option>
+												</select>
+												{errors.province && (
+													<p className="text-xs text-red-500 mt-1">{errors.province}</p>
+												)}
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-					)}
+							)}
 
-					{/* Step 2: Payment Method */}
-					{currentStep === 2 && (
-						<div>
-							<h2 className="text-xl font-bold text-gray-800 mb-6">
+							{/* Step 2: Payment Method */}
+							{currentStep === 2 && (
+								<div>
+									<h2 className="text-xl font-bold text-gray-800 mb-6">
 								Método de Pagamento
-							</h2>
+									</h2>
 
 									{/* Payment Method Selection */}
 									<div className="space-y-3 mb-6">
 										<div
-										onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
-										className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
+											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
 												? 'border-blue-600 bg-blue-50'
 												: 'border-gray-200 hover:border-gray-300'
 											}`}
-									>
-										<div className="flex items-center gap-3">
-											<input
-												type="radio"
-												checked={paymentInfo.method === 'multicaixa'}
-												onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
-												className="w-4 h-4"
-											/>
-											<div>
-												<p className="font-semibold text-gray-800">Multicaixa Express</p>
-												<p className="text-xs text-gray-500">Pagamento via telemóvel</p>
+										>
+											<div className="flex items-center gap-3">
+												<input
+													type="radio"
+													checked={paymentInfo.method === 'multicaixa'}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
+													className="w-4 h-4"
+												/>
+												<div>
+													<p className="font-semibold text-gray-800">Multicaixa Express</p>
+													<p className="text-xs text-gray-500">Pagamento via telemóvel</p>
+												</div>
+											</div>
+										</div>
+
+										{/* TPA option removed for Angola context */}
+
+										<div
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
+											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'transfer'
+												? 'border-blue-600 bg-blue-50'
+												: 'border-gray-200 hover:border-gray-300'
+											}`}
+										>
+											<div className="flex items-center gap-3">
+												<input
+													type="radio"
+													checked={paymentInfo.method === 'transfer'}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
+													className="w-4 h-4"
+												/>
+												<div>
+													<p className="font-semibold text-gray-800">Transferência Bancária</p>
+													<p className="text-xs text-gray-500">BAI, BFA, BIC, Atlantico</p>
+												</div>
+											</div>
+										</div>
+
+										<div
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
+											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'credit'
+												? 'border-blue-600 bg-blue-50'
+												: 'border-gray-200 hover:border-gray-300'
+											}`}
+										>
+											<div className="flex items-center gap-3">
+												<input
+													type="radio"
+													checked={paymentInfo.method === 'credit'}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
+													className="w-4 h-4"
+												/>
+												<div>
+													<p className="font-semibold text-gray-800">Cartão de Crédito</p>
+													<p className="text-xs text-gray-500">Visa, Mastercard</p>
+												</div>
 											</div>
 										</div>
 									</div>
 
-									{/* TPA option removed for Angola context */}
-
-									<div
-										onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
-										className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'transfer'
-												? 'border-blue-600 bg-blue-50'
-												: 'border-gray-200 hover:border-gray-300'
-											}`}
-									>
-										<div className="flex items-center gap-3">
-											<input
-												type="radio"
-												checked={paymentInfo.method === 'transfer'}
-												onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
-												className="w-4 h-4"
-											/>
-											<div>
-												<p className="font-semibold text-gray-800">Transferência Bancária</p>
-												<p className="text-xs text-gray-500">BAI, BFA, BIC, Atlantico</p>
-											</div>
-										</div>
-									</div>
-
-									<div
-										onClick={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
-										className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'credit'
-												? 'border-blue-600 bg-blue-50'
-												: 'border-gray-200 hover:border-gray-300'
-											}`}
-									>
-										<div className="flex items-center gap-3">
-											<input
-												type="radio"
-												checked={paymentInfo.method === 'credit'}
-												onChange={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
-												className="w-4 h-4"
-											/>
-											<div>
-												<p className="font-semibold text-gray-800">Cartão de Crédito</p>
-												<p className="text-xs text-gray-500">Visa, Mastercard</p>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								{/* Credit Card Form */}
-								{paymentInfo.method === 'credit' && (
+									{/* Credit Card Form */}
+									{paymentInfo.method === 'credit' && (
 										<div className="space-y-4 pt-4 border-t border-gray-200">
 											<div>
 												<label className="block text-sm font-medium text-gray-700 mb-1">
@@ -398,7 +399,7 @@ const Checkout = () => {
 														setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })
 													}
 													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'
-														}`}
+													}`}
 													placeholder="1234 5678 9012 3456"
 													maxLength="19"
 												/>
@@ -418,7 +419,7 @@ const Checkout = () => {
 														setPaymentInfo({ ...paymentInfo, cardName: e.target.value })
 													}
 													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardName ? 'border-red-500' : 'border-gray-300'
-														}`}
+													}`}
 													placeholder="JOÃO SILVA"
 												/>
 												{errors.cardName && (
@@ -438,7 +439,7 @@ const Checkout = () => {
 															setPaymentInfo({ ...paymentInfo, cardExpiry: e.target.value })
 														}
 														className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardExpiry ? 'border-red-500' : 'border-gray-300'
-															}`}
+														}`}
 														placeholder="MM/AA"
 														maxLength="5"
 													/>
@@ -458,7 +459,7 @@ const Checkout = () => {
 															setPaymentInfo({ ...paymentInfo, cardCVV: e.target.value })
 														}
 														className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardCVV ? 'border-red-500' : 'border-gray-300'
-															}`}
+														}`}
 														placeholder="123"
 														maxLength="4"
 													/>
@@ -484,7 +485,7 @@ const Checkout = () => {
 														setPaymentInfo({ ...paymentInfo, phoneNumber: e.target.value })
 													}
 													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
-														}`}
+													}`}
 													placeholder="+244 923 456 789"
 												/>
 												{errors.phoneNumber && (
@@ -523,7 +524,7 @@ const Checkout = () => {
 							)}
 
 							{/* Step 3: Review & Confirm */}
-						{currentStep === 3 && (
+							{currentStep === 3 && (
 								<div>
 									<h2 className="text-xl font-bold text-gray-800 mb-6">
 										Revisar Pedido

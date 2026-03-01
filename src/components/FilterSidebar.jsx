@@ -9,18 +9,15 @@ const FilterSidebar = ({
 	setPriceRange = () => {},
 	selectedCategories = [],
 	setSelectedCategories = () => {},
-	rating = null,
 	setRating = () => {},
 	searchQuery = '',
 	setSearchQuery = () => {},
-	selectedBrand = '',
 	setSelectedBrand = () => {},
 	featuredOnly = false,
 	setFeaturedOnly = () => {},
 	onSearch = () => {},
 	onClear = () => {},
 }) => {
-	const brands = ['Todas', 'Double E', 'GenCo', 'AquaFun', 'Marqs', 'Thermocap'];
 
 	const handleClear = () => {
 		setSearchQuery('');

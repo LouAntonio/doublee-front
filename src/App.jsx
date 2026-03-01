@@ -18,30 +18,30 @@ import Lojas from './pages/Lojas';
 import LojaDetails from './pages/LojaDetails';
 
 function App() {
-    return (
-        <CartProvider>
-            <BrowserRouter>
-                <ScrollToTop />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/categorias" element={<Categorias />} />
-                    <Route path="/produtos" element={<Produtos />} />
-                    <Route path="/cupoes" element={<Cupoes />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/contato" element={<Contato />} />
-                    <Route path="/sobre" element={<Sobre />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/produto/:id" element={<ProductDetails />} />
-                    <Route path="/promocoes" element={<Promocoes />} />
-                    <Route path="/lojas" element={<Lojas />} />
-                    <Route path="/loja/:id" element={<LojaDetails />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Footer />
-            </BrowserRouter>
-        </CartProvider>
-    )
+	return (
+		<CartProvider>
+			<BrowserRouter>
+				<ScrollToTop />
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/categorias" element={<Categorias />} />
+					<Route path="/produtos" element={<Produtos />} />
+					<Route path="/cupoes" element={<Cupoes />} />
+					<Route path="/auth" element={<Auth />} />
+					<Route path="/contato" element={<Contato />} />
+					<Route path="/sobre" element={<Sobre />} />
+					<Route path="/cart" element={<Cart />} />
+					<Route path="/checkout" element={<Checkout />} />
+					<Route path="/produto/:id" element={<ProductDetails />} />
+					<Route path="/promocoes" element={<Promocoes />} />
+					<Route path="/lojas" element={<Lojas />} />
+					<Route path="/loja/:id" element={<LojaDetails />} />
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+				<Footer />
+			</BrowserRouter>
+		</CartProvider>
+	)
 }
 
 export default App

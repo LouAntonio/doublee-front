@@ -17,7 +17,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [otpSent, setOtpSent] = useState(false);
-	const [canResendOtp, setCanResendOtp] = useState(false);
 	const [resendTimer, setResendTimer] = useState(60);
 
 	const otpInputRefs = useRef([]);
@@ -27,8 +26,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 		if (otpSent && resendTimer > 0) {
 			const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
 			return () => clearTimeout(timer);
-		} else if (resendTimer === 0) {
-			setCanResendOtp(true);
 		}
 	}, [otpSent, resendTimer]);
 
@@ -57,7 +54,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 				setOtpSent(true);
 				setCurrentStep(2);
 				setResendTimer(60);
-				setCanResendOtp(false);
 			}, 1500);
 		}
 	};
@@ -104,7 +100,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 	};
 
 	const handleResendOtp = () => {
-		if (!canResendOtp) return;
+		if (resendTimer !== 0) return;
 
 		setIsLoading(true);
 		// TODO: Implement actual API call to resend OTP
@@ -112,7 +108,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 			console.log('Resending OTP to:', formData.email);
 			setIsLoading(false);
 			setResendTimer(60);
-			setCanResendOtp(false);
 			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
 		}, 1000);
 	};
@@ -180,11 +175,11 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 						<div className="flex flex-col items-center gap-2">
 							<div
 								className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${currentStep > step.number
-										? 'bg-green-500 text-white'
-										: currentStep === step.number
-											? 'bg-blue-600 text-white'
-											: 'bg-gray-200 text-gray-500'
-									}`}
+									? 'bg-green-500 text-white'
+									: currentStep === step.number
+										? 'bg-blue-600 text-white'
+										: 'bg-gray-200 text-gray-500'
+								}`}
 							>
 								{currentStep > step.number ? (
 									<IoCheckmarkCircle className="w-6 h-6" />
@@ -193,13 +188,13 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								)}
 							</div>
 							<span className={`text-xs font-medium ${currentStep >= step.number ? 'text-gray-900' : 'text-gray-400'
-								}`}>
+							}`}>
 								{step.title}
 							</span>
 						</div>
 						{index < steps.length - 1 && (
 							<div className={`flex-1 h-1 mx-2 rounded ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'
-								}`} />
+							}`} />
 						)}
 					</React.Fragment>
 				))}
@@ -228,7 +223,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.email}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="seu@email.com"
 							/>
 						</div>
@@ -285,7 +280,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									onChange={(e) => handleOtpChange(index, e.target.value)}
 									onKeyDown={(e) => handleOtpKeyDown(index, e)}
 									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'
-										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								/>
 							))}
 						</div>
@@ -298,10 +293,10 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 						<button
 							type="button"
 							onClick={handleResendOtp}
-							disabled={!canResendOtp || isLoading}
+							disabled={resendTimer !== 0 || isLoading}
 							className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
 						>
-							{canResendOtp ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
+							{resendTimer === 0 ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
 						</button>
 					</div>
 
@@ -361,7 +356,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									value={formData.firstName}
 									onChange={handleChange}
 									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 									placeholder="Seu nome"
 								/>
 							</div>
@@ -385,7 +380,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									value={formData.lastName}
 									onChange={handleChange}
 									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 									placeholder="Seu sobrenome"
 								/>
 							</div>
@@ -412,7 +407,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.password}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Mínimo 6 caracteres"
 							/>
 							<button
@@ -448,7 +443,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.confirmPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Digite a senha novamente"
 							/>
 							<button

@@ -46,9 +46,9 @@ const CouponCard = ({ coupon }) => {
 							className={`
 								flex items-center gap-2 px-3 py-1.5 rounded text-xs font-bold transition-all duration-200 cursor-pointer
 								${copied
-									? 'bg-green-100 text-green-700'
-									: 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-								}
+			? 'bg-green-100 text-green-700'
+			: 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+		}
 							`}
 						>
 							{copied ? (
@@ -76,7 +76,7 @@ const CouponCard = ({ coupon }) => {
 
 const Cupoes = () => {
 	useDocumentTitle('Cupões - Double E');
-	const [activeCategory, setActiveCategory] = useState('Todos');
+	const [activeCategory] = useState('Todos');
 
 	const coupons = [
 		{
@@ -186,14 +186,14 @@ const Cupoes = () => {
 								Basta copiar o código e usar no checkout!
 							</p>
 						</div>
-				</div>
+					</div>
 
 
 
 					{/* Coupons Grid */}
-					{coupons.length > 0 ? (
+					{filteredCoupons.length > 0 ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-							{coupons.map((coupon) => (
+							{filteredCoupons.map((coupon) => (
 								<CouponCard key={coupon.id} coupon={coupon} />
 							))}
 						</div>

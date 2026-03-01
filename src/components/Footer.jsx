@@ -34,13 +34,13 @@ const Footer = () => {
 				{ name: 'Configurações', url: '/configuracoes' }
 			]
 		},
-				{
-					title: 'Pagamento',
-					links: [
-						{ name: 'Formas de pagamento', url: '/pagamento' },
-						{ name: 'Cartão Double E', url: '/cartao' }
-					]
-				}
+		{
+			title: 'Pagamento',
+			links: [
+				{ name: 'Formas de pagamento', url: '/pagamento' },
+				{ name: 'Cartão Double E', url: '/cartao' }
+			]
+		}
 	];
 
 	const socialLinks = [

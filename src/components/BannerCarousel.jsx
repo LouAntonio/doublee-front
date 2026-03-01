@@ -145,28 +145,28 @@ const BannerCarousel = () => {
 									<div className="w-full max-w-3xl pl-14 pr-14 sm:pl-20 sm:pr-20 md:pl-24 md:pr-10 lg:pl-28 lg:pr-12 xl:pl-32 xl:pr-16 pointer-events-auto">
 										{banner.title && (
 											<h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-2 sm:mb-3 md:mb-4 text-white transition-all duration-700 delay-100 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-												}`}
-												style={{
-													textShadow: '0 4px 20px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)'
-												}}>
+											}`}
+											style={{
+												textShadow: '0 4px 20px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)'
+											}}>
 												{banner.title}
 											</h2>
 										)}
 										{banner.subtitle && (
 											<p className={`text-xs sm:text-sm md:text-base lg:text-lg text-white/90 mb-4 sm:mb-5 md:mb-6 leading-relaxed transition-all duration-700 delay-200 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-												}`}
-												style={{
-													textShadow: '0 2px 12px rgba(0,0,0,0.6)'
-												}}>
+											}`}
+											style={{
+												textShadow: '0 2px 12px rgba(0,0,0,0.6)'
+											}}>
 												{banner.subtitle}
 											</p>
 										)}
 										{banner.cta && (
 											<button className={`pointer-events-auto inline-flex items-center gap-2 sm:gap-3 bg-white text-gray-900 font-bold px-4 sm:px-5 md:px-7 py-2 sm:py-2.5 md:py-3 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 text-xs sm:text-sm md:text-base group cursor-pointer ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-												}`}
-												style={{
-													transitionDelay: index === currentSlide ? '300ms' : '0ms'
-												}}>
+											}`}
+											style={{
+												transitionDelay: index === currentSlide ? '300ms' : '0ms'
+											}}>
 												{banner.cta}
 												<span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
 											</button>
@@ -212,7 +212,7 @@ const BannerCarousel = () => {
 							className={`rounded-full transition-all duration-300 cursor-pointer ${index === currentSlide
 								? 'bg-white w-8 sm:w-10 h-2.5 sm:h-3'
 								: 'bg-white/60 hover:bg-white/90 w-2.5 sm:w-3 h-2.5 sm:h-3'
-								}`}
+							}`}
 							aria-label={`Ir para slide ${index + 1}`}
 						/>
 					))}

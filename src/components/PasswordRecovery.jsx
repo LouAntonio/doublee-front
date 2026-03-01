@@ -13,7 +13,6 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [canResendOtp, setCanResendOtp] = useState(false);
 	const [resendTimer, setResendTimer] = useState(60);
 
 	const otpInputRefs = useRef([]);
@@ -23,8 +22,6 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 		if (currentStep === 2 && resendTimer > 0) {
 			const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
 			return () => clearTimeout(timer);
-		} else if (resendTimer === 0) {
-			setCanResendOtp(true);
 		}
 	}, [currentStep, resendTimer]);
 
@@ -52,7 +49,6 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 				setIsLoading(false);
 				setCurrentStep(2);
 				setResendTimer(60);
-				setCanResendOtp(false);
 			}, 1500);
 		}
 	};
@@ -99,7 +95,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 	};
 
 	const handleResendOtp = () => {
-		if (!canResendOtp) return;
+		if (resendTimer !== 0) return;
 
 		setIsLoading(true);
 		// TODO: Implement actual API call to resend OTP
@@ -107,7 +103,6 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 			console.log('Resending recovery OTP to:', formData.email);
 			setIsLoading(false);
 			setResendTimer(60);
-			setCanResendOtp(false);
 			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
 		}, 1000);
 	};
@@ -173,7 +168,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.email}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="seu@email.com"
 							/>
 						</div>
@@ -238,7 +233,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 									onChange={(e) => handleOtpChange(index, e.target.value)}
 									onKeyDown={(e) => handleOtpKeyDown(index, e)}
 									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'
-										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								/>
 							))}
 						</div>
@@ -251,10 +246,10 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						<button
 							type="button"
 							onClick={handleResendOtp}
-							disabled={!canResendOtp || isLoading}
+							disabled={resendTimer !== 0 || isLoading}
 							className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
 						>
-							{canResendOtp ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
+							{resendTimer === 0 ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
 						</button>
 					</div>
 
@@ -310,7 +305,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.newPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.newPassword ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Mínimo 6 caracteres"
 							/>
 							<button
@@ -345,7 +340,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.confirmPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Digite a senha novamente"
 							/>
 							<button

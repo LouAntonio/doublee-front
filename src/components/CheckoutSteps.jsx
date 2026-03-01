@@ -22,17 +22,17 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 							{/* Step */}
 							<div
 								className={`flex flex-col items-center flex-1 ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed'
-									}`}
+								}`}
 								onClick={() => isClickable && onStepClick && onStepClick(step.id)}
 							>
 								{/* Icon Circle */}
 								<div
 									className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${isCompleted
-											? 'bg-green-500 text-white'
-											: isActive
-												? 'bg-blue-600 text-white ring-4 ring-blue-100'
-												: 'bg-gray-200 text-gray-400'
-										}`}
+										? 'bg-green-500 text-white'
+										: isActive
+											? 'bg-blue-600 text-white ring-4 ring-blue-100'
+											: 'bg-gray-200 text-gray-400'
+									}`}
 								>
 									{isCompleted ? (
 										<IoCheckmarkCircle className="w-6 h-6" />
@@ -44,11 +44,11 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 								{/* Step Name */}
 								<span
 									className={`text-sm font-medium ${isActive
-											? 'text-blue-600'
-											: isCompleted
-												? 'text-green-600'
-												: 'text-gray-400'
-										}`}
+										? 'text-blue-600'
+										: isCompleted
+											? 'text-green-600'
+											: 'text-gray-400'
+									}`}
 								>
 									{step.name}
 								</span>
@@ -64,7 +64,7 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 								<div className="flex-1 h-1 mx-2 lg:mx-4 mb-8">
 									<div
 										className={`h-full rounded transition-all ${currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
-											}`}
+										}`}
 									/>
 								</div>
 							)}

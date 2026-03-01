@@ -20,10 +20,7 @@ const ProductDetails = () => {
 	const [countdown, setCountdown] = useState(null);
 
 	useEffect(() => {
-		if (!product?.promotionEndDate) {
-			setCountdown(null);
-			return;
-		}
+		if (!product?.promotionEndDate) return;
 
 		const calcRemaining = () => {
 			const end = new Date(product.promotionEndDate).getTime();
@@ -622,72 +619,72 @@ const ProductDetails = () => {
 									fontWeight: '500',
 									fontSize: '14px',
 									color: '#333'
-							}}>
-								Quantidade:
-							</label>
-							<div style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								border: '1px solid #ddd',
-								borderRadius: '6px',
-								overflow: 'hidden',
-								backgroundColor: 'white'
-							}}>
-								<button
-									onClick={decrementQuantity}
-									disabled={quantity <= 1}
-									style={{
-										width: '35px',
-										height: '35px',
-										border: 'none',
-										backgroundColor: 'transparent',
-										cursor: quantity <= 1 ? 'not-allowed' : 'pointer',
-										fontSize: '16px',
-										color: quantity <= 1 ? '#ccc' : '#333'
-									}}
-								>
-									−
-								</button>
-								<div style={{
-									minWidth: '45px',
-									height: '35px',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									borderLeft: '1px solid #ddd',
-									borderRight: '1px solid #ddd',
-									fontWeight: '400',
-									fontSize: '15px'
 								}}>
-									{quantity}
-								</div>
-								<button
-									onClick={incrementQuantity}
-									disabled={quantity >= product.stock}
-									style={{
-										width: '35px',
+								Quantidade:
+								</label>
+								<div style={{
+									display: 'inline-flex',
+									alignItems: 'center',
+									border: '1px solid #ddd',
+									borderRadius: '6px',
+									overflow: 'hidden',
+									backgroundColor: 'white'
+								}}>
+									<button
+										onClick={decrementQuantity}
+										disabled={quantity <= 1}
+										style={{
+											width: '35px',
+											height: '35px',
+											border: 'none',
+											backgroundColor: 'transparent',
+											cursor: quantity <= 1 ? 'not-allowed' : 'pointer',
+											fontSize: '16px',
+											color: quantity <= 1 ? '#ccc' : '#333'
+										}}
+									>
+									−
+									</button>
+									<div style={{
+										minWidth: '45px',
 										height: '35px',
-										border: 'none',
-										backgroundColor: 'transparent',
-										cursor: quantity >= product.stock ? 'not-allowed' : 'pointer',
-										fontSize: '16px',
-										color: quantity >= product.stock ? '#ccc' : '#333'
-									}}
-								>
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										borderLeft: '1px solid #ddd',
+										borderRight: '1px solid #ddd',
+										fontWeight: '400',
+										fontSize: '15px'
+									}}>
+										{quantity}
+									</div>
+									<button
+										onClick={incrementQuantity}
+										disabled={quantity >= product.stock}
+										style={{
+											width: '35px',
+											height: '35px',
+											border: 'none',
+											backgroundColor: 'transparent',
+											cursor: quantity >= product.stock ? 'not-allowed' : 'pointer',
+											fontSize: '16px',
+											color: quantity >= product.stock ? '#ccc' : '#333'
+										}}
+									>
 									+
-								</button>
-							</div>
-							<div style={{
-								marginTop: '8px',
-								fontSize: '13px',
-								color: '#666'
-							}}>
+									</button>
+								</div>
+								<div style={{
+									marginTop: '8px',
+									fontSize: '13px',
+									color: '#666'
+								}}>
 								({product.stock} disponíveis)
+								</div>
 							</div>
-						</div>
 
-						{/* Botões de Ação */}
-						<button
+							{/* Botões de Ação */}
+							<button
 								onClick={handleAddToCart}
 								disabled={product.stock === 0}
 								style={{

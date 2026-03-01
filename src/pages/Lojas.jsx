@@ -172,63 +172,63 @@ const Lojas = () => {
 		<div className="bg-gray-50 flex flex-col">
 			{/* Header + Hero fill 100vh */}
 			<div className="h-screen flex flex-col">
-			<Header />
+				<Header />
 
-			{/* ── Hero ── */}
-			<div className="relative overflow-hidden flex-1">
-				<img
-					src="./images/slider/1.webp"
-					alt="Lojas"
-					className="absolute inset-0 w-full h-full object-cover"
-				/>
-				{/* Multi-layer gradient overlay */}
-				<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-orange-950/60 to-orange-900/40" />
-				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+				{/* ── Hero ── */}
+				<div className="relative overflow-hidden flex-1">
+					<img
+						src="./images/slider/1.webp"
+						alt="Lojas"
+						className="absolute inset-0 w-full h-full object-cover"
+					/>
+					{/* Multi-layer gradient overlay */}
+					<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-orange-950/60 to-orange-900/40" />
+					<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
 				
-				{/* Animated background elements */}
-				<div className="absolute top-10 left-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
-				<div className="absolute bottom-20 right-20 w-60 h-60 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+					{/* Animated background elements */}
+					<div className="absolute top-10 left-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
+					<div className="absolute bottom-20 right-20 w-60 h-60 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
-				<div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-4 h-full py-12">
-					{/* Badge */}
-					<span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full mb-6 border border-white/30 shadow-lg animate-in fade-in slide-in-from-top-4 duration-700">
-						<IoTrophyOutline className="text-base" /> Lojas verificadas e aprovadas
-					</span>
+					<div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-4 h-full py-12">
+						{/* Badge */}
+						<span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full mb-6 border border-white/30 shadow-lg animate-in fade-in slide-in-from-top-4 duration-700">
+							<IoTrophyOutline className="text-base" /> Lojas verificadas e aprovadas
+						</span>
 
-					{/* Main Headline */}
-					<div className="mb-6 overflow-hidden">
-						<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] mb-2 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both">
+						{/* Main Headline */}
+						<div className="mb-6 overflow-hidden">
+							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] mb-2 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both">
 							As Melhores
-						</h1>
-						<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 fill-mode-both" style={{ color: '#FFA500' }}>
+							</h1>
+							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 fill-mode-both" style={{ color: '#FFA500' }}>
 							Lojas
-						</h1>
-					</div>
+							</h1>
+						</div>
 
-					{/* Divider */}
-					<div className="w-16 h-1.5 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mb-6 animate-in fade-in slide-in-from-left-6 duration-700 delay-200" />
+						{/* Divider */}
+						<div className="w-16 h-1.5 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mb-6 animate-in fade-in slide-in-from-left-6 duration-700 delay-200" />
 
-					{/* Subtitle */}
-					<p className="text-base sm:text-lg md:text-xl max-w-2xl opacity-95 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+						{/* Subtitle */}
+						<p className="text-base sm:text-lg md:text-xl max-w-2xl opacity-95 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
 						Encontre as lojas parceiras Double E e compre com total confiança. Mais de 120 estabelecimentos verificados esperando por você.
-					</p>
+						</p>
 
-					{/* Search Bar */}
-					<div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-700 delay-500">
-						<div className="relative group">
-							<div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-500/20 rounded-full blur-xl opacity-0  transition-opacity duration-300" />
-							<IoSearchOutline className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none" />
-							<input
-								type="text"
-								placeholder="Pesquisar loja por nome..."
-								value={search}
-								onChange={handleSearch}
-								className="relative w-full pl-14 pr-6 py-4 sm:py-5 rounded-full text-gray-500 text-sm sm:text-base shadow-2xl focus:outline-none  transition-all duration-300 placeholder:text-gray-500 font-medium"
-							/>
+						{/* Search Bar */}
+						<div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-700 delay-500">
+							<div className="relative group">
+								<div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-500/20 rounded-full blur-xl opacity-0  transition-opacity duration-300" />
+								<IoSearchOutline className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none" />
+								<input
+									type="text"
+									placeholder="Pesquisar loja por nome..."
+									value={search}
+									onChange={handleSearch}
+									className="relative w-full pl-14 pr-6 py-4 sm:py-5 rounded-full text-gray-500 text-sm sm:text-base shadow-2xl focus:outline-none  transition-all duration-300 placeholder:text-gray-500 font-medium"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 			</div>{/* end h-screen wrapper */}
 
 			{/* ── Stats bar ── */}
