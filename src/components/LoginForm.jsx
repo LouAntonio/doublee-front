@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
+import apiRequest, { notyf } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
+	const navigate = useNavigate();
+	const { login } = useAuth();
+
 	const [formData, setFormData] = useState({
 		email: '',
 		password: '',
@@ -29,21 +35,37 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 
 		if (!formData.password) {
 			newErrors.password = 'Senha é obrigatória';
-		} else if (formData.password.length < 6) {
-			newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
+		} else if (formData.password.length < 8) {
+			newErrors.password = 'Senha deve ter no mínimo 8 caracteres';
 		}
 
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual login API call
-			setTimeout(() => {
-				console.log('Login attempt:', formData);
+			try {
+				const data = await apiRequest('/users/login', {
+					method: 'POST',
+					body: JSON.stringify({
+						email: formData.email,
+						password: formData.password
+					})
+				});
+
+				if (data.success) {
+					login(data.token, data.user);
+					notyf.success('Login realizado com sucesso!');
+					navigate('/');
+				} else {
+					notyf.error(data.msg || 'Erro ao fazer login.');
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao comunicar com o servidor.');
+				}
+			} finally {
 				setIsLoading(false);
-				// Simulate success
-				alert('Login realizado com sucesso! (Demo)');
-			}, 1500);
+			}
 		}
 	};
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
 	IoSearchOutline,
 	IoCartOutline,
@@ -17,13 +17,36 @@ import {
 	IoPersonOutline,
 	IoTrendingUpOutline,
 	IoBookOutline,
+	IoLogOutOutline,
 } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
 	const { getCartCount } = useCart();
 	const cartCount = getCartCount();
+	const { user, isAuthenticated, logout } = useAuth();
+	const navigate = useNavigate();
+	const [userMenuOpen, setUserMenuOpen] = useState(false);
+	const userMenuRef = useRef(null);
+
+	// Close user menu when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+				setUserMenuOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
+	const handleLogout = () => {
+		logout();
+		setUserMenuOpen(false);
+		navigate('/auth');
+	};
 
 	const slugify = (s) =>
 		String(s)
@@ -158,13 +181,41 @@ const Header = () => {
 						</Link>
 
 						{/* User */}
-						<Link
-							to="/auth"
-							className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
-							aria-label="Conta"
-						>
-							<IoPersonOutline className="w-6 h-6" />
-						</Link>
+						{isAuthenticated ? (
+							<div className="relative" ref={userMenuRef}>
+								<button
+									onClick={() => setUserMenuOpen(!userMenuOpen)}
+									className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors cursor-pointer flex items-center gap-1.5"
+									aria-label="Conta"
+								>
+									<IoPersonOutline className="w-6 h-6" />
+									<span className="text-sm font-medium hidden sm:inline">{user?.name}</span>
+								</button>
+								{userMenuOpen && (
+									<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
+										<div className="px-4 py-2 border-b border-gray-100">
+											<p className="text-sm font-semibold text-gray-800">{user?.name} {user?.surname}</p>
+											<p className="text-xs text-gray-500 truncate">{user?.email}</p>
+										</div>
+										<button
+											onClick={handleLogout}
+											className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+										>
+											<IoLogOutOutline className="w-4 h-4" />
+											Sair
+										</button>
+									</div>
+								)}
+							</div>
+						) : (
+							<Link
+								to="/auth"
+								className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
+								aria-label="Conta"
+							>
+								<IoPersonOutline className="w-6 h-6" />
+							</Link>
+						)}
 
 						{/* Mobile hamburger */}
 						<button
@@ -208,13 +259,13 @@ const Header = () => {
 										className={`absolute top-[calc(100%+0.4rem)] left-0 ${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
 											? 'w-[680px]'
 											: 'w-[240px]'
-										} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
+											} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
 									>
 										{/* Main list */}
 										<div className={`${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
 											? 'w-1/3'
 											: 'w-full'
-										} bg-gray-800 text-white`}>
+											} bg-gray-800 text-white`}>
 											<ul>
 												{categories.map((category) => (
 													<li
@@ -222,7 +273,7 @@ const Header = () => {
 														className={`cursor-pointer text-sm ${activeCategory === category.name
 															? 'bg-[#F97316]'
 															: 'hover:bg-gray-700'
-														}`}
+															}`}
 														onMouseEnter={() => setActiveCategory(category.name)}
 													>
 														<Link
@@ -363,10 +414,26 @@ const Header = () => {
 								<span>Como Funciona</span>
 							</NavLink>
 						</div>
-						<NavLink to="/auth" className="flex items-center gap-3 px-4 py-3 text-sm text-[#F97316] hover:bg-orange-50 font-medium">
-							<IoPersonAddOutline className="w-5 h-5 text-[#F97316]" />
-							<span>Conta</span>
-						</NavLink>
+						{isAuthenticated ? (
+							<>
+								<div className="px-4 py-2 border-b border-gray-100">
+									<p className="text-sm font-semibold text-gray-800">{user?.name} {user?.surname}</p>
+									<p className="text-xs text-gray-500">{user?.email}</p>
+								</div>
+								<button
+									onClick={handleLogout}
+									className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full cursor-pointer"
+								>
+									<IoLogOutOutline className="w-5 h-5" />
+									<span>Sair</span>
+								</button>
+							</>
+						) : (
+							<NavLink to="/auth" className="flex items-center gap-3 px-4 py-3 text-sm text-[#F97316] hover:bg-orange-50 font-medium">
+								<IoPersonAddOutline className="w-5 h-5 text-[#F97316]" />
+								<span>Conta</span>
+							</NavLink>
+						)}
 					</nav>
 				</div>
 			)}

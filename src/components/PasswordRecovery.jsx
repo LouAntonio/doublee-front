@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline, IoCheckmarkCircle, IoArrowBack } from 'react-icons/io5';
+import apiRequest, { notyf } from '../services/api';
 
 const PasswordRecovery = ({ onSwitchToLogin }) => {
 	const [currentStep, setCurrentStep] = useState(1);
@@ -43,13 +44,29 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual API call to send recovery OTP
-			setTimeout(() => {
-				console.log('Sending recovery OTP to:', formData.email);
+			try {
+				const data = await apiRequest('/users/request-password-reset', {
+					method: 'POST',
+					body: JSON.stringify({ email: formData.email })
+				});
+
+				if (data.success) {
+					notyf.success('Código OTP enviado para o seu e-mail!');
+					setCurrentStep(2);
+					setResendTimer(60);
+				} else {
+					notyf.error(data.msg || 'Erro ao solicitar recuperação de senha.');
+					if (data.msg) {
+						setErrors({ email: data.msg });
+					}
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao comunicar com o servidor.');
+				}
+			} finally {
 				setIsLoading(false);
-				setCurrentStep(2);
-				setResendTimer(60);
-			}, 1500);
+			}
 		}
 	};
 
@@ -84,27 +101,35 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
-			setIsLoading(true);
-			// TODO: Implement actual API call to verify OTP
-			setTimeout(() => {
-				console.log('Verifying recovery OTP:', otpValue);
-				setIsLoading(false);
-				setCurrentStep(3);
-			}, 1500);
+			// Move to password step — the OTP will be validated on final submission
+			setCurrentStep(3);
 		}
 	};
 
-	const handleResendOtp = () => {
+	const handleResendOtp = async () => {
 		if (resendTimer !== 0) return;
 
 		setIsLoading(true);
-		// TODO: Implement actual API call to resend OTP
-		setTimeout(() => {
-			console.log('Resending recovery OTP to:', formData.email);
+		try {
+			const data = await apiRequest('/users/request-password-reset', {
+				method: 'POST',
+				body: JSON.stringify({ email: formData.email })
+			});
+
+			if (data.success) {
+				notyf.success('Código OTP reenviado!');
+				setResendTimer(60);
+				setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+			} else {
+				notyf.error(data.msg || 'Erro ao reenviar código.');
+			}
+		} catch (error) {
+			if (error.message !== 'Sessão expirada') {
+				notyf.error('Erro ao reenviar código.');
+			}
+		} finally {
 			setIsLoading(false);
-			setResendTimer(60);
-			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
-		}, 1000);
+		}
 	};
 
 	const handlePasswordSubmit = async () => {
@@ -112,8 +137,8 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 
 		if (!formData.newPassword) {
 			newErrors.newPassword = 'Nova senha é obrigatória';
-		} else if (formData.newPassword.length < 6) {
-			newErrors.newPassword = 'Senha deve ter no mínimo 6 caracteres';
+		} else if (formData.newPassword.length < 8) {
+			newErrors.newPassword = 'Senha deve ter no mínimo 8 caracteres';
 		}
 
 		if (formData.newPassword !== formData.confirmPassword) {
@@ -124,12 +149,35 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual API call to reset password
-			setTimeout(() => {
-				console.log('Resetting password for:', formData.email);
+			try {
+				const otpValue = formData.otp.join('');
+				const data = await apiRequest('/users/reset-password', {
+					method: 'POST',
+					body: JSON.stringify({
+						email: formData.email,
+						code: otpValue,
+						newPassword: formData.newPassword
+					})
+				});
+
+				if (data.success) {
+					notyf.success('Senha redefinida com sucesso!');
+					setCurrentStep(4);
+				} else {
+					notyf.error(data.msg || 'Erro ao redefinir senha.');
+					// If OTP is invalid, go back to OTP step
+					if (data.msg && (data.msg.includes('OTP') || data.msg.includes('código'))) {
+						setCurrentStep(2);
+						setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+					}
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao redefinir senha.');
+				}
+			} finally {
 				setIsLoading(false);
-				setCurrentStep(4);
-			}, 1500);
+			}
 		}
 	};
 
@@ -306,7 +354,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.newPassword ? 'border-red-500' : 'border-gray-300'
 									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
-								placeholder="Mínimo 6 caracteres"
+								placeholder="Mínimo 8 caracteres"
 							/>
 							<button
 								type="button"

@@ -103,5 +103,5 @@ const apiRequest = async (endpoint, options = {}) => {
 	}
 };
 
-export default api;
+export default apiRequest;
 export { API_URL, notyf };

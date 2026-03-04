@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IoMailOutline, IoPersonOutline, IoLockClosedOutline, IoCallOutline, IoEyeOutline, IoEyeOffOutline, IoCheckmarkCircle, IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import apiRequest, { notyf } from '../services/api';
 
 const RegisterForm = ({ onSwitchToLogin }) => {
 	const [currentStep, setCurrentStep] = useState(1);
@@ -47,14 +48,30 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual API call to send OTP
-			setTimeout(() => {
-				console.log('Sending OTP to:', formData.email);
+			try {
+				const data = await apiRequest('/users/check-email', {
+					method: 'POST',
+					body: JSON.stringify({ email: formData.email })
+				});
+
+				if (data.success && data.exists) {
+					notyf.error('Este e-mail já está registado.');
+					setErrors({ email: 'Este e-mail já está registado' });
+				} else if (data.success && !data.exists) {
+					notyf.success('Código OTP enviado para o seu e-mail!');
+					setOtpSent(true);
+					setCurrentStep(2);
+					setResendTimer(60);
+				} else {
+					notyf.error(data.msg || 'Erro ao verificar e-mail.');
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao comunicar com o servidor.');
+				}
+			} finally {
 				setIsLoading(false);
-				setOtpSent(true);
-				setCurrentStep(2);
-				setResendTimer(60);
-			}, 1500);
+			}
 		}
 	};
 
@@ -90,26 +107,56 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual API call to verify OTP
-			setTimeout(() => {
-				console.log('Verifying OTP:', otpValue);
+			try {
+				const data = await apiRequest('/users/verify-otp', {
+					method: 'POST',
+					body: JSON.stringify({
+						email: formData.email,
+						code: otpValue
+					})
+				});
+
+				if (data.success) {
+					notyf.success('Código verificado com sucesso!');
+					setCurrentStep(3);
+				} else {
+					notyf.error(data.msg || 'Código OTP inválido.');
+					setErrors({ otp: data.msg || 'Código OTP inválido' });
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao verificar código.');
+				}
+			} finally {
 				setIsLoading(false);
-				setCurrentStep(3);
-			}, 1500);
+			}
 		}
 	};
 
-	const handleResendOtp = () => {
+	const handleResendOtp = async () => {
 		if (resendTimer !== 0) return;
 
 		setIsLoading(true);
-		// TODO: Implement actual API call to resend OTP
-		setTimeout(() => {
-			console.log('Resending OTP to:', formData.email);
+		try {
+			const data = await apiRequest('/users/resend-otp', {
+				method: 'POST',
+				body: JSON.stringify({ email: formData.email })
+			});
+
+			if (data.success) {
+				notyf.success('Código OTP reenviado!');
+				setResendTimer(60);
+				setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+			} else {
+				notyf.error(data.msg || 'Erro ao reenviar código.');
+			}
+		} catch (error) {
+			if (error.message !== 'Sessão expirada') {
+				notyf.error('Erro ao reenviar código.');
+			}
+		} finally {
 			setIsLoading(false);
-			setResendTimer(60);
-			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
-		}, 1000);
+		}
 	};
 
 	const handleFinalSubmit = async () => {
@@ -125,8 +172,8 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (!formData.password) {
 			newErrors.password = 'Senha é obrigatória';
-		} else if (formData.password.length < 6) {
-			newErrors.password = 'Senha deve ter no mínimo 6 caracteres';
+		} else if (formData.password.length < 8) {
+			newErrors.password = 'Senha deve ter no mínimo 8 caracteres';
 		}
 
 		if (formData.password !== formData.confirmPassword) {
@@ -137,18 +184,31 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			// TODO: Implement actual API call to create account
-			setTimeout(() => {
-				console.log('Creating account:', {
-					email: formData.email,
-					firstName: formData.firstName,
-					lastName: formData.lastName,
-					phone: formData.phone
+			try {
+				const data = await apiRequest('/users/complete-registration', {
+					method: 'POST',
+					body: JSON.stringify({
+						email: formData.email,
+						name: formData.firstName,
+						surname: formData.lastName,
+						phone: formData.phone,
+						password: formData.password
+					})
 				});
+
+				if (data.success) {
+					notyf.success('Conta criada com sucesso!');
+					onSwitchToLogin();
+				} else {
+					notyf.error(data.msg || 'Erro ao criar conta.');
+				}
+			} catch (error) {
+				if (error.message !== 'Sessão expirada') {
+					notyf.error('Erro ao criar conta.');
+				}
+			} finally {
 				setIsLoading(false);
-				alert('Conta criada com sucesso! (Demo)');
-				onSwitchToLogin();
-			}, 1500);
+			}
 		}
 	};
 
@@ -390,6 +450,30 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 						</div>
 					</div>
 
+					{/* Phone */}
+					<div>
+						<label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+							Telefone
+						</label>
+						<div className="relative">
+							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+								<IoCallOutline className="w-5 h-5" />
+							</div>
+							<input
+								type="tel"
+								id="phone"
+								name="phone"
+								value={formData.phone}
+								onChange={handleChange}
+								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300'
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								placeholder="9XX XXX XXX"
+							/>
+						</div>
+						{errors.phone && (
+							<p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+						)}
+					</div>
 
 					{/* Password */}
 					<div>
@@ -408,7 +492,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'
 									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
-								placeholder="Mínimo 6 caracteres"
+								placeholder="Mínimo 8 caracteres"
 							/>
 							<button
 								type="button"

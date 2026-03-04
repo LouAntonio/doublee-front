@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
 import Categorias from './pages/Categorias';
 import Cupoes from './pages/Cupoes';
@@ -17,30 +18,47 @@ import Produtos from './pages/Produtos';
 import Lojas from './pages/Lojas';
 import LojaDetails from './pages/LojaDetails';
 
+// Redirect authenticated users away from /auth
+const AuthRoute = () => {
+	const { isAuthenticated, isLoading } = useAuth();
+
+	if (isLoading) return null;
+	if (isAuthenticated) return <Navigate to="/" replace />;
+	return <Auth />;
+};
+
+function AppRoutes() {
+	return (
+		<BrowserRouter>
+			<ScrollToTop />
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="/categorias" element={<Categorias />} />
+				<Route path="/produtos" element={<Produtos />} />
+				<Route path="/cupoes" element={<Cupoes />} />
+				<Route path="/auth" element={<AuthRoute />} />
+				<Route path="/contato" element={<Contato />} />
+				<Route path="/sobre" element={<Sobre />} />
+				<Route path="/cart" element={<Cart />} />
+				<Route path="/checkout" element={<Checkout />} />
+				<Route path="/produto/:id" element={<ProductDetails />} />
+				<Route path="/promocoes" element={<Promocoes />} />
+				<Route path="/lojas" element={<Lojas />} />
+				<Route path="/loja/:id" element={<LojaDetails />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+			<Footer />
+		</BrowserRouter>
+	);
+}
+
 function App() {
 	return (
-		<CartProvider>
-			<BrowserRouter>
-				<ScrollToTop />
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/categorias" element={<Categorias />} />
-					<Route path="/produtos" element={<Produtos />} />
-					<Route path="/cupoes" element={<Cupoes />} />
-					<Route path="/auth" element={<Auth />} />
-					<Route path="/contato" element={<Contato />} />
-					<Route path="/sobre" element={<Sobre />} />
-					<Route path="/cart" element={<Cart />} />
-					<Route path="/checkout" element={<Checkout />} />
-					<Route path="/produto/:id" element={<ProductDetails />} />
-					<Route path="/promocoes" element={<Promocoes />} />
-					<Route path="/lojas" element={<Lojas />} />
-					<Route path="/loja/:id" element={<LojaDetails />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-				<Footer />
-			</BrowserRouter>
-		</CartProvider>
+		<AuthProvider>
+			<CartProvider>
+				<AppRoutes />
+			</CartProvider>
+		</AuthProvider>
 	)
 }
 
