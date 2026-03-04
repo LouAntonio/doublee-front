@@ -17,6 +17,7 @@ import Promocoes from './pages/Promocoes';
 import Produtos from './pages/Produtos';
 import Lojas from './pages/Lojas';
 import LojaDetails from './pages/LojaDetails';
+import Dashboard from './pages/Dashboard';
 
 // Redirect authenticated users away from /auth
 const AuthRoute = () => {
@@ -25,6 +26,15 @@ const AuthRoute = () => {
 	if (isLoading) return null;
 	if (isAuthenticated) return <Navigate to="/" replace />;
 	return <Auth />;
+};
+
+// Protect routes that require authentication
+const ProtectedRoute = ({ children }) => {
+	const { isAuthenticated, isLoading } = useAuth();
+
+	if (isLoading) return null;
+	if (!isAuthenticated) return <Navigate to="/auth" replace />;
+	return children;
 };
 
 function AppRoutes() {
@@ -45,6 +55,14 @@ function AppRoutes() {
 				<Route path="/promocoes" element={<Promocoes />} />
 				<Route path="/lojas" element={<Lojas />} />
 				<Route path="/loja/:id" element={<LojaDetails />} />
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedRoute>
+							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 			<Footer />

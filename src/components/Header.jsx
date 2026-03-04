@@ -22,6 +22,7 @@ import {
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import apiRequest from '../services/api';
 
 const Header = () => {
 	const { getCartCount } = useCart();
@@ -30,6 +31,25 @@ const Header = () => {
 	const navigate = useNavigate();
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const userMenuRef = useRef(null);
+	const [hasApprovedStore, setHasApprovedStore] = useState(false);
+
+	useEffect(() => {
+		let cancelled = false;
+		const fetchStoreStatus = async () => {
+			if (!isAuthenticated) {
+				if (!cancelled) setHasApprovedStore(false);
+				return;
+			}
+			try {
+				const data = await apiRequest('/stores/status');
+				if (!cancelled) setHasApprovedStore(data?.success && data?.data?.status === 'approved');
+			} catch {
+				if (!cancelled) setHasApprovedStore(false);
+			}
+		};
+		fetchStoreStatus();
+		return () => { cancelled = true; };
+	}, [isAuthenticated]);
 
 	// Close user menu when clicking outside
 	useEffect(() => {
@@ -157,6 +177,18 @@ const Header = () => {
 
 					{/* Right Icons */}
 					<div className="flex items-center gap-1 ml-auto flex-shrink-0">
+						{/* Store dashboard — only when store is approved */}
+						{isAuthenticated && hasApprovedStore && (
+							<Link
+								to="/dashboard?tab=store"
+								className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
+								aria-label="Minha Loja"
+								title="Minha Loja"
+							>
+								<IoStorefrontOutline className="w-6 h-6" />
+							</Link>
+						)}
+
 						{/* Wishlist */}
 						<Link
 							to="/wishlist"
@@ -197,6 +229,14 @@ const Header = () => {
 											<p className="text-sm font-semibold text-gray-800">{user?.name} {user?.surname}</p>
 											<p className="text-xs text-gray-500 truncate">{user?.email}</p>
 										</div>
+										<Link
+											to="/dashboard"
+											onClick={() => setUserMenuOpen(false)}
+											className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+										>
+											<IoPersonOutline className="w-4 h-4" />
+											Minha Conta
+										</Link>
 										<button
 											onClick={handleLogout}
 											className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
@@ -420,6 +460,14 @@ const Header = () => {
 									<p className="text-sm font-semibold text-gray-800">{user?.name} {user?.surname}</p>
 									<p className="text-xs text-gray-500">{user?.email}</p>
 								</div>
+								<NavLink
+									to="/dashboard"
+									onClick={() => setMenuOpen(false)}
+									className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 border-b border-gray-100"
+								>
+									<IoPersonOutline className="w-5 h-5 text-gray-400" />
+									<span>Minha Conta</span>
+								</NavLink>
 								<button
 									onClick={handleLogout}
 									className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full cursor-pointer"

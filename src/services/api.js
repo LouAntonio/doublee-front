@@ -12,7 +12,7 @@ const notyf = new Notyf({
 // URL da API
 const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
 const API_URL = isProd
-	? 'https://dbe.ecopacks-ao.com'
+	? 'https://doublee-back-production.up.railway.app'
 	: 'http://localhost:20262';
 
 /**
