@@ -180,10 +180,10 @@ const Header = () => {
 						{/* Store dashboard — only when store is approved */}
 						{isAuthenticated && hasApprovedStore && (
 							<Link
-								to="/dashboard?tab=store"
+								to="/loja/dashboard"
 								className="relative p-2 rounded-full text-white hover:bg-orange-500 transition-colors"
-								aria-label="Minha Loja"
-								title="Minha Loja"
+								aria-label="Gerir Loja"
+								title="Gerir Loja"
 							>
 								<IoStorefrontOutline className="w-6 h-6" />
 							</Link>
@@ -467,8 +467,16 @@ const Header = () => {
 								>
 									<IoPersonOutline className="w-5 h-5 text-gray-400" />
 									<span>Minha Conta</span>
-								</NavLink>
-								<button
+								</NavLink>							{hasApprovedStore && (
+									<NavLink
+										to="/loja/dashboard"
+										onClick={() => setMenuOpen(false)}
+										className="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 border-b border-gray-100"
+									>
+										<IoStorefrontOutline className="w-5 h-5 text-gray-400" />
+										<span>Gerir Loja</span>
+									</NavLink>
+								)}								<button
 									onClick={handleLogout}
 									className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full cursor-pointer"
 								>

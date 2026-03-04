@@ -8,6 +8,7 @@ import AccountSettings from '../components/dashboard/AccountSettings';
 import IdentityVerification from '../components/dashboard/IdentityVerification';
 import OrderHistory from '../components/dashboard/OrderHistory';
 import StoreCreation from '../components/dashboard/StoreCreation';
+import StoreDashboard from '../components/dashboard/StoreDashboard';
 import {
 	IoPersonOutline,
 	IoLockClosedOutline,
@@ -18,6 +19,7 @@ import {
 	IoTimeOutline,
 	IoAlertCircleOutline,
 	IoStorefrontOutline,
+	IoGridOutline,
 } from 'react-icons/io5';
 
 const getGreeting = () => {
@@ -41,6 +43,8 @@ const Dashboard = () => {
 	const [activeTab, setActiveTab] = useState('profile');
 	// status: 'none' | 'pending' | 'verified'
 	const [verificationStatus, setVerificationStatus] = useState(null);
+	// store status: null | 'none' | 'pending' | 'approved' | 'rejected' | 'suspended'
+	const [storeStatus, setStoreStatus] = useState(null);
 
 	useEffect(() => {
 		const fetchVerificationStatus = async () => {
@@ -56,6 +60,19 @@ const Dashboard = () => {
 			}
 		};
 		fetchVerificationStatus();
+	}, []);
+
+	useEffect(() => {
+		const fetchStoreStatus = async () => {
+			try {
+				const data = await apiRequest('/stores/status', { method: 'GET' });
+				if (data.success) setStoreStatus(data.data?.status || 'none');
+				else setStoreStatus('none');
+			} catch {
+				setStoreStatus('none');
+			}
+		};
+		fetchStoreStatus();
 	}, []);
 
 	const tabs = useMemo(() => [
@@ -85,12 +102,14 @@ const Dashboard = () => {
 		},
 		{
 			id: 'store',
-			label: 'Criar Loja',
-			description: 'Configure e publique a sua loja',
-			icon: <IoStorefrontOutline className="w-5 h-5" />,
+			label: storeStatus === 'approved' ? 'Gerir Loja' : 'Criar Loja',
+			description: storeStatus === 'approved' ? 'Produtos, encomendas e info da loja' : 'Configure e publique a sua loja',
+			icon: storeStatus === 'approved'
+				? <IoGridOutline className="w-5 h-5" />
+				: <IoStorefrontOutline className="w-5 h-5" />,
 			requiresVerification: true,
 		},
-	], []);
+	], [storeStatus]);
 
 	const renderContent = () => {
 		switch (activeTab) {
@@ -98,7 +117,9 @@ const Dashboard = () => {
 			case 'account':      return <AccountSettings />;
 			case 'verification': return <IdentityVerification />;
 			case 'orders':       return <OrderHistory />;
-			case 'store':        return <StoreCreation verificationStatus={verificationStatus} />;
+			case 'store':        return storeStatus === 'approved'
+				? <StoreDashboard />
+				: <StoreCreation verificationStatus={verificationStatus} />;
 			default:             return <ProfileSettings />;
 		}
 	};

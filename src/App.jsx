@@ -18,6 +18,7 @@ import Produtos from './pages/Produtos';
 import Lojas from './pages/Lojas';
 import LojaDetails from './pages/LojaDetails';
 import Dashboard from './pages/Dashboard';
+import StoreDashboardPage from './pages/StoreDashboardPage';
 
 // Redirect authenticated users away from /auth
 const AuthRoute = () => {
@@ -60,6 +61,14 @@ function AppRoutes() {
 					element={
 						<ProtectedRoute>
 							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/loja/dashboard"
+					element={
+						<ProtectedRoute>
+							<StoreDashboardPage />
 						</ProtectedRoute>
 					}
 				/>
