@@ -168,7 +168,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.email}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="seu@email.com"
 							/>
 						</div>
@@ -181,7 +181,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						type="button"
 						onClick={handleEmailSubmit}
 						disabled={isLoading}
-						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
 					>
 						{isLoading ? (
 							<>
@@ -197,7 +197,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						<button
 							type="button"
 							onClick={onSwitchToLogin}
-							className="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2 mx-auto"
+							className="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2 mx-auto cursor-pointer"
 						>
 							<IoArrowBack className="w-4 h-4" />
 							Voltar para login
@@ -233,7 +233,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 									onChange={(e) => handleOtpChange(index, e.target.value)}
 									onKeyDown={(e) => handleOtpKeyDown(index, e)}
 									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								/>
 							))}
 						</div>
@@ -247,7 +247,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 							type="button"
 							onClick={handleResendOtp}
 							disabled={resendTimer !== 0 || isLoading}
-							className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+							className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed cursor-pointer"
 						>
 							{resendTimer === 0 ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
 						</button>
@@ -257,7 +257,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						type="button"
 						onClick={handleOtpSubmit}
 						disabled={isLoading}
-						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
 					>
 						{isLoading ? (
 							<>
@@ -273,7 +273,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						<button
 							type="button"
 							onClick={() => setCurrentStep(1)}
-							className="text-sm text-gray-600 hover:text-gray-700 font-medium flex items-center gap-2 mx-auto"
+							className="text-sm text-gray-600 hover:text-gray-700 font-medium flex items-center gap-2 mx-auto cursor-pointer"
 						>
 							<IoArrowBack className="w-4 h-4" />
 							Alterar e-mail
@@ -305,7 +305,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.newPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.newPassword ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Mínimo 6 caracteres"
 							/>
 							<button
@@ -340,7 +340,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.confirmPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Digite a senha novamente"
 							/>
 							<button
@@ -364,7 +364,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						type="button"
 						onClick={handlePasswordSubmit}
 						disabled={isLoading}
-						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
 					>
 						{isLoading ? (
 							<>
@@ -392,7 +392,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 					<button
 						type="button"
 						onClick={onSwitchToLogin}
-						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200"
+						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 cursor-pointer"
 					>
 						Fazer Login
 					</button>

@@ -77,7 +77,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 						value={formData.email}
 						onChange={handleChange}
 						className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-						} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+							} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 						placeholder="seu@email.com"
 					/>
 				</div>
@@ -102,7 +102,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 						value={formData.password}
 						onChange={handleChange}
 						className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'
-						} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+							} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 						placeholder="••••••••"
 					/>
 					<button
@@ -137,7 +137,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 				<button
 					type="button"
 					onClick={onSwitchToRecovery}
-					className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+					className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
 				>
 					Esqueceu a senha?
 				</button>
@@ -147,7 +147,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 			<button
 				type="submit"
 				disabled={isLoading}
-				className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+				className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
 			>
 				{isLoading ? (
 					<>
@@ -166,7 +166,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 					<button
 						type="button"
 						onClick={onSwitchToRegister}
-						className="text-blue-600 hover:text-blue-700 font-semibold"
+						className="text-blue-600 hover:text-blue-700 font-semibold cursor-pointer"
 					>
 						Criar conta
 					</button>
