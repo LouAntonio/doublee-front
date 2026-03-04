@@ -216,7 +216,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.email}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="seu@email.com"
 							/>
 						</div>
@@ -281,7 +281,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 									onChange={(e) => handleOtpChange(index, e.target.value)}
 									onKeyDown={(e) => handleOtpKeyDown(index, e)}
 									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'
-										} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								/>
 							))}
 						</div>
@@ -353,7 +353,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.newPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.newPassword ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Mínimo 8 caracteres"
 							/>
 							<button
@@ -388,7 +388,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 								value={formData.confirmPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 								placeholder="Digite a senha novamente"
 							/>
 							<button

@@ -99,7 +99,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 						value={formData.email}
 						onChange={handleChange}
 						className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-							} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+						} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 						placeholder="seu@email.com"
 					/>
 				</div>
@@ -124,7 +124,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 						value={formData.password}
 						onChange={handleChange}
 						className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'
-							} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+						} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
 						placeholder="••••••••"
 					/>
 					<button

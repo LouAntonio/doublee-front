@@ -259,13 +259,13 @@ const Header = () => {
 										className={`absolute top-[calc(100%+0.4rem)] left-0 ${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
 											? 'w-[680px]'
 											: 'w-[240px]'
-											} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
+										} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden transition-all duration-150`}
 									>
 										{/* Main list */}
 										<div className={`${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
 											? 'w-1/3'
 											: 'w-full'
-											} bg-gray-800 text-white`}>
+										} bg-gray-800 text-white`}>
 											<ul>
 												{categories.map((category) => (
 													<li
@@ -273,7 +273,7 @@ const Header = () => {
 														className={`cursor-pointer text-sm ${activeCategory === category.name
 															? 'bg-[#F97316]'
 															: 'hover:bg-gray-700'
-															}`}
+														}`}
 														onMouseEnter={() => setActiveCategory(category.name)}
 													>
 														<Link

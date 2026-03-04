@@ -10,11 +10,10 @@ const notyf = new Notyf({
 });
 
 // URL da API
-let API_URL = 'http://localhost:20262';
-
-if (0) {
-	API_URL = 'https://dbe.ecopacks-ao.com';
-}
+const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
+const API_URL = isProd
+	? 'https://dbe.ecopacks-ao.com'
+	: 'http://localhost:20262';
 
 /**
  * Faz logout do usuário limpando o localStorage e redirecionando para login
@@ -76,7 +75,7 @@ const apiRequest = async (endpoint, options = {}) => {
 			data = await response.json();
 		} catch (error) {
 			// Se não for JSON, retornar um objeto de erro
-			throw new Error('Erro ao processar resposta do servidor');
+			throw new Error(`Erro ao processar resposta do servidor: ${error}`);
 		}
 
 		// Verificar se é um erro de autenticação (sessão expirada)
