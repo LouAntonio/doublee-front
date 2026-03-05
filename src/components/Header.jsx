@@ -221,7 +221,6 @@ const Header = () => {
 									aria-label="Conta"
 								>
 									<IoPersonOutline className="w-6 h-6" />
-									<span className="text-sm font-medium hidden sm:inline">{user?.name}</span>
 								</button>
 								{userMenuOpen && (
 									<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">

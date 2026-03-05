@@ -21,7 +21,6 @@ const API_URL = isProd
 const handleSessionExpired = () => {
 	// Limpar dados do localStorage
 	localStorage.removeItem('doublee_user');
-	localStorage.removeItem('doublee_token');
 
 	// Mostrar notificação
 	notyf.error('Sua sessão expirou. Por favor, faça login novamente.');
@@ -51,23 +50,12 @@ const apiRequest = async (endpoint, options = {}) => {
 			headers['Content-Type'] = 'application/json';
 		}
 
-		// Adicionar token de autorização se existir
-		const token = localStorage.getItem('doublee_token');
-		if (token) {
-			headers['Authorization'] = `Bearer ${token}`;
-		}
-
 		// Fazer a requisição
 		const response = await fetch(`${API_URL}${endpoint}`, {
 			...options,
 			headers,
+			credentials: 'include',
 		});
-
-		// Verificar se há um token renovado no header
-		const renewedToken = response.headers.get('x-renewed-token');
-		if (renewedToken) {
-			localStorage.setItem('doublee_token', renewedToken);
-		}
 
 		// Tentar parsear a resposta como JSON
 		let data;

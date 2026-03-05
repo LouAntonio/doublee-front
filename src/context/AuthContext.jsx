@@ -18,25 +18,16 @@ export const AuthProvider = ({ children }) => {
 		return savedUser ? JSON.parse(savedUser) : null;
 	});
 
-	const [token, setToken] = useState(() => {
-		return localStorage.getItem('doublee_token') || null;
-	});
-
 	const [isLoading, setIsLoading] = useState(true);
 
-	// Validate token on mount
+	// Validate session cookie on mount
 	useEffect(() => {
 		const validateSession = async () => {
-			if (!token) {
-				setIsLoading(false);
-				return;
-			}
-
 			try {
 				const data = await apiRequest('/users/is-logged-in', { method: 'GET' });
 
 				if (!data.success) {
-					// Token is invalid or expired
+					// Cookie is invalid or expired
 					logout();
 				}
 			} catch {
@@ -49,25 +40,20 @@ export const AuthProvider = ({ children }) => {
 		validateSession();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const login = (newToken, userData) => {
-		setToken(newToken);
+	const login = (userData) => {
 		setUser(userData);
-		localStorage.setItem('doublee_token', newToken);
 		localStorage.setItem('doublee_user', JSON.stringify(userData));
 	};
 
 	const logout = () => {
-		setToken(null);
 		setUser(null);
-		localStorage.removeItem('doublee_token');
 		localStorage.removeItem('doublee_user');
 	};
 
-	const isAuthenticated = !!user && !!token;
+	const isAuthenticated = !!user;
 
 	const value = {
 		user,
-		token,
 		isAuthenticated,
 		isLoading,
 		login,

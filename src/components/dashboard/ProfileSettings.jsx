@@ -29,8 +29,7 @@ const ProfileSettings = () => {
 				notyf.success('Perfil atualizado com sucesso!');
 				// Update user in context and localStorage
 				const updatedUser = { ...user, ...formData };
-				const token = localStorage.getItem('doublee_token');
-				login(token, updatedUser);
+				login(updatedUser);
 			} else {
 				notyf.error(data.msg || 'Erro ao atualizar perfil.');
 			}

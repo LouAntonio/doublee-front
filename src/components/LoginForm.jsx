@@ -53,7 +53,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 				});
 
 				if (data.success) {
-					login(data.token, data.user);
+					login(data.user);
 					notyf.success('Login realizado com sucesso!');
 					navigate('/');
 				} else {
