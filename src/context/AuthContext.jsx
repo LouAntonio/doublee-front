@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 		};
 
 		validateSession();
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	}, []);  
 
 	const login = (userData) => {
 		setUser(userData);
