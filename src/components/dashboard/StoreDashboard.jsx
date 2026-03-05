@@ -33,17 +33,26 @@ const StoreDashboard = () => {
 		setLoading(true);
 		setError(null);
 		try {
-			const [storeRes, productsRes, ordersRes] = await Promise.all([
+			const [storeRes, productsRes, ordersRes] = await Promise.allSettled([
 				apiRequest('/stores/mine', { method: 'GET' }),
 				apiRequest('/stores/products', { method: 'GET' }),
 				apiRequest('/stores/orders', { method: 'GET' }),
 			]);
 
-			if (storeRes.success) setStore(storeRes.data?.store || storeRes.data || null);
-			if (productsRes.success) setProducts(productsRes.data?.products || productsRes.data || []);
-			if (ordersRes.success) setOrders(ordersRes.data?.orders || ordersRes.data || []);
+			if (storeRes.status === 'fulfilled' && storeRes.value.success) {
+				setStore(storeRes.value.data?.store || storeRes.value.data || null);
+			} else if (storeRes.status === 'rejected' || (storeRes.status === 'fulfilled' && !storeRes.value.success)) {
+				throw new Error('Não foi possível carregar os dados da loja.');
+			}
+
+			if (productsRes.status === 'fulfilled' && productsRes.value.success)
+				setProducts(productsRes.value.data?.products || productsRes.value.data || []);
+
+			if (ordersRes.status === 'fulfilled' && ordersRes.value.success)
+				setOrders(ordersRes.value.data?.orders || ordersRes.value.data || []);
+
 		} catch (err) {
-			setError('Não foi possível carregar os dados da loja.');
+			setError(err.message || 'Não foi possível carregar os dados da loja.');
 			console.error(err);
 		} finally {
 			setLoading(false);
