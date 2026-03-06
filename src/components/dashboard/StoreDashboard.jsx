@@ -12,6 +12,7 @@ import StoreInfoTab from './store/StoreInfoTab';
 import ProductsTab from './store/ProductsTab';
 import OrdersTab from './store/OrdersTab';
 import StatisticsTab from './store/StatisticsTab';
+import StoreDashboardSkeleton from './StoreDashboardSkeleton';
 
 const TABS = [
 	{ id: 'overview', label: 'Visão Geral', icon: IoStatsChartOutline },
@@ -35,7 +36,7 @@ const StoreDashboard = () => {
 		try {
 			const [storeRes, productsRes, ordersRes] = await Promise.allSettled([
 				apiRequest('/stores/mine', { method: 'GET' }),
-				apiRequest('/stores/products', { method: 'GET' }),
+				apiRequest('/products/mine', { method: 'GET' }),
 				apiRequest('/stores/orders', { method: 'GET' }),
 			]);
 
@@ -62,12 +63,7 @@ const StoreDashboard = () => {
 	useEffect(() => { fetchAll(); }, [fetchAll]);
 
 	if (loading) {
-		return (
-			<div className="flex flex-col items-center justify-center py-20 gap-3">
-				<div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-				<p className="text-sm text-gray-400">A carregar dados da loja...</p>
-			</div>
-		);
+		return <StoreDashboardSkeleton />;
 	}
 
 	if (error) {

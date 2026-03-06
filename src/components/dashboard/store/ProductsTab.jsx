@@ -27,12 +27,12 @@ const normalizeChars = raw => {
 
 // ProductStatus do schema
 const PRODUCT_STATUS_MAP = {
-	active:       { label: 'Activo',        cls: 'bg-green-50 text-green-700 border-green-200' },
-	inactive:     { label: 'Inactivo',      cls: 'bg-gray-100 text-gray-500 border-gray-200' },
-	outOfStock:   { label: 'Sem stock',     cls: 'bg-orange-50 text-orange-700 border-orange-200' },
+	active: { label: 'Activo', cls: 'bg-green-50 text-green-700 border-green-200' },
+	inactive: { label: 'Inactivo', cls: 'bg-gray-100 text-gray-500 border-gray-200' },
+	outOfStock: { label: 'Sem stock', cls: 'bg-orange-50 text-orange-700 border-orange-200' },
 	discontinued: { label: 'Descontinuado', cls: 'bg-red-50 text-red-600 border-red-200' },
-	suspended:    { label: 'Suspenso',      cls: 'bg-red-100 text-red-700 border-red-300' },
-	pending:      { label: 'Pendente',      cls: 'bg-amber-50 text-amber-700 border-amber-200' },
+	suspended: { label: 'Suspenso', cls: 'bg-red-100 text-red-700 border-red-300' },
+	pending: { label: 'Pendente', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
 };
 
 const isPromoValid = product => {
@@ -55,7 +55,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 	useEffect(() => {
 		apiRequest('/categories', { method: 'GET' })
 			.then(res => { if (res.success) setAllCategories(res.data?.categories || []); })
-			.catch(() => {});
+			.catch(() => { });
 	}, []);
 
 	// Main form fields
@@ -202,8 +202,8 @@ const ProductsTab = ({ products, onRefresh }) => {
 
 			setSavingProgress('A guardar produto...');
 			const data = editingProduct
-				? await apiRequest(`/stores/products/${editingProduct.id}`, { method: 'PUT', body: JSON.stringify(payload) })
-				: await apiRequest('/stores/products', { method: 'POST', body: JSON.stringify(payload) });
+				? await apiRequest(`/products/${editingProduct.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+				: await apiRequest('/products', { method: 'POST', body: JSON.stringify(payload) });
 
 			if (data.success) {
 				notyf.success(editingProduct ? 'Produto actualizado!' : 'Produto adicionado!');
@@ -224,7 +224,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 		if (!window.confirm('Tem a certeza que quer eliminar este produto?')) return;
 		setDeleting(id);
 		try {
-			const data = await apiRequest(`/stores/products/${id}`, { method: 'DELETE' });
+			const data = await apiRequest(`/products/${id}`, { method: 'DELETE' });
 			if (data.success) {
 				notyf.success('Produto eliminado.');
 				onRefresh();
@@ -259,7 +259,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 						</button>
 					} />
 			) : (
-				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 					{products.map(product => (
 						<div key={product.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:border-primary-200 hover:shadow-md transition-all group">
 							<div className="relative h-40 bg-gray-50">
@@ -300,8 +300,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 											<span className="text-sm font-bold text-gray-900">{formatCurrency(product.price)}</span>
 										)}
 									</div>
-									<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${
-										product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+									<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
 									}`}>
 										{product.stock > 0 ? `${product.stock} em stock` : 'Sem stock'}
 									</span>
