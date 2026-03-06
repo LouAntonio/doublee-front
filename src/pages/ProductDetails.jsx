@@ -90,6 +90,7 @@ const ProductDetails = () => {
 							}
 							return [{ label: 'Detalhe', value: String(chars) }];
 						} catch (e) {
+							console.error('Error parsing characteristics:', e);
 							return [{ label: 'Detalhe', value: String(p.characteristics) }];
 						}
 					})(),

@@ -125,7 +125,7 @@ const LojaDetails = () => {
 						setStore(mapped);
 						setProducts(mappedProducts);
 					} catch (err) {
-						// Em caso de erro, manter fallback com lista vazia
+						console.error('Error fetching products:', err);
 						setStore(mapped);
 						setProducts([]);
 					}

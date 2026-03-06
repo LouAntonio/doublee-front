@@ -54,22 +54,20 @@ const Promocoes = () => {
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-	const buildQuery = () => {
-		const params = new URLSearchParams();
-		params.set('page', currentPage);
-		params.set('limit', itemsPerPage);
-		if (selectedCategories && selectedCategories.length) params.set('categoryIds', selectedCategories.join(','));
-		if (priceRange.min) params.set('minPrice', priceRange.min);
-		if (priceRange.max) params.set('maxPrice', priceRange.max);
-		params.set('onPromotion', 'true');
-		return `?${params.toString()}`;
-	};
-
 	useEffect(() => {
 		let mounted = true;
 		const fetchOffers = async () => {
 			setLoading(true);
-			const query = buildQuery();
+
+			const params = new URLSearchParams();
+			params.set('page', currentPage);
+			params.set('limit', itemsPerPage);
+			if (selectedCategories && selectedCategories.length) params.set('categoryIds', selectedCategories.join(','));
+			if (priceRange.min) params.set('minPrice', priceRange.min);
+			if (priceRange.max) params.set('maxPrice', priceRange.max);
+			params.set('onPromotion', 'true');
+			const query = `?${params.toString()}`;
+
 			const res = await apiRequest(`/products${query}`);
 			if (!mounted) return;
 			if (res && res.success) {
@@ -106,6 +104,7 @@ const Promocoes = () => {
 
 		fetchOffers();
 		return () => { mounted = false; };
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, itemsPerPage, fetchTrigger, sortOption]);
 
 	return (

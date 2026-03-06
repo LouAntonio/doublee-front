@@ -29,7 +29,7 @@ const FilterSidebar = ({
 				if (!mounted) return;
 				if (res && res.success) setFetchedCategories(res.data?.categories || []);
 			} catch (err) {
-				// ignore, keep empty
+				console.log('Error fetching categories:', err);
 			}
 		};
 		load();
