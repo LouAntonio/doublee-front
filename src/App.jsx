@@ -24,8 +24,7 @@ import StoreDashboardPage from './pages/StoreDashboardPage';
 const AuthRoute = () => {
 	const { isAuthenticated, isLoading } = useAuth();
 
-	if (isLoading) return null;
-	if (isAuthenticated) return <Navigate to="/" replace />;
+	if (!isLoading && isAuthenticated) return <Navigate to="/" replace />;
 	return <Auth />;
 };
 

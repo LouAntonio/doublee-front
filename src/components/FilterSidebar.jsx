@@ -1,23 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoSearchOutline, IoRefreshOutline } from 'react-icons/io5';
 import { MdCategory } from 'react-icons/md';
 import { TbCurrencyDollarOff, TbCurrencyDollar } from 'react-icons/tb';
+import apiRequest from '../services/api';
 
 const FilterSidebar = ({
 	categories = [],
 	priceRange = { min: '', max: '' },
-	setPriceRange = () => {},
+	setPriceRange = () => { },
 	selectedCategories = [],
-	setSelectedCategories = () => {},
-	setRating = () => {},
+	setSelectedCategories = () => { },
+	setRating = () => { },
 	searchQuery = '',
-	setSearchQuery = () => {},
-	setSelectedBrand = () => {},
+	setSearchQuery = () => { },
+	setSelectedBrand = () => { },
 	featuredOnly = false,
-	setFeaturedOnly = () => {},
-	onSearch = () => {},
-	onClear = () => {},
+	setFeaturedOnly = () => { },
+	onSearch = () => { },
+	onClear = () => { },
 }) => {
+	const [fetchedCategories, setFetchedCategories] = useState([]);
+
+	useEffect(() => {
+		let mounted = true;
+		const load = async () => {
+			try {
+				const res = await apiRequest('/categories');
+				if (!mounted) return;
+				if (res && res.success) setFetchedCategories(res.data?.categories || []);
+			} catch (err) {
+				// ignore, keep empty
+			}
+		};
+		load();
+		return () => { mounted = false; };
+	}, []);
 
 	const handleClear = () => {
 		setSearchQuery('');
@@ -46,6 +63,7 @@ const FilterSidebar = ({
 						placeholder="Ex: Piscina, Mangueira..."
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
+						onKeyDown={(e) => { if (e.key === 'Enter') onSearch(); }}
 						className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
 					/>
 				</div>
@@ -57,18 +75,21 @@ const FilterSidebar = ({
 						Categorias
 					</label>
 					<div className="flex flex-wrap gap-2">
-						{categories.map((cat) => {
-							const selected = selectedCategories.includes(cat);
+						{(fetchedCategories.length > 0 ? fetchedCategories : categories).map((cat) => {
+							// cat can be either string (fallback) or object { id, name }
+							const id = typeof cat === 'string' ? cat : cat.id;
+							const name = typeof cat === 'string' ? cat : cat.name;
+							const selected = selectedCategories.includes(id);
 							return (
 								<button
-									key={cat}
+									key={id}
 									onClick={() => {
-										if (selected) setSelectedCategories(selectedCategories.filter(c => c !== cat));
-										else setSelectedCategories([...selectedCategories, cat]);
+										if (selected) setSelectedCategories(selectedCategories.filter(c => c !== id));
+										else setSelectedCategories([...selectedCategories, id]);
 									}}
 									className={`text-sm px-3 py-1 rounded-md border transition focus:outline-none ${selected ? 'bg-[#F97316] text-white' : 'bg-white text-gray-700 border-gray-200'}`}
 								>
-									{cat}
+									{name}
 								</button>
 							);
 						})}

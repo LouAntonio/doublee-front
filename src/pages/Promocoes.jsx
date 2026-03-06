@@ -1,166 +1,112 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import FilterSidebar from '../components/FilterSidebar';
+import ProductSkeleton from '../components/ProductSkeleton';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import apiRequest from '../services/api';
 
 const Promocoes = () => {
 	useDocumentTitle('Produtos em Promoção - Double E');
 
-	// Countdown timer logic
-	const [timeLeft, setTimeLeft] = React.useState({ hours: 12, minutes: 45, seconds: 30 });
+	// Countdown timer logic (Ends at midnight)
+	const calculateTimeLeft = () => {
+		const now = new Date();
+		const midnight = new Date();
+		midnight.setHours(24, 0, 0, 0);
 
-	React.useEffect(() => {
+		const diff = midnight - now;
+		if (diff > 0) {
+			return {
+				hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+				minutes: Math.floor((diff / 1000 / 60) % 60),
+				seconds: Math.floor((diff / 1000) % 60),
+			};
+		}
+		return { hours: 0, minutes: 0, seconds: 0 };
+	};
+
+	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+	useEffect(() => {
 		const timer = setInterval(() => {
-			setTimeLeft(prev => {
-				if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-				if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-				if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-				return prev;
-			});
+			setTimeLeft(calculateTimeLeft());
 		}, 1000);
 		return () => clearInterval(timer);
 	}, []);
 
 	const pad = (n) => n.toString().padStart(2, '0');
 
-	const offers = [
-		{
-			id: 1,
-			title: 'Smartphone Samsung Galaxy S23 Ultra 5G 256GB Cream',
-			price: 899000,
-			oldPrice: 1199000,
-			discount: 25,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Galaxy+S23',
-			coupon: 'SAMSUNG25'
-		},
-		{
-			id: 2,
-			title: 'Smart TV 55" 4K UHD LG LED Wi-Fi Bluetooth HDR10',
-			price: 459000,
-			oldPrice: 699000,
-			discount: 34,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=TV+LG+55',
-			coupon: 'TVLG10'
-		},
-		{
-			id: 3,
-			title: 'Notebook Dell Inspiron 15 3000 Intel Core i5 8GB 256GB SSD',
-			price: 529000,
-			oldPrice: 729000,
-			discount: 27,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Dell+Inspiron'
-		},
-		{
-			id: 4,
-			title: 'Geladeira Brastemp Frost Free Duplex 375L Branca',
-			price: 689000,
-			oldPrice: 899000,
-			discount: 23,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Geladeira',
-			coupon: 'COZINHA20'
-		},
-		{
-			id: 5,
-			title: 'Fritadeira Sem Óleo Air Fryer Mondial 4L',
-			price: 89000,
-			oldPrice: 149000,
-			discount: 40,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Air+Fryer'
-		},
-		{
-			id: 6,
-			title: 'Console Sony PlayStation 5 825GB',
-			price: 3899000,
-			oldPrice: 4499000,
-			discount: 13,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=PS5',
-			coupon: 'GAME100'
-		},
-		{
-			id: 7,
-			title: 'Máquina de Lavar Electrolux 13kg Branca',
-			price: 2199000,
-			oldPrice: 2899000,
-			discount: 24,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Lavadora'
-		},
-		{
-			id: 8,
-			title: 'Iphone 14 128GB Estelar',
-			price: 5699000,
-			oldPrice: 6499000,
-			discount: 12,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=iPhone+14'
-		},
-		{
-			id: 9,
-			title: 'Micro-ondas Electrolux 34L Branco',
-			price: 159000,
-			oldPrice: 219000,
-			discount: 27,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Microondas'
-		},
-		{
-			id: 10,
-			title: 'Cafeteira Expresso Nespresso Essenza Mini',
-			price: 89000,
-			oldPrice: 129000,
-			discount: 31,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Nespresso',
-			coupon: 'CAFE15'
-		},
-		{
-			id: 11,
-			title: 'Soundbar JBL Cinema 2.1 Canais 110W',
-			price: 129900,
-			oldPrice: 189900,
-			discount: 31,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Soundbar'
-		},
-		{
-			id: 12,
-			title: 'Robô Aspirador de Pó Multilaser',
-			price: 49900,
-			oldPrice: 79900,
-			discount: 37,
-			image: 'https://via.placeholder.com/300x300/f5f5f5/666?text=Robo+Aspirador'
-		}
-	];
-
 	// Filter and Pagination state
-	const [priceRange, setPriceRange] = React.useState({ min: '', max: '' });
-	const [selectedCategories, setSelectedCategories] = React.useState([]);
-	const [rating, setRating] = React.useState(null);
-	const [sortOption, setSortOption] = React.useState('relevance');
-	const [currentPage, setCurrentPage] = React.useState(1);
+	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+	const [selectedCategories, setSelectedCategories] = useState([]);
+	const [rating, setRating] = useState(null);
+	const [sortOption, setSortOption] = useState('relevance');
+	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
 
-	// Apply sorting
-	const getSortedOffers = () => {
-		let sorted = [...offers];
-		if (sortOption === 'lowest') {
-			sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
-		} else if (sortOption === 'highest') {
-			sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
-		} else if (sortOption === 'name') {
-			sorted.sort((a, b) => String(a.title).localeCompare(String(b.title)));
-		}
-		// Filter by selected categories (mock logic as offers don't have category field in this snippet, assumes generic match if implemented)
-		// For now we just return sorted
-		return sorted;
-	};
-
-	const sortedOffers = getSortedOffers();
-
-	// Pagination
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentOffers = sortedOffers.slice(indexOfFirstItem, indexOfLastItem);
-	const totalPages = Math.ceil(sortedOffers.length / itemsPerPage);
+	const [offers, setOffers] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [totalResults, setTotalResults] = useState(0);
+	const [totalPages, setTotalPages] = useState(1);
+	const [fetchTrigger, setFetchTrigger] = useState(0);
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+	const buildQuery = () => {
+		const params = new URLSearchParams();
+		params.set('page', currentPage);
+		params.set('limit', itemsPerPage);
+		if (selectedCategories && selectedCategories.length) params.set('categoryIds', selectedCategories.join(','));
+		if (priceRange.min) params.set('minPrice', priceRange.min);
+		if (priceRange.max) params.set('maxPrice', priceRange.max);
+		params.set('onPromotion', 'true');
+		return `?${params.toString()}`;
+	};
+
+	useEffect(() => {
+		let mounted = true;
+		const fetchOffers = async () => {
+			setLoading(true);
+			const query = buildQuery();
+			const res = await apiRequest(`/products${query}`);
+			if (!mounted) return;
+			if (res && res.success) {
+				const items = (res.data?.products || []).map(p => ({
+					id: p.id,
+					title: p.name,
+					price: p.promotionalPrice ?? p.price,
+					oldPrice: p.promotionalPrice ? p.price : undefined,
+					image: p.image || '/images/logo/placeholder.png',
+					rating: p.rating,
+					reviewCount: p.qtdRatings,
+					discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
+				}));
+
+				// Sorting locally if backend does not sort items in place
+				if (sortOption === 'lowest') {
+					items.sort((a, b) => (a.price || 0) - (b.price || 0));
+				} else if (sortOption === 'highest') {
+					items.sort((a, b) => (b.price || 0) - (a.price || 0));
+				} else if (sortOption === 'name') {
+					items.sort((a, b) => String(a.title).localeCompare(String(b.title)));
+				}
+
+				setOffers(items);
+				setTotalResults(res.data?.pagination?.total || 0);
+				setTotalPages(res.data?.pagination?.totalPages || 1);
+			} else {
+				setOffers([]);
+				setTotalResults(0);
+				setTotalPages(1);
+			}
+			setLoading(false);
+		};
+
+		fetchOffers();
+		return () => { mounted = false; };
+	}, [currentPage, itemsPerPage, fetchTrigger, sortOption]);
 
 	return (
 		<>
@@ -180,8 +126,8 @@ const Promocoes = () => {
 							<div className="mb-6 md:mb-0">
 								<h1 className="text-4xl font-extrabold mb-2 tracking-tight">Produtos em Promoção</h1>
 								<p className="text-gray-100 text-lg max-w-xl">
-                                    Aproveite descontos exclusivos por tempo limitado.
-                                    Corra antes que o estoque acabe!
+									Aproveite descontos exclusivos por tempo limitado.
+									Corra antes que o estoque acabe!
 								</p>
 							</div>
 
@@ -211,13 +157,14 @@ const Promocoes = () => {
 					<div className="flex gap-6">
 						{/* Sidebar Filters */}
 						<FilterSidebar
-							categories={['Mais Vendidos', 'Smartphones', 'Notebooks', 'TVs', 'Casa', 'Beleza', 'Moda']}
 							priceRange={priceRange}
 							setPriceRange={setPriceRange}
 							selectedCategories={selectedCategories}
 							setSelectedCategories={setSelectedCategories}
 							rating={rating}
 							setRating={setRating}
+							onSearch={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
+							onClear={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
 						/>
 
 						{/* Main Content */}
@@ -228,7 +175,7 @@ const Promocoes = () => {
 									<span className="w-2 h-8 bg-blue-600 rounded-full inline-block"></span>
 									<div>
 										<h2 className="text-xl font-bold text-gray-800">Destaques do Dia</h2>
-										<span className="text-xs text-gray-500 font-medium">{offers.length} produtos encontrados</span>
+										<span className="text-xs text-gray-500 font-medium">{totalResults} produtos encontrados</span>
 									</div>
 								</div>
 
@@ -247,8 +194,19 @@ const Promocoes = () => {
 								</div>
 							</div>
 
-							{/* Product Grid */}
-							<ProductGrid products={currentOffers} />
+							{loading ? (
+								<div style={{
+									display: 'grid',
+									gridTemplateColumns: 'repeat(4, 1fr)',
+									gap: '12px'
+								}}>
+									{Array.from({ length: itemsPerPage }).map((_, i) => (
+										<ProductSkeleton key={i} />
+									))}
+								</div>
+							) : (
+								<ProductGrid products={offers} />
+							)}
 
 							{/* Pagination */}
 							<div className="flex justify-center items-center mt-8 gap-2">
@@ -257,7 +215,7 @@ const Promocoes = () => {
 									disabled={currentPage === 1}
 									className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-colors ${currentPage === 1
 										? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-										: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-gray-200'
+										: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'
 									}`}
 								>
 									<IoChevronBack size={18} />
@@ -268,8 +226,8 @@ const Promocoes = () => {
 										key={i}
 										onClick={() => paginate(i + 1)}
 										className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-medium ${currentPage === i + 1
-											? 'bg-blue-600 text-white border-blue-600'
-											: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-gray-200'
+											? 'bg-orange-500 text-white border-orange-500'
+											: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'
 										}`}
 									>
 										{i + 1}
@@ -281,7 +239,7 @@ const Promocoes = () => {
 									disabled={currentPage === totalPages}
 									className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-colors ${currentPage === totalPages
 										? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-										: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-gray-200'
+										: 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'
 									}`}
 								>
 									<IoChevronForward size={18} />

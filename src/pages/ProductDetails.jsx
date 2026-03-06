@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
+import apiRequest from '../services/api';
 
 const ProductDetails = () => {
 	const { id } = useParams();
@@ -55,254 +56,59 @@ const ProductDetails = () => {
 	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
 
 	useEffect(() => {
-		// Simulando busca de dados do produto
+		let mounted = true;
 		const fetchProduct = async () => {
 			setLoading(true);
-			await new Promise(resolve => setTimeout(resolve, 500));
+			const res = await apiRequest(`/products/${id}`);
+			if (!mounted) return;
 
-			// Produtos de exemplo
-			const mockProducts = [
-				{
-					id: 1,
-					title: 'Arroz Tipo 1 Tio João',
-					price: 5990,
-					oldPrice: 7990,
-					discount: 25,
-					promotionEndDate: '2026-03-02T23:59:59',
-					images: [
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Arroz+Tio+João+1',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Arroz+Tio+João+2',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Arroz+Tio+João+3',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Arroz+Tio+João+4'
-					],
-					category: 'Alimentos Básicos',
-					brand: 'Tio João',
-					weight: '1kg',
-					description: 'Arroz tipo 1, grãos longos e soltos. Produto de alta qualidade ideal para o dia a dia. Rico em nutrientes essenciais, perfeito para acompanhar suas refeições.',
-					rating: 4.5,
-					reviews: 128,
-					stock: 45,
-					seller: {
-						name: 'Produtos Online',
-						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
-						rating: 4.8,
-						sales: '+5000 vendas'
-					},
-					specs: [
-						{ label: 'Marca', value: 'Tio João' },
-						{ label: 'Tipo', value: 'Tipo 1' },
-						{ label: 'Peso líquido', value: '1kg' },
-						{ label: 'Validade', value: '12 meses' }
-					],
-					features: [
-						'Tipo 1 - Alta qualidade',
-						'Grãos longos e soltos',
-						'Rico em nutrientes',
-						'Embalagem com 1kg'
-					]
-				},
-				{
-					id: 2,
-					title: 'Feijão Preto Camil',
-					price: 7490,
-					oldPrice: 9990,
-					discount: 25,
-					promotionEndDate: '2026-03-07T23:59:59',
-					images: [
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Feijão+Camil+1',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Feijão+Camil+2',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Feijão+Camil+3'
-					],
-					category: 'Alimentos Básicos',
-					brand: 'Camil',
-					weight: '1kg',
-					description: 'Feijão preto tipo 1, selecionado e de alta qualidade. Perfeito para o preparo de feijoada.',
-					rating: 4.7,
-					reviews: 95,
-					stock: 32,
-					seller: {
-						name: 'Produtos Online',
-						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
-						rating: 4.8,
-						sales: '+5000 vendas'
-					},
-					specs: [
-						{ label: 'Marca', value: 'Camil' },
-						{ label: 'Tipo', value: 'Tipo 1' },
-						{ label: 'Peso líquido', value: '1kg' },
-						{ label: 'Validade', value: '12 meses' }
-					],
-					features: [
-						'Tipo 1 - Grãos selecionados',
-						'Rico em proteínas',
-						'Fonte de fibras',
-						'Embalagem com 1kg'
-					]
-				},
-				{
-					id: 3,
-					title: 'Óleo de Soja Liza',
-					price: 8990,
-					oldPrice: 11490,
-					discount: 22,
-					promotionEndDate: '2026-03-12T23:59:59',
-					images: [
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Óleo+Liza+1',
-						'https://via.placeholder.com/600x600/f8f8f8/666?text=Óleo+Liza+2'
-					],
-					category: 'Óleos e Azeites',
-					brand: 'Liza',
-					weight: '900ml',
-					description: 'Óleo de soja refinado, ideal para cozinhar e fritar. Fonte de ácidos graxos essenciais.',
-					rating: 4.3,
-					reviews: 76,
-					stock: 58,
-					seller: {
-						name: 'Produtos Online',
-						logo: 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
-						rating: 4.8,
-						sales: '+5000 vendas'
-					},
-					specs: [
-						{ label: 'Marca', value: 'Liza' },
-						{ label: 'Volume', value: '900ml' },
-						{ label: 'Tipo', value: 'Refinado' },
-						{ label: 'Validade', value: '18 meses' }
-					],
-					features: [
-						'100% vegetal',
-						'Rico em vitamina E',
-						'Sem colesterol',
-						'Garrafa com 900ml'
-					]
-				},
-				{
-					id: 4,
-					title: 'Ventilador De Teto Silencioso Econômico Com Luz Led Lâmpada Embutida 3 Cores Ajustáveis Modos Timer Controle Remoto Instalação Fácil No Bocal Ideal Para Quarto Sala Marca Registrada Vital Decor',
-					price: 167900,
-					oldPrice: 249900,
-					discount: 32,
-					bestseller: true,
-					promotionEndDate: '2026-03-03T23:59:59',
-					images: [
-						'https://http2.mlstatic.com/D_NQ_NP_625503-MLB76890119338_062024-O.webp',
-						'https://http2.mlstatic.com/D_NQ_NP_855923-MLB76890119340_062024-O.webp',
-						'https://http2.mlstatic.com/D_NQ_NP_812239-MLB76890119339_062024-O.webp',
-						'https://http2.mlstatic.com/D_NQ_NP_999831-MLB76890119341_062024-O.webp'
-					],
-					category: 'Eletrodomésticos',
-					brand: 'Vital Decor',
-					model: 'Venti-Lux',
-					description: 'O ventilador de teto Vital Decor é a solução perfeita para quem busca conforto, economia e praticidade. Com um design moderno e elegante, ele se adapta a qualquer ambiente, seja no quarto, na sala ou no escritório. A iluminação LED embutida oferece 3 cores ajustáveis (branco frio, branco quente e neutro), permitindo criar a atmosfera ideal para cada momento. O motor silencioso garante noites de sono tranquilas, enquanto o controle remoto e o timer programável trazem total comodidade para o seu dia a dia. A instalação é super fácil, diretamente no bocal da lâmpada, sem a necessidade de obras ou furos no teto.',
-					rating: 4.8,
-					reviews: 1523,
-					stock: 120,
-					pricePerUnit: '167.900,00 Kz por unidade',
-					coupon: '10% OFF. Compra mínima 167.900,00 Kz.',
-					purchaseOptions: { count: 15, minPrice: 149900 },
-					seller: {
-						name: 'Vital Decor Oficial',
-						location: 'São Paulo, SP',
-						logo: 'https://via.placeholder.com/100x60/3483fa/fff?text=VITAL',
-						rating: 4.9,
-						sales: '+10000 vendas',
-						experience: 'Vendedor Platinum | 5 anos no Mercado Livre'
-					},
-					specs: [
-						{ label: 'Marca', value: 'Vital Decor' },
-						{ label: 'Modelo', value: 'Venti-Lux' },
-						{ label: 'Potência', value: '30W' },
-						{ label: 'Diâmetro', value: '52 cm' },
-						{ label: 'Material das pás', value: 'Plástico ABS' },
-						{ label: 'Voltagem', value: 'Bivolt (110V/220V)' }
-					],
-					features: [
-						'Motor DC silencioso e econômico.',
-						'Luz de LED com 3 temperaturas de cor.',
-						'6 velocidades de ventilação.',
-						'Função timer para desligamento automático.'
-					],
-					questions: [
-						{
-							id: 1,
-							user: 'Maria S.',
-							question: 'Boa noite! A instalação é realmente fácil como diz no anúncio? Preciso de um eletricista?',
-							answer: 'Olá, Maria! Sim, a instalação é muito simples, feita diretamente no bocal E27 padrão, como se estivesse rosqueando uma lâmpada. Não é necessário contratar um profissional. Qualquer dúvida, estamos à disposição!'
-						},
-						{
-							id: 2,
-							user: 'João P.',
-							question: 'Ele clareia bem um quarto de 12m²?',
-							answer: 'Olá, João! Sim, a luminária LED de 30W é potente e ilumina muito bem um ambiente de até 15m². Você também pode ajustar a cor da luz para deixar o ambiente mais aconchegante.'
-						}
-					],
-					ratingDistribution: { 5: 1102, 4: 298, 3: 76, 2: 31, 1: 16 },
-					opinions: [
-						{
-							id: 1,
-							user: 'Ana Clara',
-							avatar: 'AC',
-							rating: 5,
-							title: 'Excelente! Superou as minhas expectativas.',
-							comment: 'O ventilador é muito silencioso, venta bem e a luz é óptima. O controlo remoto é um diferencial. A instalação foi super fácil, eu mesma fiz em 5 minutos. Recomendo muito!',
-							date: '18 Fev. 2026',
-							helpful: 47,
-							verified: true
-						},
-						{
-							id: 2,
-							user: 'Ricardo Alves',
-							avatar: 'RA',
-							rating: 5,
-							title: 'Produto de óptima qualidade.',
-							comment: 'Gostei muito do design e da praticidade. O motor é realmente silencioso. Valeu cada centavo.',
-							date: '10 Jan. 2026',
-							helpful: 29,
-							verified: true
-						},
-						{
-							id: 3,
-							user: 'Fernanda Lima',
-							avatar: 'FL',
-							rating: 4,
-							title: 'Bom, mas poderia ser mais forte.',
-							comment: 'O produto é bom, a luz é excelente e é muito silencioso. Achei que a ventilação poderia ser um pouco mais forte, mas para o meu quarto pequeno, atende bem.',
-							date: '3 Jan. 2026',
-							helpful: 12,
-							verified: false
-						},
-						{
-							id: 4,
-							user: 'Carlos Mendes',
-							avatar: 'CM',
-							rating: 5,
-							title: 'Perfeito para o meu escritório.',
-							comment: 'Comprei para o escritório e ficou perfeito. O som é praticamente nulo, a luz LED tem uma cor muito agradável e o controlo remoto funciona muito bem. Entrega rápida e embalagem impecável.',
-							date: '22 Dez. 2025',
-							helpful: 63,
-							verified: true
-						},
-						{
-							id: 5,
-							user: 'Beatriz Nunes',
-							avatar: 'BN',
-							rating: 3,
-							title: 'Razoável, mas o controlo falhou.',
-							comment: 'O ventilador em si funciona bem e é silencioso. Porém, o controlo remoto parou de responder após 2 semanas de uso. Tive de acionar a garantia.',
-							date: '15 Dez. 2025',
-							helpful: 8,
-							verified: true
-						}
-					]
-				}
-			];
+			if (res && res.success && res.data?.product) {
+				const p = res.data.product;
 
-			const foundProduct = mockProducts.find(p => p.id === parseInt(id));
-			setProduct(foundProduct);
+				const mappedProduct = {
+					id: p.id,
+					title: p.name,
+					price: p.promotionalPrice || p.price,
+					oldPrice: p.promotionalPrice ? p.price : undefined,
+					discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
+					promotionEndDate: p.promotionalEndDate,
+					images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
+					category: p.categories?.[0]?.name || 'Diversos',
+					brand: 'Double E',
+					description: p.description || 'Sem descrição.',
+					rating: p.rating || 0,
+					reviews: p.qtdRatings || 0,
+					stock: p.stock || 0,
+					features: [],
+					specs: (() => {
+						if (!p.characteristics) return [];
+						try {
+							const chars = typeof p.characteristics === 'string' ? JSON.parse(p.characteristics) : p.characteristics;
+							if (Array.isArray(chars)) return chars;
+							if (typeof chars === 'object' && chars !== null) {
+								return Object.entries(chars).map(([k, v]) => ({ label: k, value: String(v) }));
+							}
+							return [{ label: 'Detalhe', value: String(chars) }];
+						} catch (e) {
+							return [{ label: 'Detalhe', value: String(p.characteristics) }];
+						}
+					})(),
+					opinions: [],
+					seller: {
+						name: p.store?.name || 'Loja Desconhecida',
+						logo: p.store?.logo || 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
+						rating: p.store?.rating || 0,
+					}
+				};
+				setProduct(mappedProduct);
+			} else {
+				setProduct(null);
+			}
 			setLoading(false);
 		};
 
 		fetchProduct();
+		return () => { mounted = false; };
 	}, [id]);
 
 	const handleAddToCart = () => {
@@ -337,15 +143,66 @@ const ProductDetails = () => {
 
 	if (loading) {
 		return (
-			<div>
+			<div className="bg-[#f5f5f5] min-h-screen flex flex-col">
 				<Header />
-				<div style={{
-					maxWidth: '1200px',
-					margin: '0 auto',
-					padding: '40px 20px',
-					textAlign: 'center'
-				}}>
-					<p>Carregando...</p>
+				<div className="max-w-[1200px] w-full mx-auto p-5 flex-1 animate-pulse">
+					{/* Breadcrumb Skeleton */}
+					<div className="flex items-center gap-2 mb-6">
+						<div className="w-16 h-4 bg-gray-200 rounded" />
+						<IoChevronForward size={12} className="text-gray-300" />
+						<div className="w-20 h-4 bg-gray-200 rounded" />
+						<IoChevronForward size={12} className="text-gray-300" />
+						<div className="w-48 h-4 bg-gray-200 rounded" />
+					</div>
+
+					{/* Container Principal Skeleton */}
+					<div className="grid grid-cols-1 md:grid-cols-[auto_1fr_300px] bg-white rounded-lg overflow-hidden mb-8 shadow-sm border border-gray-100">
+						{/* Coluna Esquerda - Imagens */}
+						<div className="flex gap-3 p-6 border-r border-gray-100 items-start">
+							{/* Miniaturas Verticais */}
+							<div className="flex flex-col gap-2">
+								{[...Array(5)].map((_, i) => (
+									<div key={i} className="w-14 h-14 bg-gray-200 rounded-md" />
+								))}
+							</div>
+							{/* Imagem Principal */}
+							<div className="w-[340px] h-[400px] bg-gray-200 rounded-md" />
+						</div>
+
+						{/* Coluna Central - Info */}
+						<div className="p-6 border-r border-gray-100">
+							<div className="w-3/4 h-6 bg-gray-200 rounded mb-4" />
+							<div className="w-1/2 h-6 bg-gray-200 rounded mb-6" />
+
+							<div className="w-32 h-4 bg-gray-200 rounded mb-8 pb-4 border-b border-gray-100" />
+
+							<div className="w-40 h-10 bg-gray-200 rounded mb-4" />
+							<div className="w-24 h-4 bg-gray-200 rounded mb-6" />
+
+							<div className="w-3/4 h-16 bg-gray-100 rounded mb-6" />
+						</div>
+
+						{/* Coluna Direita - Ação */}
+						<div className="p-6 flex flex-col gap-4">
+							<div className="w-full h-10 bg-gray-100 rounded" />
+							<div className="w-32 h-5 bg-gray-200 rounded mb-2" />
+							<div className="w-full h-10 bg-gray-200 rounded border border-gray-300" />
+							<div className="w-full h-12 bg-gray-200 rounded-lg shadow mt-2" />
+
+							<div className="w-full h-32 bg-gray-100 rounded-lg mt-4 border border-gray-200" />
+						</div>
+					</div>
+
+					{/* Descrição Skeleton */}
+					<div className="bg-white rounded-lg p-8 mb-4 shadow-sm border border-gray-100">
+						<div className="w-40 h-6 bg-gray-200 rounded mb-6" />
+						<div className="space-y-3">
+							<div className="w-full h-4 bg-gray-200 rounded" />
+							<div className="w-full h-4 bg-gray-200 rounded" />
+							<div className="w-5/6 h-4 bg-gray-200 rounded" />
+							<div className="w-2/3 h-4 bg-gray-200 rounded" />
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -548,7 +405,7 @@ const ProductDetails = () => {
 									<IoTimerOutline size={18} color="#e65100" />
 									<span style={{ fontSize: '12px', color: '#e65100', fontWeight: '600' }}>Promoção termina em:</span>
 									<div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-										{[{label: 'dias', value: countdown.days}, {label: 'h', value: countdown.hours}, {label: 'min', value: countdown.minutes}, {label: 's', value: countdown.seconds}].map(({ label, value }) => (
+										{[{ label: 'dias', value: countdown.days }, { label: 'h', value: countdown.hours }, { label: 'min', value: countdown.minutes }, { label: 's', value: countdown.seconds }].map(({ label, value }) => (
 											<div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 												<span style={{
 													backgroundColor: '#e65100',
@@ -620,7 +477,7 @@ const ProductDetails = () => {
 									fontSize: '14px',
 									color: '#333'
 								}}>
-								Quantidade:
+									Quantidade:
 								</label>
 								<div style={{
 									display: 'inline-flex',
@@ -643,7 +500,7 @@ const ProductDetails = () => {
 											color: quantity <= 1 ? '#ccc' : '#333'
 										}}
 									>
-									−
+										−
 									</button>
 									<div style={{
 										minWidth: '45px',
@@ -671,7 +528,7 @@ const ProductDetails = () => {
 											color: quantity >= product.stock ? '#ccc' : '#333'
 										}}
 									>
-									+
+										+
 									</button>
 								</div>
 								<div style={{
@@ -679,7 +536,7 @@ const ProductDetails = () => {
 									fontSize: '13px',
 									color: '#666'
 								}}>
-								({product.stock} disponíveis)
+									({product.stock} disponíveis)
 								</div>
 							</div>
 
@@ -744,7 +601,7 @@ const ProductDetails = () => {
 						</div>
 					</div>
 				</div>
-	
+
 				<div style={{
 					backgroundColor: 'white',
 					borderRadius: '8px',

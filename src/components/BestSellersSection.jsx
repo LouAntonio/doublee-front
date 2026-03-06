@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
+import ProductSkeleton from './ProductSkeleton';
 
 const BestSellersSection = () => {
 	const products = [
@@ -107,6 +108,16 @@ const BestSellersSection = () => {
 		}
 	];
 
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		// Simula um carregamento de API para exibir o esqueleto
+		const timer = setTimeout(() => {
+			setLoading(false);
+		}, 1500);
+		return () => clearTimeout(timer);
+	}, []);
+
 	const firstRow = products.slice(0, 5);
 	const secondRow = products.slice(5, 10);
 
@@ -144,41 +155,74 @@ const BestSellersSection = () => {
 					alignItems: 'center',
 					marginBottom: '20px'
 				}}>
-					<h2 style={{
-						fontSize: '24px',
-						fontWeight: '400',
-						color: '#333',
-						margin: 0
-					}}>
-						Mais vendidos da semana em Piscinas e Acessórios
-					</h2>
-					<Link to="/mais-vendidos" style={{
-						color: '#3483fa',
-						fontSize: '14px',
-						textDecoration: 'none',
-						fontWeight: '400'
-					}}>
-						Ir para Mais vendidos
-					</Link>
+					{loading ? (
+						<>
+							<div className="h-6 bg-gray-200 rounded w-80 animate-pulse"></div>
+							<div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+						</>
+					) : (
+						<>
+							<h2 style={{
+								fontSize: '24px',
+								fontWeight: '400',
+								color: '#333',
+								margin: 0
+							}}>
+								Mais vendidos da semana
+							</h2>
+							<Link to="/mais-vendidos" style={{
+								color: '#3483fa',
+								fontSize: '14px',
+								textDecoration: 'none',
+								fontWeight: '400'
+							}}>
+								Ir para Mais vendidos
+							</Link>
+						</>
+					)}
 				</div>
 
-				{/* Row 1 */}
-				<div style={rowStyle}>
-					{firstRow.map((product) => (
-						<div key={product.id} style={cardWrapperStyle}>
-							<ProductCard product={product} />
+				{loading ? (
+					<>
+						{/* Row 1 Skeleton */}
+						<div style={rowStyle}>
+							{[1, 2, 3, 4, 5].map((_, i) => (
+								<div key={`skel-1-${i}`} style={cardWrapperStyle}>
+									<ProductSkeleton />
+								</div>
+							))}
 						</div>
-					))}
-				</div>
 
-				{/* Row 2 */}
-				<div style={rowStyle}>
-					{secondRow.map((product) => (
-						<div key={product.id} style={cardWrapperStyle}>
-							<ProductCard product={product} />
+						{/* Row 2 Skeleton */}
+						<div style={rowStyle}>
+							{[1, 2, 3, 4, 5].map((_, i) => (
+								<div key={`skel-2-${i}`} style={cardWrapperStyle}>
+									<ProductSkeleton />
+								</div>
+							))}
 						</div>
-					))}
-				</div>
+					</>
+				) : (
+					<>
+						{/* Row 1 */}
+						<div style={rowStyle}>
+							{firstRow.map((product) => (
+								<div key={product.id} style={cardWrapperStyle}>
+									<ProductCard product={product} />
+								</div>
+							))}
+						</div>
+
+						{/* Row 2 */}
+						<div style={rowStyle}>
+							{secondRow.map((product) => (
+								<div key={product.id} style={cardWrapperStyle}>
+									<ProductCard product={product} />
+								</div>
+							))}
+						</div>
+					</>
+				)}
 			</div>
 		</section>
 	);

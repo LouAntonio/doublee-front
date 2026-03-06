@@ -283,7 +283,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.email}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} outline-none transition-colors`}
 								placeholder="seu@email.com"
 							/>
 						</div>
@@ -340,7 +340,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									onChange={(e) => handleOtpChange(index, e.target.value)}
 									onKeyDown={(e) => handleOtpKeyDown(index, e)}
 									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} outline-none transition-colors`}
 								/>
 							))}
 						</div>
@@ -416,7 +416,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									value={formData.firstName}
 									onChange={handleChange}
 									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} outline-none transition-colors`}
 									placeholder="Seu nome"
 								/>
 							</div>
@@ -440,7 +440,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 									value={formData.lastName}
 									onChange={handleChange}
 									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-									} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+									} outline-none transition-colors`}
 									placeholder="Seu sobrenome"
 								/>
 							</div>
@@ -466,7 +466,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.phone}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} outline-none transition-colors`}
 								placeholder="9XX XXX XXX"
 							/>
 						</div>
@@ -491,7 +491,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.password}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} outline-none transition-colors`}
 								placeholder="Mínimo 8 caracteres"
 							/>
 							<button
@@ -527,7 +527,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 								value={formData.confirmPassword}
 								onChange={handleChange}
 								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-								} focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
+								} outline-none transition-colors`}
 								placeholder="Digite a senha novamente"
 							/>
 							<button

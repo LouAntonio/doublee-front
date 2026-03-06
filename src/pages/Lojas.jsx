@@ -1,144 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import { IoSearchOutline, IoStarSharp, IoChevronBack, IoChevronForward, IoStorefrontOutline, IoShieldCheckmarkOutline, IoTrophyOutline } from 'react-icons/io5';
 import { FaStore, FaBoxOpen, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-
-const stores = [
-	{
-		id: 1,
-		name: 'Kero Supermercado',
-		category: 'Supermercado',
-		rating: 4.8,
-		reviews: 1240,
-		image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/e63946/fff?text=KS',
-		products: 1800,
-		badge: 'Destaque',
-	},
-	{
-		id: 2,
-		name: 'Shoprite Angola',
-		category: 'Supermercado',
-		rating: 4.6,
-		reviews: 980,
-		image: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/e63946/fff?text=SR',
-		products: 2200,
-		badge: null,
-	},
-	{
-		id: 3,
-		name: 'TechZone Angola',
-		category: 'Tecnologia',
-		rating: 4.7,
-		reviews: 530,
-		image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/0077b6/fff?text=TZ',
-		products: 420,
-		badge: 'Novo',
-	},
-	{
-		id: 4,
-		name: 'Moda Fashion Store',
-		category: 'Moda',
-		rating: 4.5,
-		reviews: 320,
-		image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/f77f00/fff?text=MF',
-		products: 680,
-		badge: null,
-	},
-	{
-		id: 5,
-		name: 'Casa & Lar Angola',
-		category: 'Casa e Jardim',
-		rating: 4.4,
-		reviews: 215,
-		image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/2d6a4f/fff?text=CL',
-		products: 910,
-		badge: null,
-	},
-	{
-		id: 6,
-		name: 'Beleza & Cosméticos',
-		category: 'Beleza e Saúde',
-		rating: 4.9,
-		reviews: 740,
-		image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/c77dff/fff?text=BC',
-		products: 375,
-		badge: 'Destaque',
-	},
-	{
-		id: 7,
-		name: 'ElectroMart',
-		category: 'Electrónica',
-		rating: 4.6,
-		reviews: 460,
-		image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/023e8a/fff?text=EM',
-		products: 550,
-		badge: null,
-	},
-	{
-		id: 8,
-		name: 'Sport Center Angola',
-		category: 'Desporto',
-		rating: 4.3,
-		reviews: 190,
-		image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/f4a261/fff?text=SC',
-		products: 300,
-		badge: 'Novo',
-	},
-	{
-		id: 9,
-		name: 'Livros & Cultura',
-		category: 'Livros',
-		rating: 4.7,
-		reviews: 280,
-		image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/6d4c41/fff?text=LC',
-		products: 1200,
-		badge: null,
-	},
-	{
-		id: 10,
-		name: 'Auto Peças Angola',
-		category: 'Automóvel',
-		rating: 4.2,
-		reviews: 145,
-		image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/495057/fff?text=AP',
-		products: 860,
-		badge: null,
-	},
-	{
-		id: 11,
-		name: 'Brinquedos World',
-		category: 'Brinquedos',
-		rating: 4.5,
-		reviews: 310,
-		image: 'https://images.unsplash.com/photo-1558877385-81a1c7e67d72?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/e63946/fff?text=BW',
-		products: 430,
-		badge: null,
-	},
-	{
-		id: 12,
-		name: 'Farmácia Saúde Viva',
-		category: 'Beleza e Saúde',
-		rating: 4.8,
-		reviews: 620,
-		image: 'https://images.unsplash.com/photo-1576671081837-49000212a370?w=600&q=80&auto=format&fit=crop',
-		logo: 'https://via.placeholder.com/80x80/2ec4b6/fff?text=FS',
-		products: 950,
-		badge: 'Destaque',
-	},
-];
+import apiRequest from '../services/api';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -149,24 +15,86 @@ const stats = [
 	{ icon: <IoShieldCheckmarkOutline className="text-2xl" />, value: '100%', label: 'Compra Segura' },
 ];
 
+const StoreLogo = ({ logo, name }) => {
+	if (logo) {
+		return (
+			<img
+				src={logo}
+				alt={name}
+				className="w-full h-full object-cover"
+			/>
+		);
+	}
+	const initials = name ? name.slice(0, 2).toUpperCase() : '??';
+	return (
+		<div className="w-full h-full flex items-center justify-center bg-orange-100 text-[#F97316] font-bold text-lg">
+			{initials}
+		</div>
+	);
+};
+
 const Lojas = () => {
 	useDocumentTitle('Lojas - Double E');
 	const [search, setSearch] = useState('');
+	const [inputValue, setInputValue] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
+	const [stores, setStores] = useState([]);
+	const [featuredStores, setFeaturedStores] = useState([]);
+	const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
+	const [loading, setLoading] = useState(true);
+	const [loadingFeatured, setLoadingFeatured] = useState(true);
+	const debounceRef = useRef(null);
 
-	const featured = stores.filter(s => s.badge === 'Destaque');
+	// Fetch featured stores once on mount
+	useEffect(() => {
+		const fetchFeatured = async () => {
+			setLoadingFeatured(true);
+			const res = await apiRequest('/stores/featured');
+			if (res.success) {
+				setFeaturedStores(res.data.stores);
+			}
+			setLoadingFeatured(false);
+		};
+		fetchFeatured();
+	}, []);
 
-	const filtered = stores.filter(store =>
-		store.name.toLowerCase().includes(search.toLowerCase())
-	);
+	// Fetch paginated stores when page changes (immediately)
+	// When search changes, debounce the fetch and reset to page 1
+	useEffect(() => {
+		if (debounceRef.current) clearTimeout(debounceRef.current);
 
-	const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-	const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+		const doFetch = async () => {
+			setLoading(true);
+			const params = new URLSearchParams({
+				page: currentPage,
+				limit: ITEMS_PER_PAGE,
+				...(search.trim() ? { search: search.trim() } : {}),
+			});
+			const res = await apiRequest(`/stores?${params}`);
+			if (res.success) {
+				setStores(res.data.stores);
+				setPagination(res.data.pagination);
+			}
+			setLoading(false);
+		};
 
-	const handleSearch = (e) => {
-		setSearch(e.target.value);
-		setCurrentPage(1);
+		debounceRef.current = setTimeout(doFetch, search ? 400 : 0);
+		return () => clearTimeout(debounceRef.current);
+	}, [search, currentPage]);
+
+	const handleInputChange = (e) => {
+		setInputValue(e.target.value);
 	};
+
+	const handleInputKeyDown = (e) => {
+		if (e.key === 'Enter') {
+			const trimmed = inputValue.trim();
+			setSearch(trimmed);
+			setCurrentPage(1);
+		}
+	};
+
+	const totalPages = pagination.totalPages || 1;
 
 	return (
 		<div className="bg-gray-50 flex flex-col">
@@ -184,7 +112,7 @@ const Lojas = () => {
 					{/* Multi-layer gradient overlay */}
 					<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-orange-950/60 to-orange-900/40" />
 					<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
-				
+
 					{/* Animated background elements */}
 					<div className="absolute top-10 left-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
 					<div className="absolute bottom-20 right-20 w-60 h-60 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
@@ -198,10 +126,10 @@ const Lojas = () => {
 						{/* Main Headline */}
 						<div className="mb-6 overflow-hidden">
 							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] mb-2 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both">
-							As Melhores
+								As Melhores
 							</h1>
 							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 fill-mode-both" style={{ color: '#FFA500' }}>
-							Lojas
+								Lojas
 							</h1>
 						</div>
 
@@ -210,7 +138,7 @@ const Lojas = () => {
 
 						{/* Subtitle */}
 						<p className="text-base sm:text-lg md:text-xl max-w-2xl opacity-95 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-						Encontre as lojas parceiras Double E e compre com total confiança. Mais de 120 estabelecimentos verificados esperando por você.
+							Encontre as lojas parceiras Double E e compre com total confiança. Mais de 120 estabelecimentos verificados esperando por você.
 						</p>
 
 						{/* Search Bar */}
@@ -221,8 +149,9 @@ const Lojas = () => {
 								<input
 									type="text"
 									placeholder="Pesquisar loja por nome..."
-									value={search}
-									onChange={handleSearch}
+									value={inputValue}
+									onChange={handleInputChange}
+									onKeyDown={handleInputKeyDown}
 									className="relative w-full pl-14 pr-6 py-4 sm:py-5 rounded-full text-gray-500 text-sm sm:text-base shadow-2xl focus:outline-none  transition-all duration-300 placeholder:text-gray-500 font-medium"
 								/>
 							</div>
@@ -249,49 +178,71 @@ const Lojas = () => {
 			</div>
 
 			{/* ── Destaques ── */}
-			{!search && (
+			{!search && featuredStores.length > 0 && (
 				<div className="px-4 py-10 bg-gradient-to-b from-orange-50 to-gray-50">
 					<div className="max-w-[1200px] mx-auto">
 						<div className="flex items-center gap-2 mb-6">
 							<IoTrophyOutline className="text-[#F97316] text-xl" />
 							<h2 className="text-xl font-bold text-gray-800">Lojas em Destaque</h2>
 						</div>
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-							{featured.map(store => (
-								<Link
-									to={`/loja/${store.id}`}
-									key={store.id}
-									className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-52 block"
-								>
-									<img
-										src={store.image}
-										alt={store.name}
-										className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-									/>
-									<div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-									<div className="absolute top-3 left-3">
-										<span className="bg-[#F97316] text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
-											⭐ Destaque
-										</span>
-									</div>
-									<div className="absolute bottom-0 left-0 right-0 p-4 flex items-end gap-3">
-										<img
-											src={store.logo}
-											alt={store.name}
-											className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0"
-										/>
-										<div className="min-w-0">
-											<p className="text-white font-bold text-sm truncate leading-tight">{store.name}</p>
-											<div className="flex items-center gap-1 mt-0.5">
-												<IoStarSharp className="text-yellow-400 text-xs" />
-												<span className="text-white/90 text-xs font-medium">{store.rating}</span>
-												<span className="text-white/60 text-xs">({store.reviews})</span>
+						{loadingFeatured ? (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+								{[...Array(4)].map((_, i) => (
+									<div key={i} className="relative overflow-hidden rounded-2xl shadow-md h-52 block bg-gray-200 animate-pulse">
+										<div className="absolute inset-0 bg-gradient-to-t from-gray-300 via-gray-200/20 to-transparent" />
+										<div className="absolute top-3 left-3">
+											<div className="h-6 w-20 bg-gray-300 rounded-full" />
+										</div>
+										<div className="absolute bottom-0 left-0 right-0 p-4 flex items-end gap-3">
+											<div className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0 overflow-hidden bg-gray-300" />
+											<div className="min-w-0 flex-1">
+												<div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
+												<div className="h-3 bg-gray-300 rounded w-1/2" />
 											</div>
 										</div>
 									</div>
-								</Link>
-							))}
-						</div>
+								))}
+							</div>
+						) : (
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+								{featuredStores.map(store => (
+									<Link
+										to={`/loja/${store.id}`}
+										key={store.id}
+										className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-52 block bg-gray-800"
+									>
+										{store.banner ? (
+											<img
+												src={store.banner}
+												alt={store.name}
+												className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+											/>
+										) : (
+											<div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-600" />
+										)}
+										<div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+										<div className="absolute top-3 left-3">
+											<span className="bg-[#F97316] text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+												⭐ Destaque
+											</span>
+										</div>
+										<div className="absolute bottom-0 left-0 right-0 p-4 flex items-end gap-3">
+											<div className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0 overflow-hidden">
+												<StoreLogo logo={store.logo} name={store.name} />
+											</div>
+											<div className="min-w-0">
+												<p className="text-white font-bold text-sm truncate leading-tight">{store.name}</p>
+												<div className="flex items-center gap-1 mt-0.5">
+													<IoStarSharp className="text-yellow-400 text-xs" />
+													<span className="text-white/90 text-xs font-medium">{store.rating}</span>
+													<span className="text-white/60 text-xs">({store.qtdRatings ?? 0})</span>
+												</div>
+											</div>
+										</div>
+									</Link>
+								))}
+							</div>
+						)}
 					</div>
 				</div>
 			)}
@@ -304,11 +255,33 @@ const Lojas = () => {
 							{search ? 'Resultados da pesquisa' : 'Todas as Lojas'}
 						</h2>
 						<span className="text-sm text-gray-400">
-							{filtered.length} {filtered.length === 1 ? 'loja' : 'lojas'}
+							{pagination.total} {pagination.total === 1 ? 'loja' : 'lojas'}
 						</span>
 					</div>
 
-					{paginated.length === 0 ? (
+					{loading ? (
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+							{[...Array(ITEMS_PER_PAGE)].map((_, i) => (
+								<div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col animate-pulse">
+									<div className="relative h-40 bg-gray-200">
+										<div className="absolute top-3 right-3 h-6 w-20 bg-gray-300 rounded-full" />
+										<div className="absolute -bottom-6 left-4">
+											<div className="w-14 h-14 rounded-xl border-[3px] border-white shadow-md bg-gray-300" />
+										</div>
+									</div>
+									<div className="pt-9 px-4 pb-4 flex flex-col flex-1">
+										<div className="mb-3">
+											<div className="h-5 bg-gray-200 rounded w-2/3" />
+										</div>
+										<div className="flex items-center gap-0.5 mb-4">
+											<div className="h-4 bg-gray-200 rounded w-1/3" />
+										</div>
+										<div className="mt-auto block text-center py-2.5 rounded-xl h-10 bg-gray-100" />
+									</div>
+								</div>
+							))}
+						</div>
+					) : stores.length === 0 ? (
 						<div className="text-center py-24 text-gray-400">
 							<FaStore className="text-5xl mx-auto mb-4 opacity-20" />
 							<p className="text-lg font-medium">Nenhuma loja encontrada.</p>
@@ -316,36 +289,36 @@ const Lojas = () => {
 						</div>
 					) : (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-							{paginated.map(store => (
+							{stores.map(store => (
 								<div
 									key={store.id}
 									className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100 flex flex-col"
 								>
 									{/* Cover */}
-									<div className="relative h-40 overflow-hidden">
-										<img
-											src={store.image}
-											alt={store.name}
-											className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-										/>
+									<div className="relative h-40 overflow-hidden bg-gray-100">
+										{store.banner ? (
+											<img
+												src={store.banner}
+												alt={store.name}
+												className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+											/>
+										) : (
+											<div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 group-hover:scale-105 transition-transform duration-500" />
+										)}
 										<div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-										{store.badge && (
-											<span className={`absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow ${
-												store.badge === 'Destaque'
-													? 'bg-[#F97316] text-white'
-													: 'bg-emerald-500 text-white'
-											}`}>
-												{store.badge === 'Destaque' ? '⭐ ' : '🆕 '}{store.badge}
+										{store.featured && (
+											<span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow bg-[#F97316] text-white">
+												⭐ Destaque
 											</span>
 										)}
 										{/* Logo overlapping */}
 										<div className="absolute -bottom-6 left-4">
-											<img
-												src={store.logo}
-												alt={store.name}
-												className="w-14 h-14 rounded-xl object-cover"
+											<div
+												className="w-14 h-14 rounded-xl overflow-hidden"
 												style={{ border: '3px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-											/>
+											>
+												<StoreLogo logo={store.logo} name={store.name} />
+											</div>
 										</div>
 									</div>
 
@@ -353,23 +326,17 @@ const Lojas = () => {
 									<div className="pt-9 px-4 pb-4 flex flex-col flex-1">
 										<div className="mb-3">
 											<h3 className="font-bold text-gray-800 text-base leading-tight truncate">{store.name}</h3>
-											<span className="text-xs text-[#F97316] font-medium">{store.category}</span>
 										</div>
 
-										<div className="flex items-center gap-0.5 mb-1">
+										<div className="flex items-center gap-0.5 mb-4">
 											{[...Array(5)].map((_, i) => (
 												<IoStarSharp
 													key={i}
-													className={i < Math.round(store.rating) ? 'text-yellow-400 text-xs' : 'text-gray-200 text-xs'}
+													className={i < Math.round(store.rating ?? 0) ? 'text-yellow-400 text-xs' : 'text-gray-200 text-xs'}
 												/>
 											))}
 											<span className="ml-1 text-xs font-semibold text-gray-700">{store.rating}</span>
-											<span className="text-xs text-gray-400 ml-0.5">({store.reviews})</span>
-										</div>
-
-										<div className="flex items-center gap-1.5 text-xs text-gray-400 mb-4 mt-1">
-											<FaBoxOpen />
-											<span>{store.products.toLocaleString('pt-AO')} produtos</span>
+											<span className="text-xs text-gray-400 ml-0.5">({store.qtdRatings ?? 0})</span>
 										</div>
 
 										<Link
@@ -398,10 +365,9 @@ const Lojas = () => {
 								<button
 									key={page}
 									onClick={() => setCurrentPage(page)}
-									className={`w-10 h-10 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${
-										currentPage === page
-											? 'bg-[#F97316] text-white border-[#F97316] shadow-md'
-											: 'border-gray-200 text-gray-600 hover:border-[#F97316] hover:text-[#F97316]'
+									className={`w-10 h-10 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${currentPage === page
+										? 'bg-[#F97316] text-white border-[#F97316] shadow-md'
+										: 'border-gray-200 text-gray-600 hover:border-[#F97316] hover:text-[#F97316]'
 									}`}
 								>
 									{page}

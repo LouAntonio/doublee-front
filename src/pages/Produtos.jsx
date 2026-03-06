@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import FilterSidebar from '../components/FilterSidebar';
+import ProductSkeleton from '../components/ProductSkeleton';
+import apiRequest from '../services/api';
 
 const Produtos = () => {
 	useDocumentTitle('Produtos - Double E');
@@ -19,100 +21,58 @@ const Produtos = () => {
 	const [selectedBrand, setSelectedBrand] = useState('');
 	const [featuredOnly, setFeaturedOnly] = useState(false);
 
-	// Base products data
-	const baseProducts = [
-		{
-			id: 1,
-			title: 'Piscina Inflável Fun Redonda 1400l Com Kit...',
-			oldPrice: 279,
-			price: 159.90,
-			discount: 42,
-			image: 'https://via.placeholder.com/200x200/4169E1/fff?text=Piscina'
-		},
-		{
-			id: 2,
-			title: 'Mangueira De Jardim 10m Metros Marqs Home...',
-			oldPrice: 32.90,
-			price: 28.89,
-			discount: 12,
-			coupon: 'Cupom 6% OFF',
-			image: 'https://via.placeholder.com/200x200/00A650/fff?text=Mangueira'
-		},
-		{
-			id: 3,
-			title: 'Piscina Banheira Inflável Redonda 450 Litro...',
-			oldPrice: 112.62,
-			price: 67.80,
-			discount: 39,
-			image: 'https://via.placeholder.com/200x200/1E90FF/fff?text=Banheira'
-		},
-		{
-			id: 4,
-			title: 'Lona Térmica Para Piscinas 3 X 3 Thermocap Cor Verde',
-			oldPrice: 181.44,
-			price: 154.22,
-			discount: 15,
-			image: 'https://via.placeholder.com/200x200/008B8B/fff?text=Lona'
-		},
-		{
-			id: 5,
-			title: 'Genco 3 Em 1 Múltipla Ação Balde 10kg Cloro Para...',
-			price: 199.90,
-			image: 'https://via.placeholder.com/200x200/FFD700/333?text=Genco'
-		},
-		{
-			id: 6,
-			title: 'Piscina Infantil Quadrada Estrutural Pvc 1500 Litros...',
-			price: 232.99,
-			image: 'https://via.placeholder.com/200x200/87CEEB/333?text=Piscina+Infantil'
-		},
-		{
-			id: 7,
-			title: 'Kit Limpeza Piscina Completo 7 Peças Aspirador...',
-			oldPrice: 289.90,
-			price: 189.90,
-			discount: 34,
-			image: 'https://via.placeholder.com/200x200/4682B4/fff?text=Kit+Limpeza'
-		},
-		{
-			id: 8,
-			title: 'Bomba Filtrante Para Piscina 3785 L/h 110v...',
-			oldPrice: 349,
-			price: 259.90,
-			discount: 25,
-			image: 'https://via.placeholder.com/200x200/5F9EA0/fff?text=Bomba'
-		}
-	];
-
-	// Generate 48 products (3 pages) for demonstration
-	const totalProducts = Array(48).fill(null).map((_, index) => ({
-		...baseProducts[index % baseProducts.length],
-		id: index + 1
-	}));
-
-	// Apply sorting before pagination
-	const getSortedProducts = () => {
-		let sorted = [...totalProducts];
-
-		// Logic to toggle sort options could be added here
-		if (sortOption === 'lowest') {
-			sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
-		} else if (sortOption === 'highest') {
-			sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
-		} else if (sortOption === 'name') {
-			sorted.sort((a, b) => String(a.title).localeCompare(String(b.title)));
-		}
-		return sorted;
-	};
-
-	const sortedProducts = getSortedProducts();
-	// Pagination logic
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentProducts = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
-	const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+	// Products from backend
+	const [products, setProducts] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [totalResults, setTotalResults] = useState(0);
+	const [totalPages, setTotalPages] = useState(1);
+	const [fetchTrigger, setFetchTrigger] = useState(0);
 
 	const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+	const buildQuery = () => {
+		const params = new URLSearchParams();
+		params.set('page', currentPage);
+		params.set('limit', itemsPerPage);
+		if (searchQuery) params.set('search', searchQuery);
+		if (selectedCategories && selectedCategories.length) params.set('categoryIds', selectedCategories.join(','));
+		if (priceRange.min) params.set('minPrice', priceRange.min);
+		if (priceRange.max) params.set('maxPrice', priceRange.max);
+		if (featuredOnly) params.set('featured', 'true');
+		return `?${params.toString()}`;
+	};
+
+	useEffect(() => {
+		let mounted = true;
+		const fetchProducts = async () => {
+			setLoading(true);
+			const query = buildQuery();
+			const res = await apiRequest(`/products${query}`);
+			if (!mounted) return;
+			if (res && res.success) {
+				const items = (res.data?.products || []).map(p => ({
+					id: p.id,
+					title: p.name,
+					price: p.promotionalPrice ?? p.price,
+					oldPrice: p.promotionalPrice ? p.price : undefined,
+					image: p.image || '/images/logo/placeholder.png',
+					rating: p.rating,
+					reviewCount: p.qtdRatings,
+				}));
+				setProducts(items);
+				setTotalResults(res.data?.pagination?.total || 0);
+				setTotalPages(res.data?.pagination?.totalPages || 1);
+			} else {
+				setProducts([]);
+				setTotalResults(0);
+				setTotalPages(1);
+			}
+			setLoading(false);
+		};
+
+		fetchProducts();
+		return () => { mounted = false; };
+	}, [currentPage, itemsPerPage, fetchTrigger]);
 
 	return (
 		<div style={{ backgroundColor: '#ededed', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -150,7 +110,6 @@ const Produtos = () => {
 					position: 'relative'
 				}}>
 					<FilterSidebar
-						categories={['Mercearia', 'Bebidas', 'Higiene', 'Limpeza', 'Hortifruti', 'Carnes', 'Padaria', 'Laticínios', 'Congelados']}
 						priceRange={priceRange}
 						setPriceRange={setPriceRange}
 						selectedCategories={selectedCategories}
@@ -163,8 +122,8 @@ const Produtos = () => {
 						setSelectedBrand={setSelectedBrand}
 						featuredOnly={featuredOnly}
 						setFeaturedOnly={setFeaturedOnly}
-						onSearch={() => setCurrentPage(1)}
-						onClear={() => setCurrentPage(1)}
+						onSearch={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
+						onClear={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
 					/>
 
 					{/* Products Grid - Right */}
@@ -173,7 +132,7 @@ const Produtos = () => {
 							<h2 style={{ fontSize: '24px', color: '#333', margin: 0 }}>Produtos</h2>
 							<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
 								<span style={{ fontSize: '14px', color: '#666' }}>
-									Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, totalProducts.length)} de {totalProducts.length} resultados
+									Mostrando {((currentPage - 1) * itemsPerPage) + 1}-{((currentPage - 1) * itemsPerPage) + products.length} de {totalResults} resultados
 								</span>
 								<select
 									value={sortOption}
@@ -183,7 +142,8 @@ const Produtos = () => {
 										borderRadius: '6px',
 										border: '1px solid #ddd',
 										background: '#fff',
-										fontSize: '14px'
+										fontSize: '14px',
+										focus: { outline: 'none' },
 									}}
 								>
 									<option value="relevance">Ordenar: Relevância</option>
@@ -194,7 +154,19 @@ const Produtos = () => {
 							</div>
 						</div>
 
-						<ProductGrid products={currentProducts} />
+						{loading ? (
+							<div style={{
+								display: 'grid',
+								gridTemplateColumns: 'repeat(4, 1fr)',
+								gap: '12px'
+							}}>
+								{Array.from({ length: itemsPerPage }).map((_, i) => (
+									<ProductSkeleton key={i} />
+								))}
+							</div>
+						) : (
+							<ProductGrid products={products} />
+						)}
 
 						{/* Pagination Controls */}
 						<div style={{
@@ -214,8 +186,8 @@ const Produtos = () => {
 									alignItems: 'center',
 									justifyContent: 'center',
 									border: 'none',
-									backgroundColor: currentPage === 1 ? '#ccc' : '#fff',
-									color: currentPage === 1 ? '#fff' : '#333',
+									backgroundColor: currentPage === 1 ? '#f3f4f6' : '#fff',
+									color: currentPage === 1 ? '#d1d5db' : '#666',
 									borderRadius: '4px',
 									cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
 									boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
@@ -235,12 +207,13 @@ const Produtos = () => {
 										alignItems: 'center',
 										justifyContent: 'center',
 										border: 'none',
-										backgroundColor: currentPage === i + 1 ? '#3483fa' : '#fff',
-										color: currentPage === i + 1 ? '#fff' : '#333',
+										backgroundColor: currentPage === i + 1 ? '#F97316' : '#fff',
+										color: currentPage === i + 1 ? '#fff' : '#666',
 										borderRadius: '4px',
 										cursor: 'pointer',
 										boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-										fontWeight: '600'
+										fontWeight: '600',
+										transition: 'background-color 0.2s, color 0.2s'
 									}}
 								>
 									{i + 1}
@@ -257,8 +230,8 @@ const Produtos = () => {
 									alignItems: 'center',
 									justifyContent: 'center',
 									border: 'none',
-									backgroundColor: currentPage === totalPages ? '#ccc' : '#fff',
-									color: currentPage === totalPages ? '#fff' : '#333',
+									backgroundColor: currentPage === totalPages ? '#f3f4f6' : '#fff',
+									color: currentPage === totalPages ? '#d1d5db' : '#666',
 									borderRadius: '4px',
 									cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
 									boxShadow: '0 1px 3px rgba(0,0,0,0.1)'

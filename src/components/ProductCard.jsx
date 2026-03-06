@@ -12,258 +12,78 @@ const ProductCard = ({ product, onClick }) => {
 	const [wishlisted, setWishlisted] = useState(false);
 
 	const handleAddToCart = (e) => {
-		e.stopPropagation();
+		e?.stopPropagation();
 		addToCart({
 			id: product.id,
 			name: product.title,
 			price: product.price,
 			image: product.image
 		});
+		notyf.success('Produto adicionado ao carrinho!');
 	};
 
 	const handleToggleWishlist = (e) => {
-		e.stopPropagation();
+		e?.stopPropagation();
 		const newState = !wishlisted;
 		setWishlisted(newState);
-		if (newState) {
-			notyf.success('Adicionado à wishlist!');
-		} else {
-			notyf.error('Removido da wishlist');
-		}
+		if (newState) notyf.success('Adicionado à wishlist!');
+		else notyf.error('Removido da wishlist');
 	};
 
 	return (
-		<div
-			style={{
-				cursor: 'pointer',
-				transition: 'all 0.2s',
-				padding: '16px',
-				borderRadius: '6px',
-				border: '1px solid transparent',
-				display: 'flex',
-				flexDirection: 'column',
-				flex: '1 1 0',
-				minWidth: 0,
-				height: '100%',
-				boxSizing: 'border-box'
-			}}
-			onMouseEnter={(e) => {
-				e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-				e.currentTarget.style.border = '1px solid #e5e5e5';
-			}}
-			onMouseLeave={(e) => {
-				e.currentTarget.style.boxShadow = 'none';
-				e.currentTarget.style.border = '1px solid transparent';
-			}}
-		>
-			{/* Product Image + Wishlist */}
-			<div
-				style={{
-					position: 'relative',
-					width: '100%',
-					aspectRatio: '1',
-					backgroundColor: '#f5f5f5',
-					borderRadius: '4px',
-					marginBottom: '12px',
-					overflow: 'hidden'
-				}}
-			>
-				<div
-					onClick={handleProductClick}
-					style={{
-						width: '100%',
-						height: '100%',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						cursor: 'pointer'
-					}}
-				>
-					<img
-						src={product.image}
-						alt={product.title}
-						style={{
-							width: '100%',
-							height: '100%',
-							objectFit: 'cover'
-						}}
-					/>
-				</div>
-
-				{/* Wishlist Button */}
+		<div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:border-gray-300 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+			<div className="relative aspect-square overflow-hidden bg-gray-50">
 				<button
 					onClick={handleToggleWishlist}
 					title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
-					style={{
-						position: 'absolute',
-						top: '8px',
-						right: '8px',
-						width: '32px',
-						height: '32px',
-						borderRadius: '50%',
-						border: 'none',
-						backgroundColor: 'rgba(255,255,255,0.9)',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						cursor: 'pointer',
-						boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
-						transition: 'all 0.2s ease',
-						transform: wishlisted ? 'scale(1.1)' : 'scale(1)'
-					}}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.backgroundColor = '#fff';
-						e.currentTarget.style.boxShadow = '0 3px 10px rgba(0,0,0,0.18)';
-						if (!wishlisted) e.currentTarget.style.transform = 'scale(1.15)';
-					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.9)';
-						e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.12)';
-						e.currentTarget.style.transform = wishlisted ? 'scale(1.1)' : 'scale(1)';
-					}}
+					className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-sm hover:shadow-md transition-transform cursor-pointer"
 				>
-					{wishlisted ? (
-						<IoHeart size={18} color="#e74c3c" />
-					) : (
-						<IoHeartOutline size={18} color="#666" />
-					)}
+					{wishlisted ? <IoHeart size={16} className="text-red-500" /> : <IoHeartOutline size={16} className="text-gray-600" />}
 				</button>
 
-				{/* Featured Badge */}
-				{product.isFeatured && (
-					<div style={{
-						position: 'absolute',
-						top: '8px',
-						left: '8px',
-						backgroundColor: '#3483fa',
-						color: '#fff',
-						fontSize: '10px',
-						fontWeight: '700',
-						padding: '2px 8px',
-						borderRadius: '4px',
-						textTransform: 'uppercase',
-						boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-						zIndex: 1
-					}}>
-                        Destaque
-					</div>
+				{product.oldPrice && (
+					<span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+						-{Math.round((1 - product.price / product.oldPrice) * 100)}%
+					</span>
 				)}
+
+				<div onClick={handleProductClick} className="w-full h-full cursor-pointer">
+					<img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+				</div>
 			</div>
 
-			{/* Product Info */}
-			<div style={{
-				display: 'flex',
-				flexDirection: 'column',
-				flex: 1
-			}}>
-				{/* Product Title */}
-				<Link 
-					to={`/produto/${product.id}`}
-					style={{
-						textDecoration: 'none',
-						fontSize: '14px',
-						fontWeight: '400',
-						color: '#333',
-						margin: '0 0 8px 0',
-						lineHeight: '1.4',
-						height: '40px',
-						overflow: 'hidden',
-						display: '-webkit-box',
-						WebkitLineClamp: 2,
-						WebkitBoxOrient: 'vertical',
-						cursor: 'pointer'
-					}}
-				>
-					{product.title}
-				</Link>
+			<div className="p-3 flex flex-col flex-1">
+				<p className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mb-2 flex-1">{product.title}</p>
 
-				{/* Old Price */}
-				{product.oldPrice && (
-					<div style={{
-						fontSize: '11px',
-						color: '#999',
-						textDecoration: 'line-through',
-						marginBottom: '4px'
-					}}>
-						{formatCurrency(product.oldPrice)}
+				{product.rating && (
+					<div className="flex items-center gap-1 mb-2">
+						<div className="flex items-center gap-0.5">
+							{[1, 2, 3, 4, 5].map(i => (
+								<span key={i} className={`text-xs ${i <= Math.round(product.rating) ? 'text-yellow-400' : 'text-gray-200'}`}>
+									★
+								</span>
+							))}
+						</div>
+						{product.reviewCount && <span className="text-[10px] text-gray-400">({product.reviewCount})</span>}
 					</div>
 				)}
 
-				{/* Price + Discount */}
-				<div style={{
-					display: 'flex',
-					alignItems: 'baseline',
-					gap: '6px',
-					marginBottom: '4px'
-				}}>
-					<span style={{
-						fontSize: '15px',
-						fontWeight: '400',
-						color: '#333'
-					}}>
-						{formatCurrency(product.price)}
-					</span>
-					{product.discount && (
-						<span style={{
-							fontSize: '14px',
-							color: '#00a650',
-							fontWeight: '600'
-						}}>
-							{product.discount}% OFF
-						</span>
+				<div className="mb-3">
+					<span className="text-sm font-bold text-gray-800">{formatCurrency(product.price)}</span>
+					{product.oldPrice && (
+						<span className="ml-1.5 text-xs text-gray-400 line-through">{formatCurrency(product.oldPrice)}</span>
 					)}
 				</div>
 
-				{/* Coupon */}
-				{product.coupon && (
-					<div style={{
-						display: 'inline-block',
-						backgroundColor: '#e8f4ff',
-						color: '#3483fa',
-						fontSize: '12px',
-						padding: '3px 8px',
-						borderRadius: '4px',
-						marginBottom: '8px',
-						fontWeight: '500'
-					}}>
-                        🎟️ {product.coupon}
-					</div>
-				)}
-
-				{/* Add to Cart Button */}
 				<button
-					onClick={handleAddToCart}
-					style={{
-						width: '100%',
-						marginTop: 'auto',
-						padding: '8px 12px',
-						backgroundColor: '#3483fa',
-						color: '#fff',
-						border: 'none',
-						borderRadius: '6px',
-						fontSize: '14px',
-						fontWeight: '600',
-						cursor: 'pointer',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						gap: '6px',
-						transition: 'all 0.2s'
-					}}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.backgroundColor = '#2968c8';
-						e.currentTarget.style.transform = 'translateY(-1px)';
-					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.backgroundColor = '#3483fa';
-						e.currentTarget.style.transform = 'translateY(0)';
-					}}
+					onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+					className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer mt-auto"
 				>
-					<IoCartOutline size={16} />
-                    Adicionar
+					<IoCartOutline />
+					Adicionar
 				</button>
 			</div>
-		</div >
+		</div>
 	);
 };
 
