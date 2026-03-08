@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
@@ -19,6 +19,20 @@ import Lojas from './pages/Lojas';
 import LojaDetails from './pages/LojaDetails';
 import Dashboard from './pages/Dashboard';
 import StoreDashboardPage from './pages/StoreDashboardPage';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboardLayout from './layouts/AdminDashboardLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminStores from './pages/admin/AdminStores';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminCategories from './pages/admin/AdminCategories';
+import { AdminAuthProvider } from './context/AdminAuthContext';
+
+const ConditionalFooter = () => {
+	const location = useLocation();
+	if (location.pathname.startsWith('/dbe')) return null;
+	return <Footer />;
+};
 
 // Redirect authenticated users away from /auth
 const AuthRoute = () => {
@@ -71,9 +85,20 @@ function AppRoutes() {
 						</ProtectedRoute>
 					}
 				/>
+
+				{/* Admin Routes */}
+				<Route path="/dbe/login" element={<AdminLogin />} />
+				<Route path="/dbe" element={<AdminDashboardLayout />}>
+					<Route index element={<AdminDashboard />} />
+					<Route path="users" element={<AdminUsers />} />
+					<Route path="stores" element={<AdminStores />} />
+					<Route path="products" element={<AdminProducts />} />
+					<Route path="categories" element={<AdminCategories />} />
+				</Route>
+
 				<Route path="*" element={<NotFound />} />
 			</Routes>
-			<Footer />
+			<ConditionalFooter />
 		</BrowserRouter>
 	);
 }
@@ -81,9 +106,11 @@ function AppRoutes() {
 function App() {
 	return (
 		<AuthProvider>
-			<CartProvider>
-				<AppRoutes />
-			</CartProvider>
+			<AdminAuthProvider>
+				<CartProvider>
+					<AppRoutes />
+				</CartProvider>
+			</AdminAuthProvider>
 		</AuthProvider>
 	)
 }

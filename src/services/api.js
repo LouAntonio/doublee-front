@@ -46,7 +46,8 @@ const apiRequest = async (endpoint, options = {}) => {
 			...options.headers,
 		};
 
-		const token = localStorage.getItem('doublee_token');
+		const tokenKey = options.admin ? 'doublee_admin_token' : 'doublee_token';
+		const token = localStorage.getItem(tokenKey);
 		if (token) {
 			headers['Authorization'] = `Bearer ${token}`;
 		}
