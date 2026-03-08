@@ -21,6 +21,7 @@ const API_URL = isProd
 const handleSessionExpired = () => {
 	// Limpar dados do localStorage
 	localStorage.removeItem('doublee_user');
+	localStorage.removeItem('doublee_token');
 
 	// Mostrar notificação
 	notyf.error('Sua sessão expirou. Por favor, faça login novamente.');
@@ -44,6 +45,11 @@ const apiRequest = async (endpoint, options = {}) => {
 		const headers = {
 			...options.headers,
 		};
+
+		const token = localStorage.getItem('doublee_token');
+		if (token) {
+			headers['Authorization'] = `Bearer ${token}`;
+		}
 
 		// Adicionar Content-Type apenas se não for FormData
 		if (!(options.body instanceof FormData) && !headers['Content-Type']) {

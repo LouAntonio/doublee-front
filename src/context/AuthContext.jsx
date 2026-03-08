@@ -38,16 +38,18 @@ export const AuthProvider = ({ children }) => {
 		};
 
 		validateSession();
-	}, []);  
+	}, []);
 
-	const login = (userData) => {
+	const login = (userData, token) => {
 		setUser(userData);
 		localStorage.setItem('doublee_user', JSON.stringify(userData));
+		if (token) localStorage.setItem('doublee_token', token);
 	};
 
 	const logout = () => {
 		setUser(null);
 		localStorage.removeItem('doublee_user');
+		localStorage.removeItem('doublee_token');
 	};
 
 	const isAuthenticated = !!user;
