@@ -8,20 +8,37 @@ export const AdminAuthProvider = ({ children }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
+	const isTokenExpired = (token) => {
+		try {
+			const payload = JSON.parse(atob(token.split('.')[1]));
+			return payload.exp * 1000 < Date.now();
+		} catch {
+			return true; // token inválido, tratar como expirado
+		}
+	};
+
 	useEffect(() => {
 		const initAuth = async () => {
 			const storedToken = localStorage.getItem('doublee_admin_token');
 			const storedAdminDate = localStorage.getItem('doublee_admin');
 
 			if (storedToken && storedAdminDate) {
+				// Verificar se o token já expirou antes de confiar nele
+				if (isTokenExpired(storedToken)) {
+					localStorage.removeItem('doublee_admin_token');
+					localStorage.removeItem('doublee_admin');
+					setIsLoading(false);
+					return;
+				}
+
 				try {
 					const adminData = JSON.parse(storedAdminDate);
 					setAdmin(adminData);
 					setIsAuthenticated(true);
-					// We'll trust the token initially, or if necessary we could add an API endpoint in the backend to verify the admin token.
 				} catch (error) {
 					console.error('Failed to parse stored admin info', error);
-					logout();
+					localStorage.removeItem('doublee_admin_token');
+					localStorage.removeItem('doublee_admin');
 				}
 			}
 			setIsLoading(false);

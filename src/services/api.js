@@ -33,6 +33,20 @@ const handleSessionExpired = () => {
 	}, 500);
 };
 
+const handleAdminSessionExpired = () => {
+	// Limpar dados de admin do localStorage
+	localStorage.removeItem('doublee_admin_token');
+	localStorage.removeItem('doublee_admin');
+
+	// Mostrar notificação
+	notyf.error('Sessão de administrador expirada. Por favor, faça login novamente.');
+
+	// Redirecionar para página de login admin
+	setTimeout(() => {
+		window.location.href = '/auth';
+	}, 500);
+};
+
 /**
  * Função principal para fazer requisições HTTP
  * @param {string} endpoint - Endpoint da API (ex: '/users/profile')
@@ -75,7 +89,11 @@ const apiRequest = async (endpoint, options = {}) => {
 
 		// Verificar se é um erro de autenticação (sessão expirada)
 		if (data.success === false && data.auth === true) {
-			handleSessionExpired();
+			if (options.admin) {
+				handleAdminSessionExpired();
+			} else {
+				handleSessionExpired();
+			}
 			// Retornar um erro para evitar processamento adicional
 			throw new Error('Sessão expirada');
 		}
