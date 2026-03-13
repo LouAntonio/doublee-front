@@ -38,10 +38,12 @@ const AdminProducts = () => {
 	};
 
 	const handleSuspendMock = (productId) => {
+		console.log(`Simulando suspensão do produto com ID: ${productId}`);
 		notyf.success(`Produto suspenso (Simulado)`);
 	};
 
 	const handleActivateMock = (productId) => {
+		console.log(`Simulando ativação do produto com ID: ${productId}`);
 		notyf.success(`Produto activado (Simulado)`);
 	};
 

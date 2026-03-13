@@ -52,6 +52,7 @@ const AdminUsers = () => {
 				notyf.error(res.msg);
 			}
 		} catch (err) {
+			console.log(err);
 			notyf.error('Erro de conexão ao alterar estado.');
 		} finally {
 			setActionLoading(prev => ({ ...prev, [`${userId}-status`]: false }));
@@ -74,6 +75,7 @@ const AdminUsers = () => {
 				notyf.error(res.msg);
 			}
 		} catch (err) {
+			console.log(err);
 			notyf.error('Erro de conexão ao alterar papel.');
 		} finally {
 			setActionLoading(prev => ({ ...prev, [`${userId}-role`]: false }));
@@ -192,7 +194,7 @@ const AdminUsers = () => {
 											<span className={`px-3 py-1 inline-flex text-xs font-bold rounded-full border ${user.role === 'ft'
 												? 'bg-purple-50 text-purple-700 border-purple-200 shadow-sm'
 												: 'bg-slate-100 text-slate-600 border-slate-200'
-												}`}>
+											}`}>
 												{user.role === 'ft' ? 'Administrador' : 'Utilizador Comum'}
 											</span>
 										</td>
@@ -234,7 +236,7 @@ const AdminUsers = () => {
 													className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${user.status === 'active'
 														? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-600 hover:text-white hover:border-transparent disabled:hover:bg-rose-50 disabled:hover:text-rose-700 disabled:hover:border-rose-200'
 														: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-transparent disabled:hover:bg-emerald-50 disabled:hover:text-emerald-700 disabled:hover:border-emerald-200'
-														}`}
+													}`}
 												>
 													{actionLoading[`${user.id}-status`] ? 'Processando...' : (user.status === 'active' ? 'Suspender' : 'Reativar')}
 												</button>

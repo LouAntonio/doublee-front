@@ -12,7 +12,7 @@ const OffersSection = () => {
 		const fetchOffers = async () => {
 			try {
 				setLoading(true);
-				const response = await apiRequest('/products?onPromotion=true&limit=9');
+				const response = await apiRequest('/products/on-sale?limit=8');
 				if (response.success && response.data?.products) {
 					setProducts(response.data.products);
 				}

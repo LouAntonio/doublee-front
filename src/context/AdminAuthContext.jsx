@@ -64,6 +64,7 @@ export const AdminAuthProvider = ({ children }) => {
 				return { success: false, msg: response.msg || 'Erro ao realizar login.' };
 			}
 		} catch (error) {
+			console.log('Login error:', error);
 			return { success: false, msg: 'Erro de conexão com o servidor.' };
 		} finally {
 			setIsLoading(false);
@@ -91,4 +92,5 @@ export const AdminAuthProvider = ({ children }) => {
 	);
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAdminAuth = () => useContext(AdminAuthContext);

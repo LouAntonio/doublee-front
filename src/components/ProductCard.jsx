@@ -53,7 +53,7 @@ const ProductCard = ({ product, onClick }) => {
 			</div>
 
 			<div className="p-3 flex flex-col flex-1">
-				<p className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mb-2 flex-1">{product.title}</p>
+				<p className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mb-2 h-8">{product.title}</p>
 
 				{product.rating && (
 					<div className="flex items-center gap-1 mb-2">

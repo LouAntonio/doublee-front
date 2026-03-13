@@ -44,6 +44,7 @@ const AdminStores = () => {
 				notyf.error(res.msg);
 			}
 		} catch (err) {
+			console.log(err);
 			notyf.error('Erro de conexão ao alterar estado da loja.');
 		}
 	};

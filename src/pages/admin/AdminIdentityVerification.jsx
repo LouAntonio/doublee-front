@@ -156,6 +156,8 @@ const DetailModal = ({ user, onClose, onApprove, onReject }) => {
 		...(user.docs?.pics || []).map((src) => ({ src, label: 'Selfie/Identificação' })),
 	];
 
+	console.log(allImages);
+
 	return (
 		<>
 			<Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />

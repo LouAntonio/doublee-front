@@ -12,7 +12,7 @@ const FeaturedProductsSection = () => {
 		const fetchFeaturedProducts = async () => {
 			try {
 				setLoading(true);
-				const response = await apiRequest('/products?featured=true&limit=8');
+				const response = await apiRequest('/products/featured?limit=8');
 				if (response.success && response.data?.products) {
 					setProducts(response.data.products);
 				}

@@ -68,7 +68,7 @@ const Promocoes = () => {
 			params.set('onPromotion', 'true');
 			const query = `?${params.toString()}`;
 
-			const res = await apiRequest(`/products${query}`);
+			const res = await apiRequest(`/products/featured?${query}`);
 			if (!mounted) return;
 			if (res && res.success) {
 				const items = (res.data?.products || []).map(p => ({

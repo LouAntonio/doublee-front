@@ -159,7 +159,7 @@ const AdminDashboard = () => {
 											<span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${store.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
 												store.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
 													'bg-rose-50 text-rose-700 border-rose-200'
-												}`}>
+											}`}>
 												{store.status === 'approved' ? 'Aprovada' : store.status === 'pending' ? 'Pendente' : 'Rejeitada'}
 											</span>
 										</td>
@@ -221,7 +221,7 @@ const AdminDashboard = () => {
 											<span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${order.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
 												order.paymentStatus === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
 													'bg-rose-50 text-rose-700 border-rose-200'
-												}`}>
+											}`}>
 												{order.paymentStatus === 'paid' ? 'Pago' : order.paymentStatus === 'pending' ? 'Pendente' : 'Falhou'}
 											</span>
 										</td>

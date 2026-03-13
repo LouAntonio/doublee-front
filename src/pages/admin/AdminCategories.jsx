@@ -49,6 +49,7 @@ const AdminCategories = () => {
 				notyf.error(res.msg);
 			}
 		} catch (err) {
+			console.log(err);
 			notyf.error('Erro ao criar categoria.');
 		} finally {
 			setIsCreating(false);
@@ -56,6 +57,7 @@ const AdminCategories = () => {
 	};
 
 	const handleDeleteMock = (id) => {
+		console.log(`Simulando exclusão da categoria com ID: ${id}`);
 		notyf.success(`Categoria suspensa/excluida (Simulado)`);
 	};
 
