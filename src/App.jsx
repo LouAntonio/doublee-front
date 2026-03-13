@@ -27,6 +27,7 @@ import AdminStores from './pages/admin/AdminStores';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminIdentityVerification from './pages/admin/AdminIdentityVerification';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
 import { AdminAuthProvider } from './context/AdminAuthContext';
 
 const ConditionalFooter = () => {
@@ -96,6 +97,7 @@ function AppRoutes() {
 					<Route path="products" element={<AdminProducts />} />
 					<Route path="categories" element={<AdminCategories />} />
 					<Route path="identity" element={<AdminIdentityVerification />} />
+					<Route path="analytics" element={<AdminAnalytics />} />
 				</Route>
 
 				<Route path="*" element={<NotFound />} />

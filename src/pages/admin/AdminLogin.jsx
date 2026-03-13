@@ -43,18 +43,15 @@ const AdminLogin = () => {
 				<div className="bg-gray-800 rounded-2xl shadow-2xl p-8 relative border border-gray-700">
 					<div className="text-center mb-10">
 						<h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500 mb-2">
-                            DoubleE Admin
+							Double E
 						</h2>
 						<p className="text-gray-400 text-sm">
-                            Acesso restrito ao painel de administração global
+							Oainel de Administração
 						</p>
 					</div>
 
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						<div>
-							<label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email">
-                                Email
-							</label>
 							<div className="relative">
 								<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
 									<svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,16 +64,13 @@ const AdminLogin = () => {
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
-									className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+									className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none transition"
 									placeholder="admin@doublee.com"
 								/>
 							</div>
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="password">
-                                Senha
-							</label>
 							<div className="relative">
 								<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
 									<svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,7 +83,7 @@ const AdminLogin = () => {
 									required
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}
-									className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+									className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none transition"
 									placeholder="••••••••"
 								/>
 							</div>
@@ -98,15 +92,15 @@ const AdminLogin = () => {
 						<div className="pt-2">
 							<button
 								type="submit"
-								className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:ring-offset-gray-800 transition-all"
+								className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 focus:outline-none transition cursor-pointer"
 							>
-                                Entrar no Painel
+								Entrar no Painel
 							</button>
 						</div>
 					</form>
 
 					<div className="mt-8 text-center text-xs text-gray-500">
-                        &copy; {new Date().getFullYear()} Double E. Todos os direitos reservados.
+						&copy; {new Date().getFullYear()} Double E. Todos os direitos reservados.
 					</div>
 				</div>
 			</div>

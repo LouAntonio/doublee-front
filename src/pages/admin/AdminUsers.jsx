@@ -6,13 +6,13 @@ const AdminUsers = () => {
 	const [loading, setLoading] = useState(true);
 	const [pagination, setPagination] = useState({ page: 1, limit: 10, totalPages: 1 });
 	const [search, setSearch] = useState('');
+	const [actionLoading, setActionLoading] = useState({});
 
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
 			const res = await apiRequest('/users/list', {
 				method: 'POST',
-				admin: true,
 				body: JSON.stringify({
 					page: pagination.page,
 					limit: pagination.limit,
@@ -38,6 +38,7 @@ const AdminUsers = () => {
 	}, [pagination.page]);
 
 	const toggleStatus = async (userId) => {
+		setActionLoading(prev => ({ ...prev, [`${userId}-status`]: true }));
 		try {
 			const res = await apiRequest('/users/toggle-status', {
 				method: 'PATCH',
@@ -52,11 +53,14 @@ const AdminUsers = () => {
 			}
 		} catch (err) {
 			notyf.error('Erro de conexão ao alterar estado.');
+		} finally {
+			setActionLoading(prev => ({ ...prev, [`${userId}-status`]: false }));
 		}
 	};
 
 	const toggleRole = async (userId) => {
 		if (!window.confirm("Você tem certeza de que deseja alterar os privilégios deste utilizador?")) return;
+		setActionLoading(prev => ({ ...prev, [`${userId}-role`]: true }));
 		try {
 			const res = await apiRequest('/users/update-role', {
 				method: 'PATCH',
@@ -71,6 +75,8 @@ const AdminUsers = () => {
 			}
 		} catch (err) {
 			notyf.error('Erro de conexão ao alterar papel.');
+		} finally {
+			setActionLoading(prev => ({ ...prev, [`${userId}-role`]: false }));
 		}
 	};
 
@@ -150,8 +156,8 @@ const AdminUsers = () => {
 								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Perfil do Utilizador</th>
 								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Contacto</th>
 								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nível de Acesso</th>
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tipo & Verificação</th>
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status Atual</th>
+								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tipo</th>
+								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
 								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Ações de Gestão</th>
 							</tr>
 						</thead>
@@ -203,18 +209,6 @@ const AdminUsers = () => {
 														Comprador
 													</span>
 												)}
-
-												{user.validatedSeller ? (
-													<span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-														<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
-														ID Verificado
-													</span>
-												) : (
-													<span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
-														<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
-														Não Verificado
-													</span>
-												)}
 											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
@@ -229,18 +223,20 @@ const AdminUsers = () => {
 											<div className="flex justify-end gap-2">
 												<button
 													onClick={() => toggleRole(user.id)}
-													className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 hover:border-transparent transition-all shadow-sm"
+													disabled={actionLoading[`${user.id}-role`]}
+													className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 hover:border-transparent transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-50 disabled:hover:text-indigo-700 disabled:hover:border-indigo-200"
 												>
-													Privilégios
+													{actionLoading[`${user.id}-role`] ? 'Processando...' : 'Privilégios'}
 												</button>
 												<button
 													onClick={() => toggleStatus(user.id)}
-													className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all shadow-sm ${user.status === 'active'
-														? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-600 hover:text-white hover:border-transparent'
-														: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-transparent'
+													disabled={actionLoading[`${user.id}-status`]}
+													className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${user.status === 'active'
+														? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-600 hover:text-white hover:border-transparent disabled:hover:bg-rose-50 disabled:hover:text-rose-700 disabled:hover:border-rose-200'
+														: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-transparent disabled:hover:bg-emerald-50 disabled:hover:text-emerald-700 disabled:hover:border-emerald-200'
 														}`}
 												>
-													{user.status === 'active' ? 'Suspender' : 'Reativar'}
+													{actionLoading[`${user.id}-status`] ? 'Processando...' : (user.status === 'active' ? 'Suspender' : 'Reativar')}
 												</button>
 											</div>
 										</td>

@@ -26,10 +26,57 @@ const AdminDashboard = () => {
 
 	if (loading) {
 		return (
-			<div className="flex justify-center items-center h-[70vh]">
-				<div className="relative w-16 h-16">
-					<div className="absolute top-0 left-0 w-full h-full border-4 border-slate-200 rounded-full"></div>
-					<div className="absolute top-0 left-0 w-full h-full border-4 border-orange-500 rounded-full border-t-transparent animate-spin"></div>
+			<div className="space-y-8 animate-fade-in-up">
+				{/* Title Skeleton */}
+				<div>
+					<div className="h-9 w-48 bg-slate-200 rounded-lg animate-pulse"></div>
+					<div className="h-5 w-64 bg-slate-200 rounded-lg animate-pulse mt-2"></div>
+				</div>
+
+				{/* Cards Skeleton */}
+				<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+					{[1, 2, 3, 4].map((i) => (
+						<div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex items-center">
+							<div className="w-15 h-15 rounded-xl bg-slate-200 animate-pulse p-4" style={{ width: '56px', height: '56px' }}></div>
+							<div className="ml-5 flex-1">
+								<div className="h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
+								<div className="h-8 w-32 bg-slate-200 rounded animate-pulse mt-2"></div>
+							</div>
+						</div>
+					))}
+				</div>
+
+				{/* Lists Skeleton */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					{[1, 2].map((i) => (
+						<div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+							<div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+								<div className="h-6 w-40 bg-slate-200 rounded animate-pulse"></div>
+								<div className="h-6 w-20 bg-slate-200 rounded-full animate-pulse"></div>
+							</div>
+							<div className="p-0">
+								<div className="w-full">
+									<div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex justify-between">
+										<div className="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+										<div className="h-4 w-16 bg-slate-200 rounded animate-pulse"></div>
+										<div className="h-4 w-16 bg-slate-200 rounded animate-pulse"></div>
+									</div>
+									<div className="divide-y divide-slate-100 px-6">
+										{[1, 2, 3].map((j) => (
+											<div key={j} className="py-4 flex items-center justify-between">
+												<div className="flex items-center gap-3 w-1/3">
+													<div className="w-8 h-8 rounded-full bg-slate-200 animate-pulse flex-shrink-0"></div>
+													<div className="h-4 w-full bg-slate-200 rounded animate-pulse"></div>
+												</div>
+												<div className="h-5 w-16 bg-slate-200 rounded-full animate-pulse"></div>
+												<div className="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
 				</div>
 			</div>
 		);
@@ -112,7 +159,7 @@ const AdminDashboard = () => {
 											<span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${store.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
 												store.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
 													'bg-rose-50 text-rose-700 border-rose-200'
-											}`}>
+												}`}>
 												{store.status === 'approved' ? 'Aprovada' : store.status === 'pending' ? 'Pendente' : 'Rejeitada'}
 											</span>
 										</td>
@@ -174,7 +221,7 @@ const AdminDashboard = () => {
 											<span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${order.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
 												order.paymentStatus === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
 													'bg-rose-50 text-rose-700 border-rose-200'
-											}`}>
+												}`}>
 												{order.paymentStatus === 'paid' ? 'Pago' : order.paymentStatus === 'pending' ? 'Pendente' : 'Falhou'}
 											</span>
 										</td>
