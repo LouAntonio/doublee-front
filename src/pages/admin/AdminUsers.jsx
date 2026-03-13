@@ -11,7 +11,7 @@ const AdminUsers = () => {
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
-			const res = await apiRequest('/users/list', {
+			const res = await apiRequest('/admin/users', {
 				method: 'POST',
 				body: JSON.stringify({
 					page: pagination.page,
@@ -40,9 +40,8 @@ const AdminUsers = () => {
 	const toggleStatus = async (userId) => {
 		setActionLoading(prev => ({ ...prev, [`${userId}-status`]: true }));
 		try {
-			const res = await apiRequest('/users/toggle-status', {
+			const res = await apiRequest('/admin/users/status', {
 				method: 'PATCH',
-				admin: true,
 				body: JSON.stringify({ userId })
 			});
 			if (res.success) {
@@ -63,9 +62,8 @@ const AdminUsers = () => {
 		if (!window.confirm("Você tem certeza de que deseja alterar os privilégios deste utilizador?")) return;
 		setActionLoading(prev => ({ ...prev, [`${userId}-role`]: true }));
 		try {
-			const res = await apiRequest('/users/update-role', {
+			const res = await apiRequest('/admin/users/role', {
 				method: 'PATCH',
-				admin: true,
 				body: JSON.stringify({ userId })
 			});
 			if (res.success) {
