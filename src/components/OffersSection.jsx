@@ -14,7 +14,16 @@ const OffersSection = () => {
 				setLoading(true);
 				const response = await apiRequest('/products/on-sale?limit=8');
 				if (response.success && response.data?.products) {
-					setProducts(response.data.products);
+					const normalized = response.data.products.map((product) => ({
+						id: product.id,
+						title: product.name ?? product.title,
+						price: product.promotionalPrice ?? product.price,
+						oldPrice: product.promotionalPrice ? product.price : product.oldPrice,
+						image: product.image || '/images/logo/placeholder.png',
+						rating: product.rating,
+						reviewCount: product.qtdRatings ?? product.reviewCount
+					}));
+					setProducts(normalized);
 				}
 			} catch (error) {
 				console.error('Erro ao buscar ofertas:', error);
@@ -109,8 +118,19 @@ const OffersSection = () => {
 		return null;
 	}
 
-	const dealOfTheDay = products[0];
-	const offers = products.slice(1);
+	const dealCandidate = products.reduce((best, product, index) => {
+		const oldPrice = Number(product?.oldPrice);
+		const price = Number(product?.price);
+		const hasValidDiscount = Number.isFinite(oldPrice) && Number.isFinite(price) && oldPrice > price && price > 0;
+		const discount = hasValidDiscount ? (oldPrice - price) / oldPrice : 0;
+		if (!best) return { product, index, discount };
+		if (discount > best.discount) return { product, index, discount };
+		return best;
+	}, null);
+
+	const dealOfTheDay = dealCandidate?.product ?? products[0];
+	const dealIndex = dealCandidate?.index ?? 0;
+	const offers = products.filter((_, index) => index !== dealIndex);
 
 	const firstRow = offers.slice(0, 4);
 	const secondRow = offers.slice(4, 8);
@@ -170,7 +190,7 @@ const OffersSection = () => {
 							}}>
 								Ofertas
 							</h2>
-							<Link to="/products?onPromotion=true" style={{
+							<Link to="/promocoes" style={{
 								fontSize: '14px',
 								color: '#3483fa',
 								textDecoration: 'none',

@@ -14,7 +14,16 @@ const FeaturedProductsSection = () => {
 				setLoading(true);
 				const response = await apiRequest('/products/featured?limit=8');
 				if (response.success && response.data?.products) {
-					setProducts(response.data.products);
+					const normalized = response.data.products.map((product) => ({
+						id: product.id,
+						title: product.name ?? product.title,
+						price: product.promotionalPrice ?? product.price,
+						oldPrice: product.promotionalPrice ? product.price : product.oldPrice,
+						image: product.image || '/images/logo/placeholder.png',
+						rating: product.rating,
+						reviewCount: product.qtdRatings ?? product.reviewCount
+					}));
+					setProducts(normalized);
 				}
 			} catch (error) {
 				console.error('Erro ao buscar produtos em destaque:', error);
@@ -127,7 +136,7 @@ const FeaturedProductsSection = () => {
 					}}>
 						Produtos em destaque
 					</h2>
-					<Link to="/products?featured=true" style={{
+					<Link to="/produtos?featured=true" style={{
 						color: '#3483fa',
 						fontSize: '14px',
 						textDecoration: 'none',

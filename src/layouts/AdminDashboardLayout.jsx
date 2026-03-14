@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '../context/AdminAuthContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const AdminDashboardLayout = () => {
 	const { isAuthenticated, isLoading, logout, admin } = useAdminAuth();
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const location = useLocation();
 
+	useDocumentTitle('Double E | Painel Administrativo');
+
 	if (isLoading) {
-		return <div className="flex bg-gray-50 h-screen w-screen justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div></div>;
+		return (
+			<div className="min-h-screen w-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black flex items-center justify-center px-6">
+				<div className="relative">
+					<div className="absolute -inset-6 rounded-3xl bg-gradient-to-r from-orange-500 to-rose-500 opacity-20 blur-2xl"></div>
+					<div className="relative bg-slate-900/70 border border-slate-800 rounded-2xl px-8 py-7 text-center shadow-2xl">
+						<div className="mx-auto h-12 w-12 rounded-full border-2 border-slate-700 border-t-orange-500 animate-spin"></div>
+						<p className="mt-4 text-sm font-semibold text-slate-200">Carregando painel</p>
+						<p className="mt-1 text-xs text-slate-400">Sincronizando dados do administrador</p>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	if (!isAuthenticated) {
@@ -36,13 +50,13 @@ const AdminDashboardLayout = () => {
 								<span className="text-white font-bold text-lg">D</span>
 							</div>
 							<span className="text-xl font-bold bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent whitespace-nowrap">
-								DoubleE Admin
+								Double E
 							</span>
 						</div>
 					)}
 					<button
 						onClick={() => setSidebarOpen(!sidebarOpen)}
-						className={`p-2 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/80 ${!sidebarOpen ? 'mx-auto' : ''}`}
+						className={`p-2 rounded-xl transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/80 cursor-pointer ${!sidebarOpen ? 'mx-auto' : ''}`}
 					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={sidebarOpen ? "M4 6h16M4 12h16M4 18h16" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
 					</button>
@@ -79,7 +93,7 @@ const AdminDashboardLayout = () => {
 				<div className="p-4 border-t border-slate-800 bg-slate-900/50 backdrop-blur-sm">
 					<button
 						onClick={logout}
-						className={`group flex items-center w-full px-3 py-3 text-sm font-medium text-rose-400 rounded-xl transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-300 ${!sidebarOpen ? 'justify-center' : ''}`}
+						className={`group flex items-center w-full px-3 py-3 text-sm font-medium text-rose-400 cursor-pointer rounded-xl transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-300 ${!sidebarOpen ? 'justify-center' : ''}`}
 					>
 						<div className="relative">
 							<svg className="w-5 h-5 flex-shrink-0 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>

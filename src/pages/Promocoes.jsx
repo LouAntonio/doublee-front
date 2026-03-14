@@ -43,6 +43,7 @@ const Promocoes = () => {
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [rating, setRating] = useState(null);
 	const [sortOption, setSortOption] = useState('relevance');
+	const [featuredOnly, setFeaturedOnly] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
 
@@ -65,10 +66,11 @@ const Promocoes = () => {
 			if (selectedCategories && selectedCategories.length) params.set('categoryIds', selectedCategories.join(','));
 			if (priceRange.min) params.set('minPrice', priceRange.min);
 			if (priceRange.max) params.set('maxPrice', priceRange.max);
+			if (featuredOnly) params.set('featured', 'true');
 			params.set('onPromotion', 'true');
 			const query = `?${params.toString()}`;
 
-			const res = await apiRequest(`/products/featured?${query}`);
+			const res = await apiRequest(`/products/on-sale?${query}`);
 			if (!mounted) return;
 			if (res && res.success) {
 				const items = (res.data?.products || []).map(p => ({
@@ -162,6 +164,8 @@ const Promocoes = () => {
 							setSelectedCategories={setSelectedCategories}
 							rating={rating}
 							setRating={setRating}
+							featuredOnly={featuredOnly}
+							setFeaturedOnly={setFeaturedOnly}
 							onSearch={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
 							onClear={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
 						/>

@@ -189,9 +189,9 @@ const AdminProducts = () => {
 							placeholder="Buscar produtos..."
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
-							className="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-l-xl border border-slate-200 bg-slate-50 text-sm focus:bg-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+							className="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-l-xl border border-slate-200 bg-slate-50 text-sm transition-all outline-none"
 						/>
-						<button type="submit" className="px-5 py-2.5 border border-transparent text-sm font-semibold rounded-r-xl text-white bg-slate-800 hover:bg-slate-900 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+						<button type="submit" className="px-5 py-2.5 border border-transparent text-sm font-semibold rounded-r-xl text-white bg-slate-800 hover:bg-slate-900 transition-colors shadow-sm focus:outline-none">
 							Buscar
 						</button>
 					</form>
@@ -204,7 +204,7 @@ const AdminProducts = () => {
 						<select
 							value={filters.featured}
 							onChange={(e) => handleFilterChange('featured', e.target.value)}
-							className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-orange-500 bg-slate-50"
+							className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none bg-slate-50"
 						>
 							<option value="">Todos</option>
 							<option value="true">Sim</option>
@@ -216,7 +216,7 @@ const AdminProducts = () => {
 						<select
 							value={filters.onPromotion}
 							onChange={(e) => handleFilterChange('onPromotion', e.target.value)}
-							className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-orange-500 bg-slate-50"
+							className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none bg-slate-50"
 						>
 							<option value="">Todos</option>
 							<option value="true">Sim</option>
@@ -229,7 +229,7 @@ const AdminProducts = () => {
 							<select
 								value={storeId}
 								onChange={(e) => setStoreId(e.target.value)}
-								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-orange-500 bg-slate-50 min-w-[150px] max-w-xs"
+								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none bg-slate-50 min-w-[150px] max-w-xs"
 							>
 								<option value="">Todas</option>
 								{stores.map(store => (
@@ -243,16 +243,18 @@ const AdminProducts = () => {
 								type="number"
 								placeholder="Mín"
 								value={minPrice}
+								min={0}
 								onChange={(e) => setMinPrice(e.target.value)}
-								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-orange-500 bg-slate-50 w-24"
+								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none bg-slate-50 w-24"
 							/>
 							<span className="text-sm text-slate-400">-</span>
 							<input
 								type="number"
 								placeholder="Máx"
 								value={maxPrice}
+								min={0}
 								onChange={(e) => setMaxPrice(e.target.value)}
-								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none focus:border-orange-500 bg-slate-50 w-24"
+								className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 outline-none bg-slate-50 w-24"
 							/>
 						</div>
 						<button type="submit" className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg transition-colors border border-slate-200">
@@ -427,7 +429,7 @@ const AdminProducts = () => {
 								<select
 									value={statusAction}
 									onChange={(e) => setStatusAction(e.target.value)}
-									className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none"
+									className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm outline-none"
 								>
 									<option value="active">Ativo</option>
 									<option value="inactive">Inativo</option>
@@ -446,7 +448,7 @@ const AdminProducts = () => {
 										value={motive}
 										onChange={(e) => setMotive(e.target.value)}
 										rows="3"
-										className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none resize-none"
+										className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none resize-none"
 										placeholder={`Descreva o motivo de alterar para ${statusAction === 'suspended' ? 'suspenso' : 'inativo'}...`}
 										required
 									></textarea>

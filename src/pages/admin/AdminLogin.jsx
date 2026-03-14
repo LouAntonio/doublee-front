@@ -10,7 +10,18 @@ const AdminLogin = () => {
 	const navigate = useNavigate();
 
 	if (isLoading) {
-		return <div className="flex bg-gray-50 h-screen w-screen justify-center items-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div></div>;
+		return (
+			<div className="min-h-screen w-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black flex items-center justify-center px-6">
+				<div className="relative">
+					<div className="absolute -inset-6 rounded-3xl bg-gradient-to-r from-orange-500 to-rose-500 opacity-20 blur-2xl"></div>
+					<div className="relative bg-slate-900/70 border border-slate-800 rounded-2xl px-8 py-7 text-center shadow-2xl">
+						<div className="mx-auto h-12 w-12 rounded-full border-2 border-slate-700 border-t-orange-500 animate-spin"></div>
+						<p className="mt-4 text-sm font-semibold text-slate-200">Processando acesso</p>
+						<p className="mt-1 text-xs text-slate-400">Preparando o painel administrativo</p>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	if (isAuthenticated) {
