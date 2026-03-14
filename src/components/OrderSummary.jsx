@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
 import { IoTicketOutline } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
 const OrderSummary = ({ showPromoCode = true }) => {
 	const { cartItems, getSubtotal, getShipping, getTax, getTotal } = useCart();
@@ -108,6 +109,12 @@ const OrderSummary = ({ showPromoCode = true }) => {
 					</div>
 				)}
 			</div>
+			<Link
+				to="/checkout"
+				className="block w-full mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-center rounded-lg transition-colors shadow-sm"
+			>
+				Finalizar Compra
+			</Link>
 		</div>
 	);
 };

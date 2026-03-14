@@ -6,10 +6,11 @@ import { useCart } from '../context/CartContext';
 import { notyf } from '../utils/notyf';
 
 const ProductCard = ({ product, onClick }) => {
-	const { addToCart } = useCart();
+	const { addToCart, isAddingProduct } = useCart();
 	const navigate = useNavigate();
 	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));
 	const [wishlisted, setWishlisted] = useState(false);
+	const isAdding = isAddingProduct(product.id);
 
 	const handleAddToCart = (e) => {
 		e?.stopPropagation();
@@ -19,7 +20,6 @@ const ProductCard = ({ product, onClick }) => {
 			price: product.price,
 			image: product.image
 		});
-		notyf.success('Produto adicionado ao carrinho!');
 	};
 
 	const handleToggleWishlist = (e) => {
@@ -77,10 +77,15 @@ const ProductCard = ({ product, onClick }) => {
 
 				<button
 					onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
-					className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer mt-auto"
+					disabled={isAdding}
+					className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer mt-auto ${isAdding ? 'opacity-70 cursor-not-allowed' : ''}`}
 				>
-					<IoCartOutline />
-					Adicionar
+					{isAdding ? (
+						<span className="w-4 h-4 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" aria-label="Adicionando" />
+					) : (
+						<IoCartOutline />
+					)}
+					{isAdding ? 'Adicionando...' : 'Adicionar'}
 				</button>
 			</div>
 		</div>

@@ -4,7 +4,9 @@ import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
 
 const CartItem = ({ item }) => {
-	const { updateQuantity, removeFromCart } = useCart();
+	const { updateQuantity, removeFromCart, isUpdatingItem, isRemovingItem } = useCart();
+	const isUpdating = isUpdatingItem(item.id);
+	const isRemoving = isRemovingItem(item.id);
 
 	const handleIncrement = () => {
 		updateQuantity(item.id, item.quantity + 1);
@@ -49,15 +51,23 @@ const CartItem = ({ item }) => {
 					<div className="flex items-center gap-2">
 						<button
 							onClick={handleDecrement}
-							className="w-7 h-7 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+							disabled={isUpdating}
+							className={`w-7 h-7 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors ${isUpdating ? 'opacity-60 cursor-not-allowed' : ''}`}
 							aria-label="Diminuir quantidade"
 						>
 							<IoRemoveOutline className="w-4 h-4 text-gray-600" />
 						</button>
 						<span className="w-8 text-center font-medium text-sm">{item.quantity}</span>
+						{isUpdating && (
+							<span
+								className="inline-block w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"
+								aria-label="Atualizando quantidade"
+							/>
+						)}
 						<button
 							onClick={handleIncrement}
-							className="w-7 h-7 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+							disabled={isUpdating}
+							className={`w-7 h-7 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors ${isUpdating ? 'opacity-60 cursor-not-allowed' : ''}`}
 							aria-label="Aumentar quantidade"
 						>
 							<IoAddOutline className="w-4 h-4 text-gray-600" />
@@ -76,15 +86,23 @@ const CartItem = ({ item }) => {
 				<div className="flex items-center gap-2">
 					<button
 						onClick={handleDecrement}
-						className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+						disabled={isUpdating}
+						className={`w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors ${isUpdating ? 'opacity-60 cursor-not-allowed' : ''}`}
 						aria-label="Diminuir quantidade"
 					>
 						<IoRemoveOutline className="w-4 h-4 text-gray-600" />
 					</button>
 					<span className="w-10 text-center font-medium">{item.quantity}</span>
+					{isUpdating && (
+						<span
+							className="inline-block w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"
+							aria-label="Atualizando quantidade"
+						/>
+					)}
 					<button
 						onClick={handleIncrement}
-						className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+						disabled={isUpdating}
+						className={`w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded transition-colors ${isUpdating ? 'opacity-60 cursor-not-allowed' : ''}`}
 						aria-label="Aumentar quantidade"
 					>
 						<IoAddOutline className="w-4 h-4 text-gray-600" />
@@ -103,10 +121,15 @@ const CartItem = ({ item }) => {
 			<div className="flex items-start lg:items-center">
 				<button
 					onClick={handleRemove}
-					className="p-2 text-red-500 hover:bg-red-50 rounded transition-colors"
+					disabled={isRemoving}
+					className={`p-2 text-red-500 hover:bg-red-50 rounded transition-colors ${isRemoving ? 'opacity-60 cursor-not-allowed' : ''}`}
 					aria-label="Remover item"
 				>
-					<IoTrashOutline className="w-5 h-5" />
+					{isRemoving ? (
+						<span className="w-5 h-5 border-2 border-red-300 border-t-transparent rounded-full animate-spin" aria-label="Removendo" />
+					) : (
+						<IoTrashOutline className="w-5 h-5" />
+					)}
 				</button>
 			</div>
 		</div>

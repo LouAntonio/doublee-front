@@ -11,7 +11,7 @@ import apiRequest from '../services/api';
 const ProductDetails = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const { addToCart } = useCart();
+	const { addToCart, isAddingProduct } = useCart();
 	const [product, setProduct] = useState(null);
 	const [selectedImage, setSelectedImage] = useState(0);
 	const [quantity, setQuantity] = useState(1);
@@ -238,6 +238,8 @@ const ProductDetails = () => {
 			</div>
 		);
 	}
+
+	const isAdding = product ? isAddingProduct(product.id) : false;
 
 	return (
 		<div style={{ backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
@@ -544,7 +546,7 @@ const ProductDetails = () => {
 							{/* Botões de Ação */}
 							<button
 								onClick={handleAddToCart}
-								disabled={product.stock === 0}
+								disabled={product.stock === 0 || isAdding}
 								style={{
 									width: '100%',
 									padding: '13px',
@@ -554,13 +556,32 @@ const ProductDetails = () => {
 									borderRadius: '6px',
 									fontSize: '15px',
 									fontWeight: '500',
-									cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-									transition: 'all 0.2s'
+									cursor: product.stock === 0 || isAdding ? 'not-allowed' : 'pointer',
+									transition: 'all 0.2s',
+									opacity: isAdding ? 0.7 : 1,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									gap: '8px',
 								}}
-								onMouseEnter={(e) => { if (product.stock > 0) e.currentTarget.style.backgroundColor = '#f5f7fa'; }}
-								onMouseLeave={(e) => { if (product.stock > 0) e.currentTarget.style.backgroundColor = 'white'; }}
+								onMouseEnter={(e) => { if (product.stock > 0 && !isAdding) e.currentTarget.style.backgroundColor = '#f5f7fa'; }}
+								onMouseLeave={(e) => { if (product.stock > 0 && !isAdding) e.currentTarget.style.backgroundColor = 'white'; }}
 							>
-								Adicionar ao carrinho
+								{isAdding && (
+									<span
+										style={{
+											width: '16px',
+											height: '16px',
+											border: '2px solid #3483fa',
+											borderTop: '2px solid transparent',
+											borderRadius: '999px',
+											display: 'inline-block',
+											animation: 'spin 0.8s linear infinite'
+										}}
+										aria-label="Adicionando"
+									/>
+								)}
+								{isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
 							</button>
 
 							{/* Benefícios */}

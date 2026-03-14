@@ -72,12 +72,7 @@ const Cart = () => {
 							<OrderSummary />
 
 							{/* Checkout Button */}
-							<Link
-								to="/checkout"
-								className="block w-full mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-center rounded-lg transition-colors shadow-sm"
-							>
-								Finalizar Compra
-							</Link>
+							
 
 							{/* Security Notice */}
 							<div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">

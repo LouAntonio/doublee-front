@@ -152,7 +152,6 @@ const LojaDetails = () => {
 
 	const handleAddToCart = (product) => {
 		addToCart(product, 1);
-		notyf.success('Produto adicionado ao carrinho!');
 	};
 
 	const currentUrl = window.location.href;
