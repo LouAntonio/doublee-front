@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { notyf } from '../../services/api';
 
@@ -52,6 +52,14 @@ const AdminLogin = () => {
 				<div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 to-rose-500 opacity-20 blur-xl"></div>
 
 				<div className="bg-gray-800 rounded-2xl shadow-2xl p-8 relative border border-gray-700">
+					<div className="flex justify-end mb-4">
+						<Link
+							to="/"
+							className="text-xs font-semibold text-slate-300 hover:text-white transition"
+						>
+							Voltar para a Home
+						</Link>
+					</div>
 					<div className="text-center mb-10">
 						<h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500 mb-2">
 							Double E
