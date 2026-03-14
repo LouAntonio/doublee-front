@@ -9,9 +9,8 @@ import {
 } from 'react-icons/io5';
 import { FaBoxOpen, FaUsers, FaAward, FaFacebook, FaWhatsapp, FaLink } from 'react-icons/fa';
 import Header from '../components/Header';
+import ProductCard from '../components/ProductCard';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-import { formatCurrency } from '../utils/currency';
-import { useCart } from '../context/CartContext';
 import { notyf } from '../utils/notyf';
 import apiRequest from '../services/api';
 
@@ -41,7 +40,6 @@ const RatingBar = ({ label, count, total }) => {
 const LojaDetails = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const { addToCart } = useCart();
 
 	const [store, setStore] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -93,7 +91,8 @@ const LojaDetails = () => {
 						rating: s.rating ?? 0,
 						reviews: s.qtdRatings ?? opinions.length,
 						products: 0,
-						badge: s.featured ? 'Destaque' : null,
+						featuredUntil: s.featuredUntil || null,
+						badge: (s.featured && s.featuredUntil && new Date(s.featuredUntil).getTime() > Date.now()) ? 'Destaque' : null,
 						address: s.location || s.province || '—',
 						phone: s.phone || '—',
 						email: s.email || '—',
@@ -114,8 +113,9 @@ const LojaDetails = () => {
 						const mappedProducts = apiProducts.map(p => ({
 							id: p.id,
 							title: p.name,
-							price: p.promotionalPrice ?? p.price,
-							oldPrice: p.promotionalPrice ? p.price : null,
+							price: p.price,
+							promotionalPrice: p.promotionalPrice,
+							promotionalEndDate: p.promotionalEndDate,
 							image: p.image || `https://via.placeholder.com/400x400/f8f8f8/999?text=${encodeURIComponent(p.name.split(' ').slice(0, 2).join('+'))}`,
 							rating: p.rating ?? 0,
 							reviewCount: p.qtdRatings ?? 0,
@@ -148,11 +148,6 @@ const LojaDetails = () => {
 
 		return () => { mounted = false; };
 	}, [id]);
-
-
-	const handleAddToCart = (product) => {
-		addToCart(product, 1);
-	};
 
 	const currentUrl = window.location.href;
 
@@ -432,71 +427,10 @@ const LojaDetails = () => {
 										<FaBoxOpen className="text-4xl mx-auto mb-3 opacity-25" />
 										<p className="font-medium">Nenhum produto encontrado.</p>
 									</div>
-								) : gridView ? (
-									<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-										{filteredProducts.map(product => (
-											<div key={product.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group flex flex-col">
-												<div className="relative aspect-square overflow-hidden bg-gray-50">
-													<img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-													{product.oldPrice && (
-														<span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
-															-{Math.round((1 - product.price / product.oldPrice) * 100)}%
-														</span>
-													)}
-												</div>
-												<div className="p-3 flex flex-col flex-1">
-													<p className="text-xs text-gray-700 font-medium line-clamp-2 leading-tight mb-2 flex-1">{product.title}</p>
-													<div className="flex items-center gap-1 mb-2">
-														<StarRow rating={product.rating} />
-														<span className="text-[10px] text-gray-400">({product.reviewCount})</span>
-													</div>
-													<div className="mb-3">
-														<span className="text-sm font-bold text-gray-800">{formatCurrency(product.price)}</span>
-														{product.oldPrice && (
-															<span className="ml-1.5 text-xs text-gray-400 line-through">{formatCurrency(product.oldPrice)}</span>
-														)}
-													</div>
-													<button
-														onClick={() => handleAddToCart(product)}
-														className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer"
-													>
-														<IoCartOutline />
-														Adicionar
-													</button>
-												</div>
-											</div>
-										))}
-									</div>
 								) : (
-									<div className="flex flex-col gap-3">
+									<div className={`grid gap-4 ${gridView ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
 										{filteredProducts.map(product => (
-											<div key={product.id} className="flex gap-4 bg-white border border-gray-100 rounded-2xl p-3 hover:shadow-md transition-shadow">
-												<div className="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-50">
-													<img src={product.image} alt={product.title} className="w-full h-full object-cover" />
-												</div>
-												<div className="flex-1 min-w-0 flex flex-col justify-center">
-													<p className="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight mb-1">{product.title}</p>
-													<div className="flex items-center gap-1 mb-1.5">
-														<StarRow rating={product.rating} />
-														<span className="text-xs text-gray-400">({product.reviewCount})</span>
-													</div>
-													<div className="flex items-center gap-2">
-														<span className="font-bold text-gray-800">{formatCurrency(product.price)}</span>
-														{product.oldPrice && (
-															<span className="text-xs text-gray-400 line-through">{formatCurrency(product.oldPrice)}</span>
-														)}
-													</div>
-												</div>
-												<div className="flex items-center flex-shrink-0">
-													<button
-														onClick={() => handleAddToCart(product)}
-														className="flex items-center gap-1.5 py-2 px-3 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer"
-													>
-														<IoCartOutline />
-														Adicionar
-													</button>
-												</div>
-											</div>
+											<ProductCard key={product.id} product={product} />
 										))}
 									</div>
 								)}

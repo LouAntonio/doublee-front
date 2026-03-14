@@ -28,6 +28,31 @@ const AdminProducts = () => {
 	const [motive, setMotive] = useState('');
 	const [updatingStatus, setUpdatingStatus] = useState(false);
 
+	const getPromotionEndDate = (promotionalEndDate) => {
+		if (!promotionalEndDate) return null;
+
+		const parsedDate = new Date(promotionalEndDate);
+		if (Number.isNaN(parsedDate.getTime())) return null;
+
+		// If date comes without time, keep promotion valid until end of that day.
+		if (typeof promotionalEndDate === 'string' && !promotionalEndDate.includes('T')) {
+			parsedDate.setHours(23, 59, 59, 999);
+		}
+
+		return parsedDate;
+	};
+
+	const isPromotionValid = (product) => {
+		if (!product?.promotionalPrice) return false;
+
+		const promotionEndDate = getPromotionEndDate(product.promotionalEndDate);
+		if (!promotionEndDate) return true;
+
+		return promotionEndDate.getTime() >= Date.now();
+	};
+
+	const detailsHasValidPromotion = isPromotionValid(selectedProductDetails);
+
 	const fetchProductsAndStores = async () => {
 		setLoading(true);
 		try {
@@ -286,92 +311,96 @@ const AdminProducts = () => {
 									<ProductSkeleton />
 								</>
 							) : products.length > 0 ? (
-								products.map((product) => (
-									<tr key={product.id} className="hover:bg-slate-50/80 transition-colors group">
-										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="flex items-center gap-4">
-												{product.image ? (
-													<img src={product.image} alt={product.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shadow-sm" />
-												) : (
-													<div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 font-bold flex items-center justify-center uppercase shadow-sm border border-slate-200/50">
-														<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-													</div>
-												)}
-												<div>
-													<div className="text-sm font-bold text-slate-800 group-hover:text-orange-600 transition-colors truncate max-w-[200px]" title={product.name}>{product.name}</div>
-													<div className="flex gap-2 mt-1">
-														{product.featured && <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Destaque</span>}
-														{product.promotionalPrice && <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">Promo</span>}
+								products.map((product) => {
+									const hasValidPromotion = isPromotionValid(product);
+
+									return (
+										<tr key={product.id} className="hover:bg-slate-50/80 transition-colors group">
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex items-center gap-4">
+													{product.image ? (
+														<img src={product.image} alt={product.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shadow-sm" />
+													) : (
+														<div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 font-bold flex items-center justify-center uppercase shadow-sm border border-slate-200/50">
+															<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+														</div>
+													)}
+													<div>
+														<div className="text-sm font-bold text-slate-800 group-hover:text-orange-600 transition-colors truncate max-w-[200px]" title={product.name}>{product.name}</div>
+														<div className="flex gap-2 mt-1">
+															{product.featured && <span className="text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Destaque</span>}
+															{hasValidPromotion && <span className="text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">Promo</span>}
+														</div>
 													</div>
 												</div>
-											</div>
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200 w-fit" title={product.store?.name || ''}>
-												{product.store?.name || product.storeId.substring(0, 8) + '...'}
-											</div>
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="flex flex-col">
-												<span className="text-sm font-bold text-slate-800">
-													{Number(product.promotionalPrice || product.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}
-												</span>
-												{product.promotionalPrice && (
-													<span className="text-xs line-through text-slate-400">
-														{Number(product.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200 w-fit" title={product.store?.name || ''}>
+													{product.store?.name || product.storeId.substring(0, 8) + '...'}
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex flex-col">
+													<span className="text-sm font-bold text-slate-800">
+														{Number(hasValidPromotion ? product.promotionalPrice : product.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}
 													</span>
-												)}
-											</div>
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="text-sm font-medium text-slate-600">{product.stock} unidades</div>
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="flex items-center gap-2">
-												<span className={`w-2 h-2 rounded-full ${product.status === 'active' || !product.status ? 'bg-emerald-500' :
-													product.status === 'inactive' ? 'bg-slate-500' :
-														product.status === 'outOfStock' ? 'bg-amber-500' :
-															product.status === 'discontinued' ? 'bg-stone-500' :
-																product.status === 'suspended' ? 'bg-rose-500' :
-																	product.status === 'pending' ? 'bg-blue-500' :
-																		'bg-slate-300'
-												}`}></span>
-												<span className={`text-sm font-bold ${product.status === 'active' || !product.status ? 'text-emerald-700' :
-													product.status === 'inactive' ? 'text-slate-700' :
-														product.status === 'outOfStock' ? 'text-amber-700' :
-															product.status === 'discontinued' ? 'text-stone-700' :
-																product.status === 'suspended' ? 'text-rose-700' :
-																	product.status === 'pending' ? 'text-blue-700' :
-																		'text-slate-500'
-												}`}>
-													{product.status === 'active' || !product.status ? 'Ativo' :
-														product.status === 'inactive' ? 'Inativo' :
-															product.status === 'outOfStock' ? 'Sem Stock' :
-																product.status === 'discontinued' ? 'Descontinuado' :
-																	product.status === 'suspended' ? 'Suspenso' :
-																		product.status === 'pending' ? 'Pendente' :
-																			product.status}
-												</span>
-											</div>
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-											<div className="flex justify-end gap-2">
-												<button
-													onClick={() => openDetails(product.id)}
-													className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200 hover:border-transparent transition-all shadow-sm"
-												>
+													{hasValidPromotion && (
+														<span className="text-xs line-through text-slate-400">
+															{Number(product.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}
+														</span>
+													)}
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="text-sm font-medium text-slate-600">{product.stock} unidades</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex items-center gap-2">
+													<span className={`w-2 h-2 rounded-full ${product.status === 'active' || !product.status ? 'bg-emerald-500' :
+														product.status === 'inactive' ? 'bg-slate-500' :
+															product.status === 'outOfStock' ? 'bg-amber-500' :
+																product.status === 'discontinued' ? 'bg-stone-500' :
+																	product.status === 'suspended' ? 'bg-rose-500' :
+																		product.status === 'pending' ? 'bg-blue-500' :
+																			'bg-slate-300'
+													}`}></span>
+													<span className={`text-sm font-bold ${product.status === 'active' || !product.status ? 'text-emerald-700' :
+														product.status === 'inactive' ? 'text-slate-700' :
+															product.status === 'outOfStock' ? 'text-amber-700' :
+																product.status === 'discontinued' ? 'text-stone-700' :
+																	product.status === 'suspended' ? 'text-rose-700' :
+																		product.status === 'pending' ? 'text-blue-700' :
+																			'text-slate-500'
+													}`}>
+														{product.status === 'active' || !product.status ? 'Ativo' :
+															product.status === 'inactive' ? 'Inativo' :
+																product.status === 'outOfStock' ? 'Sem Stock' :
+																	product.status === 'discontinued' ? 'Descontinuado' :
+																		product.status === 'suspended' ? 'Suspenso' :
+																			product.status === 'pending' ? 'Pendente' :
+																				product.status}
+													</span>
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+												<div className="flex justify-end gap-2">
+													<button
+														onClick={() => openDetails(product.id)}
+														className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200 hover:border-transparent transition-all shadow-sm"
+													>
 													Detalhes
-												</button>
-												<button
-													onClick={() => openStatusModal(product)}
-													className="px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-50 text-orange-700 hover:bg-orange-600 hover:text-white border border-orange-200 hover:border-transparent transition-all shadow-sm"
-												>
+													</button>
+													<button
+														onClick={() => openStatusModal(product)}
+														className="px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-50 text-orange-700 hover:bg-orange-600 hover:text-white border border-orange-200 hover:border-transparent transition-all shadow-sm"
+													>
 													Alterar Status
-												</button>
-											</div>
-										</td>
-									</tr>
-								))
+													</button>
+												</div>
+											</td>
+										</tr>
+									);
+								})
 							) : (
 								<tr>
 									<td colSpan="6" className="px-6 py-16 text-center">
@@ -514,10 +543,10 @@ const AdminProducts = () => {
 													<p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Preço Base</p>
 													<p className="text-lg font-bold text-slate-800">{Number(selectedProductDetails.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}</p>
 												</div>
-												<div className={`p-3 rounded-xl border shadow-sm ${selectedProductDetails.promotionalPrice ? 'bg-orange-50 border-orange-100' : 'bg-white border-slate-100'}`}>
+												<div className={`p-3 rounded-xl border shadow-sm ${detailsHasValidPromotion ? 'bg-orange-50 border-orange-100' : 'bg-white border-slate-100'}`}>
 													<p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Preço Promo</p>
-													<p className={`text-lg font-bold ${selectedProductDetails.promotionalPrice ? 'text-orange-600' : 'text-slate-800'}`}>
-														{selectedProductDetails.promotionalPrice ? Number(selectedProductDetails.promotionalPrice).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : '-'}
+													<p className={`text-lg font-bold ${detailsHasValidPromotion ? 'text-orange-600' : 'text-slate-800'}`}>
+														{detailsHasValidPromotion ? Number(selectedProductDetails.promotionalPrice).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : '-'}
 													</p>
 												</div>
 												<div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">

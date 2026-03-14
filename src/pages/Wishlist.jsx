@@ -21,6 +21,7 @@ const Wishlist = () => {
 			title: product.name || '',
 			price: product.promotionalPrice ?? product.price ?? 0,
 			oldPrice: product.promotionalPrice ? product.price : undefined,
+			promotionalEndDate: product.promotionalEndDate,
 			image: product.image || '/images/logo/placeholder.png',
 			rating: product.rating || 0,
 			reviewCount: product.qtdRatings || 0,

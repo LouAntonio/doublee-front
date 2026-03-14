@@ -125,6 +125,7 @@ const ProductDetails = () => {
 					})(),
 					opinions: [],
 					seller: {
+						id: p.store?.id || null,
 						name: p.store?.name || 'Loja Desconhecida',
 						logo: p.store?.logo || 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
 						rating: p.store?.rating || 0,
@@ -658,7 +659,10 @@ const ProductDetails = () => {
 									<div style={{ flex: 1 }}>
 										<div style={{ fontSize: '13px', fontWeight: '600', color: '#333' }}>{product.seller.name}</div>
 									</div>
-									<button style={{ padding: '5px 12px', backgroundColor: 'transparent', color: '#3483fa', border: '1px solid #3483fa', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+									<button
+										onClick={() => product?.seller?.id && navigate(`/loja/${product.seller.id}`)}
+										style={{ padding: '5px 12px', backgroundColor: 'transparent', color: '#3483fa', border: '1px solid #3483fa', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+									>
 										Ver Mais
 									</button>
 								</div>

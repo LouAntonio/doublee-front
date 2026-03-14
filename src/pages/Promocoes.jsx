@@ -78,6 +78,7 @@ const Promocoes = () => {
 					title: p.name,
 					price: p.promotionalPrice ?? p.price,
 					oldPrice: p.promotionalPrice ? p.price : undefined,
+					promotionalEndDate: p.promotionalEndDate,
 					image: p.image || '/images/logo/placeholder.png',
 					rating: p.rating,
 					reviewCount: p.qtdRatings,

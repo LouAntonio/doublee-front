@@ -33,6 +33,13 @@ const StoreLogo = ({ logo, name }) => {
 	);
 };
 
+const isStoreFeaturedNow = (store) => {
+	if (!store?.featured || !store?.featuredUntil) return false;
+	const featuredUntilMs = new Date(store.featuredUntil).getTime();
+	if (Number.isNaN(featuredUntilMs)) return false;
+	return featuredUntilMs > Date.now();
+};
+
 const Lojas = () => {
 	useDocumentTitle('Lojas - Double E');
 	const [search, setSearch] = useState('');
@@ -306,7 +313,7 @@ const Lojas = () => {
 											<div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 group-hover:scale-105 transition-transform duration-500" />
 										)}
 										<div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-										{store.featured && (
+										{isStoreFeaturedNow(store) && (
 											<span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow bg-[#F97316] text-white">
 												⭐ Destaque
 											</span>
