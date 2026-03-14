@@ -66,7 +66,7 @@ export const WishlistProvider = ({ children }) => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [hasToken, rebuildIds]);
+	}, [hasToken, isAuthenticated, rebuildIds]);
 
 	const checkInWishlist = useCallback(async (productId) => {
 		if (!productId || !isAuthenticated || !hasToken()) return false;
@@ -82,7 +82,7 @@ export const WishlistProvider = ({ children }) => {
 			return inWishlist;
 		}
 		return false;
-	}, [hasToken]);
+	}, [hasToken, isAuthenticated]);
 
 	const addItemIfMissing = useCallback((product) => {
 		if (!product?.id) return;
@@ -149,7 +149,7 @@ export const WishlistProvider = ({ children }) => {
 		} finally {
 			setToggleLoading(productId, false);
 		}
-	}, [addItemIfMissing, hasToken, removeItem, setToggleLoading]);
+	}, [addItemIfMissing, hasToken, isAuthenticated, removeItem, setToggleLoading]);
 
 	const isWishlisted = useCallback((productId) => wishlistIds.has(productId), [wishlistIds]);
 
