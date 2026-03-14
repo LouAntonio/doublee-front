@@ -1,33 +1,79 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { IoCartOutline, IoHeartOutline, IoHeart } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
 import { useCart } from '../context/CartContext';
 import { notyf } from '../utils/notyf';
+import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const ProductCard = ({ product, onClick }) => {
 	const { addToCart, isAddingProduct } = useCart();
+	const { isAuthenticated } = useAuth();
+	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlist();
 	const navigate = useNavigate();
 	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));
-	const [wishlisted, setWishlisted] = useState(false);
-	const isAdding = isAddingProduct(product.id);
+	const productId = product?.id;
+	const productTitle = product?.title ?? product?.name ?? '';
+	const productPrice = product?.price ?? 0;
+	const productImage = product?.image;
+	const wishlisted = productId ? isWishlisted(productId) : false;
+	const isAdding = productId ? isAddingProduct(productId) : false;
+	const isWishToggling = productId ? isToggling(productId) : false;
+
+	useEffect(() => {
+		let active = true;
+		const syncWishlist = async () => {
+			if (!active || !isAuthenticated || !productId) return;
+			if (!isWishlisted(productId)) {
+				await checkInWishlist(productId);
+			}
+		};
+		syncWishlist();
+		return () => { active = false; };
+	}, [checkInWishlist, isAuthenticated, isWishlisted, productId]);
 
 	const handleAddToCart = (e) => {
 		e?.stopPropagation();
 		addToCart({
-			id: product.id,
-			name: product.title,
-			price: product.price,
-			image: product.image
+			id: productId,
+			name: productTitle,
+			price: productPrice,
+			image: productImage
 		});
 	};
 
-	const handleToggleWishlist = (e) => {
+	const handleToggleWishlist = async (e) => {
 		e?.stopPropagation();
-		const newState = !wishlisted;
-		setWishlisted(newState);
-		if (newState) notyf.success('Adicionado à wishlist!');
-		else notyf.error('Removido da wishlist');
+		if (!isAuthenticated) {
+			notyf.error('Faça login para usar a wishlist.');
+			navigate('/auth');
+			return;
+		}
+		if (!productId) return;
+
+		const result = await toggleWishlist({
+			id: productId,
+			name: productTitle,
+			price: productPrice,
+			image: productImage,
+			promotionalPrice: product?.promotionalPrice,
+			stock: product?.stock,
+			store: product?.store,
+			rating: product?.rating,
+			reviewCount: product?.reviewCount
+		});
+		if (result.success) {
+			if (result.inWishlist) notyf.success(result.msg || 'Adicionado à wishlist!');
+			else notyf.error(result.msg || 'Removido da wishlist');
+			return;
+		}
+		if (result.msg === 'not-authenticated') {
+			notyf.error('Faça login para usar a wishlist.');
+			navigate('/auth');
+			return;
+		}
+		notyf.error(result.msg || 'Nao foi possivel atualizar a wishlist.');
 	};
 
 	return (
@@ -36,9 +82,16 @@ const ProductCard = ({ product, onClick }) => {
 				<button
 					onClick={handleToggleWishlist}
 					title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
-					className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-sm hover:shadow-md transition-transform cursor-pointer"
+					disabled={isWishToggling}
+					className={`absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-sm hover:shadow-md transition-transform cursor-pointer ${isWishToggling ? 'opacity-70 cursor-not-allowed' : ''}`}
 				>
-					{wishlisted ? <IoHeart size={16} className="text-red-500" /> : <IoHeartOutline size={16} className="text-gray-600" />}
+					{isWishToggling ? (
+						<span className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" aria-label="Atualizando" />
+					) : (
+						wishlisted
+							? <IoHeart size={16} className="text-red-500" />
+							: <IoHeartOutline size={16} className="text-gray-600" />
+					)}
 				</button>
 
 				{product.oldPrice && (

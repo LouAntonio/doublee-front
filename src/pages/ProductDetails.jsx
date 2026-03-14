@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { IoCartOutline, IoStar, IoStarOutline, IoHeartOutline, IoHeart, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch, IoTimerOutline } from 'react-icons/io5';
 import Header from '../components/Header';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import { formatCurrency } from '../utils/currency';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
@@ -12,11 +14,12 @@ const ProductDetails = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { addToCart, isAddingProduct } = useCart();
+	const { isAuthenticated } = useAuth();
+	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlist();
 	const [product, setProduct] = useState(null);
 	const [selectedImage, setSelectedImage] = useState(0);
 	const [quantity, setQuantity] = useState(1);
 	const [loading, setLoading] = useState(true);
-	const [wishlisted, setWishlisted] = useState(false);
 	// Countdown timer for promotions
 	const [countdown, setCountdown] = useState(null);
 
@@ -43,14 +46,40 @@ const ProductDetails = () => {
 		return () => clearInterval(timer);
 	}, [product]);
 
-	const handleToggleWishlist = () => {
-		const newState = !wishlisted;
-		setWishlisted(newState);
-		if (newState) {
-			notyf.success('Adicionado à wishlist!');
-		} else {
-			notyf.error('Removido da wishlist');
+	const productId = product?.id;
+	const wishlisted = productId ? isWishlisted(productId) : false;
+	const isWishToggling = productId ? isToggling(productId) : false;
+
+	const handleToggleWishlist = async () => {
+		if (!isAuthenticated) {
+			notyf.error('Faça login para usar a wishlist.');
+			navigate('/auth');
+			return;
 		}
+		if (!product) return;
+
+		const result = await toggleWishlist({
+			id: product.id,
+			name: product.title,
+			price: product.price,
+			image: product.images?.[0],
+			stock: product.stock,
+			store: product.seller,
+			rating: product.rating,
+			reviewCount: product.reviews
+		});
+
+		if (result.success) {
+			if (result.inWishlist) notyf.success(result.msg || 'Adicionado à wishlist!');
+			else notyf.error(result.msg || 'Removido da wishlist');
+			return;
+		}
+		if (result.msg === 'not-authenticated') {
+			notyf.error('Faça login para usar a wishlist.');
+			navigate('/auth');
+			return;
+		}
+		notyf.error(result.msg || 'Nao foi possivel atualizar a wishlist.');
 	};
 
 	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
@@ -111,6 +140,18 @@ const ProductDetails = () => {
 		fetchProduct();
 		return () => { mounted = false; };
 	}, [id]);
+
+	useEffect(() => {
+		let active = true;
+		const syncWishlist = async () => {
+			if (!active || !isAuthenticated || !productId) return;
+			if (!isWishlisted(productId)) {
+				await checkInWishlist(productId);
+			}
+		};
+		syncWishlist();
+		return () => { active = false; };
+	}, [checkInWishlist, isAuthenticated, isWishlisted, productId]);
 
 	const handleAddToCart = () => {
 		if (product) {
@@ -319,6 +360,7 @@ const ProductDetails = () => {
 							<button
 								onClick={handleToggleWishlist}
 								title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
+								disabled={isWishToggling}
 								style={{
 									position: 'absolute',
 									top: '0',
@@ -332,10 +374,16 @@ const ProductDetails = () => {
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',
-									zIndex: 1
+									zIndex: 1,
+									opacity: isWishToggling ? 0.7 : 1
 								}}
 							>
-								{wishlisted ? (
+								{isWishToggling ? (
+									<span
+										className="inline-block w-[18px] h-[18px] border-2 border-gray-400 border-t-transparent rounded-full animate-spin"
+										aria-label="Atualizando"
+									/>
+								) : wishlisted ? (
 									<IoHeart size={22} color="#e74c3c" />
 								) : (
 									<IoHeartOutline size={22} color="#aaa" />
