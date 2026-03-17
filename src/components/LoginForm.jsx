@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import apiRequest, { notyf } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import GoogleButton from './GoogleButton';
 
 const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 	const navigate = useNavigate();
@@ -180,6 +181,19 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 					'Entrar'
 				)}
 			</button>
+
+			{/* Divider */}
+			<div className="relative my-6">
+				<div className="absolute inset-0 flex items-center">
+					<div className="w-full border-t border-gray-300"></div>
+				</div>
+				<div className="relative flex justify-center text-sm">
+					<span className="bg-white px-4 text-gray-500">Ou continue com</span>
+				</div>
+			</div>
+
+			{/* Google Login Button */}
+			<GoogleButton />
 
 			{/* Register Link */}
 			<div className="text-center pt-4 border-t border-gray-200">
