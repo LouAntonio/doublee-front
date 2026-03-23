@@ -12,7 +12,7 @@ const notyf = new Notyf({
 // URL da API
 const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
 const API_URL = isProd
-	? 'https://doublee-back-production.up.railway.app'
+	? 'https://doublee-back.onrender.com'
 	: 'http://localhost:20262';
 
 /**

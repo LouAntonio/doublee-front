@@ -30,6 +30,8 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminIdentityVerification from './pages/admin/AdminIdentityVerification';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+import Vender from './pages/Vender';
+import ComoFunciona from './pages/ComoFunciona';
 import { AdminAuthProvider } from './context/AdminAuthContext';
 
 const ConditionalFooter = () => {
@@ -67,6 +69,8 @@ function AppRoutes() {
 				<Route path="/auth" element={<AuthRoute />} />
 				<Route path="/contato" element={<Contato />} />
 				<Route path="/sobre" element={<Sobre />} />
+				<Route path="/vender" element={<Vender />} />
+				<Route path="/como-funciona" element={<ComoFunciona />} />
 				<Route path="/cart" element={<Cart />} />
 				<Route
 					path="/wishlist"
