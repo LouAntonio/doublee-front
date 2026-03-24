@@ -30,6 +30,7 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminIdentityVerification from './pages/admin/AdminIdentityVerification';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminPromotions from './pages/admin/AdminPromotions';
 import Vender from './pages/Vender';
 import ComoFunciona from './pages/ComoFunciona';
 import { AdminAuthProvider } from './context/AdminAuthContext';
@@ -112,6 +113,7 @@ function AppRoutes() {
 					<Route path="categories" element={<AdminCategories />} />
 					<Route path="identity" element={<AdminIdentityVerification />} />
 					<Route path="analytics" element={<AdminAnalytics />} />
+					<Route path="promotions" element={<AdminPromotions />} />
 				</Route>
 
 				<Route path="*" element={<NotFound />} />

@@ -1,0 +1,268 @@
+import React, { useEffect, useState } from 'react';
+import apiRequest, { notyf } from '../../services/api';
+
+const AdminPromotions = () => {
+	const [packages, setPackages] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [isCreating, setIsCreating] = useState(false);
+	const [isUpdating, setIsUpdating] = useState(false);
+	const [editingPackage, setEditingPackage] = useState(null);
+
+	// Form states
+	const [formData, setFormData] = useState({
+		name: '',
+		type: 'STORE',
+		durationDays: 7,
+		price: 0
+	});
+
+	const fetchPackages = async () => {
+		setLoading(true);
+		try {
+			const res = await apiRequest('/promotions/packages', { method: 'GET' });
+			if (res.success) {
+				setPackages(res.data.packages || []);
+			} else {
+				notyf.error(res.msg || 'Erro ao carregar pacotes.');
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchPackages();
+	}, []);
+
+	const handleCreate = async (e) => {
+		e.preventDefault();
+		setIsCreating(true);
+		try {
+			const res = await apiRequest('/promotions/packages', {
+				method: 'POST',
+				admin: true,
+				body: JSON.stringify(formData)
+			});
+			if (res.success) {
+				notyf.success('Pacote criado com sucesso');
+				setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
+				fetchPackages();
+			} else {
+				notyf.error(res.msg);
+			}
+		} catch (err) {
+			console.error(err);
+			notyf.error('Erro ao criar pacote.');
+		} finally {
+			setIsCreating(false);
+		}
+	};
+
+	const handleEditClick = (pkg) => {
+		setEditingPackage(pkg);
+		setFormData({
+			name: pkg.name,
+			type: pkg.type,
+			durationDays: pkg.durationDays,
+			price: pkg.price
+		});
+	};
+
+	const handleUpdate = async (e) => {
+		e.preventDefault();
+		setIsUpdating(true);
+		try {
+			const res = await apiRequest(`/promotions/packages/${editingPackage.id}`, {
+				method: 'PUT',
+				admin: true,
+				body: JSON.stringify(formData)
+			});
+			if (res.success) {
+				notyf.success('Pacote actualizado com sucesso');
+				setEditingPackage(null);
+				setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
+				fetchPackages();
+			} else {
+				notyf.error(res.msg);
+			}
+		} catch (err) {
+			console.error(err);
+			notyf.error('Erro ao actualizar pacote.');
+		} finally {
+			setIsUpdating(false);
+		}
+	};
+
+	const handleDelete = async (id) => {
+		if (!window.confirm('Tem certeza que deseja remover este pacote?')) return;
+		try {
+			const res = await apiRequest(`/promotions/packages/${id}`, {
+				method: 'DELETE',
+				admin: true
+			});
+			if (res.success) {
+				notyf.success('Pacote removido');
+				fetchPackages();
+			} else {
+				notyf.error(res.msg);
+			}
+		} catch (err) {
+			console.error(err);
+			notyf.error('Erro ao remover pacote.');
+		}
+	};
+
+	return (
+		<div className="space-y-6 animate-fade-in-up">
+			<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+				<div>
+					<h2 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+						<svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+						</svg>
+						Gestão de Promoções
+					</h2>
+					<p className="text-sm text-slate-500 mt-1">Crie pacotes de destaque para lojas e produtos.</p>
+				</div>
+			</div>
+
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+				{/* Form Card */}
+				<div className="lg:col-span-1">
+					<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-24">
+						<h3 className="text-lg font-bold text-slate-800 mb-4">
+							{editingPackage ? 'Editar Pacote' : 'Novo Pacote'}
+						</h3>
+						<form onSubmit={editingPackage ? handleUpdate : handleCreate} className="space-y-4">
+							<div>
+								<label className="block text-sm font-semibold text-slate-700 mb-1">Nome do Pacote</label>
+								<input
+									type="text"
+									required
+									className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+									placeholder="Ex: Destaque Loja Prata"
+									value={formData.name}
+									onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-semibold text-slate-700 mb-1">Tipo</label>
+								<select
+									className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+									value={formData.type}
+									onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+								>
+									<option value="STORE">Loja</option>
+									<option value="PRODUCT">Produto</option>
+								</select>
+							</div>
+							<div>
+								<label className="block text-sm font-semibold text-slate-700 mb-1">Duração (Dias)</label>
+								<input
+									type="number"
+									required
+									min="1"
+									className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+									value={formData.durationDays}
+									onChange={(e) => setFormData({ ...formData, durationDays: e.target.value })}
+								/>
+							</div>
+							<div>
+								<label className="block text-sm font-semibold text-slate-700 mb-1">Preço (Kz)</label>
+								<input
+									type="number"
+									required
+									min="0"
+									step="0.01"
+									className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
+									value={formData.price}
+									onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+								/>
+							</div>
+							<div className="pt-2 flex gap-2">
+								<button
+									type="submit"
+									disabled={isCreating || isUpdating}
+									className="flex-1 bg-slate-800 text-white py-2.5 rounded-xl font-bold hover:bg-slate-900 transition-colors disabled:bg-slate-400"
+								>
+									{isCreating || isUpdating ? 'Processando...' : editingPackage ? 'Actualizar' : 'Criar Pacote'}
+								</button>
+								{editingPackage && (
+									<button
+										type="button"
+										onClick={() => {
+											setEditingPackage(null);
+											setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
+										}}
+										className="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors"
+									>
+										Cancelar
+									</button>
+								)}
+							</div>
+						</form>
+					</div>
+				</div>
+
+				{/* Table Card */}
+				<div className="lg:col-span-2">
+					<div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+						<table className="w-full text-left">
+							<thead>
+								<tr className="bg-slate-50 border-b border-slate-100">
+									<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Pacote</th>
+									<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tipo</th>
+									<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Duração</th>
+									<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Preço</th>
+									<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Acções</th>
+								</tr>
+							</thead>
+							<tbody className="divide-y divide-slate-100 text-sm">
+								{loading ? (
+									<tr><td colSpan="5" className="px-6 py-10 text-center text-slate-400">Carregando...</td></tr>
+								) : packages.length > 0 ? (
+									packages.map((pkg) => (
+										<tr key={pkg.id} className="hover:bg-slate-50 transition-colors">
+											<td className="px-6 py-4 font-bold text-slate-800">{pkg.name}</td>
+											<td className="px-6 py-4">
+												<span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${pkg.type === 'STORE' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}`}>
+													{pkg.type === 'STORE' ? 'Loja' : 'Produto'}
+												</span>
+											</td>
+											<td className="px-6 py-4">{pkg.durationDays} dias</td>
+											<td className="px-6 py-4 font-mono font-bold text-orange-600">
+												{parseFloat(pkg.price).toLocaleString('pt-AO')} Kz
+											</td>
+											<td className="px-6 py-4 text-right space-x-2">
+												<button
+													onClick={() => handleEditClick(pkg)}
+													className="text-slate-400 hover:text-slate-600 transition-colors"
+													title="Editar"
+												>
+													<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+												</button>
+												<button
+													onClick={() => handleDelete(pkg.id)}
+													className="text-slate-400 hover:text-rose-600 transition-colors"
+													title="Remover"
+												>
+													<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+												</button>
+											</td>
+										</tr>
+									))
+								) : (
+									<tr><td colSpan="5" className="px-6 py-10 text-center text-slate-400">Nenhum pacote criado.</td></tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default AdminPromotions;
