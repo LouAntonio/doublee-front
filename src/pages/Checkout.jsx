@@ -6,12 +6,17 @@ import Header from '../components/Header';
 import CheckoutSteps from '../components/CheckoutSteps';
 import OrderSummary from '../components/OrderSummary';
 import { useCart } from '../context/CartContext';
+import { notyf } from '../utils/notyf';
+import apiRequest from '../services/api';
+
+
 
 const Checkout = () => {
 	useDocumentTitle('Checkout - Double E');
 	const navigate = useNavigate();
-	const { cartItems, clearCart } = useCart();
+	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCart();
 	const [currentStep, setCurrentStep] = useState(1);
+
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
 
@@ -99,10 +104,30 @@ const Checkout = () => {
 		}
 	};
 
-	const handlePlaceOrder = () => {
-		// Simulate order placement
-		setOrderPlaced(true);
-		clearCart();
+	const handlePlaceOrder = async () => {
+		try {
+			const res = await apiRequest('/orders', {
+				method: 'POST',
+				body: JSON.stringify({
+					items: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
+					shippingAddress: `${shippingInfo.address}, ${shippingInfo.municipality}, ${shippingInfo.province}`,
+					couponCode: appliedCoupon?.code
+				})
+			});
+
+
+			if (res.success) {
+				setOrderPlaced(true);
+				clearCart();
+				setAppliedCoupon(null);
+			} else {
+
+				notyf.error(res.msg || 'Erro ao realizar pedido.');
+			}
+		} catch (error) {
+			console.log(error);
+			notyf.error('Erro ao conectar ao servidor.');
+		}
 	};
 
 	if (orderPlaced) {
@@ -232,7 +257,7 @@ const Checkout = () => {
 
 										<div>
 											<label className="block text-sm font-medium text-gray-700 mb-1">
-											Endereço Completo *
+												Endereço Completo *
 											</label>
 											<input
 												type="text"
@@ -252,7 +277,7 @@ const Checkout = () => {
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<div>
 												<label className="block text-sm font-medium text-gray-700 mb-1">
-											Município *
+													Município *
 												</label>
 												<input
 													type="text"
@@ -271,7 +296,7 @@ const Checkout = () => {
 
 											<div>
 												<label className="block text-sm font-medium text-gray-700 mb-1">
-											Província *
+													Província *
 												</label>
 												<select
 													value={shippingInfo.province}
@@ -314,7 +339,7 @@ const Checkout = () => {
 							{currentStep === 2 && (
 								<div>
 									<h2 className="text-xl font-bold text-gray-800 mb-6">
-								Método de Pagamento
+										Método de Pagamento
 									</h2>
 
 									{/* Payment Method Selection */}

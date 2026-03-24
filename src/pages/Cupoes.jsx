@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
-import { IoTicketOutline, IoCopyOutline, IoCheckmarkCircleOutline, IoTimeOutline, IoStorefrontOutline, IoHardwareChipOutline, IoShirtOutline, IoFastFoodOutline } from 'react-icons/io5';
+import { IoTicketOutline, IoCopyOutline, IoCheckmarkCircleOutline, IoHardwareChipOutline } from 'react-icons/io5';
+import apiRequest from '../services/api';
 
 const CouponCard = ({ coupon }) => {
 	const [copied, setCopied] = useState(false);
@@ -15,25 +16,25 @@ const CouponCard = ({ coupon }) => {
 	return (
 		<div className="bg-white relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col border border-gray-200">
 			{/* Decorative colored top bar */}
-			<div className={`h-2 w-full ${coupon.color}`}></div>
+			<div className="h-2 w-full bg-primary-600"></div>
 
 			<div className="p-6 flex-1 flex flex-col">
 				<div className="flex justify-between items-start mb-4">
-					<div className={`p-3 rounded-full bg-opacity-10 ${coupon.bgColor} ${coupon.textColor}`}>
-						{coupon.icon}
+					<div className="p-3 rounded-full bg-primary-50 text-primary-600">
+						<IoHardwareChipOutline className="w-6 h-6" />
 					</div>
 					<span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">
-						Válido até {coupon.expiry}
+						Válido até {new Date(coupon.expiryDate).toLocaleDateString()}
 					</span>
 				</div>
 
 				<div className="mb-4">
 					<div className="flex items-baseline gap-1 mb-1">
-						<span className="text-2xl font-bold text-gray-800">{coupon.discount}</span>
+						<span className="text-2xl font-bold text-gray-800">{coupon.discount}%</span>
 						<span className="text-sm font-medium text-gray-600">OFF</span>
 					</div>
-					<h3 className="font-semibold text-gray-800 mb-1">{coupon.store}</h3>
-					<p className="text-sm text-gray-500 leading-relaxed">{coupon.description}</p>
+					<h3 className="font-semibold text-gray-800 mb-1">{coupon.store?.name}</h3>
+					<p className="text-sm text-gray-500 leading-relaxed">Aproveite este desconto exclusivo na loja {coupon.store?.name}.</p>
 				</div>
 
 				<div className="mt-auto pt-4 border-t border-dashed border-gray-300">
@@ -76,92 +77,26 @@ const CouponCard = ({ coupon }) => {
 
 const Cupoes = () => {
 	useDocumentTitle('Cupões - Double E');
-	const [activeCategory] = useState('Todos');
+	const [coupons, setCoupons] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-	const coupons = [
-		{
-			id: 1,
-			store: 'Samsung Angola',
-			discount: '50.000 Kz',
-			description: 'Desconto em todo o site para compras acima de 200.000 Kz.',
-			code: 'GALAXY50K',
-			expiry: '25/12',
-			category: 'Tecnologia',
-			icon: <IoHardwareChipOutline className="w-6 h-6" />,
-			color: 'bg-blue-600',
-			textColor: 'text-blue-600',
-			bgColor: 'bg-blue-600'
-		},
-		{
-			id: 2,
-			store: 'Sportzone',
-			discount: '15%',
-			description: 'Cupom válido para calçado desportivo e roupas.',
-			code: 'SPORT15',
-			expiry: '30/11',
-			category: 'Moda',
-			icon: <IoShirtOutline className="w-6 h-6" />,
-			color: 'bg-orange-500',
-			textColor: 'text-orange-500',
-			bgColor: 'bg-orange-500'
-		},
-		{
-			id: 3,
-			store: 'Shoprite Angola',
-			discount: '3.000 Kz',
-			description: 'Nas compras acima de 30.000 Kz em produtos.',
-			code: 'SHOPRITE3K',
-			expiry: '15/11',
-			category: 'Mercado',
-			icon: <IoStorefrontOutline className="w-6 h-6" />,
-			color: 'bg-green-600',
-			textColor: 'text-green-600',
-			bgColor: 'bg-green-600'
-		},
-		{
-			id: 4,
-			store: 'Tupuca',
-			discount: '1.000 Kz',
-			description: 'Válido para o primeiro pedido em restaurantes parceiros.',
-			code: 'TUPUCA1K',
-			expiry: 'Hoje',
-			category: 'Restaurantes',
-			icon: <IoFastFoodOutline className="w-6 h-6" />,
-			color: 'bg-red-500',
-			textColor: 'text-red-500',
-			bgColor: 'bg-red-500'
-		},
-		{
-			id: 5,
-			store: 'Unitel Store',
-			discount: '5%',
-			description: 'Desconto extra para smartphones e acessórios tecnológicos.',
-			code: 'UNITEL5',
-			expiry: '20/12',
-			category: 'Tecnologia',
-			icon: <IoHardwareChipOutline className="w-6 h-6" />,
-			color: 'bg-blue-600',
-			textColor: 'text-blue-600',
-			bgColor: 'bg-blue-600'
-		},
-		{
-			id: 6,
-			store: 'Mango Angola',
-			discount: '20%',
-			description: 'Na compra de 2 ou mais peças da nova coleção.',
-			code: 'MANGO20',
-			expiry: '10/12',
-			category: 'Moda',
-			icon: <IoShirtOutline className="w-6 h-6" />,
-			color: 'bg-purple-600',
-			textColor: 'text-purple-600',
-			bgColor: 'bg-purple-600'
-		}
-	];
+	useEffect(() => {
+		const fetchCoupons = async () => {
+			try {
+				const res = await apiRequest('/coupons/public');
+				if (res.success) {
+					setCoupons(res.data || []);
+				}
+			} catch (error) {
+				console.error('Erro ao carregar cupões:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchCoupons();
+	}, []);
 
-	const filteredCoupons = activeCategory === 'Todos'
-		? coupons
-		: coupons.filter(c => c.category === activeCategory);
+	const filteredCoupons = coupons;
 
 	return (
 		<>
@@ -191,7 +126,28 @@ const Cupoes = () => {
 
 
 					{/* Coupons Grid */}
-					{filteredCoupons.length > 0 ? (
+					{loading ? (
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+								<div key={i} className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden animate-pulse">
+									<div className="h-2 w-full bg-gray-200"></div>
+									<div className="p-6 space-y-4">
+										<div className="flex justify-between items-start">
+											<div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+											<div className="h-4 bg-gray-200 rounded w-24"></div>
+										</div>
+										<div className="space-y-2">
+											<div className="h-6 bg-gray-200 rounded w-1/2"></div>
+											<div className="h-4 bg-gray-200 rounded w-3/4"></div>
+										</div>
+										<div className="pt-4 border-t border-dashed border-gray-200">
+											<div className="h-10 bg-gray-200 rounded-lg"></div>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+					) : filteredCoupons.length > 0 ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 							{filteredCoupons.map((coupon) => (
 								<CouponCard key={coupon.id} coupon={coupon} />

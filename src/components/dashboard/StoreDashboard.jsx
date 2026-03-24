@@ -6,7 +6,9 @@ import {
 	IoStatsChartOutline,
 	IoAlertCircleOutline,
 	IoFlashOutline,
+	IoTicketOutline,
 } from 'react-icons/io5';
+
 import apiRequest from '../../services/api';
 import OverviewTab from './store/OverviewTab';
 import StoreInfoTab from './store/StoreInfoTab';
@@ -14,7 +16,9 @@ import ProductsTab from './store/ProductsTab';
 import OrdersTab from './store/OrdersTab';
 import StatisticsTab from './store/StatisticsTab';
 import PromotionsTab from './store/PromotionsTab';
+import CouponsTab from './store/CouponsTab';
 import StoreDashboardSkeleton from './StoreDashboardSkeleton';
+
 
 const TABS = [
 	{ id: 'overview', label: 'Visão Geral', icon: IoStatsChartOutline },
@@ -23,7 +27,9 @@ const TABS = [
 	{ id: 'orders', label: 'Encomendas', icon: IoBagCheckOutline },
 	{ id: 'statistics', label: 'Estatísticas', icon: IoStatsChartOutline },
 	{ id: 'promotions', label: 'Impulsionar', icon: IoFlashOutline },
+	{ id: 'coupons', label: 'Cupões', icon: IoTicketOutline },
 ];
+
 
 const StoreDashboard = () => {
 	const [activeTab, setActiveTab] = useState('overview');
@@ -110,6 +116,7 @@ const StoreDashboard = () => {
 			{activeTab === 'orders' && <OrdersTab orders={orders} onRefresh={fetchAll} />}
 			{activeTab === 'statistics' && <StatisticsTab orders={orders} />}
 			{activeTab === 'promotions' && <PromotionsTab store={store} products={products} onRefresh={fetchAll} />}
+			{activeTab === 'coupons' && <CouponsTab />}
 		</div>
 	);
 };

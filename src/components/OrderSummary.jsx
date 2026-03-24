@@ -3,22 +3,55 @@ import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
 import { IoTicketOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
+import { notyf } from '../utils/notyf';
+import apiRequest from '../services/api';
 
 const OrderSummary = ({ showPromoCode = true }) => {
-	const { cartItems, getSubtotal, getShipping, getTax, getTotal } = useCart();
+	const { cartItems, getSubtotal, getShipping, getTax, getTotal, appliedCoupon, setAppliedCoupon, getDiscount } = useCart();
 	const [promoCode, setPromoCode] = useState('');
-	const [promoApplied, setPromoApplied] = useState(false);
 
-	const handleApplyPromo = () => {
-		// Simple promo code validation (can be enhanced)
-		if (promoCode.toUpperCase() === 'DESCONTO10') {
-			setPromoApplied(true);
+
+	const [error, setError] = useState('');
+
+	const handleApplyPromo = async () => {
+		setError('');
+		if (!promoCode) return;
+
+		try {
+			const res = await apiRequest('/coupons/validate', {
+				method: 'POST',
+				body: JSON.stringify({ code: promoCode.toUpperCase() })
+			});
+
+
+			if (res.success) {
+				// Check if the store is in our cart
+				const hasItemsFromStore = cartItems.some(item =>
+					(item.store?.id === res.data.storeId) || (item.product?.storeId === res.data.storeId)
+				);
+
+				if (!hasItemsFromStore) {
+					setError('Este cupão pertence a uma loja que não está no seu carrinho.');
+					return;
+				}
+
+				setAppliedCoupon(res.data);
+				setPromoCode('');
+				notyf.success('Cupão aplicado com sucesso!');
+			} else {
+
+				setError(res.msg || 'Cupão inválido ou expirado.');
+			}
+		} catch (err) {
+			console.log(err);
+			setError('Erro ao validar o cupão.');
 		}
 	};
 
 	const subtotal = getSubtotal();
 	const shipping = getShipping();
 	const tax = getTax();
+	const discountAmount = getDiscount();
 	const total = getTotal();
 
 	return (
@@ -47,6 +80,14 @@ const OrderSummary = ({ showPromoCode = true }) => {
 					<span className="font-medium text-gray-800">{formatCurrency(subtotal)}</span>
 				</div>
 
+				{/* Discount */}
+				{appliedCoupon && (
+					<div className="flex justify-between text-sm text-green-600">
+						<span>Desconto ({appliedCoupon.code})</span>
+						<span className="font-medium">-{formatCurrency(discountAmount)}</span>
+					</div>
+				)}
+
 				{/* Shipping */}
 				<div className="flex justify-between text-sm">
 					<span className="text-gray-600">Entrega</span>
@@ -68,28 +109,43 @@ const OrderSummary = ({ showPromoCode = true }) => {
 				{/* Promo Code */}
 				{showPromoCode && (
 					<div className="pt-3 border-t border-gray-200">
-						<div className="flex gap-2">
-							<div className="relative flex-1">
-								<input
-									type="text"
-									value={promoCode}
-									onChange={(e) => setPromoCode(e.target.value)}
-									placeholder="Código promocional"
-									className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-									disabled={promoApplied}
-								/>
-								<IoTicketOutline className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+						{appliedCoupon ? (
+							<div className="flex items-center justify-between bg-green-50 p-2 rounded-lg border border-green-100">
+								<div className="flex items-center gap-2">
+									<IoTicketOutline className="text-green-600" />
+									<span className="text-sm font-bold text-green-700">{appliedCoupon.code}</span>
+								</div>
+								<button
+									onClick={() => setAppliedCoupon(null)}
+									className="text-xs text-red-500 hover:underline font-medium"
+								>
+									Remover
+								</button>
 							</div>
-							<button
-								onClick={handleApplyPromo}
-								disabled={promoApplied}
-								className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded-lg transition-colors"
-							>
-								Aplicar
-							</button>
-						</div>
-						{promoApplied && (
-							<p className="text-xs text-green-600 mt-2">✓ Código aplicado com sucesso!</p>
+						) : (
+							<>
+								<div className="flex gap-2">
+									<div className="relative flex-1">
+										<input
+											type="text"
+											value={promoCode}
+											onChange={(e) => setPromoCode(e.target.value)}
+											placeholder="Código promocional"
+											className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+										/>
+										<IoTicketOutline className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+									</div>
+									<button
+										onClick={handleApplyPromo}
+										className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors cursor-pointer"
+									>
+										Aplicar
+									</button>
+								</div>
+								{error && (
+									<p className="text-xs text-red-500 mt-2">{error}</p>
+								)}
+							</>
 						)}
 					</div>
 				)}
@@ -99,15 +155,6 @@ const OrderSummary = ({ showPromoCode = true }) => {
 					<span className="text-base font-bold text-gray-800">Total</span>
 					<span className="text-lg font-bold text-blue-600">{formatCurrency(total)}</span>
 				</div>
-
-				{/* Free Shipping Notice */}
-				{shipping > 0 && subtotal < 200 && (
-					<div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
-						<p className="text-xs text-blue-800">
-							Falta apenas <strong>{formatCurrency(200 - subtotal)}</strong> para entrega grátis!
-						</p>
-					</div>
-				)}
 			</div>
 			<Link
 				to="/checkout"

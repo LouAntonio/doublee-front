@@ -23,6 +23,8 @@ export const CartProvider = ({ children }) => {
 	const [addingProductIds, setAddingProductIds] = useState([]);
 	const [removingItemIds, setRemovingItemIds] = useState([]);
 	const [updatingItemIds, setUpdatingItemIds] = useState([]);
+	const [appliedCoupon, setAppliedCoupon] = useState(null);
+
 
 	const hasToken = useCallback(() => Boolean(localStorage.getItem('doublee_token')), []);
 
@@ -75,7 +77,9 @@ export const CartProvider = ({ children }) => {
 		id: item.id,
 		productId: item.product?.id ?? item.productId,
 		name: item.product?.name ?? item.name,
-		price: item.product?.promotionalPrice ?? item.product?.price ?? item.price ?? 0,
+		price: (item.product?.promotionalPrice && Number(item.product.promotionalPrice) > 0) 
+			? Number(item.product.promotionalPrice) 
+			: Number(item.product?.price ?? item.price ?? 0),
 		image: item.product?.image ?? item.image,
 		quantity: item.quantity,
 		stock: item.product?.stock ?? item.stock,
@@ -227,19 +231,30 @@ export const CartProvider = ({ children }) => {
 	};
 
 	const getShipping = () => {
-		// Free shipping for orders over R$ 200
-		const subtotal = getSubtotal();
-		return subtotal >= 200 ? 0 : 15;
+		// Default to 0, user set it manually in OrderSummary
+		return 0;
 	};
 
+
 	const getTax = () => {
-		// 10% tax
-		return getSubtotal() * 0.1;
+		// Default to 0, user set it manually in OrderSummary
+		return 0;
+	};
+
+
+	const getDiscount = () => {
+		if (!appliedCoupon) return 0;
+		const storeItemsTotal = cartItems
+			.filter(item => (item.store?.id === appliedCoupon.storeId) || (item.product?.storeId === appliedCoupon.storeId))
+			.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+		
+		return storeItemsTotal * (appliedCoupon.discount / 100);
 	};
 
 	const getTotal = () => {
-		return getSubtotal() + getShipping() + getTax();
+		return getSubtotal() + getShipping() + getTax() - getDiscount();
 	};
+
 
 	const value = {
 		cartItems,
@@ -256,7 +271,11 @@ export const CartProvider = ({ children }) => {
 		getShipping,
 		getTax,
 		getTotal,
+		appliedCoupon,
+		setAppliedCoupon,
+		getDiscount
 	};
+
 
 	return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
