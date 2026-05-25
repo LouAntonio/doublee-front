@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import { useAdminAuth } from '../../context/AdminAuthContext';
-import { notyf } from '../../services/api';
+import useAuthStore from '../../stores/authStore';
+import { notyf } from '../../utils/notyf';
 
 const AdminLogin = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const { login, isAuthenticated, isLoading } = useAdminAuth();
+	const { adminLogin, isAdmin, isLoading } = useAuthStore();
 	const navigate = useNavigate();
 
 	if (isLoading) {
@@ -24,7 +24,7 @@ const AdminLogin = () => {
 		);
 	}
 
-	if (isAuthenticated) {
+	if (isAdmin) {
 		return <Navigate to="/dbe" replace />;
 	}
 
@@ -36,7 +36,7 @@ const AdminLogin = () => {
 			return;
 		}
 
-		const result = await login(email, password);
+		const result = await adminLogin(email, password);
 		if (result.success) {
 			notyf.success('Sessão iniciada como Administrador');
 			navigate('/dbe');

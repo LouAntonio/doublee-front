@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../components/Header';
-import { useAuth } from '../context/AuthContext';
+import useAuthStore from '../stores/authStore';
 import apiRequest from '../services/api';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
 import AccountSettings from '../components/dashboard/AccountSettings';
@@ -39,7 +39,7 @@ const formatDate = () => {
 };
 
 const Dashboard = () => {
-	const { user, logout } = useAuth();
+	const { user, logout } = useAuthStore();
 	const [activeTab, setActiveTab] = useState('profile');
 	// status: 'none' | 'pending' | 'verified'
 	const [verificationStatus, setVerificationStatus] = useState(null);

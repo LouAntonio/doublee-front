@@ -1,10 +1,10 @@
 import React from 'react';
 import { IoTrashOutline, IoAddOutline, IoRemoveOutline } from 'react-icons/io5';
-import { useCart } from '../context/CartContext';
+import useCartStore from '../stores/cartStore';
 import { formatCurrency } from '../utils/currency';
 
 const CartItem = ({ item }) => {
-	const { updateQuantity, removeFromCart, isUpdatingItem, isRemovingItem } = useCart();
+	const { updateQuantity, removeFromCart, isUpdatingItem, isRemovingItem } = useCartStore();
 	const isUpdating = isUpdatingItem(item.id);
 	const isRemoving = isRemovingItem(item.id);
 

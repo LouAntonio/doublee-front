@@ -20,14 +20,15 @@ import {
 	IoLogOutOutline,
 } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import useCartStore from '../stores/cartStore';
+import useAuthStore from '../stores/authStore';
 import apiRequest from '../services/api';
 
 const Header = () => {
-	const { getCartCount } = useCart();
-	const cartCount = getCartCount();
-	const { user, isAuthenticated, logout } = useAuth();
+	const cartCount = useCartStore((s) => s.getCartCount());
+	const user = useAuthStore((s) => s.user);
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+	const logout = useAuthStore((s) => s.logout);
 	const navigate = useNavigate();
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const userMenuRef = useRef(null);

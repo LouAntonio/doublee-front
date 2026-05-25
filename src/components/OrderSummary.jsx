@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import useCartStore from '../stores/cartStore';
 import { formatCurrency } from '../utils/currency';
 import { IoTicketOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { notyf } from '../utils/notyf';
 import apiRequest from '../services/api';
 
 const OrderSummary = ({ showPromoCode = true }) => {
-	const { cartItems, getSubtotal, getShipping, getTax, getTotal, appliedCoupon, setAppliedCoupon, getDiscount } = useCart();
+	const { cartItems, getSubtotal, getShipping, getTax, getTotal, appliedCoupon, setAppliedCoupon, getDiscount } = useCartStore();
 	const [promoCode, setPromoCode] = useState('');
 
 

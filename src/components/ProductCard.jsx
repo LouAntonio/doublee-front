@@ -2,15 +2,15 @@ import React, { useEffect } from 'react';
 import { IoCartOutline, IoHeartOutline, IoHeart } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
-import { useCart } from '../context/CartContext';
+import useCartStore from '../stores/cartStore';
+import useAuthStore from '../stores/authStore';
+import useWishlistStore from '../stores/wishlistStore';
 import { notyf } from '../utils/notyf';
-import { useAuth } from '../context/AuthContext';
-import { useWishlist } from '../context/WishlistContext';
 
 const ProductCard = ({ product, onClick }) => {
-	const { addToCart, isAddingProduct } = useCart();
-	const { isAuthenticated } = useAuth();
-	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlist();
+	const { addToCart, isAddingProduct } = useCartStore();
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
 	const [currentTimestamp, setCurrentTimestamp] = React.useState(null);
 	const navigate = useNavigate();
 	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));

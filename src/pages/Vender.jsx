@@ -1,7 +1,7 @@
 import React from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
-import { useAuth } from '../context/AuthContext';
+import useAuthStore from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import {
 	FaStore,
@@ -18,7 +18,7 @@ import {
 
 const Vender = () => {
 	useDocumentTitle('Venda Connosco - Double E');
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated } = useAuthStore();
 	const navigate = useNavigate();
 
 	const handleComecarVender = () => {

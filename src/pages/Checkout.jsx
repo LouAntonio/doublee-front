@@ -5,7 +5,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import CheckoutSteps from '../components/CheckoutSteps';
 import OrderSummary from '../components/OrderSummary';
-import { useCart } from '../context/CartContext';
+import useCartStore from '../stores/cartStore';
 import { notyf } from '../utils/notyf';
 import apiRequest from '../services/api';
 
@@ -14,7 +14,7 @@ import apiRequest from '../services/api';
 const Checkout = () => {
 	useDocumentTitle('Checkout - Double E');
 	const navigate = useNavigate();
-	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCart();
+	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const [currentStep, setCurrentStep] = useState(1);
 
 	const [orderPlaced, setOrderPlaced] = useState(false);

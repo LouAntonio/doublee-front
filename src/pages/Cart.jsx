@@ -5,11 +5,11 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import CartItem from '../components/CartItem';
 import OrderSummary from '../components/OrderSummary';
-import { useCart } from '../context/CartContext';
+import useCartStore from '../stores/cartStore';
 
 const Cart = () => {
 	useDocumentTitle('Carrinho - Double E');
-	const { cartItems } = useCart();
+	const { cartItems } = useCartStore();
 
 	return (
 		<div style={{ backgroundColor: '#ededed', minHeight: '100vh' }}>

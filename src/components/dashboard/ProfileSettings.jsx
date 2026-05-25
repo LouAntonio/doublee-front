@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import useAuthStore from '../../stores/authStore';
 import apiRequest, { notyf } from '../../services/api';
 
 const ProfileSettings = () => {
-	const { user, login } = useAuth();
+	const user = useAuthStore((s) => s.user);
+	const login = useAuthStore((s) => s.login);
 	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		name: user?.name || '',
