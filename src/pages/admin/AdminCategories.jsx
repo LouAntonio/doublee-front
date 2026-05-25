@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
+import { useAdminCategoriesList, useCreateCategory, useUpdateCategory } from '../../hooks/queries/useAdminCategories';
 
 const uploadToCloudinary = async (file, folder) => {
 	const auth = await http.get(`/cloudinary/authorize-upload-admin?folder=${folder}`, { admin: true });
@@ -42,8 +43,9 @@ const CategorySkeleton = () => (
 );
 
 const AdminCategories = () => {
-	const [categories, setCategories] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: categories = [], isLoading: loading } = useAdminCategoriesList();
+	const createCategory = useCreateCategory();
+	const updateCategory = useUpdateCategory();
 	const [newCategoryName, setNewCategoryName] = useState('');
 	const [imageFile, setImageFile] = useState(null);
 	const [imagePreview, setImagePreview] = useState('');
@@ -57,26 +59,6 @@ const AdminCategories = () => {
 	const [editImagePreview, setEditImagePreview] = useState('');
 	const [isUpdating, setIsUpdating] = useState(false);
 	const editFileInputRef = useRef(null);
-
-	const fetchCategories = async () => {
-		setLoading(true);
-		try {
-			const res = await http.get('/categories');
-			if (res?.success && res.data) {
-				setCategories(res.data.categories || []);
-			} else {
-				notyf.error(res?.msg || 'Erro ao carregar categorias.');
-			}
-		} catch {
-			// handled by interceptor
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchCategories();
-	}, []);
 
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
@@ -103,17 +85,11 @@ const AdminCategories = () => {
 			const payload = { name: newCategoryName.trim() };
 			if (imageUrl) payload.image = imageUrl;
 
-			const res = await http.post('/admin/categories', payload, { admin: true });
-			if (res?.success) {
-				notyf.success('Categoria criada com sucesso');
-				setNewCategoryName('');
-				setImageFile(null);
-				setImagePreview('');
-				if (fileInputRef.current) fileInputRef.current.value = '';
-				fetchCategories();
-			} else {
-				notyf.error(res?.msg);
-			}
+			await createCategory.mutateAsync(payload);
+			setNewCategoryName('');
+			setImageFile(null);
+			setImagePreview('');
+			if (fileInputRef.current) fileInputRef.current.value = '';
 		} catch {
 			notyf.error('Erro ao criar categoria.');
 		} finally {
@@ -175,15 +151,8 @@ const AdminCategories = () => {
 				image: imageUrl
 			};
 
-			const res = await http.put('/admin/categories', payload, { admin: true });
-
-			if (res?.success) {
-				notyf.success('Categoria atualizada com sucesso');
-				handleCancelEdit();
-				fetchCategories();
-			} else {
-				notyf.error(res?.msg);
-			}
+			await updateCategory.mutateAsync(payload);
+			handleCancelEdit();
 		} catch {
 			notyf.error('Erro ao atualizar categoria.');
 		} finally {

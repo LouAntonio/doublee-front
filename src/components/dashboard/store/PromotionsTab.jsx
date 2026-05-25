@@ -1,37 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoFlashOutline, IoCheckmarkCircleOutline, IoTimeOutline, IoWalletOutline } from 'react-icons/io5';
-import http from '../../../services/http';
+import { usePromotionPackages, usePromotionPurchases, usePurchasePromotion } from '../../../hooks/queries/useStorePromotions';
 import { notyf } from '../../../utils/notyf';
 
 const PromotionsTab = ({ store, products, onRefresh }) => {
-	const [packages, setPackages] = useState([]);
-	const [purchases, setPurchases] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: packages = [], isLoading: loadingPackages } = usePromotionPackages();
+	const { data: purchases = [], isLoading: loadingPurchases } = usePromotionPurchases();
+	const purchasePromotion = usePurchasePromotion();
 	const [buying, setBuying] = useState(false);
 
 	const [selectedPackage, setSelectedPackage] = useState(null);
 	const [selectedProduct, setSelectedProduct] = useState('');
 
-	const fetchData = async () => {
-		setLoading(true);
-		try {
-			const [pkgRes, purRes] = await Promise.all([
-				http.get('/promotions/packages?isActive=true'),
-				http.get('/promotions/purchases')
-			]);
-
-			if (pkgRes?.success) setPackages(pkgRes.data.packages || []);
-			if (purRes?.success) setPurchases(purRes.data.purchases || []);
-		} catch {
-			// handled by interceptor
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchData();
-	}, []);
+	const loading = loadingPackages || loadingPurchases;
 
 	const handlePurchase = async () => {
 		if (!selectedPackage) return;
@@ -49,24 +30,12 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 
 		setBuying(true);
 		try {
-			const res = await http.post('/promotions/purchase', payload);
-
-			if (res?.success) {
-				notyf.success('Solicitação criada! Simulando confirmação de pagamento...');
-				await http.post('/promotions/confirm-payment', {
-					purchaseId: res.data.purchaseId,
-					transactionRef: 'MOCK-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-				});
-				notyf.success('Destaque activado com sucesso!');
-				setSelectedPackage(null);
-				setSelectedProduct('');
-				fetchData();
-				if (onRefresh) onRefresh();
-			} else {
-				notyf.error(res?.msg);
-			}
+			await purchasePromotion.mutateAsync(payload);
+			setSelectedPackage(null);
+			setSelectedProduct('');
+			if (onRefresh) onRefresh();
 		} catch {
-			notyf.error('Erro ao processar compra.');
+			// handled by mutation
 		} finally {
 			setBuying(false);
 		}

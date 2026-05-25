@@ -56,10 +56,10 @@ const LojaDetails = () => {
 		const load = async () => {
 			setLoading(true);
 			try {
-			const resp = await http.get(`/stores/${id}`);
+				const resp = await http.get(`/stores/${id}`);
 
-			if (!mounted) return;
-			if (resp?.success) {
+				if (!mounted) return;
+				if (resp?.success) {
 					const s = resp.data.store;
 
 					const opinions = (s.reviews || []).map(r => ({

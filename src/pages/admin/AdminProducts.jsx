@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
+import { useAdminProductsList, useAdminAllStores, useUpdateProductStatus } from '../../hooks/queries/useAdminProducts';
 
 const isPromotionValid = (product, now) => {
 	if (!product?.promotionalPrice) return false;
@@ -56,9 +57,7 @@ const ProductSkeleton = () => (
 );
 
 const AdminProducts = () => {
-	const [products, setProducts] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [pagination, setPagination] = useState({ page: 1, limit: 10, totalPages: 1 });
+	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [storeId, setStoreId] = useState('');
 	const [minPrice, setMinPrice] = useState('');
@@ -68,7 +67,14 @@ const AdminProducts = () => {
 		onPromotion: ''
 	});
 
-	const [stores, setStores] = useState([]);
+	const { data: productsData, isLoading: loading } = useAdminProductsList({
+		page, limit: 10, search, filters, storeId, minPrice, maxPrice
+	});
+	const { data: stores = [] } = useAdminAllStores();
+	const updateProductStatus = useUpdateProductStatus();
+
+	const products = productsData?.products || [];
+	const pagination = productsData?.pagination || { page: 1, limit: 10, totalPages: 1 };
 
 	const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 	const [selectedProductDetails, setSelectedProductDetails] = useState(null);
@@ -84,51 +90,14 @@ const AdminProducts = () => {
 
 	const detailsHasValidPromotion = isPromotionValid(selectedProductDetails, currentTime);
 
-	const fetchProductsAndStores = async () => {
-		setLoading(true);
-		try {
-			let queryProducts = `/admin/products?page=${pagination.page}&limit=${pagination.limit}&search=${search}`;
-			if (filters.featured !== '') queryProducts += `&featured=${filters.featured}`;
-			if (filters.onPromotion !== '') queryProducts += `&onPromotion=${filters.onPromotion}`;
-			if (storeId !== '') queryProducts += `&storeId=${storeId}`;
-			if (minPrice !== '') queryProducts += `&minPrice=${minPrice}`;
-			if (maxPrice !== '') queryProducts += `&maxPrice=${maxPrice}`;
-
-			const productsRes = await http.get(queryProducts);
-			if (productsRes?.success && productsRes.data) {
-				setProducts(productsRes.data.products || productsRes.data || []);
-				if (productsRes.data.pagination) setPagination((prev) => ({ ...prev, ...productsRes.data.pagination }));
-			} else {
-				notyf.error(productsRes?.msg || 'Erro ao carregar produtos.');
-			}
-
-			if (stores.length === 0) {
-				const storesRes = await http.get(`/admin/stores?limit=1000`);
-				if (storesRes?.success && storesRes.data && storesRes.data.stores) {
-					setStores(storesRes.data.stores);
-				}
-			}
-		} catch {
-			// handled by interceptor
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		fetchProductsAndStores();
-		// eslint-disable-next-line
-	}, [pagination.page, filters.featured, filters.onPromotion]);
-
 	const handleSearch = (e) => {
 		e.preventDefault();
-		setPagination((prev) => ({ ...prev, page: 1 }));
-		fetchProductsAndStores();
+		setPage(1);
 	};
 
 	const handleFilterChange = (key, value) => {
 		setFilters(prev => ({ ...prev, [key]: value }));
-		setPagination(prev => ({ ...prev, page: 1 }));
+		setPage(1);
 	};
 
 	const openDetails = async (productId) => {
@@ -165,21 +134,14 @@ const AdminProducts = () => {
 
 		setUpdatingStatus(true);
 		try {
-			const res = await http.patch('/admin/products/status', {
+			await updateProductStatus.mutateAsync({
 				id: selectedProductForStatus.id,
 				status: statusAction,
-				motive: motive
+				motive
 			});
-
-			if (res?.success) {
-				notyf.success(res.msg || 'Status atualizado com sucesso.');
-				setStatusModalOpen(false);
-				fetchProductsAndStores();
-			} else {
-				notyf.error(res?.msg || 'Erro ao atualizar status.');
-			}
+			setStatusModalOpen(false);
 		} catch {
-			// handled by interceptor
+			// handled by mutation
 		} finally {
 			setUpdatingStatus(false);
 		}
@@ -412,8 +374,8 @@ const AdminProducts = () => {
 				{!loading && pagination.totalPages > 1 && (
 					<div className="bg-slate-50/50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
 						<button
-							disabled={pagination.page <= 1}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page - 1 }))}
+							disabled={page <= 1}
+							onClick={() => setPage((prev) => prev - 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -423,8 +385,8 @@ const AdminProducts = () => {
 							Página <span className="font-bold text-slate-900">{pagination.page}</span> de <span className="font-bold text-slate-900">{pagination.totalPages}</span>
 						</span>
 						<button
-							disabled={pagination.page >= pagination.totalPages}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page + 1 }))}
+							disabled={page >= pagination.totalPages}
+							onClick={() => setPage((prev) => prev + 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							Próxima

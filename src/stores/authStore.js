@@ -29,7 +29,7 @@ const isTokenExpired = (token) => {
 	}
 };
 
-const useAuthStore = create((set, get) => ({
+const useAuthStore = create((set) => ({
 	user: getStoredUser(),
 	admin: getStoredAdmin(),
 	isLoading: true,

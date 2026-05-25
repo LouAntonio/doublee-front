@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import http from '../../services/http';
+import React, { useState } from 'react';
 import { notyf } from '../../utils/notyf';
+import { useAdminUsersList, useToggleUserStatus, useToggleUserRole } from '../../hooks/queries/useAdminUsers';
 
 const UserSkeleton = () => (
 	<tr className="animate-pulse border-b border-slate-100 last:border-0">
@@ -35,48 +35,21 @@ const UserSkeleton = () => (
 );
 
 const AdminUsers = () => {
-	const [users, setUsers] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [pagination, setPagination] = useState({ page: 1, limit: 10, totalPages: 1 });
+	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [actionLoading, setActionLoading] = useState({});
 
-	const fetchUsers = async () => {
-		setLoading(true);
-		try {
-			const res = await http.post('/admin/users', {
-				page: pagination.page,
-				limit: pagination.limit,
-				search,
-			}, { admin: true });
-			if (res?.success && res.data) {
-				setUsers(res.data.users);
-				setPagination((prev) => ({ ...prev, ...res.data.pagination }));
-			} else {
-				notyf.error(res?.msg || 'Erro ao carregar utilizadores.');
-			}
-		} catch {
-			// handled by interceptor
-		} finally {
-			setLoading(false);
-		}
-	};
+	const { data: usersData, isLoading: loading } = useAdminUsersList({ page, limit: 10, search });
+	const toggleUserStatus = useToggleUserStatus();
+	const toggleUserRole = useToggleUserRole();
 
-	useEffect(() => {
-		fetchUsers();
-		// eslint-disable-next-line
-	}, [pagination.page]);
+	const users = usersData?.users || [];
+	const pagination = usersData?.pagination || { page: 1, limit: 10, totalPages: 1 };
 
 	const toggleStatus = async (userId) => {
 		setActionLoading(prev => ({ ...prev, [`${userId}-status`]: true }));
 		try {
-			const res = await http.patch('/admin/users/status', { userId }, { admin: true });
-			if (res?.success) {
-				notyf.success(res.msg);
-				fetchUsers();
-			} else {
-				notyf.error(res?.msg);
-			}
+			await toggleUserStatus.mutateAsync(userId);
 		} catch {
 			notyf.error('Erro de conexão ao alterar estado.');
 		} finally {
@@ -88,13 +61,7 @@ const AdminUsers = () => {
 		if (!window.confirm("Você tem certeza de que deseja alterar os privilégios deste utilizador?")) return;
 		setActionLoading(prev => ({ ...prev, [`${userId}-role`]: true }));
 		try {
-			const res = await http.patch('/admin/users/role', { userId }, { admin: true });
-			if (res?.success) {
-				notyf.success(res.msg);
-				fetchUsers();
-			} else {
-				notyf.error(res?.msg);
-			}
+			await toggleUserRole.mutateAsync(userId);
 		} catch {
 			notyf.error('Erro de conexão ao alterar papel.');
 		} finally {
@@ -104,8 +71,7 @@ const AdminUsers = () => {
 
 	const handleSearch = (e) => {
 		e.preventDefault();
-		setPagination((prev) => ({ ...prev, page: 1 }));
-		fetchUsers();
+		setPage(1);
 	};
 
 	return (
@@ -251,7 +217,7 @@ const AdminUsers = () => {
 					<div className="bg-slate-50/50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
 						<button
 							disabled={pagination.page <= 1}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page - 1 }))}
+							onClick={() => setPage((prev) => prev - 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -262,7 +228,7 @@ const AdminUsers = () => {
 						</span>
 						<button
 							disabled={pagination.page >= pagination.totalPages}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page + 1 }))}
+							onClick={() => setPage((prev) => prev + 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							Próxima

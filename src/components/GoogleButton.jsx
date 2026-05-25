@@ -20,7 +20,7 @@ const GoogleButton = ({ onSuccessMessage = 'Login realizado com sucesso!', onLog
 			} else {
 				notyf.error(data.msg || 'Erro ao fazer login com Google.');
 			}
-		} catch (error) {
+		} catch {
 			notyf.error('Erro ao comunicar com o servidor.');
 		}
 	};
@@ -48,7 +48,7 @@ export const GoogleRegisterButton = () => {
 			} else {
 				notyf.error(data.msg || 'Erro ao criar conta com Google.');
 			}
-		} catch (error) {
+		} catch {
 			notyf.error('Erro ao comunicar com o servidor.');
 		}
 	};

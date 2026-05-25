@@ -13,9 +13,8 @@ export const useMyOrders = () =>
 		staleTime: 1000 * 60 * 2,
 	});
 
-export const useCreateOrder = () => {
-	const qc = useQueryClient();
-	return useMutation({
+export const useCreateOrder = () =>
+	useMutation({
 		mutationFn: (orderData) => http.post('/orders', orderData),
 		onSuccess: (res) => {
 			if (!res?.success) {
@@ -25,7 +24,6 @@ export const useCreateOrder = () => {
 		},
 		onError: () => notyf.error('Erro ao conectar ao servidor.'),
 	});
-};
 
 export const useUpdateOrderStatus = () => {
 	const qc = useQueryClient();

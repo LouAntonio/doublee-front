@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 
@@ -51,14 +51,12 @@ export const useDeleteProduct = () => {
 };
 
 export const useCategoriesSimple = () =>
-	import('@tanstack/react-query').then(({ useQuery }) =>
-		useQuery({
-			queryKey: ['categories', 'simple'],
-			queryFn: async () => {
-				const res = await http.get('/categories');
-				if (!res?.success) return [];
-				return res.data?.categories || [];
-			},
-			staleTime: 1000 * 60 * 10,
-		})
-	);
+	useQuery({
+		queryKey: ['categories', 'simple'],
+		queryFn: async () => {
+			const res = await http.get('/categories');
+			if (!res?.success) return [];
+			return res.data?.categories || [];
+		},
+		staleTime: 1000 * 60 * 10,
+	});

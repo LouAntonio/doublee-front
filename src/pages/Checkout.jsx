@@ -19,7 +19,7 @@ const Checkout = () => {
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
-	const { mutateAsync: createOrder, isPending: isCreatingOrder } = useCreateOrder();
+	const { mutateAsync: createOrder } = useCreateOrder();
 
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
