@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 const apiurl = import.meta.env.VITE_API_URL || 'http://localhost:20262';
 export const API_URL = apiurl;
@@ -8,6 +8,7 @@ console.log('API URL:', API_URL);
 const handleSessionExpired = () => {
 	localStorage.removeItem('Kusumba_user');
 	localStorage.removeItem('Kusumba_token');
+	if (window.location.pathname === '/auth') return;
 	setTimeout(() => {
 		window.location.href = '/auth';
 	}, 500);
@@ -70,3 +71,4 @@ http.interceptors.response.use(
 );
 
 export default http;
+
