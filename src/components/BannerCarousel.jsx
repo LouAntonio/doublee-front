@@ -144,7 +144,7 @@ const BannerCarousel = () => {
 								<div className="absolute inset-0 flex items-center">
 									<div className="w-full max-w-3xl pl-14 pr-14 sm:pl-20 sm:pr-20 md:pl-24 md:pr-10 lg:pl-28 lg:pr-12 xl:pl-32 xl:pr-16 pointer-events-auto">
 										{banner.title && (
-											<h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-2 sm:mb-3 md:mb-4 text-white transition-all duration-700 delay-100 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+											<h2 className={`font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-2 sm:mb-3 md:mb-4 text-white transition-all duration-700 delay-100 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
 											}`}
 											style={{
 												textShadow: '0 4px 20px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)'
