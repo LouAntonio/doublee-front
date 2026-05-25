@@ -240,14 +240,14 @@ const ProductsTab = ({ products, onRefresh }) => {
 	};
 
 	return (
-		<div>
+		<div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 			<div className="flex items-center justify-between mb-6">
 				<div>
-					<h2 className="text-lg font-bold text-gray-900">Produtos</h2>
-					<p className="text-sm text-gray-400">{products.length} produto{products.length !== 1 ? 's' : ''} na sua loja.</p>
+					<h2 className="text-lg font-bold text-[#1C1917] font-display">Produtos</h2>
+					<p className="text-sm text-[#78716C]">{products.length} produto{products.length !== 1 ? 's' : ''} na sua loja.</p>
 				</div>
 				<button onClick={openNew}
-					className="flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all cursor-pointer shadow-lg shadow-primary-100">
+					className="flex items-center gap-2 px-5 py-2.5 bg-accent text-white text-sm font-semibold rounded-full hover:bg-accent-dark transition-all cursor-pointer shadow-lg shadow-accent/20">
 					<IoAddOutline className="w-4 h-4" /> Adicionar Produto
 				</button>
 			</div>
@@ -255,36 +255,36 @@ const ProductsTab = ({ products, onRefresh }) => {
 			{products.length === 0 ? (
 				<EmptyState emoji="🛍️" title="Nenhum produto ainda" description="Adicione o seu primeiro produto para começar a vender."
 					action={
-						<button onClick={openNew} className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors">
+						<button onClick={openNew} className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white text-sm font-semibold rounded-full hover:bg-accent-dark transition-colors">
 							<IoAddOutline className="w-4 h-4" /> Adicionar Produto
 						</button>
 					} />
 			) : (
 				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-					{products.map(product => (
-						<div key={product.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:border-primary-200 hover:shadow-md transition-all group">
-							<div className="relative h-40 bg-gray-50">
+					{products.map((product, idx) => (
+						<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
+							<div className="relative h-40 bg-sand">
 								{product.image ? (
 									<img src={product.image} alt={product.name} className="w-full h-full object-cover" />
 								) : (
-									<div className="w-full h-full flex items-center justify-center text-gray-200">
+									<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
 										<IoImageOutline className="w-12 h-12" />
 									</div>
 								)}
 								<div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
 									<button onClick={() => openEdit(product)}
-										className="p-1.5 bg-white rounded-lg shadow text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+										className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-accent hover:bg-orange-50 transition-colors">
 										<IoPencilOutline className="w-3.5 h-3.5" />
 									</button>
 									<button onClick={() => handleDelete(product.id)} disabled={deleting === product.id}
-										className="p-1.5 bg-white rounded-lg shadow text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors">
+										className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-red-600 hover:bg-red-50 transition-colors">
 										{deleting === product.id ? '...' : <IoTrashOutline className="w-3.5 h-3.5" />}
 									</button>
 								</div>
 							</div>
 							<div className="p-3">
 								<div className="flex items-start justify-between gap-2 mb-1">
-									<p className="font-semibold text-gray-900 text-sm truncate">{product.name}</p>
+									<p className="font-semibold text-[#1C1917] text-sm truncate">{product.name}</p>
 									{(() => {
 										const st = PRODUCT_STATUS_MAP[product.status] || PRODUCT_STATUS_MAP.pending;
 										return <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium border ${st.cls}`}>{st.label}</span>;
@@ -294,11 +294,11 @@ const ProductsTab = ({ products, onRefresh }) => {
 									<div>
 										{isPromoValid(product) ? (
 											<>
-												<span className="text-xs text-gray-400 line-through mr-1">{formatCurrency(product.price)}</span>
+												<span className="text-xs text-[#78716C] line-through mr-1">{formatCurrency(product.price)}</span>
 												<span className="text-sm font-bold text-green-600">{formatCurrency(product.promotionalPrice)}</span>
 											</>
 										) : (
-											<span className="text-sm font-bold text-gray-900">{formatCurrency(product.price)}</span>
+											<span className="text-sm font-bold text-[#1C1917]">{formatCurrency(product.price)}</span>
 										)}
 									</div>
 									<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
@@ -319,10 +319,10 @@ const ProductsTab = ({ products, onRefresh }) => {
 			{modalOpen && (
 				<div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 bg-black/50 overflow-y-auto">
 					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mb-10">
-						<div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
-							<h3 className="font-bold text-gray-900">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h3>
-							<button type="button" onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-								<IoCloseOutline className="w-5 h-5" />
+						<div className="flex items-center justify-between px-6 py-4 border-b border-accent/10 sticky top-0 bg-white rounded-t-2xl z-10">
+							<h3 className="font-bold text-[#1C1917] font-display">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h3>
+							<button type="button" onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-sand transition-colors cursor-pointer">
+								<IoCloseOutline className="w-5 h-5 text-[#78716C]" />
 							</button>
 						</div>
 
@@ -337,13 +337,13 @@ const ProductsTab = ({ products, onRefresh }) => {
 
 									{/* Gallery */}
 									<div className="space-y-2">
-										<label className="text-sm font-medium text-gray-700">
-											Galeria <span className="text-gray-400 font-normal">(até 8 imagens)</span>
+										<label className="text-sm font-medium text-[#1C1917]">
+											Galeria <span className="text-[#78716C] font-normal">(até 8 imagens)</span>
 										</label>
 										<div className="flex flex-wrap gap-2">
 											{/* Existing uploaded images */}
 											{existingGallery.map((url, idx) => (
-												<div key={`ex-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200 group/thumb">
+												<div key={`ex-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-accent/10 group/thumb">
 													<img src={url} alt="" className="w-full h-full object-cover" />
 													<button type="button" onClick={() => removeExistingGalleryImage(idx)}
 														className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
@@ -353,7 +353,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 											))}
 											{/* New files pending upload */}
 											{galleryPreviews.map((url, idx) => (
-												<div key={`new-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-primary-300 group/thumb">
+												<div key={`new-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-accent/30 group/thumb">
 													<img src={url} alt="" className="w-full h-full object-cover" />
 													<button type="button" onClick={() => removeNewGalleryImage(idx)}
 														className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
@@ -363,7 +363,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 											))}
 											{/* Add button */}
 											{(existingGallery.length + galleryFiles.length) < 8 && (
-												<label className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition-all text-gray-400 text-xs gap-1">
+												<label className="w-20 h-20 rounded-xl border-2 border-dashed border-accent/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent hover:bg-orange-50 transition-all text-[#78716C] text-xs gap-1">
 													<IoAddOutline className="w-5 h-5" />
 													<span>Adicionar</span>
 													<input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryAdd} />
@@ -379,14 +379,14 @@ const ProductsTab = ({ products, onRefresh }) => {
 								<SectionTitle>Informações Gerais</SectionTitle>
 								<div className="space-y-4">
 									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-gray-700">Nome <span className="text-red-500">*</span></label>
+										<label className="text-sm font-medium text-[#1C1917]">Nome <span className="text-red-500">*</span></label>
 										<input type="text" name="name" value={form.name} onChange={handleChange} required
-											className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all" placeholder="Nome do produto" />
+											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Nome do produto" />
 									</div>
 									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-gray-700">Descrição</label>
+										<label className="text-sm font-medium text-[#1C1917]">Descrição</label>
 										<textarea name="description" value={form.description} onChange={handleChange} rows="3"
-											className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all resize-none" placeholder="Descreva o produto com detalhes..." />
+											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white resize-none" placeholder="Descreva o produto com detalhes..." />
 									</div>
 								</div>
 							</div>
@@ -397,30 +397,30 @@ const ProductsTab = ({ products, onRefresh }) => {
 								<div className="space-y-4">
 									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-gray-700">Preço (Kz) <span className="text-red-500">*</span></label>
+											<label className="text-sm font-medium text-[#1C1917]">Preço (Kz) <span className="text-red-500">*</span></label>
 											<input type="number" name="price" value={form.price} onChange={handleChange} required min="0" step="0.01"
-												className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all" placeholder="0.00" />
+												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="0.00" />
 										</div>
 										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-gray-700">Preço Promocional (Kz)</label>
+											<label className="text-sm font-medium text-[#1C1917]">Preço Promocional (Kz)</label>
 											<input type="number" name="promotionalPrice" value={form.promotionalPrice} onChange={handleChange} min="0" step="0.01"
-												className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all" placeholder="Opcional" />
+												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Opcional" />
 										</div>
 									</div>
 
 									{form.promotionalPrice && (
 										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-gray-700">Data de fim da promoção</label>
+											<label className="text-sm font-medium text-[#1C1917]">Data de fim da promoção</label>
 											<input type="date" name="promotionalEndDate" value={form.promotionalEndDate} onChange={handleChange}
 												min={new Date().toISOString().slice(0, 10)}
-												className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all" />
+												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" />
 										</div>
 									)}
 
 									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-gray-700">Stock <span className="text-red-500">*</span></label>
+										<label className="text-sm font-medium text-[#1C1917]">Stock <span className="text-red-500">*</span></label>
 										<input type="number" name="stock" value={form.stock} onChange={handleChange} required min="0"
-											className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none transition-all" placeholder="Quantidade disponível" />
+											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Quantidade disponível" />
 									</div>
 								</div>
 							</div>
@@ -432,17 +432,17 @@ const ProductsTab = ({ products, onRefresh }) => {
 									{chars.map((c, idx) => (
 										<div key={idx} className="flex gap-2 items-center">
 											<input type="text" value={c.key} onChange={e => handleCharChange(idx, 'key', e.target.value)}
-												className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm transition-all" placeholder="Ex: Cor" />
+												className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Cor" />
 											<input type="text" value={c.value} onChange={e => handleCharChange(idx, 'value', e.target.value)}
-												className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none text-sm transition-all" placeholder="Ex: Vermelho" />
+												className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Vermelho" />
 											<button type="button" onClick={() => removeChar(idx)} disabled={chars.length === 1}
-												className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+												className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
 												<IoTrashOutline className="w-4 h-4" />
 											</button>
 										</div>
 									))}
 									<button type="button" onClick={addChar}
-										className="flex items-center gap-1.5 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors mt-1 cursor-pointer">
+										className="flex items-center gap-1.5 text-sm text-accent font-medium hover:text-accent-dark transition-colors mt-1 cursor-pointer">
 										<IoAddOutline className="w-4 h-4" /> Adicionar característica
 									</button>
 								</div>
@@ -452,7 +452,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 							<div>
 								<SectionTitle>Categorias</SectionTitle>
 								{allCategories.length === 0 ? (
-									<p className="text-sm text-gray-400">Nenhuma categoria disponível.</p>
+									<p className="text-sm text-[#78716C]">Nenhuma categoria disponível.</p>
 								) : (
 									<div className="flex flex-wrap gap-2">
 										{allCategories.map(cat => {
@@ -464,8 +464,8 @@ const ProductsTab = ({ products, onRefresh }) => {
 													onClick={() => toggleCategory(cat.id)}
 													className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all cursor-pointer
 														${selected
-													? 'bg-primary-600 text-white border-primary-600 shadow-sm'
-													: 'bg-white text-gray-600 border-gray-200 hover:border-primary-300 hover:text-primary-600'
+													? 'bg-accent text-white border-accent shadow-sm'
+													: 'bg-white text-[#78716C] border-accent/20 hover:border-accent hover:text-accent'
 												}`}
 												>
 													{selected && <IoCheckmarkOutline className="w-3.5 h-3.5" />}
@@ -480,11 +480,11 @@ const ProductsTab = ({ products, onRefresh }) => {
 							{/* Actions */}
 							<div className="flex items-center gap-3 pt-1">
 								<button type="button" onClick={() => setModalOpen(false)}
-									className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-all cursor-pointer">
+									className="flex-1 px-4 py-3 rounded-full border border-accent/20 text-[#78716C] font-medium hover:bg-sand transition-all cursor-pointer">
 									Cancelar
 								</button>
 								<button type="submit" disabled={saving}
-									className="flex-1 px-4 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-all disabled:opacity-60 cursor-pointer">
+									className="flex-1 px-4 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark transition-all disabled:opacity-60 cursor-pointer shadow-lg shadow-accent/20">
 									{saving ? (savingProgress || 'A guardar...') : (editingProduct ? 'Guardar Alterações' : 'Adicionar Produto')}
 								</button>
 							</div>
