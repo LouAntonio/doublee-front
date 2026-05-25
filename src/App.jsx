@@ -18,7 +18,7 @@ import Footer from '../src/components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import Promocoes from './pages/Promocoes';
 import Produtos from './pages/Produtos';
-import Lojas from './pages/Lojas';
+import Lojas from './pages/lojas';
 import LojaDetails from './pages/LojaDetails';
 import Dashboard from './pages/Dashboard';
 import StoreDashboardPage from './pages/StoreDashboardPage';

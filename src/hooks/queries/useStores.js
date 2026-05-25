@@ -6,12 +6,15 @@ export const useStores = (params = {}) =>
 		queryKey: ['stores', params],
 		queryFn: async () => {
 			const res = await getStores(params);
+			console.log('🔍 useStores raw response:', res);
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar lojas');
-			return {
-				stores: res.data?.stores || [],
-				total: res.data?.pagination?.total || 0,
-				totalPages: res.data?.pagination?.totalPages || 1,
+			const mapped = {
+				stores: res.data?.stores || res.data?.data || res.stores || [],
+				total: res.data?.pagination?.total || res.data?.total || res.total || 0,
+				totalPages: res.data?.pagination?.totalPages || res.data?.totalPages || res.totalPages || 1,
 			};
+			console.log('🔍 useStores mapped:', mapped);
+			return mapped;
 		},
 		staleTime: 1000 * 60 * 5,
 	});

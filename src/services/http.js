@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
 const apiurl = import.meta.env.VITE_API_URL || 'http://localhost:20262';
 export const API_URL = apiurl;
 
