@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 
@@ -182,51 +182,6 @@ const AdminDashboard = () => {
 						</table>
 					</div>
 				</div>
-				<div className="overflow-x-auto flex-1">
-					<table className="w-full">
-						<thead>
-							<tr className="bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-								<th className="px-6 py-4">Nome</th>
-								<th className="px-6 py-4">Status</th>
-								<th className="px-6 py-4 text-right">Data</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-slate-100">
-							{stats.recentStores && stats.recentStores.length > 0 ? stats.recentStores.map((store) => (
-								<tr key={store.id} className="hover:bg-slate-50/80 transition-colors group cursor-pointer">
-									<td className="px-6 py-4 whitespace-nowrap">
-										<div className="flex items-center gap-3">
-											<div className="w-8 h-8 rounded-full bg-slate-100 flex justify-center items-center text-slate-600 font-bold text-xs uppercase shadow-sm">
-												{store.name.charAt(0)}
-											</div>
-											<span className="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">{store.name}</span>
-										</div>
-									</td>
-									<td className="px-6 py-4 whitespace-nowrap">
-										<span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border ${store.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-											store.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-												'bg-rose-50 text-rose-700 border-rose-200'
-										}`}>
-											{store.status === 'approved' ? 'Aprovada' : store.status === 'pending' ? 'Pendente' : 'Rejeitada'}
-										</span>
-									</td>
-									<td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium text-right">
-										{new Date(store.createdAt).toLocaleDateString('pt-PT')}
-									</td>
-								</tr>
-							)) : (
-								<tr>
-									<td colSpan="3" className="px-6 py-12 text-center text-slate-500">
-										<div className="flex flex-col items-center">
-											<svg className="w-10 h-10 text-slate-200 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-											<span>Nenhuma loja encontrada</span>
-										</div>
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
 			</div>
 
 			{/* Recent Orders */}
@@ -303,3 +258,7 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+
+
+
