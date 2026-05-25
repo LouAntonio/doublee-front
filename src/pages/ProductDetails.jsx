@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { IoCartOutline, IoStar, IoStarOutline, IoHeartOutline, IoHeart, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch, IoTimerOutline } from 'react-icons/io5';
 import Header from '../components/Header';
@@ -8,7 +8,49 @@ import useWishlistStore from '../stores/wishlistStore';
 import { formatCurrency } from '../utils/currency';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
-import apiRequest from '../services/api';
+import { useProduct } from '../hooks/queries/useProducts';
+
+const parseSpecs = (p) => {
+	if (!p?.characteristics) return [];
+	try {
+		const chars = typeof p.characteristics === 'string' ? JSON.parse(p.characteristics) : p.characteristics;
+		if (Array.isArray(chars)) return chars;
+		if (typeof chars === 'object' && chars !== null) {
+			return Object.entries(chars).map(([k, v]) => ({ label: k, value: String(v) }));
+		}
+		return [{ label: 'Detalhe', value: String(chars) }];
+	} catch {
+		return [{ label: 'Detalhe', value: String(p.characteristics) }];
+	}
+};
+
+const mapProduct = (p) => {
+	if (!p) return null;
+	return {
+		id: p.id,
+		title: p.name,
+		price: p.promotionalPrice || p.price,
+		oldPrice: p.promotionalPrice ? p.price : undefined,
+		discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
+		promotionEndDate: p.promotionalEndDate,
+		images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
+		category: p.categories?.[0]?.name || 'Diversos',
+		brand: 'Double E',
+		description: p.description || 'Sem descrição.',
+		rating: p.rating || 0,
+		reviews: p.qtdRatings || 0,
+		stock: p.stock || 0,
+		features: [],
+		specs: parseSpecs(p),
+		opinions: [],
+		seller: {
+			id: p.store?.id || null,
+			name: p.store?.name || 'Loja Desconhecida',
+			logo: p.store?.logo || 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
+			rating: p.store?.rating || 0,
+		},
+	};
+};
 
 const ProductDetails = () => {
 	const { id } = useParams();
@@ -16,12 +58,12 @@ const ProductDetails = () => {
 	const { addToCart, isAddingProduct } = useCartStore();
 	const { isAuthenticated } = useAuthStore();
 	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
-	const [product, setProduct] = useState(null);
 	const [selectedImage, setSelectedImage] = useState(0);
 	const [quantity, setQuantity] = useState(1);
-	const [loading, setLoading] = useState(true);
-	// Countdown timer for promotions
 	const [countdown, setCountdown] = useState(null);
+
+	const { data: rawData, isLoading } = useProduct(id);
+	const product = useMemo(() => mapProduct(rawData?.product ?? rawData), [rawData]);
 
 	useEffect(() => {
 		if (!product?.promotionEndDate) return;
@@ -66,7 +108,7 @@ const ProductDetails = () => {
 			stock: product.stock,
 			store: product.seller,
 			rating: product.rating,
-			reviewCount: product.reviews
+			reviewCount: product.reviews,
 		});
 
 		if (result.success) {
@@ -85,73 +127,8 @@ const ProductDetails = () => {
 	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
 
 	useEffect(() => {
-		let mounted = true;
-		const fetchProduct = async () => {
-			setLoading(true);
-			const res = await apiRequest(`/products/${id}`);
-			if (!mounted) return;
-
-			if (res && res.success && res.data?.product) {
-				const p = res.data.product;
-
-				const mappedProduct = {
-					id: p.id,
-					title: p.name,
-					price: p.promotionalPrice || p.price,
-					oldPrice: p.promotionalPrice ? p.price : undefined,
-					discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
-					promotionEndDate: p.promotionalEndDate,
-					images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
-					category: p.categories?.[0]?.name || 'Diversos',
-					brand: 'Double E',
-					description: p.description || 'Sem descrição.',
-					rating: p.rating || 0,
-					reviews: p.qtdRatings || 0,
-					stock: p.stock || 0,
-					features: [],
-					specs: (() => {
-						if (!p.characteristics) return [];
-						try {
-							const chars = typeof p.characteristics === 'string' ? JSON.parse(p.characteristics) : p.characteristics;
-							if (Array.isArray(chars)) return chars;
-							if (typeof chars === 'object' && chars !== null) {
-								return Object.entries(chars).map(([k, v]) => ({ label: k, value: String(v) }));
-							}
-							return [{ label: 'Detalhe', value: String(chars) }];
-						} catch (e) {
-							console.error('Error parsing characteristics:', e);
-							return [{ label: 'Detalhe', value: String(p.characteristics) }];
-						}
-					})(),
-					opinions: [],
-					seller: {
-						id: p.store?.id || null,
-						name: p.store?.name || 'Loja Desconhecida',
-						logo: p.store?.logo || 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
-						rating: p.store?.rating || 0,
-					}
-				};
-				setProduct(mappedProduct);
-			} else {
-				setProduct(null);
-			}
-			setLoading(false);
-		};
-
-		fetchProduct();
-		return () => { mounted = false; };
-	}, [id]);
-
-	useEffect(() => {
-		let active = true;
-		const syncWishlist = async () => {
-			if (!active || !isAuthenticated || !productId) return;
-			if (!isWishlisted(productId)) {
-				await checkInWishlist(productId);
-			}
-		};
-		syncWishlist();
-		return () => { active = false; };
+		if (!isAuthenticated || !productId || isWishlisted(productId)) return;
+		checkInWishlist(productId);
 	}, [checkInWishlist, isAuthenticated, isWishlisted, productId]);
 
 	const handleAddToCart = () => {
@@ -184,7 +161,7 @@ const ProductDetails = () => {
 		return stars;
 	};
 
-	if (loading) {
+	if (isLoading) {
 		return (
 			<div className="bg-[#f5f5f5] min-h-screen flex flex-col">
 				<Header />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IoBagHandleOutline } from 'react-icons/io5';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const OrderHistory = () => {
 	const [orders, setOrders] = useState([]);
@@ -9,15 +10,14 @@ const OrderHistory = () => {
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await apiRequest('/users/orders', { method: 'GET' });
-				if (data.success) {
+				const data = await http.get('/users/orders');
+				if (data?.success) {
 					setOrders(data.orders || []);
 				} else {
 					notyf.error('Erro ao carregar histórico de pedidos.');
 				}
-			} catch (error) {
+			} catch {
 				notyf.error('Erro ao carregar pedidos.');
-				console.error('Fetch orders error:', error);
 			} finally {
 				setIsLoading(false);
 			}

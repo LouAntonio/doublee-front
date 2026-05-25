@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const isPromotionValid = (product, now) => {
 	if (!product?.promotionalPrice) return false;
@@ -93,62 +94,29 @@ const AdminProducts = () => {
 			if (minPrice !== '') queryProducts += `&minPrice=${minPrice}`;
 			if (maxPrice !== '') queryProducts += `&maxPrice=${maxPrice}`;
 
-			const productsRes = await apiRequest(queryProducts, { method: 'GET' });
-			if (productsRes.success && productsRes.data) {
-				console.log(productsRes);
+			const productsRes = await http.get(queryProducts);
+			if (productsRes?.success && productsRes.data) {
 				setProducts(productsRes.data.products || productsRes.data || []);
 				if (productsRes.data.pagination) setPagination((prev) => ({ ...prev, ...productsRes.data.pagination }));
 			} else {
-				notyf.error(productsRes.msg || 'Erro ao carregar produtos.');
+				notyf.error(productsRes?.msg || 'Erro ao carregar produtos.');
 			}
 
 			if (stores.length === 0) {
-				const storesRes = await apiRequest(`/admin/stores?limit=1000`, { method: 'GET' });
-				if (storesRes.success && storesRes.data && storesRes.data.stores) {
+				const storesRes = await http.get(`/admin/stores?limit=1000`);
+				if (storesRes?.success && storesRes.data && storesRes.data.stores) {
 					setStores(storesRes.data.stores);
 				}
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			try {
-				let queryProducts = `/admin/products?page=${pagination.page}&limit=${pagination.limit}&search=${search}`;
-				if (filters.featured !== '') queryProducts += `&featured=${filters.featured}`;
-				if (filters.onPromotion !== '') queryProducts += `&onPromotion=${filters.onPromotion}`;
-				if (storeId !== '') queryProducts += `&storeId=${storeId}`;
-				if (minPrice !== '') queryProducts += `&minPrice=${minPrice}`;
-				if (maxPrice !== '') queryProducts += `&maxPrice=${maxPrice}`;
-
-				const productsRes = await apiRequest(queryProducts, { method: 'GET' });
-				if (productsRes.success && productsRes.data) {
-					console.log(productsRes);
-					setProducts(productsRes.data.products || productsRes.data || []);
-					if (productsRes.data.pagination) setPagination((prev) => ({ ...prev, ...productsRes.data.pagination }));
-				} else {
-					notyf.error(productsRes.msg || 'Erro ao carregar produtos.');
-				}
-
-				if (stores.length === 0) {
-					const storesRes = await apiRequest(`/admin/stores?limit=1000`, { method: 'GET' });
-					if (storesRes.success && storesRes.data && storesRes.data.stores) {
-						setStores(storesRes.data.stores);
-					}
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
+		fetchProductsAndStores();
 		// eslint-disable-next-line
 	}, [pagination.page, filters.featured, filters.onPromotion]);
 
@@ -168,15 +136,14 @@ const AdminProducts = () => {
 		setLoadingDetails(true);
 		setSelectedProductDetails(null);
 		try {
-			const res = await apiRequest(`/admin/products/${productId}`, { method: 'GET' });
-			if (res.success && res.data) {
+			const res = await http.get(`/admin/products/${productId}`);
+			if (res?.success && res.data) {
 				setSelectedProductDetails(res.data);
 			} else {
-				notyf.error(res.msg || 'Erro ao carregar detalhes do produto.');
+				notyf.error(res?.msg || 'Erro ao carregar detalhes do produto.');
 				setDetailsModalOpen(false);
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
 			setDetailsModalOpen(false);
 		} finally {
 			setLoadingDetails(false);
@@ -198,24 +165,21 @@ const AdminProducts = () => {
 
 		setUpdatingStatus(true);
 		try {
-			const res = await apiRequest('/admin/products/status', {
-				method: 'PATCH',
-				body: JSON.stringify({
-					id: selectedProductForStatus.id,
-					status: statusAction,
-					motive: motive
-				})
+			const res = await http.patch('/admin/products/status', {
+				id: selectedProductForStatus.id,
+				status: statusAction,
+				motive: motive
 			});
 
-			if (res.success) {
+			if (res?.success) {
 				notyf.success(res.msg || 'Status atualizado com sucesso.');
 				setStatusModalOpen(false);
 				fetchProductsAndStores();
 			} else {
-				notyf.error(res.msg || 'Erro ao atualizar status.');
+				notyf.error(res?.msg || 'Erro ao atualizar status.');
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setUpdatingStatus(false);
 		}

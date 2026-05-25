@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 // ─── Provinces ───────────────────────────────────────────────────────────────
 const ANGOLA_PROVINCES = [
@@ -11,8 +12,8 @@ const ANGOLA_PROVINCES = [
 
 // ─── Upload helper ────────────────────────────────────────────────────────────
 const uploadToCloudinary = async (file, folder) => {
-	const auth = await apiRequest(`/cloudinary/authorize-upload?folder=${folder}`);
-	if (!auth.success) throw new Error(auth.message || 'Falha ao autorizar upload.');
+	const auth = await http.get(`/cloudinary/authorize-upload?folder=${folder}`);
+	if (!auth?.success) throw new Error(auth?.message || 'Falha ao autorizar upload.');
 
 	const formData = new FormData();
 	formData.append('file', file);
@@ -69,12 +70,10 @@ const StoreCreation = ({ verificationStatus }) => {
 		if (verificationStatus !== 'verified') return;
 		const fetchStatus = async () => {
 			try {
-				const data = await apiRequest('/stores/status');
-				if (data.success){
+				const data = await http.get('/stores/status');
+				if (data?.success) {
 					setStoreStatus(data.data.status);
-					console.log('Status da loja:', data);
-				}
-				else setStoreStatus('none');
+				} else setStoreStatus('none');
 			} catch {
 				setStoreStatus('none');
 			}
@@ -134,19 +133,16 @@ const StoreCreation = ({ verificationStatus }) => {
 			}
 
 			setProgress('A criar loja...');
-			const data = await apiRequest('/stores/create', {
-				method: 'POST',
-				body: JSON.stringify(payload),
-			});
+			const data = await http.post('/stores/create', payload);
 
-			if (data.success) {
+			if (data?.success) {
 				notyf.success('Loja criada com sucesso! Aguarde a aprovação.');
 				setStoreStatus('pending');
 			} else {
-				notyf.error(data.msg || 'Erro ao criar loja.');
+				notyf.error(data?.msg || 'Erro ao criar loja.');
 			}
-		} catch (error) {
-			notyf.error(error.message || 'Erro ao conectar com o servidor.');
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoading(false);
 			setProgress('');

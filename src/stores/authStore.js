@@ -42,8 +42,15 @@ const useAuthStore = create((set, get) => ({
 			set({ isLoading: false, user: null, isAuthenticated: false });
 			return;
 		}
-		const res = await validateSession();
-		if (!res.success) {
+		try {
+			const res = await validateSession();
+			if (!res || res.success === false) {
+				localStorage.removeItem('doublee_user');
+				localStorage.removeItem('doublee_token');
+				set({ user: null, isAuthenticated: false, isLoading: false });
+				return;
+			}
+		} catch {
 			localStorage.removeItem('doublee_user');
 			localStorage.removeItem('doublee_token');
 			set({ user: null, isAuthenticated: false, isLoading: false });
@@ -66,15 +73,20 @@ const useAuthStore = create((set, get) => ({
 
 	adminLogin: async (email, password) => {
 		set({ isLoading: true });
-		const res = await loginAdmin(email, password);
-		if (res.success && res.token && res.user) {
-			localStorage.setItem('doublee_admin_token', res.token);
-			localStorage.setItem('doublee_admin', JSON.stringify(res.user));
-			set({ admin: res.user, isAdmin: true, isLoading: false });
-			return { success: true };
+		try {
+			const res = await loginAdmin(email, password);
+			if (res.success && res.token && res.user) {
+				localStorage.setItem('doublee_admin_token', res.token);
+				localStorage.setItem('doublee_admin', JSON.stringify(res.user));
+				set({ admin: res.user, isAdmin: true, isLoading: false });
+				return { success: true };
+			}
+			set({ isLoading: false });
+			return { success: false, msg: res.msg || 'Erro ao realizar login.' };
+		} catch (err) {
+			set({ isLoading: false });
+			return { success: false, msg: err.response?.data?.msg || err.message || 'Erro ao realizar login.' };
 		}
-		set({ isLoading: false });
-		return { success: false, msg: res.msg || 'Erro ao realizar login.' };
 	},
 
 	adminLogout: () => {

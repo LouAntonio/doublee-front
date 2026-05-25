@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const UserSkeleton = () => (
 	<tr className="animate-pulse border-b border-slate-100 last:border-0">
@@ -43,71 +44,40 @@ const AdminUsers = () => {
 	const fetchUsers = async () => {
 		setLoading(true);
 		try {
-			const res = await apiRequest('/admin/users', {
-				method: 'POST',
-				body: JSON.stringify({
-					page: pagination.page,
-					limit: pagination.limit,
-					search: search
-				})
-			});
-			if (res.success && res.data) {
+			const res = await http.post('/admin/users', {
+				page: pagination.page,
+				limit: pagination.limit,
+				search,
+			}, { admin: true });
+			if (res?.success && res.data) {
 				setUsers(res.data.users);
 				setPagination((prev) => ({ ...prev, ...res.data.pagination }));
 			} else {
-				notyf.error(res.msg || 'Erro ao carregar utilizadores.');
+				notyf.error(res?.msg || 'Erro ao carregar utilizadores.');
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			try {
-				const res = await apiRequest('/admin/users', {
-					method: 'POST',
-					body: JSON.stringify({
-						page: pagination.page,
-						limit: pagination.limit,
-						search: search
-					})
-				});
-				if (res.success && res.data) {
-					setUsers(res.data.users);
-					setPagination((prev) => ({ ...prev, ...res.data.pagination }));
-				} else {
-					notyf.error(res.msg || 'Erro ao carregar utilizadores.');
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
+		fetchUsers();
 		// eslint-disable-next-line
 	}, [pagination.page]);
 
 	const toggleStatus = async (userId) => {
 		setActionLoading(prev => ({ ...prev, [`${userId}-status`]: true }));
 		try {
-			const res = await apiRequest('/admin/users/status', {
-				method: 'PATCH',
-				body: JSON.stringify({ userId })
-			});
-			if (res.success) {
+			const res = await http.patch('/admin/users/status', { userId }, { admin: true });
+			if (res?.success) {
 				notyf.success(res.msg);
 				fetchUsers();
 			} else {
-				notyf.error(res.msg);
+				notyf.error(res?.msg);
 			}
-		} catch (err) {
-			console.log(err);
+		} catch {
 			notyf.error('Erro de conexão ao alterar estado.');
 		} finally {
 			setActionLoading(prev => ({ ...prev, [`${userId}-status`]: false }));
@@ -118,18 +88,14 @@ const AdminUsers = () => {
 		if (!window.confirm("Você tem certeza de que deseja alterar os privilégios deste utilizador?")) return;
 		setActionLoading(prev => ({ ...prev, [`${userId}-role`]: true }));
 		try {
-			const res = await apiRequest('/admin/users/role', {
-				method: 'PATCH',
-				body: JSON.stringify({ userId })
-			});
-			if (res.success) {
+			const res = await http.patch('/admin/users/role', { userId }, { admin: true });
+			if (res?.success) {
 				notyf.success(res.msg);
 				fetchUsers();
 			} else {
-				notyf.error(res.msg);
+				notyf.error(res?.msg);
 			}
-		} catch (err) {
-			console.log(err);
+		} catch {
 			notyf.error('Erro de conexão ao alterar papel.');
 		} finally {
 			setActionLoading(prev => ({ ...prev, [`${userId}-role`]: false }));

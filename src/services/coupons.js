@@ -1,23 +1,17 @@
-import apiRequest from './api';
+import http from './http';
 
-export const getCoupons = () => apiRequest('/coupons');
+export const getCoupons = () => http.get('/coupons');
 
-export const getPublicCoupons = () => apiRequest('/coupons/public');
+export const getPublicCoupons = () => http.get('/coupons/public');
 
 export const getStoreCoupons = (storeId) =>
-	apiRequest(`/stores/${storeId}/coupons`);
+	http.get(`/stores/${storeId}/coupons`);
 
 export const createCoupon = (storeId, data) =>
-	apiRequest(`/stores/${storeId}/coupons`, {
-		method: 'POST',
-		body: JSON.stringify(data),
-	});
+	http.post(`/stores/${storeId}/coupons`, data);
 
 export const updateCoupon = (storeId, couponId, data) =>
-	apiRequest(`/stores/${storeId}/coupons/${couponId}`, {
-		method: 'PUT',
-		body: JSON.stringify(data),
-	});
+	http.put(`/stores/${storeId}/coupons/${couponId}`, data);
 
 export const deleteCoupon = (storeId, couponId) =>
-	apiRequest(`/stores/${storeId}/coupons/${couponId}`, { method: 'DELETE' });
+	http.delete(`/stores/${storeId}/coupons/${couponId}`);

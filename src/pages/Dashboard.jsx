@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../components/Header';
 import useAuthStore from '../stores/authStore';
-import apiRequest from '../services/api';
+import { useVerificationStatus, useStoreStatus } from '../hooks/queries/useDashboard';
 import ProfileSettings from '../components/dashboard/ProfileSettings';
 import AccountSettings from '../components/dashboard/AccountSettings';
 import IdentityVerification from '../components/dashboard/IdentityVerification';
@@ -41,39 +41,15 @@ const formatDate = () => {
 const Dashboard = () => {
 	const { user, logout } = useAuthStore();
 	const [activeTab, setActiveTab] = useState('profile');
-	// status: 'none' | 'pending' | 'verified'
-	const [verificationStatus, setVerificationStatus] = useState(null);
-	// store status: null | 'none' | 'pending' | 'approved' | 'rejected' | 'suspended'
-	const [storeStatus, setStoreStatus] = useState(null);
+	const { data: verificationStatus } = useVerificationStatus();
+	const { data: storeStatus } = useStoreStatus();
 
-	useEffect(() => {
-		const fetchVerificationStatus = async () => {
-			try {
-				const data = await apiRequest('/users/verification-status', { method: 'GET' });
-				if (data.success) setVerificationStatus(data.status);
-				// armazenar no localstorage doublee_user
-				const storedUser = JSON.parse(localStorage.getItem('doublee_user')) || {};
-				localStorage.setItem('doublee_user', JSON.stringify({ ...storedUser, verificationStatus: data.status }));
-			} catch (error) {
-				console.error('Fetch verification status error:', error);
-				// silencioso — o badge simplesmente não aparece
-			}
-		};
-		fetchVerificationStatus();
-	}, []);
-
-	useEffect(() => {
-		const fetchStoreStatus = async () => {
-			try {
-				const data = await apiRequest('/stores/status', { method: 'GET' });
-				if (data.success) setStoreStatus(data.data?.status || 'none');
-				else setStoreStatus('none');
-			} catch {
-				setStoreStatus('none');
-			}
-		};
-		fetchStoreStatus();
-	}, []);
+	React.useEffect(() => {
+		if (verificationStatus) {
+			const storedUser = JSON.parse(localStorage.getItem('doublee_user')) || {};
+			localStorage.setItem('doublee_user', JSON.stringify({ ...storedUser, verificationStatus }));
+		}
+	}, [verificationStatus]);
 
 	const tabs = useMemo(() => [
 		{

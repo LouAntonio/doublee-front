@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 import { IoMailOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
 
 const AccountSettings = () => {
@@ -22,15 +23,12 @@ const AccountSettings = () => {
 		e.preventDefault();
 		setIsLoadingEmail(true);
 		try {
-			const data = await apiRequest('/users/request-email-change', {
-				method: 'POST',
-				body: JSON.stringify(emailData),
-			});
-			if (data.success) {
+			const data = await http.post('/users/request-email-change', emailData);
+			if (data?.success) {
 				notyf.success('Código enviado para o novo email!');
 				setEmailStep('otp');
 			} else {
-				notyf.error(data.msg || 'Erro ao solicitar alteração.');
+				notyf.error(data?.msg || 'Erro ao solicitar alteração.');
 			}
 		} catch {
 			notyf.error('Erro ao conectar com o servidor.');
@@ -44,17 +42,14 @@ const AccountSettings = () => {
 		e.preventDefault();
 		setIsLoadingEmail(true);
 		try {
-			const data = await apiRequest('/users/update-email', {
-				method: 'PUT',
-				body: JSON.stringify({ newEmail: emailData.newEmail, code: otpCode }),
-			});
-			if (data.success) {
+			const data = await http.put('/users/update-email', { newEmail: emailData.newEmail, code: otpCode });
+			if (data?.success) {
 				notyf.success('Email actualizado com sucesso!');
 				setEmailStep('form');
 				setEmailData({ newEmail: '', password: '' });
 				setOtpCode('');
 			} else {
-				notyf.error(data.msg || 'Código inválido ou expirado.');
+				notyf.error(data?.msg || 'Código inválido ou expirado.');
 			}
 		} catch {
 			notyf.error('Erro ao conectar com o servidor.');
@@ -72,18 +67,15 @@ const AccountSettings = () => {
 			return notyf.error('A nova palavra-passe deve ter pelo menos 8 caracteres.');
 		setIsLoadingPass(true);
 		try {
-			const data = await apiRequest('/users/update-password', {
-				method: 'PUT',
-				body: JSON.stringify({
-					oldPassword: passData.currentPassword,
-					newPassword: passData.newPassword,
-				}),
+			const data = await http.put('/users/update-password', {
+				oldPassword: passData.currentPassword,
+				newPassword: passData.newPassword,
 			});
-			if (data.success) {
+			if (data?.success) {
 				notyf.success('Palavra-passe actualizada com sucesso!');
 				setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
 			} else {
-				notyf.error(data.msg || 'Erro ao actualizar palavra-passe.');
+				notyf.error(data?.msg || 'Erro ao actualizar palavra-passe.');
 			}
 		} catch {
 			notyf.error('Erro ao conectar com o servidor.');

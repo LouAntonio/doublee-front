@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import useAuthStore from '../../stores/authStore';
-import apiRequest, { notyf } from '../../services/api';
+import { notyf } from '../../utils/notyf';
+import { useUpdateProfile } from '../../hooks/queries/useProfile';
 
 const ProfileSettings = () => {
 	const user = useAuthStore((s) => s.user);
 	const login = useAuthStore((s) => s.login);
-	const [isLoading, setIsLoading] = useState(false);
+	const { mutateAsync: updateProfile, isPending: isLoading } = useUpdateProfile();
 	const [formData, setFormData] = useState({
 		name: user?.name || '',
 		surname: user?.surname || '',
@@ -18,27 +19,15 @@ const ProfileSettings = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setIsLoading(true);
-
 		try {
-			const data = await apiRequest('/users/update-profile', {
-				method: 'PUT',
-				body: JSON.stringify(formData),
-			});
-
-			if (data.success) {
+			const data = await updateProfile(formData);
+			if (data?.success) {
 				notyf.success('Perfil atualizado com sucesso!');
-				// Update user in context and localStorage
 				const updatedUser = { ...user, ...formData };
 				login(updatedUser);
-			} else {
-				notyf.error(data.msg || 'Erro ao atualizar perfil.');
 			}
-		} catch (error) {
+		} catch {
 			notyf.error('Erro ao conectar com o servidor.');
-			console.error('Update profile error:', error);
-		} finally {
-			setIsLoading(false);
 		}
 	};
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const StoreSkeleton = () => (
 	<tr className="animate-pulse border-b border-slate-100 last:border-0">
@@ -50,52 +51,25 @@ const AdminStores = () => {
 			const query = new URLSearchParams({
 				page: pagination.page,
 				limit: pagination.limit,
-				search: search
+				search,
 			}).toString();
 
-			const res = await apiRequest(`/admin/stores?${query}`, {
-				method: 'GET',
-			});
-			if (res.success && res.data) {
+			const res = await http.get(`/admin/stores?${query}`, { admin: true });
+			if (res?.success && res.data) {
 				setStores(res.data.stores);
 				setPagination((prev) => ({ ...prev, ...res.data.pagination }));
 			} else {
-				notyf.error(res.msg || 'Erro ao carregar lojas.');
+				notyf.error(res?.msg || 'Erro ao carregar lojas.');
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			try {
-				const query = new URLSearchParams({
-					page: pagination.page,
-					limit: pagination.limit,
-					search: search
-				}).toString();
-
-				const res = await apiRequest(`/admin/stores?${query}`, {
-					method: 'GET',
-				});
-				if (res.success && res.data) {
-					setStores(res.data.stores);
-					setPagination((prev) => ({ ...prev, ...res.data.pagination }));
-				} else {
-					notyf.error(res.msg || 'Erro ao carregar lojas.');
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
+		fetchStores();
 		// eslint-disable-next-line
 	}, [pagination.page]);
 
@@ -108,15 +82,14 @@ const AdminStores = () => {
 		setEmailSubject('');
 		setEmailBody('');
 		try {
-			const res = await apiRequest(`/admin/stores/${storeId}`, { method: 'GET' });
-			if (res.success && res.data) {
+			const res = await http.get(`/admin/stores/${storeId}`, { admin: true });
+			if (res?.success && res.data) {
 				setStoreDetails(res.data.store);
 			} else {
-				notyf.error(res.msg || 'Erro ao carregar detalhes da loja.');
+				notyf.error(res?.msg || 'Erro ao carregar detalhes da loja.');
 				setIsModalOpen(false);
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
 			notyf.error('Erro de conexão ao carregar detalhes.');
 			setIsModalOpen(false);
 		} finally {
@@ -133,23 +106,19 @@ const AdminStores = () => {
 
 		setActionLoading(prev => ({ ...prev, ['modal-status']: true }));
 		try {
-			const res = await apiRequest(`/admin/stores/${selectedStoreId}/status`, {
-				method: 'PATCH',
-				body: JSON.stringify({ 
-					status: selectedAction,
-					emailSubject: selectedAction === 'approved' ? undefined : emailSubject,
-					emailBody: selectedAction === 'approved' ? undefined : emailBody
-				})
-			});
-			if (res.success) {
+			const res = await http.patch(`/admin/stores/${selectedStoreId}/status`, {
+				status: selectedAction,
+				emailSubject: selectedAction === 'approved' ? undefined : emailSubject,
+				emailBody: selectedAction === 'approved' ? undefined : emailBody,
+			}, { admin: true });
+			if (res?.success) {
 				notyf.success(res.msg || 'Status atualizado com sucesso.');
 				setIsModalOpen(false);
 				fetchStores();
 			} else {
-				notyf.error(res.msg || 'Erro ao atualizar status.');
+				notyf.error(res?.msg || 'Erro ao atualizar status.');
 			}
-		} catch (err) {
-			console.error(err);
+		} catch {
 			notyf.error('Erro de conexão.');
 		} finally {
 			setActionLoading(prev => ({ ...prev, ['modal-status']: false }));

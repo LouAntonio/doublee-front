@@ -1,59 +1,31 @@
-import apiRequest from './api';
+import http from './http';
 
 export const loginUser = (email, password) =>
-	apiRequest('/users/login', {
-		method: 'POST',
-		body: JSON.stringify({ email, password }),
-	});
+	http.post('/users/login', { email, password });
 
 export const checkEmail = (email) =>
-	apiRequest('/users/check-email', {
-		method: 'POST',
-		body: JSON.stringify({ email }),
-	});
+	http.post('/users/check-email', { email });
 
 export const verifyOtp = (email, code) =>
-	apiRequest('/users/verify-otp', {
-		method: 'POST',
-		body: JSON.stringify({ email, code }),
-	});
+	http.post('/users/verify-otp', { email, code });
 
 export const resendOtp = (email) =>
-	apiRequest('/users/resend-otp', {
-		method: 'POST',
-		body: JSON.stringify({ email }),
-	});
+	http.post('/users/resend-otp', { email });
 
 export const completeRegistration = (data) =>
-	apiRequest('/users/complete-registration', {
-		method: 'POST',
-		body: JSON.stringify(data),
-	});
+	http.post('/users/complete-registration', data);
 
 export const validateSession = () =>
-	apiRequest('/users/is-logged-in', { method: 'GET' });
+	http.get('/users/is-logged-in');
 
 export const loginAdmin = (email, password) =>
-	apiRequest('/users/admin/login', {
-		method: 'POST',
-		body: JSON.stringify({ email, password }),
-		admin: true,
-	});
+	http.post('/users/admin/login', { email, password }, { admin: true });
 
 export const requestPasswordReset = (email) =>
-	apiRequest('/users/request-password-reset', {
-		method: 'POST',
-		body: JSON.stringify({ email }),
-	});
+	http.post('/users/request-password-reset', { email });
 
 export const resetPassword = (email, code, newPassword) =>
-	apiRequest('/users/reset-password', {
-		method: 'POST',
-		body: JSON.stringify({ email, code, newPassword }),
-	});
+	http.post('/users/reset-password', { email, code, newPassword });
 
 export const googleAuth = (credential) =>
-	apiRequest('/auth/google', {
-		method: 'POST',
-		body: JSON.stringify({ credential }),
-	});
+	http.post('/auth/google', { credential });

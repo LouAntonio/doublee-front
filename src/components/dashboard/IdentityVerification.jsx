@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /** Pede autorização ao backend e faz upload directo para o Cloudinary. */
 const uploadToCloudinary = async (file, folder) => {
 	// 1. Pedir assinatura ao backend
-	const auth = await apiRequest(`/cloudinary/authorize-upload?folder=${folder}`);
-	if (!auth.success) throw new Error(auth.message || 'Falha ao autorizar upload.');
+	const auth = await http.get(`/cloudinary/authorize-upload?folder=${folder}`);
+	if (!auth?.success) throw new Error(auth?.message || 'Falha ao autorizar upload.');
 
 	// 2. Fazer upload directo para o Cloudinary
 	const formData = new FormData();
@@ -78,8 +79,8 @@ const IdentityVerification = () => {
 	useEffect(() => {
 		const fetchStatus = async () => {
 			try {
-				const data = await apiRequest('/users/verification-status');
-				if (data.success) setVerificationStatus(data.status);
+				const data = await http.get('/users/verification-status');
+				if (data?.success) setVerificationStatus(data.status);
 				else setVerificationStatus('none');
 			} catch {
 				setVerificationStatus('none');
@@ -124,20 +125,16 @@ const IdentityVerification = () => {
 
 			// ── Passo final: actualizar BD ───────────────────────────────────
 			setProgress({ current: 5, total: 5, label: 'A guardar documentos...' });
-			const result = await apiRequest('/users/verify-identity', {
-				method: 'POST',
-				body: JSON.stringify({ biUrls: [biFrontUrl, biBackUrl], picUrls }),
-			});
+			const result = await http.post('/users/verify-identity', { biUrls: [biFrontUrl, biBackUrl], picUrls });
 
-			if (result.success) {
+			if (result?.success) {
 				notyf.success('Documentos enviados com sucesso! Aguarde aprovação.');
 				setVerificationStatus('pending');
 			} else {
-				notyf.error(result.msg || 'Erro ao guardar documentos.');
+				notyf.error(result?.msg || 'Erro ao guardar documentos.');
 			}
-		} catch (err) {
-			console.error(err);
-			notyf.error(err.message || 'Erro inesperado durante o envio.');
+		} catch {
+			notyf.error('Erro inesperado durante o envio.');
 		} finally {
 			setIsLoading(false);
 		}

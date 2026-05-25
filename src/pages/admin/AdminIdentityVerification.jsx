@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) => {
@@ -274,11 +275,11 @@ const AdminIdentityVerification = () => {
 	const fetchSellers = useCallback(async () => {
 		setLoading(true);
 		try {
-			const data = await apiRequest('/admin/unverified-sellers', { admin: true });
-			if (data.success) {
+			const data = await http.get('/admin/unverified-sellers', { admin: true });
+			if (data?.success) {
 				setRequests(data.sellers || []);
 			} else {
-				notyf.error(data.msg || 'Erro ao carregar vendedores.');
+				notyf.error(data?.msg || 'Erro ao carregar vendedores.');
 			}
 		} catch {
 			notyf.error('Erro ao comunicar com o servidor.');
@@ -288,37 +289,17 @@ const AdminIdentityVerification = () => {
 	}, []);
 
 	useEffect(() => {
-		const fetchSellers = async () => {
-			setLoading(true);
-			try {
-				const data = await apiRequest('/admin/unverified-sellers', { admin: true });
-				if (data.success) {
-					setRequests(data.sellers || []);
-				} else {
-					notyf.error(data.msg || 'Erro ao carregar vendedores.');
-				}
-			} catch {
-				notyf.error('Erro ao comunicar com o servidor.');
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchSellers();
-	}, []);
+	}, [fetchSellers]);
 
 	const handleApprove = async (userId) => {
 		try {
-			const data = await apiRequest('/admin/approve-seller', {
-				method: 'POST',
-				body: JSON.stringify({ sellerId: userId, approve: true }),
-				admin: true,
-			});
-			if (data.success) {
+			const data = await http.post('/admin/approve-seller', { sellerId: userId, approve: true }, { admin: true });
+			if (data?.success) {
 				notyf.success('Vendedor verificado com sucesso!');
 				await fetchSellers();
 			} else {
-				notyf.error(data.msg || 'Erro ao aprovar vendedor.');
+				notyf.error(data?.msg || 'Erro ao aprovar vendedor.');
 			}
 		} catch {
 			notyf.error('Erro ao comunicar com o servidor.');
@@ -332,16 +313,12 @@ const AdminIdentityVerification = () => {
 			? { sellerId: userId, message }
 			: { sellerId: userId, approve: false, message };
 		try {
-			const data = await apiRequest(endpoint, {
-				method: 'POST',
-				body: JSON.stringify(body),
-				admin: true,
-			});
-			if (data.success) {
+			const data = await http.post(endpoint, body, { admin: true });
+			if (data?.success) {
 				notyf.success(seller?.validatedSeller ? 'Verificação revogada.' : 'Candidatura rejeitada.');
 				await fetchSellers();
 			} else {
-				notyf.error(data.msg || 'Erro ao processar ação.');
+				notyf.error(data?.msg || 'Erro ao processar ação.');
 			}
 		} catch {
 			notyf.error('Erro ao comunicar com o servidor.');

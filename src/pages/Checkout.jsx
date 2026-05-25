@@ -7,7 +7,7 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import OrderSummary from '../components/OrderSummary';
 import useCartStore from '../stores/cartStore';
 import { notyf } from '../utils/notyf';
-import apiRequest from '../services/api';
+import { useCreateOrder } from '../hooks/queries/useOrders';
 
 
 
@@ -19,6 +19,7 @@ const Checkout = () => {
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
+	const { mutateAsync: createOrder, isPending: isCreatingOrder } = useCreateOrder();
 
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
@@ -106,26 +107,20 @@ const Checkout = () => {
 
 	const handlePlaceOrder = async () => {
 		try {
-			const res = await apiRequest('/orders', {
-				method: 'POST',
-				body: JSON.stringify({
-					items: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
-					shippingAddress: `${shippingInfo.address}, ${shippingInfo.municipality}, ${shippingInfo.province}`,
-					couponCode: appliedCoupon?.code
-				})
+			const res = await createOrder({
+				items: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
+				shippingAddress: `${shippingInfo.address}, ${shippingInfo.municipality}, ${shippingInfo.province}`,
+				couponCode: appliedCoupon?.code,
 			});
 
-
-			if (res.success) {
+			if (res?.success) {
 				setOrderPlaced(true);
 				clearCart();
 				setAppliedCoupon(null);
 			} else {
-
-				notyf.error(res.msg || 'Erro ao realizar pedido.');
+				notyf.error(res?.msg || 'Erro ao realizar pedido.');
 			}
-		} catch (error) {
-			console.log(error);
+		} catch {
 			notyf.error('Erro ao conectar ao servidor.');
 		}
 	};

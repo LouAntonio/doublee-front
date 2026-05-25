@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IoFlashOutline, IoCheckmarkCircleOutline, IoTimeOutline, IoWalletOutline } from 'react-icons/io5';
-import apiRequest, { notyf } from '../../../services/api';
+import http from '../../../services/http';
+import { notyf } from '../../../utils/notyf';
 
 const PromotionsTab = ({ store, products, onRefresh }) => {
 	const [packages, setPackages] = useState([]);
@@ -15,37 +16,20 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 		setLoading(true);
 		try {
 			const [pkgRes, purRes] = await Promise.all([
-				apiRequest('/promotions/packages?isActive=true', { method: 'GET' }),
-				apiRequest('/promotions/purchases', { method: 'GET' })
+				http.get('/promotions/packages?isActive=true'),
+				http.get('/promotions/purchases')
 			]);
 
-			if (pkgRes.success) setPackages(pkgRes.data.packages || []);
-			if (purRes.success) setPurchases(purRes.data.purchases || []);
-		} catch (error) {
-			console.error(error);
+			if (pkgRes?.success) setPackages(pkgRes.data.packages || []);
+			if (purRes?.success) setPurchases(purRes.data.purchases || []);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			setLoading(true);
-			try {
-				const [pkgRes, purRes] = await Promise.all([
-					apiRequest('/promotions/packages?isActive=true', { method: 'GET' }),
-					apiRequest('/promotions/purchases', { method: 'GET' })
-				]);
-
-				if (pkgRes.success) setPackages(pkgRes.data.packages || []);
-				if (purRes.success) setPurchases(purRes.data.purchases || []);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchData();
 	}, []);
 
@@ -65,20 +49,13 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 
 		setBuying(true);
 		try {
-			const res = await apiRequest('/promotions/purchase', {
-				method: 'POST',
-				body: JSON.stringify(payload)
-			});
+			const res = await http.post('/promotions/purchase', payload);
 
-			if (res.success) {
+			if (res?.success) {
 				notyf.success('Solicitação criada! Simulando confirmação de pagamento...');
-				// Simulating payment confirmation for now as there is no real payment gateway integration provided in the snippet
-				await apiRequest('/promotions/confirm-payment', {
-					method: 'POST',
-					body: JSON.stringify({
-						purchaseId: res.data.purchaseId,
-						transactionRef: 'MOCK-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-					})
+				await http.post('/promotions/confirm-payment', {
+					purchaseId: res.data.purchaseId,
+					transactionRef: 'MOCK-' + Math.random().toString(36).substr(2, 9).toUpperCase()
 				});
 				notyf.success('Destaque activado com sucesso!');
 				setSelectedPackage(null);
@@ -86,10 +63,9 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 				fetchData();
 				if (onRefresh) onRefresh();
 			} else {
-				notyf.error(res.msg);
+				notyf.error(res?.msg);
 			}
-		} catch (err) {
-			console.error(err);
+		} catch {
 			notyf.error('Erro ao processar compra.');
 		} finally {
 			setBuying(false);

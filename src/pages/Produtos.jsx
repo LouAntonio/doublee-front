@@ -5,7 +5,7 @@ import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductSkeleton from '../components/ProductSkeleton';
-import apiRequest from '../services/api';
+import http from '../services/http';
 
 const Produtos = () => {
 	useDocumentTitle('Produtos - Double E');
@@ -45,7 +45,7 @@ const Produtos = () => {
 			if (featuredOnly) params.set('featured', 'true');
 			const query = `?${params.toString()}`;
 
-			const res = await apiRequest(`/products${query}`);
+			const res = await http.get(`/products${query}`);
 			if (!mounted) return;
 			if (res && res.success) {
 				const items = (res.data?.products || []).map(p => ({

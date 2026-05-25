@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const StatSkeleton = () => (
 	<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
@@ -37,18 +38,14 @@ const AdminAnalytics = () => {
 		const fetchStats = async () => {
 			setLoading(true);
 			try {
-				const res = await apiRequest('/admin/dashboard', {
-					method: 'GET',
-					admin: true
-				});
-				if (res.success && res.data) {
+				const res = await http.get('/admin/dashboard', { admin: true });
+				if (res?.success && res.data) {
 					setStats(res.data);
 				} else {
-					notyf.error(res.msg || 'Erro ao carregar estatísticas.');
+					notyf.error(res?.msg || 'Erro ao carregar estatísticas.');
 				}
-			} catch (error) {
-				console.error(error);
-				notyf.error('Erro de conexão ao carregar analytics.');
+			} catch {
+				// handled by interceptor
 			} finally {
 				setLoading(false);
 			}

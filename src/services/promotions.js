@@ -1,19 +1,13 @@
-import apiRequest from './api';
+import http from './http';
 
 export const getStorePromotions = (storeId) =>
-	apiRequest(`/stores/${storeId}/promotions`);
+	http.get(`/stores/${storeId}/promotions`);
 
 export const createStorePromotion = (storeId, data) =>
-	apiRequest(`/stores/${storeId}/promotions`, {
-		method: 'POST',
-		body: JSON.stringify(data),
-	});
+	http.post(`/stores/${storeId}/promotions`, data);
 
 export const updateStorePromotion = (storeId, promotionId, data) =>
-	apiRequest(`/stores/${storeId}/promotions/${promotionId}`, {
-		method: 'PUT',
-		body: JSON.stringify(data),
-	});
+	http.put(`/stores/${storeId}/promotions/${promotionId}`, data);
 
 export const deleteStorePromotion = (storeId, promotionId) =>
-	apiRequest(`/stores/${storeId}/promotions/${promotionId}`, { method: 'DELETE' });
+	http.delete(`/stores/${storeId}/promotions/${promotionId}`);

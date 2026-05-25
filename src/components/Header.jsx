@@ -22,7 +22,7 @@ import {
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
-import apiRequest from '../services/api';
+import http from '../services/http';
 
 const Header = () => {
 	const cartCount = useCartStore((s) => s.getCartCount());
@@ -42,7 +42,7 @@ const Header = () => {
 				return;
 			}
 			try {
-				const data = await apiRequest('/stores/status');
+				const data = await http.get('/stores/status');
 				if (!cancelled) setHasApprovedStore(data?.success && data?.data?.status === 'approved');
 			} catch {
 				if (!cancelled) setHasApprovedStore(false);

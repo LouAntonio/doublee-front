@@ -1,60 +1,52 @@
-import apiRequest from './api';
+import http from './http';
 
-const adminRequest = (endpoint, options = {}) =>
-	apiRequest(endpoint, { ...options, admin: true });
+const adminGet = (url) => http.get(url, { admin: true });
+const adminPost = (url, data) => http.post(url, data, { admin: true });
+const adminPut = (url, data) => http.put(url, data, { admin: true });
+const adminPatch = (url, data) => http.patch(url, data, { admin: true });
+const adminDelete = (url) => http.delete(url, { admin: true });
 
-export const getAdminUsers = () => adminRequest('/admin/users');
+export const getAdminUsers = () => adminGet('/admin/users');
+
 export const updateUserStatus = (userId, status) =>
-	adminRequest(`/admin/users/${userId}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ status }),
-	});
+	adminPatch(`/admin/users/${userId}`, { status });
 
-export const getAdminStores = () => adminRequest('/admin/stores');
+export const getAdminStores = () => adminGet('/admin/stores');
+
 export const updateStoreStatus = (storeId, status) =>
-	adminRequest(`/admin/stores/${storeId}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ status }),
-	});
+	adminPatch(`/admin/stores/${storeId}`, { status });
 
-export const getAdminProducts = () => adminRequest('/admin/products');
+export const getAdminProducts = () => adminGet('/admin/products');
+
 export const deleteAdminProduct = (productId) =>
-	adminRequest(`/admin/products/${productId}`, { method: 'DELETE' });
+	adminDelete(`/admin/products/${productId}`);
 
-export const getAdminCategories = () => adminRequest('/admin/categories');
+export const getAdminCategories = () => adminGet('/admin/categories');
+
 export const createCategory = (formData) =>
-	adminRequest('/admin/categories', {
-		method: 'POST',
-		body: formData,
-	});
+	adminPost('/admin/categories', formData);
+
 export const updateCategory = (categoryId, formData) =>
-	adminRequest(`/admin/categories/${categoryId}`, {
-		method: 'PUT',
-		body: formData,
-	});
+	adminPut(`/admin/categories/${categoryId}`, formData);
+
 export const deleteCategory = (categoryId) =>
-	adminRequest(`/admin/categories/${categoryId}`, { method: 'DELETE' });
+	adminDelete(`/admin/categories/${categoryId}`);
 
 export const getAdminIdentityVerifications = () =>
-	adminRequest('/admin/identity-verifications');
+	adminGet('/admin/identity-verifications');
+
 export const verifyIdentity = (verificationId, status) =>
-	adminRequest(`/admin/identity-verifications/${verificationId}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ status }),
-	});
+	adminPatch(`/admin/identity-verifications/${verificationId}`, { status });
 
-export const getAdminAnalytics = () => adminRequest('/admin/analytics');
+export const getAdminAnalytics = () => adminGet('/admin/analytics');
 
-export const getAdminPromotions = () => adminRequest('/admin/promotions');
+export const getAdminPromotions = () => adminGet('/admin/promotions');
+
 export const createPromotion = (data) =>
-	adminRequest('/admin/promotions', {
-		method: 'POST',
-		body: JSON.stringify(data),
-	});
+	adminPost('/admin/promotions', data);
+
 export const updatePromotion = (promotionId, data) =>
-	adminRequest(`/admin/promotions/${promotionId}`, {
-		method: 'PUT',
-		body: JSON.stringify(data),
-	});
+	adminPut(`/admin/promotions/${promotionId}`, data);
+
 export const deletePromotion = (promotionId) =>
-	adminRequest(`/admin/promotions/${promotionId}`, { method: 'DELETE' });
+	adminDelete(`/admin/promotions/${promotionId}`);

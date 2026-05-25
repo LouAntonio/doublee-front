@@ -1,8 +1,6 @@
-import apiRequest from './api';
+import http from './http';
 
-export const getOrders = () => apiRequest('/orders');
-
-export const getStoreOrders = (storeId, params = {}) => {
+const buildQuery = (params) => {
 	const searchParams = new URLSearchParams();
 	Object.entries(params).forEach(([key, value]) => {
 		if (value !== undefined && value !== null && value !== '') {
@@ -10,17 +8,16 @@ export const getStoreOrders = (storeId, params = {}) => {
 		}
 	});
 	const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
-	return apiRequest(`/stores/${storeId}/orders${query}`);
+	return query;
 };
 
+export const getOrders = () => http.get('/orders');
+
+export const getStoreOrders = (storeId, params = {}) =>
+	http.get(`/stores/${storeId}/orders${buildQuery(params)}`);
+
 export const updateOrderStatus = (storeId, orderId, status) =>
-	apiRequest(`/stores/${storeId}/orders/${orderId}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ status }),
-	});
+	http.patch(`/stores/${storeId}/orders/${orderId}`, { status });
 
 export const createOrder = (data) =>
-	apiRequest('/orders', {
-		method: 'POST',
-		body: JSON.stringify(data),
-	});
+	http.post('/orders', data);

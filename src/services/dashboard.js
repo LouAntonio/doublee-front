@@ -1,28 +1,19 @@
-import apiRequest from './api';
+import http from './http';
 
-export const getStoreDashboardData = () => apiRequest('/dashboard');
+export const getStoreDashboardData = () => http.get('/dashboard');
 
-export const getStoreProfile = () => apiRequest('/dashboard/profile');
+export const getStoreProfile = () => http.get('/dashboard/profile');
 
 export const updateStoreProfile = (data) =>
-	apiRequest('/dashboard/profile', {
-		method: 'PUT',
-		body: data instanceof FormData ? data : JSON.stringify(data),
-	});
+	http.put('/dashboard/profile', data);
 
-export const getStoreAccount = () => apiRequest('/dashboard/account');
+export const getStoreAccount = () => http.get('/dashboard/account');
 
 export const updateStoreAccount = (data) =>
-	apiRequest('/dashboard/account', {
-		method: 'PUT',
-		body: JSON.stringify(data),
-	});
+	http.put('/dashboard/account', data);
 
 export const submitIdentityVerification = (formData) =>
-	apiRequest('/dashboard/identity', {
-		method: 'POST',
-		body: formData,
-	});
+	http.post('/dashboard/identity', formData);
 
 export const getIdentityVerificationStatus = () =>
-	apiRequest('/dashboard/identity');
+	http.get('/dashboard/identity');

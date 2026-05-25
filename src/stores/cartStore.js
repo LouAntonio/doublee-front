@@ -69,16 +69,20 @@ const useCartStore = create(
 
 			loadCartFromApi: async () => {
 				if (!hasToken()) return;
-				const res = await getCart();
-				if (res && res.success && res.data?.cart) {
-					const items = Array.isArray(res.data.cart.items)
-						? res.data.cart.items.map(mapApiItem)
-						: [];
-					set({ cartItems: items });
-					return;
-				}
-				if (res && res.success === false) {
-					notyf.error(res.msg || 'Erro ao carregar o carrinho.');
+				try {
+					const res = await getCart();
+					if (res?.success && res.data?.cart) {
+						const items = Array.isArray(res.data.cart.items)
+							? res.data.cart.items.map(mapApiItem)
+							: [];
+						set({ cartItems: items });
+						return;
+					}
+					if (res?.success === false) {
+						notyf.error(res.msg || 'Erro ao carregar o carrinho.');
+					}
+				} catch {
+					// silently ignore — offline / session expired
 				}
 			},
 
@@ -88,14 +92,19 @@ const useCartStore = create(
 				setProductAdding(product.id, true);
 				try {
 					if (hasToken()) {
-						const res = await addToCartApi(product.id, quantity);
-						if (res && res.success) {
-							await loadCartFromApi();
-							if (showNotification) notyf.success(res.msg || 'Produto adicionado ao carrinho!');
+						try {
+							const res = await addToCartApi(product.id, quantity);
+							if (res?.success) {
+								await loadCartFromApi();
+								if (showNotification) notyf.success(res.msg || 'Produto adicionado ao carrinho!');
+								return;
+							}
+							notyf.error(res?.msg || 'Não foi possível adicionar ao carrinho.');
+							return;
+						} catch {
+							notyf.error('Erro ao adicionar ao carrinho.');
 							return;
 						}
-						notyf.error(res?.msg || 'Não foi possível adicionar ao carrinho.');
-						return;
 					}
 
 					set((state) => {
@@ -122,14 +131,19 @@ const useCartStore = create(
 				setItemRemoving(itemId, true);
 				try {
 					if (hasToken()) {
-						const res = await removeFromCartApi(itemId);
-						if (res && res.success) {
-							await loadCartFromApi();
-							notyf.error(res.msg || 'Produto removido do carrinho');
+						try {
+							const res = await removeFromCartApi(itemId);
+							if (res?.success) {
+								await loadCartFromApi();
+								notyf.error(res.msg || 'Produto removido do carrinho');
+								return;
+							}
+							notyf.error(res?.msg || 'Não foi possível remover do carrinho.');
+							return;
+						} catch {
+							notyf.error('Erro ao remover do carrinho.');
 							return;
 						}
-						notyf.error(res?.msg || 'Não foi possível remover do carrinho.');
-						return;
 					}
 
 					set((state) => ({
@@ -152,11 +166,14 @@ const useCartStore = create(
 					setItemUpdating(itemId, true);
 					try {
 						const res = await updateCartItem(itemId, quantity);
-						if (res && res.success) {
+						if (res?.success) {
 							await get().loadCartFromApi();
 							return;
 						}
 						notyf.error(res?.msg || 'Não foi possível atualizar a quantidade.');
+						return;
+					} catch {
+						notyf.error('Erro ao atualizar quantidade.');
 						return;
 					} finally {
 						setItemUpdating(itemId, false);
@@ -172,13 +189,18 @@ const useCartStore = create(
 
 			clearCart: async () => {
 				if (hasToken()) {
-					const res = await clearCartApi();
-					if (res && res.success) {
-						set({ cartItems: [] });
+					try {
+						const res = await clearCartApi();
+						if (res?.success) {
+							set({ cartItems: [] });
+							return;
+						}
+						notyf.error(res?.msg || 'Não foi possível limpar o carrinho.');
+						return;
+					} catch {
+						notyf.error('Erro ao limpar carrinho.');
 						return;
 					}
-					notyf.error(res?.msg || 'Não foi possível limpar o carrinho.');
-					return;
 				}
 				set({ cartItems: [] });
 			},

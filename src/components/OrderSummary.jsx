@@ -4,28 +4,22 @@ import { formatCurrency } from '../utils/currency';
 import { IoTicketOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import { notyf } from '../utils/notyf';
-import apiRequest from '../services/api';
+import { useValidateCoupon } from '../hooks/queries/useProfile';
 
 const OrderSummary = ({ showPromoCode = true }) => {
 	const { cartItems, getSubtotal, getShipping, getTax, getTotal, appliedCoupon, setAppliedCoupon, getDiscount } = useCartStore();
 	const [promoCode, setPromoCode] = useState('');
-
-
 	const [error, setError] = useState('');
+	const { mutateAsync: validateCoupon } = useValidateCoupon();
 
 	const handleApplyPromo = async () => {
 		setError('');
 		if (!promoCode) return;
 
 		try {
-			const res = await apiRequest('/coupons/validate', {
-				method: 'POST',
-				body: JSON.stringify({ code: promoCode.toUpperCase() })
-			});
+			const res = await validateCoupon(promoCode.toUpperCase());
 
-
-			if (res.success) {
-				// Check if the store is in our cart
+			if (res?.success) {
 				const hasItemsFromStore = cartItems.some(item =>
 					(item.store?.id === res.data.storeId) || (item.product?.storeId === res.data.storeId)
 				);
@@ -39,11 +33,9 @@ const OrderSummary = ({ showPromoCode = true }) => {
 				setPromoCode('');
 				notyf.success('Cupão aplicado com sucesso!');
 			} else {
-
-				setError(res.msg || 'Cupão inválido ou expirado.');
+				setError(res?.msg || 'Cupão inválido ou expirado.');
 			}
-		} catch (err) {
-			console.log(err);
+		} catch {
 			setError('Erro ao validar o cupão.');
 		}
 	};

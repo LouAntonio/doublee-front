@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IoAddOutline, IoTrashOutline, IoTicketOutline, IoCheckmarkCircleOutline, IoCalendarOutline } from 'react-icons/io5';
-import apiRequest from '../../../services/api';
+import http from '../../../services/http';
 import { notyf } from '../../../utils/notyf';
 
 
@@ -20,32 +20,18 @@ const CouponsTab = () => {
 	const fetchCoupons = async () => {
 		setLoading(true);
 		try {
-			const res = await apiRequest('/coupons/mine', { method: 'GET' });
-			if (res.success) {
+			const res = await http.get('/coupons/mine');
+			if (res?.success) {
 				setCoupons(res.data || []);
 			}
-		} catch (error) {
-			console.error('Erro ao carregar cupões:', error);
+		} catch {
+			// handled by interceptor
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		const fetchCoupons = async () => {
-			setLoading(true);
-			try {
-				const res = await apiRequest('/coupons/mine', { method: 'GET' });
-				if (res.success) {
-					setCoupons(res.data || []);
-				}
-			} catch (error) {
-				console.error('Erro ao carregar cupões:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchCoupons();
 	}, []);
 
@@ -53,24 +39,19 @@ const CouponsTab = () => {
 		e.preventDefault();
 		setIsCreating(true);
 		try {
-			const res = await apiRequest('/coupons', {
-				method: 'POST',
-				body: JSON.stringify(formData)
-			});
+			const res = await http.post('/coupons', formData);
 
-			if (res.success) {
+			if (res?.success) {
 				notyf.success('Cupão criado com sucesso!');
 				setIsModalOpen(false);
 				setFormData({ code: '', discount: '', expiryDate: '', visible: true });
 				fetchCoupons();
 			} else {
-				notyf.error(res.msg || 'Erro ao criar cupão');
+				notyf.error(res?.msg || 'Erro ao criar cupão');
 			}
-
 		} catch {
 			notyf.error('Erro ao conectar ao servidor');
 		} finally {
-
 			setIsCreating(false);
 		}
 	};
@@ -79,12 +60,11 @@ const CouponsTab = () => {
 	const handleDelete = async (id) => {
 		if (!window.confirm('Tem a certeza que deseja eliminar este cupão?')) return;
 		try {
-			const res = await apiRequest(`/coupons/${id}`, { method: 'DELETE' });
-			if (res.success) {
+			const res = await http.delete(`/coupons/${id}`);
+			if (res?.success) {
 				notyf.success('Cupão eliminado!');
 				fetchCoupons();
 			}
-
 		} catch {
 			notyf.error('Erro ao eliminar cupão');
 		}

@@ -40,13 +40,15 @@ const useWishlistStore = create((set, get) => ({
 		set({ isLoading: true });
 		try {
 			const res = await getWishlist(page, limit);
-			if (res && res.success && res.data?.wishlist) {
+			if (res?.success && res.data?.wishlist) {
 				const items = Array.isArray(res.data.wishlist) ? res.data.wishlist : [];
 				set({ wishlistItems: items });
 				get().rebuildIds(items);
 				return res;
 			}
-			return res;
+			return res || { success: false };
+		} catch {
+			return { success: false };
 		} finally {
 			set({ isLoading: false });
 		}
@@ -57,16 +59,20 @@ const useWishlistStore = create((set, get) => ({
 		const isAuthenticated = !!localStorage.getItem('doublee_token');
 		if (!isAuthenticated) return false;
 
-		const res = await checkWishlist(productId);
-		if (res && res.success) {
-			const inWishlist = Boolean(res.data?.inWishlist);
-			set((state) => {
-				const next = new Set(state.wishlistIds);
-				if (inWishlist) next.add(productId);
-				else next.delete(productId);
-				return { wishlistIds: next };
-			});
-			return inWishlist;
+		try {
+			const res = await checkWishlist(productId);
+			if (res?.success) {
+				const inWishlist = Boolean(res.data?.inWishlist);
+				set((state) => {
+					const next = new Set(state.wishlistIds);
+					if (inWishlist) next.add(productId);
+					else next.delete(productId);
+					return { wishlistIds: next };
+				});
+				return inWishlist;
+			}
+		} catch {
+			// ignore
 		}
 		return false;
 	},
@@ -120,7 +126,7 @@ const useWishlistStore = create((set, get) => ({
 		get().setToggleLoading(productId, true);
 		try {
 			const res = await toggleWishlistApi(productId);
-			if (res && res.success) {
+			if (res?.success) {
 				const inWishlist = Boolean(res.data?.inWishlist);
 				set((state) => {
 					const next = new Set(state.wishlistIds);
@@ -137,6 +143,8 @@ const useWishlistStore = create((set, get) => ({
 				return { success: true, msg: res.msg, inWishlist };
 			}
 			return { success: false, msg: res?.msg || 'Erro ao atualizar wishlist.', inWishlist: false };
+		} catch (err) {
+			return { success: false, msg: err.message || 'Erro ao atualizar wishlist.', inWishlist: false };
 		} finally {
 			get().setToggleLoading(productId, false);
 		}

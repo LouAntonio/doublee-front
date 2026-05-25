@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-import apiRequest from '../services/api';
+import http from '../services/http';
 import { notyf } from '../utils/notyf';
 
 const CartContext = createContext();
@@ -88,17 +88,20 @@ export const CartProvider = ({ children }) => {
 
 	const loadCartFromApi = useCallback(async () => {
 		if (!hasToken()) return;
-		const res = await apiRequest('/cart');
-		if (res && res.success && res.data?.cart) {
-			const items = Array.isArray(res.data.cart.items)
-				? res.data.cart.items.map(mapApiItem)
-				: [];
-			setCartItems(items);
-			return;
-		}
-
-		if (res && res.success === false) {
-			notyf.error(res.msg || 'Erro ao carregar o carrinho.');
+		try {
+			const res = await http.get('/cart');
+			if (res?.success && res.data?.cart) {
+				const items = Array.isArray(res.data.cart.items)
+					? res.data.cart.items.map(mapApiItem)
+					: [];
+				setCartItems(items);
+				return;
+			}
+			if (res?.success === false) {
+				notyf.error(res.msg || 'Erro ao carregar o carrinho.');
+			}
+		} catch {
+			// handled by interceptor
 		}
 	}, [hasToken, mapApiItem]);
 
@@ -108,35 +111,16 @@ export const CartProvider = ({ children }) => {
 	}, [cartItems]);
 
 	useEffect(() => {
-		const loadCartFromApi = async () => {
-			if (!hasToken()) return;
-			const res = await apiRequest('/cart');
-			if (res && res.success && res.data?.cart) {
-				const items = Array.isArray(res.data.cart.items)
-					? res.data.cart.items.map(mapApiItem)
-					: [];
-				setCartItems(items);
-				return;
-			}
-
-			if (res && res.success === false) {
-				notyf.error(res.msg || 'Erro ao carregar o carrinho.');
-			}
-		};
-
 		loadCartFromApi();
-	}, [hasToken, mapApiItem]);
+	}, [loadCartFromApi]);
 
 	const addToCart = async (product, quantity = 1, showNotification = true) => {
 		if (!product?.id) return;
 		setProductAdding(product.id, true);
 		try {
 			if (hasToken()) {
-				const res = await apiRequest('/cart', {
-					method: 'POST',
-					body: JSON.stringify({ productId: product.id, quantity }),
-				});
-				if (res && res.success) {
+				const res = await http.post('/cart', { productId: product.id, quantity });
+				if (res?.success) {
 					await loadCartFromApi();
 					if (showNotification) {
 						notyf.success(res.msg || 'Produto adicionado ao carrinho!');
@@ -151,14 +135,12 @@ export const CartProvider = ({ children }) => {
 				const existingItem = prevItems.find((item) => item.id === product.id);
 
 				if (existingItem) {
-					// If item exists, increase quantity
 					return prevItems.map((item) =>
 						item.id === product.id
 							? { ...item, quantity: item.quantity + quantity }
 							: item
 					);
 				}
-				// Add new item with quantity
 				return [...prevItems, { ...product, quantity }];
 			});
 			if (showNotification) {
@@ -173,8 +155,8 @@ export const CartProvider = ({ children }) => {
 		setItemRemoving(itemId, true);
 		try {
 			if (hasToken()) {
-				const res = await apiRequest(`/cart/${itemId}`, { method: 'DELETE' });
-				if (res && res.success) {
+				const res = await http.delete(`/cart/${itemId}`);
+				if (res?.success) {
 					await loadCartFromApi();
 					notyf.error(res.msg || 'Produto removido do carrinho');
 					return;
@@ -199,11 +181,8 @@ export const CartProvider = ({ children }) => {
 		if (hasToken()) {
 			setItemUpdating(itemId, true);
 			try {
-				const res = await apiRequest(`/cart/${itemId}`, {
-					method: 'PATCH',
-					body: JSON.stringify({ quantity }),
-				});
-				if (res && res.success) {
+				const res = await http.patch(`/cart/${itemId}`, { quantity });
+				if (res?.success) {
 					await loadCartFromApi();
 					return;
 				}
@@ -223,8 +202,8 @@ export const CartProvider = ({ children }) => {
 
 	const clearCart = async () => {
 		if (hasToken()) {
-			const res = await apiRequest('/cart', { method: 'DELETE' });
-			if (res && res.success) {
+			const res = await http.delete('/cart');
+			if (res?.success) {
 				setCartItems([]);
 				return;
 			}

@@ -1,19 +1,20 @@
-import apiRequest from './api';
+import http from './http';
 
 export const uploadToCloudinary = async (file, folder = 'products') => {
 	try {
-		const { data, success, msg } = await apiRequest('/cloudinary/auth', { admin: true });
-		if (!success) throw new Error(msg || 'Erro ao obter autenticação cloudinary');
+		const res = await http.get('/cloudinary/auth', { admin: true });
+		if (!res?.success) throw new Error(res?.msg || 'Erro ao obter autenticação cloudinary');
 
+		const d = res.data;
 		const formData = new FormData();
 		formData.append('file', file);
-		formData.append('api_key', data.apiKey);
-		formData.append('timestamp', data.timestamp);
-		formData.append('signature', data.signature);
+		formData.append('api_key', d.apiKey);
+		formData.append('timestamp', d.timestamp);
+		formData.append('signature', d.signature);
 		formData.append('folder', folder);
 
 		const cloudinaryResponse = await fetch(
-			`https://api.cloudinary.com/v1_1/${data.cloudName}/image/upload`,
+			`https://api.cloudinary.com/v1_1/${d.cloudName}/image/upload`,
 			{ method: 'POST', body: formData }
 		);
 

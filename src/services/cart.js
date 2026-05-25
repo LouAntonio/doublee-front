@@ -1,27 +1,18 @@
-import apiRequest from './api';
+import http from './http';
 
-export const getCart = () => apiRequest('/cart');
+export const getCart = () => http.get('/cart');
 
 export const addToCartApi = (productId, quantity = 1) =>
-	apiRequest('/cart', {
-		method: 'POST',
-		body: JSON.stringify({ productId, quantity }),
-	});
+	http.post('/cart', { productId, quantity });
 
 export const removeFromCartApi = (itemId) =>
-	apiRequest(`/cart/${itemId}`, { method: 'DELETE' });
+	http.delete(`/cart/${itemId}`);
 
 export const updateCartItem = (itemId, quantity) =>
-	apiRequest(`/cart/${itemId}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ quantity }),
-	});
+	http.patch(`/cart/${itemId}`, { quantity });
 
 export const clearCartApi = () =>
-	apiRequest('/cart', { method: 'DELETE' });
+	http.delete('/cart');
 
 export const applyCoupon = (code) =>
-	apiRequest('/cart/coupon', {
-		method: 'POST',
-		body: JSON.stringify({ code }),
-	});
+	http.post('/cart/coupon', { code });

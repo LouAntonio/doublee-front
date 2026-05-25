@@ -1,6 +1,6 @@
-import apiRequest from './api';
+import http from './http';
 
-export const getProducts = (params = {}) => {
+const buildQuery = (params) => {
 	const searchParams = new URLSearchParams();
 	Object.entries(params).forEach(([key, value]) => {
 		if (value !== undefined && value !== null && value !== '') {
@@ -9,21 +9,32 @@ export const getProducts = (params = {}) => {
 		}
 	});
 	const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
-	return apiRequest(`/products${query}`);
+	return query;
 };
 
-export const getProduct = (id) => apiRequest(`/products/${id}`);
+export const getProducts = (params = {}) => http.get(`/products${buildQuery(params)}`);
 
-export const getFeaturedProducts = () => apiRequest('/products/featured');
+export const getProduct = (id) => http.get(`/products/${id}`);
 
-export const getBestSellers = () => apiRequest('/products/best-sellers');
+export const getFeaturedProducts = () => http.get('/products/featured');
 
-export const getLatestProducts = () => apiRequest('/products/latest');
+export const getBestSellers = () => http.get('/products/best-sellers');
 
-export const getPromotions = () => apiRequest('/products/promotions');
+export const getLatestProducts = () => http.get('/products/latest');
+
+export const getPromotions = () => http.get('/products/promotions');
 
 export const getRelatedProducts = (productId, limit = 8) =>
-	apiRequest(`/products/${productId}/related?limit=${limit}`);
+	http.get(`/products/${productId}/related?limit=${limit}`);
 
 export const getOnSaleProducts = (limit = 8) =>
-	apiRequest(`/products/on-sale?limit=${limit}`);
+	http.get(`/products/on-sale?limit=${limit}`);
+
+export const createProduct = (data) =>
+	http.post('/products', data);
+
+export const updateProduct = (id, data) =>
+	http.put(`/products/${id}`, data);
+
+export const deleteProduct = (id) =>
+	http.delete(`/products/${id}`);

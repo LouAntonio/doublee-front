@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import apiRequest from '../services/api';
+import http from '../services/http';
 
 const AuthContext = createContext();
 
@@ -36,10 +36,9 @@ export const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		const validateSession = async () => {
 			try {
-				const data = await apiRequest('/users/is-logged-in', { method: 'GET' });
+				const data = await http.get('/users/is-logged-in');
 
-				if (!data.success) {
-					// Cookie is invalid or expired
+				if (!data?.success) {
 					logout();
 				}
 			} catch {
