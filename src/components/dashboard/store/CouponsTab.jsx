@@ -32,6 +32,20 @@ const CouponsTab = () => {
 	};
 
 	useEffect(() => {
+		const fetchCoupons = async () => {
+			setLoading(true);
+			try {
+				const res = await apiRequest('/coupons/mine', { method: 'GET' });
+				if (res.success) {
+					setCoupons(res.data || []);
+				}
+			} catch (error) {
+				console.error('Erro ao carregar cupões:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		fetchCoupons();
 	}, []);
 

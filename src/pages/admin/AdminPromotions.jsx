@@ -33,6 +33,22 @@ const AdminPromotions = () => {
 	};
 
 	useEffect(() => {
+		const fetchPackages = async () => {
+			setLoading(true);
+			try {
+				const res = await apiRequest('/promotions/packages', { method: 'GET' });
+				if (res.success) {
+					setPackages(res.data.packages || []);
+				} else {
+					notyf.error(res.msg || 'Erro ao carregar pacotes.');
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		fetchPackages();
 	}, []);
 

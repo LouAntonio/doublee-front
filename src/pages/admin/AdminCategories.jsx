@@ -21,6 +21,25 @@ const uploadToCloudinary = async (file, folder) => {
 	return result.secure_url;
 };
 
+const CategorySkeleton = () => (
+	<tr className="animate-pulse border-b border-slate-100 last:border-0">
+		<td className="px-6 py-4 whitespace-nowrap w-16">
+			<div className="w-12 h-12 bg-slate-200 rounded-lg"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="space-y-2">
+				<div className="h-4 bg-slate-200 rounded w-48"></div>
+				<div className="h-3 bg-slate-100 rounded w-32"></div>
+			</div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap text-right">
+			<div className="flex justify-end">
+				<div className="h-8 w-24 bg-slate-200 rounded-lg"></div>
+			</div>
+		</td>
+	</tr>
+);
+
 const AdminCategories = () => {
 	const [categories, setCategories] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -56,7 +75,24 @@ const AdminCategories = () => {
 	};
 
 	useEffect(() => {
-		fetchCategories();
+		const load = async () => {
+			setLoading(true);
+			try {
+				const res = await apiRequest('/categories', { method: 'GET' });
+				if (res.success && res.data) {
+					console.log(res.data);
+					setCategories(res.data.categories || []);
+				} else {
+					notyf.error(res.msg || 'Erro ao carregar categorias.');
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		load();
 	}, []);
 
 	const handleImageChange = (e) => {
@@ -185,26 +221,6 @@ const AdminCategories = () => {
 			setIsUpdating(false);
 		}
 	};
-
-	// --- Skeleton Loader Component ---
-	const CategorySkeleton = () => (
-		<tr className="animate-pulse border-b border-slate-100 last:border-0">
-			<td className="px-6 py-4 whitespace-nowrap w-16">
-				<div className="w-12 h-12 bg-slate-200 rounded-lg"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="space-y-2">
-					<div className="h-4 bg-slate-200 rounded w-48"></div>
-					<div className="h-3 bg-slate-100 rounded w-32"></div>
-				</div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap text-right">
-				<div className="flex justify-end">
-					<div className="h-8 w-24 bg-slate-200 rounded-lg"></div>
-				</div>
-			</td>
-		</tr>
-	);
 
 	return (
 		<div className="space-y-6 animate-fade-in-up">

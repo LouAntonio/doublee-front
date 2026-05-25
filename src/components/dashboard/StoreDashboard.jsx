@@ -69,7 +69,39 @@ const StoreDashboard = () => {
 		}
 	}, []);
 
-	useEffect(() => { fetchAll(); }, [fetchAll]);
+	useEffect(() => {
+		const load = async () => {
+			setLoading(true);
+			setError(null);
+			try {
+				const [storeRes, productsRes, ordersRes] = await Promise.allSettled([
+					apiRequest('/stores/mine', { method: 'GET' }),
+					apiRequest('/products/mine', { method: 'GET' }),
+					apiRequest('/stores/orders', { method: 'GET' }),
+				]);
+
+				if (storeRes.status === 'fulfilled' && storeRes.value.success) {
+					setStore(storeRes.value.data?.store || storeRes.value.data || null);
+				} else if (storeRes.status === 'rejected' || (storeRes.status === 'fulfilled' && !storeRes.value.success)) {
+					throw new Error('Não foi possível carregar os dados da loja.');
+				}
+
+				if (productsRes.status === 'fulfilled' && productsRes.value.success)
+					setProducts(productsRes.value.data?.products || productsRes.value.data || []);
+
+				if (ordersRes.status === 'fulfilled' && ordersRes.value.success)
+					setOrders(ordersRes.value.data?.orders || ordersRes.value.data || []);
+
+			} catch (err) {
+				setError(err.message || 'Não foi possível carregar os dados da loja.');
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		load();
+	}, []);
 
 	if (loading) {
 		return <StoreDashboardSkeleton />;

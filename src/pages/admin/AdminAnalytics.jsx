@@ -1,62 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import apiRequest, { notyf } from '../../services/api';
 
+const StatSkeleton = () => (
+	<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
+		<div className="flex justify-between items-start mb-4">
+			<div className="w-12 h-12 rounded-xl bg-slate-200"></div>
+			<div className="h-4 bg-slate-100 rounded w-16"></div>
+		</div>
+		<div className="h-8 bg-slate-200 rounded w-24 mb-2"></div>
+		<div className="h-4 bg-slate-100 rounded w-32"></div>
+	</div>
+);
+
+const ActivitySkeleton = () => (
+	<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
+		<div className="h-6 bg-slate-200 rounded w-48 mb-6"></div>
+		<div className="space-y-4">
+			{[1, 2, 3, 4, 5].map(i => (
+				<div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0 text-slate-400">
+					<div className="w-10 h-10 rounded-full bg-slate-200"></div>
+					<div className="flex-1 space-y-2">
+						<div className="h-4 bg-slate-200 rounded w-3/4"></div>
+						<div className="h-3 bg-slate-100 rounded w-1/2"></div>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+);
+
 const AdminAnalytics = () => {
 	const [stats, setStats] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	const fetchStats = async () => {
-		setLoading(true);
-		try {
-			const res = await apiRequest('/admin/dashboard', {
-				method: 'GET',
-				admin: true
-			});
-			if (res.success && res.data) {
-				setStats(res.data);
-			} else {
-				notyf.error(res.msg || 'Erro ao carregar estatísticas.');
-			}
-		} catch (error) {
-			console.error(error);
-			notyf.error('Erro de conexão ao carregar analytics.');
-		} finally {
-			setLoading(false);
-		}
-	};
-
 	useEffect(() => {
+		const fetchStats = async () => {
+			setLoading(true);
+			try {
+				const res = await apiRequest('/admin/dashboard', {
+					method: 'GET',
+					admin: true
+				});
+				if (res.success && res.data) {
+					setStats(res.data);
+				} else {
+					notyf.error(res.msg || 'Erro ao carregar estatísticas.');
+				}
+			} catch (error) {
+				console.error(error);
+				notyf.error('Erro de conexão ao carregar analytics.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		fetchStats();
 	}, []);
-
-	// --- Skeleton Loader Components ---
-	const StatSkeleton = () => (
-		<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
-			<div className="flex justify-between items-start mb-4">
-				<div className="w-12 h-12 rounded-xl bg-slate-200"></div>
-				<div className="h-4 bg-slate-100 rounded w-16"></div>
-			</div>
-			<div className="h-8 bg-slate-200 rounded w-24 mb-2"></div>
-			<div className="h-4 bg-slate-100 rounded w-32"></div>
-		</div>
-	);
-
-	const ActivitySkeleton = () => (
-		<div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
-			<div className="h-6 bg-slate-200 rounded w-48 mb-6"></div>
-			<div className="space-y-4">
-				{[1, 2, 3, 4, 5].map(i => (
-					<div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0 text-slate-400">
-						<div className="w-10 h-10 rounded-full bg-slate-200"></div>
-						<div className="flex-1 space-y-2">
-							<div className="h-4 bg-slate-200 rounded w-3/4"></div>
-							<div className="h-3 bg-slate-100 rounded w-1/2"></div>
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
-	);
 
 	if (loading && !stats) {
 		return (

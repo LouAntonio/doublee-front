@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import apiRequest from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -153,12 +153,15 @@ export const WishlistProvider = ({ children }) => {
 
 	const isWishlisted = useCallback((productId) => wishlistIds.has(productId), [wishlistIds]);
 
+	// Reset wishlist when user logs out
+	const prevAuth = useRef(isAuthenticated);
 	useEffect(() => {
-		if (!isAuthenticated || !hasToken()) {
+		if (prevAuth.current && !isAuthenticated) {
 			setWishlistItems([]);
 			setWishlistIds(new Set());
 		}
-	}, [hasToken, isAuthenticated]);
+		prevAuth.current = isAuthenticated;
+	}, [isAuthenticated]);
 
 	const value = useMemo(() => ({
 		wishlistItems,

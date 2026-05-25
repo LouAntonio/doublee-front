@@ -287,7 +287,25 @@ const AdminIdentityVerification = () => {
 		}
 	}, []);
 
-	useEffect(() => { fetchSellers(); }, [fetchSellers]);
+	useEffect(() => {
+		const fetchSellers = async () => {
+			setLoading(true);
+			try {
+				const data = await apiRequest('/admin/unverified-sellers', { admin: true });
+				if (data.success) {
+					setRequests(data.sellers || []);
+				} else {
+					notyf.error(data.msg || 'Erro ao carregar vendedores.');
+				}
+			} catch {
+				notyf.error('Erro ao comunicar com o servidor.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchSellers();
+	}, []);
 
 	const handleApprove = async (userId) => {
 		try {

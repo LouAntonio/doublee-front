@@ -29,6 +29,23 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 	};
 
 	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
+			try {
+				const [pkgRes, purRes] = await Promise.all([
+					apiRequest('/promotions/packages?isActive=true', { method: 'GET' }),
+					apiRequest('/promotions/purchases', { method: 'GET' })
+				]);
+
+				if (pkgRes.success) setPackages(pkgRes.data.packages || []);
+				if (purRes.success) setPurchases(purRes.data.purchases || []);
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
 		fetchData();
 	}, []);
 

@@ -108,8 +108,24 @@ export const CartProvider = ({ children }) => {
 	}, [cartItems]);
 
 	useEffect(() => {
+		const loadCartFromApi = async () => {
+			if (!hasToken()) return;
+			const res = await apiRequest('/cart');
+			if (res && res.success && res.data?.cart) {
+				const items = Array.isArray(res.data.cart.items)
+					? res.data.cart.items.map(mapApiItem)
+					: [];
+				setCartItems(items);
+				return;
+			}
+
+			if (res && res.success === false) {
+				notyf.error(res.msg || 'Erro ao carregar o carrinho.');
+			}
+		};
+
 		loadCartFromApi();
-	}, [loadCartFromApi]);
+	}, [hasToken, mapApiItem]);
 
 	const addToCart = async (product, quantity = 1, showNotification = true) => {
 		if (!product?.id) return;

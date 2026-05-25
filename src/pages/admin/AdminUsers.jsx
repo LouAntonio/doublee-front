@@ -1,6 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import apiRequest, { notyf } from '../../services/api';
 
+const UserSkeleton = () => (
+	<tr className="animate-pulse border-b border-slate-100 last:border-0">
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="flex items-center gap-3">
+				<div className="w-10 h-10 rounded-full bg-slate-200"></div>
+				<div className="space-y-2">
+					<div className="h-4 bg-slate-200 rounded w-32"></div>
+					<div className="h-3 bg-slate-100 rounded w-24"></div>
+				</div>
+			</div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="space-y-2">
+				<div className="h-4 bg-slate-200 rounded w-40"></div>
+				<div className="h-3 bg-slate-100 rounded w-28"></div>
+			</div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-6 w-20 bg-slate-200 rounded-full"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-6 w-16 bg-slate-200 rounded-full"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap text-right">
+			<div className="flex justify-end gap-2">
+				<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
+				<div className="h-8 w-20 bg-slate-200 rounded-lg"></div>
+			</div>
+		</td>
+	</tr>
+);
+
 const AdminUsers = () => {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -33,7 +65,31 @@ const AdminUsers = () => {
 	};
 
 	useEffect(() => {
-		fetchUsers();
+		const load = async () => {
+			setLoading(true);
+			try {
+				const res = await apiRequest('/admin/users', {
+					method: 'POST',
+					body: JSON.stringify({
+						page: pagination.page,
+						limit: pagination.limit,
+						search: search
+					})
+				});
+				if (res.success && res.data) {
+					setUsers(res.data.users);
+					setPagination((prev) => ({ ...prev, ...res.data.pagination }));
+				} else {
+					notyf.error(res.msg || 'Erro ao carregar utilizadores.');
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		load();
 		// eslint-disable-next-line
 	}, [pagination.page]);
 
@@ -85,39 +141,6 @@ const AdminUsers = () => {
 		setPagination((prev) => ({ ...prev, page: 1 }));
 		fetchUsers();
 	};
-
-	// --- Skeleton Loader Component ---
-	const UserSkeleton = () => (
-		<tr className="animate-pulse border-b border-slate-100 last:border-0">
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="flex items-center gap-3">
-					<div className="w-10 h-10 rounded-full bg-slate-200"></div>
-					<div className="space-y-2">
-						<div className="h-4 bg-slate-200 rounded w-32"></div>
-						<div className="h-3 bg-slate-100 rounded w-24"></div>
-					</div>
-				</div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="space-y-2">
-					<div className="h-4 bg-slate-200 rounded w-40"></div>
-					<div className="h-3 bg-slate-100 rounded w-28"></div>
-				</div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-6 w-20 bg-slate-200 rounded-full"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-6 w-16 bg-slate-200 rounded-full"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap text-right">
-				<div className="flex justify-end gap-2">
-					<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
-					<div className="h-8 w-20 bg-slate-200 rounded-lg"></div>
-				</div>
-			</td>
-		</tr>
-	);
 
 	return (
 		<div className="space-y-6 animate-fade-in-up">

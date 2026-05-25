@@ -1,6 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import apiRequest, { notyf } from '../../services/api';
 
+const isPromotionValid = (product, now) => {
+	if (!product?.promotionalPrice) return false;
+
+	const promotionEndDate = getPromotionEndDate(product.promotionalEndDate);
+	if (!promotionEndDate) return true;
+
+	return promotionEndDate.getTime() >= now;
+};
+
+const getPromotionEndDate = (promotionalEndDate) => {
+	if (!promotionalEndDate) return null;
+
+	const parsedDate = new Date(promotionalEndDate);
+	if (Number.isNaN(parsedDate.getTime())) return null;
+
+	if (typeof promotionalEndDate === 'string' && !promotionalEndDate.includes('T')) {
+		parsedDate.setHours(23, 59, 59, 999);
+	}
+
+	return parsedDate;
+};
+
+const ProductSkeleton = () => (
+	<tr className="animate-pulse border-b border-slate-100 last:border-0">
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="flex items-center gap-4">
+				<div className="w-10 h-10 rounded-xl bg-slate-200"></div>
+				<div className="space-y-2">
+					<div className="h-4 bg-slate-200 rounded w-40"></div>
+				</div>
+			</div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-4 bg-slate-200 rounded w-32"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-4 bg-slate-200 rounded w-20"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-4 bg-slate-200 rounded w-12"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap">
+			<div className="h-6 w-16 bg-slate-200 rounded-full"></div>
+		</td>
+		<td className="px-6 py-4 whitespace-nowrap text-right">
+			<div className="flex justify-end gap-2">
+				<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
+				<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
+			</div>
+		</td>
+	</tr>
+);
+
 const AdminProducts = () => {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -14,49 +67,25 @@ const AdminProducts = () => {
 		onPromotion: ''
 	});
 
-	// Stores state for the filter
 	const [stores, setStores] = useState([]);
 
-	// Modals state
 	const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 	const [selectedProductDetails, setSelectedProductDetails] = useState(null);
 	const [loadingDetails, setLoadingDetails] = useState(false);
 
 	const [statusModalOpen, setStatusModalOpen] = useState(false);
 	const [selectedProductForStatus, setSelectedProductForStatus] = useState(null);
-	const [statusAction, setStatusAction] = useState('active'); // 'active', 'inactive', 'suspended'
+	const [statusAction, setStatusAction] = useState('active');
 	const [motive, setMotive] = useState('');
 	const [updatingStatus, setUpdatingStatus] = useState(false);
 
-	const getPromotionEndDate = (promotionalEndDate) => {
-		if (!promotionalEndDate) return null;
+	const [currentTime] = useState(() => Date.now());
 
-		const parsedDate = new Date(promotionalEndDate);
-		if (Number.isNaN(parsedDate.getTime())) return null;
-
-		// If date comes without time, keep promotion valid until end of that day.
-		if (typeof promotionalEndDate === 'string' && !promotionalEndDate.includes('T')) {
-			parsedDate.setHours(23, 59, 59, 999);
-		}
-
-		return parsedDate;
-	};
-
-	const isPromotionValid = (product) => {
-		if (!product?.promotionalPrice) return false;
-
-		const promotionEndDate = getPromotionEndDate(product.promotionalEndDate);
-		if (!promotionEndDate) return true;
-
-		return promotionEndDate.getTime() >= Date.now();
-	};
-
-	const detailsHasValidPromotion = isPromotionValid(selectedProductDetails);
+	const detailsHasValidPromotion = isPromotionValid(selectedProductDetails, currentTime);
 
 	const fetchProductsAndStores = async () => {
 		setLoading(true);
 		try {
-			// Fetch Products
 			let queryProducts = `/admin/products?page=${pagination.page}&limit=${pagination.limit}&search=${search}`;
 			if (filters.featured !== '') queryProducts += `&featured=${filters.featured}`;
 			if (filters.onPromotion !== '') queryProducts += `&onPromotion=${filters.onPromotion}`;
@@ -73,7 +102,6 @@ const AdminProducts = () => {
 				notyf.error(productsRes.msg || 'Erro ao carregar produtos.');
 			}
 
-			// Fetch all stores only once if not loaded
 			if (stores.length === 0) {
 				const storesRes = await apiRequest(`/admin/stores?limit=1000`, { method: 'GET' });
 				if (storesRes.success && storesRes.data && storesRes.data.stores) {
@@ -88,7 +116,39 @@ const AdminProducts = () => {
 	};
 
 	useEffect(() => {
-		fetchProductsAndStores();
+		const load = async () => {
+			setLoading(true);
+			try {
+				let queryProducts = `/admin/products?page=${pagination.page}&limit=${pagination.limit}&search=${search}`;
+				if (filters.featured !== '') queryProducts += `&featured=${filters.featured}`;
+				if (filters.onPromotion !== '') queryProducts += `&onPromotion=${filters.onPromotion}`;
+				if (storeId !== '') queryProducts += `&storeId=${storeId}`;
+				if (minPrice !== '') queryProducts += `&minPrice=${minPrice}`;
+				if (maxPrice !== '') queryProducts += `&maxPrice=${maxPrice}`;
+
+				const productsRes = await apiRequest(queryProducts, { method: 'GET' });
+				if (productsRes.success && productsRes.data) {
+					console.log(productsRes);
+					setProducts(productsRes.data.products || productsRes.data || []);
+					if (productsRes.data.pagination) setPagination((prev) => ({ ...prev, ...productsRes.data.pagination }));
+				} else {
+					notyf.error(productsRes.msg || 'Erro ao carregar produtos.');
+				}
+
+				if (stores.length === 0) {
+					const storesRes = await apiRequest(`/admin/stores?limit=1000`, { method: 'GET' });
+					if (storesRes.success && storesRes.data && storesRes.data.stores) {
+						setStores(storesRes.data.stores);
+					}
+				}
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		load();
 		// eslint-disable-next-line
 	}, [pagination.page, filters.featured, filters.onPromotion]);
 
@@ -160,38 +220,6 @@ const AdminProducts = () => {
 			setUpdatingStatus(false);
 		}
 	};
-
-	// --- Skeleton Loader Component ---
-	const ProductSkeleton = () => (
-		<tr className="animate-pulse border-b border-slate-100 last:border-0">
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="flex items-center gap-4">
-					<div className="w-10 h-10 rounded-xl bg-slate-200"></div>
-					<div className="space-y-2">
-						<div className="h-4 bg-slate-200 rounded w-40"></div>
-					</div>
-				</div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-4 bg-slate-200 rounded w-32"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-4 bg-slate-200 rounded w-20"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-4 bg-slate-200 rounded w-12"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				<div className="h-6 w-16 bg-slate-200 rounded-full"></div>
-			</td>
-			<td className="px-6 py-4 whitespace-nowrap text-right">
-				<div className="flex justify-end gap-2">
-					<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
-					<div className="h-8 w-16 bg-slate-200 rounded-lg"></div>
-				</div>
-			</td>
-		</tr>
-	);
 
 	return (
 		<div className="space-y-6 animate-fade-in-up">
@@ -312,7 +340,7 @@ const AdminProducts = () => {
 								</>
 							) : products.length > 0 ? (
 								products.map((product) => {
-									const hasValidPromotion = isPromotionValid(product);
+									const hasValidPromotion = isPromotionValid(product, currentTime);
 
 									return (
 										<tr key={product.id} className="hover:bg-slate-50/80 transition-colors group">
