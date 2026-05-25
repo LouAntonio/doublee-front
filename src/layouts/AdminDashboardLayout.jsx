@@ -48,12 +48,10 @@ const AdminDashboardLayout = () => {
 				<div className="flex items-center justify-between p-5 border-b border-[#F97316]/10 h-20 bg-sand/30">
 					{sidebarOpen && (
 						<div className="flex items-center gap-3 overflow-hidden">
-							<div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center flex-shrink-0 shadow-md shadow-accent/20">
-								<span className="text-white font-bold text-lg font-display">D</span>
-							</div>
-							<span className="text-xl font-bold font-display bg-gradient-to-r from-[#1C1917] to-[#78716C] bg-clip-text text-transparent whitespace-nowrap">
-								Kusumba
-							</span>
+							<img
+								src="/images/logo/logo.png" alt="Kusumba Logo"
+								className="w-20 object-contain"
+							/>
 						</div>
 					)}
 					<button
