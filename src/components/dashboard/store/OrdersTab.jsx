@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import apiRequest, { notyf } from '../../../services/api';
+import http from '../../../services/http';
+import { notyf } from '../../../utils/notyf';
 import { formatCurrency } from '../../../utils/currency';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
 import EmptyState from './ui/EmptyState';
@@ -10,18 +11,15 @@ const OrdersTab = ({ orders, onRefresh }) => {
 	const handleStatusChange = async (orderId, newStatus) => {
 		setUpdatingId(orderId);
 		try {
-			const data = await apiRequest(`/stores/orders/${orderId}/status`, {
-				method: 'PATCH',
-				body: JSON.stringify({ status: newStatus }),
-			});
-			if (data.success) {
+			const data = await http.patch(`/stores/orders/${orderId}/status`, { status: newStatus });
+			if (data?.success) {
 				notyf.success('Estado actualizado!');
 				onRefresh();
 			} else {
-				notyf.error(data.msg || 'Erro ao actualizar estado.');
+				notyf.error(data?.msg || 'Erro ao actualizar estado.');
 			}
-		} catch (err) {
-			notyf.error(err.message || 'Erro ao conectar com o servidor.');
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setUpdatingId(null);
 		}

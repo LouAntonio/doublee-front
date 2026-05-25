@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
 	IoStorefrontOutline,
 	IoGridOutline,
@@ -9,7 +9,7 @@ import {
 	IoTicketOutline,
 } from 'react-icons/io5';
 
-import apiRequest from '../../services/api';
+import { useMyStore, useMyProducts, useMyStoreOrders } from '../../hooks/queries/useDashboard';
 import OverviewTab from './store/OverviewTab';
 import StoreInfoTab from './store/StoreInfoTab';
 import ProductsTab from './store/ProductsTab';
@@ -33,75 +33,31 @@ const TABS = [
 
 const StoreDashboard = () => {
 	const [activeTab, setActiveTab] = useState('overview');
-	const [store, setStore] = useState(null);
-	const [products, setProducts] = useState([]);
-	const [orders, setOrders] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
 
-	const fetchAll = useCallback(async () => {
-		setLoading(true);
-		setError(null);
-		try {
-			const [storeRes, productsRes, ordersRes] = await Promise.allSettled([
-				apiRequest('/stores/mine', { method: 'GET' }),
-				apiRequest('/products/mine', { method: 'GET' }),
-				apiRequest('/stores/orders', { method: 'GET' }),
-			]);
+	const {
+		data: store,
+		isLoading: storeLoading,
+		isError: storeError,
+		refetch: refetchStore,
+	} = useMyStore();
 
-			if (storeRes.status === 'fulfilled' && storeRes.value.success) {
-				setStore(storeRes.value.data?.store || storeRes.value.data || null);
-			} else if (storeRes.status === 'rejected' || (storeRes.status === 'fulfilled' && !storeRes.value.success)) {
-				throw new Error('Não foi possível carregar os dados da loja.');
-			}
+	const {
+		data: products = [],
+		refetch: refetchProducts,
+	} = useMyProducts();
 
-			if (productsRes.status === 'fulfilled' && productsRes.value.success)
-				setProducts(productsRes.value.data?.products || productsRes.value.data || []);
+	const {
+		data: orders = [],
+		refetch: refetchOrders,
+	} = useMyStoreOrders();
 
-			if (ordersRes.status === 'fulfilled' && ordersRes.value.success)
-				setOrders(ordersRes.value.data?.orders || ordersRes.value.data || []);
-
-		} catch (err) {
-			setError(err.message || 'Não foi possível carregar os dados da loja.');
-			console.error(err);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			setError(null);
-			try {
-				const [storeRes, productsRes, ordersRes] = await Promise.allSettled([
-					apiRequest('/stores/mine', { method: 'GET' }),
-					apiRequest('/products/mine', { method: 'GET' }),
-					apiRequest('/stores/orders', { method: 'GET' }),
-				]);
-
-				if (storeRes.status === 'fulfilled' && storeRes.value.success) {
-					setStore(storeRes.value.data?.store || storeRes.value.data || null);
-				} else if (storeRes.status === 'rejected' || (storeRes.status === 'fulfilled' && !storeRes.value.success)) {
-					throw new Error('Não foi possível carregar os dados da loja.');
-				}
-
-				if (productsRes.status === 'fulfilled' && productsRes.value.success)
-					setProducts(productsRes.value.data?.products || productsRes.value.data || []);
-
-				if (ordersRes.status === 'fulfilled' && ordersRes.value.success)
-					setOrders(ordersRes.value.data?.orders || ordersRes.value.data || []);
-
-			} catch (err) {
-				setError(err.message || 'Não foi possível carregar os dados da loja.');
-				console.error(err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
-	}, []);
+	const loading = storeLoading;
+	const error = storeError;
+	const fetchAll = () => {
+		refetchStore();
+		refetchProducts();
+		refetchOrders();
+	};
 
 	if (loading) {
 		return <StoreDashboardSkeleton />;
@@ -111,7 +67,7 @@ const StoreDashboard = () => {
 		return (
 			<div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
 				<IoAlertCircleOutline className="w-12 h-12 text-red-400" />
-				<p className="text-base font-semibold text-gray-700">{error}</p>
+				<p className="text-base font-semibold text-gray-700">Não foi possível carregar os dados da loja.</p>
 				<button onClick={fetchAll} className="mt-2 px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors">
 					Tentar novamente
 				</button>

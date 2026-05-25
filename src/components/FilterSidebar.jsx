@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IoSearchOutline, IoRefreshOutline } from 'react-icons/io5';
 import { MdCategory } from 'react-icons/md';
 import { TbCurrencyDollarOff, TbCurrencyDollar } from 'react-icons/tb';
-import apiRequest from '../services/api';
+import http from '../services/http';
 
 const FilterSidebar = ({
 	categories = [],
@@ -25,9 +25,9 @@ const FilterSidebar = ({
 		let mounted = true;
 		const load = async () => {
 			try {
-				const res = await apiRequest('/categories');
+				const res = await http.get('/categories');
 				if (!mounted) return;
-				if (res && res.success) setFetchedCategories(res.data?.categories || []);
+				if (res?.success) setFetchedCategories(res.data?.categories || []);
 			} catch (err) {
 				console.log('Error fetching categories:', err);
 			}

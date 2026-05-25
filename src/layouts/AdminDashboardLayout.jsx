@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
-import { useAdminAuth } from '../context/AdminAuthContext';
+import useAuthStore from '../stores/authStore';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const AdminDashboardLayout = () => {
-	const { isAuthenticated, isLoading, logout, admin } = useAdminAuth();
+	const { isAdmin, isLoading, adminLogout, admin } = useAuthStore();
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const location = useLocation();
 
@@ -25,7 +25,7 @@ const AdminDashboardLayout = () => {
 		);
 	}
 
-	if (!isAuthenticated) {
+	if (!isAdmin) {
 		return <Navigate to="/dbe/login" replace />;
 	}
 
@@ -93,7 +93,7 @@ const AdminDashboardLayout = () => {
 
 				<div className="p-4 border-t border-slate-800 bg-slate-900/50 backdrop-blur-sm">
 					<button
-						onClick={logout}
+						onClick={adminLogout}
 						className={`group flex items-center w-full px-3 py-3 text-sm font-medium text-rose-400 cursor-pointer rounded-xl transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-300 ${!sidebarOpen ? 'justify-center' : ''}`}
 					>
 						<div className="relative">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
 
 const AdminDashboard = () => {
 	const [stats, setStats] = useState(null);
@@ -8,14 +9,14 @@ const AdminDashboard = () => {
 	useEffect(() => {
 		const fetchStats = async () => {
 			try {
-				const response = await apiRequest('/admin/dashboard', { method: 'GET', admin: true });
-				if (response.success && response.data) {
+				const response = await http.get('/admin/dashboard', { admin: true });
+				if (response?.success && response.data) {
 					setStats(response.data);
 				} else {
-					notyf.error(response.msg || 'Erro ao carregar estatísticas.');
+					notyf.error(response?.msg || 'Erro ao carregar estatísticas.');
 				}
-			} catch (error) {
-				console.error(error);
+			} catch {
+				// handled by interceptor
 			} finally {
 				setLoading(false);
 			}

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import React, { useState } from 'react';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
+import { useAdminStoresList, useUpdateStoreStatus } from '../../hooks/queries/useAdminStores';
 
 const StoreSkeleton = () => (
 	<tr className="animate-pulse border-b border-slate-100 last:border-0">
@@ -30,11 +32,14 @@ const StoreSkeleton = () => (
 );
 
 const AdminStores = () => {
-	const [stores, setStores] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [pagination, setPagination] = useState({ page: 1, limit: 10, totalPages: 1 });
+	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [actionLoading, setActionLoading] = useState({});
+
+	const { data: storesData, isLoading: loading } = useAdminStoresList({ page, limit: 10, search });
+	const updateStoreStatus = useUpdateStoreStatus();
+	const stores = storesData?.stores || [];
+	const pagination = storesData?.pagination || { page: 1, limit: 10, totalPages: 1 };
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedStoreId, setSelectedStoreId] = useState(null);
@@ -43,61 +48,6 @@ const AdminStores = () => {
 	const [emailSubject, setEmailSubject] = useState('');
 	const [emailBody, setEmailBody] = useState('');
 	const [selectedAction, setSelectedAction] = useState(null);
-
-	const fetchStores = async () => {
-		setLoading(true);
-		try {
-			const query = new URLSearchParams({
-				page: pagination.page,
-				limit: pagination.limit,
-				search: search
-			}).toString();
-
-			const res = await apiRequest(`/admin/stores?${query}`, {
-				method: 'GET',
-			});
-			if (res.success && res.data) {
-				setStores(res.data.stores);
-				setPagination((prev) => ({ ...prev, ...res.data.pagination }));
-			} else {
-				notyf.error(res.msg || 'Erro ao carregar lojas.');
-			}
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			try {
-				const query = new URLSearchParams({
-					page: pagination.page,
-					limit: pagination.limit,
-					search: search
-				}).toString();
-
-				const res = await apiRequest(`/admin/stores?${query}`, {
-					method: 'GET',
-				});
-				if (res.success && res.data) {
-					setStores(res.data.stores);
-					setPagination((prev) => ({ ...prev, ...res.data.pagination }));
-				} else {
-					notyf.error(res.msg || 'Erro ao carregar lojas.');
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
-		// eslint-disable-next-line
-	}, [pagination.page]);
 
 	const handleViewDetails = async (storeId) => {
 		setSelectedStoreId(storeId);
@@ -108,15 +58,14 @@ const AdminStores = () => {
 		setEmailSubject('');
 		setEmailBody('');
 		try {
-			const res = await apiRequest(`/admin/stores/${storeId}`, { method: 'GET' });
-			if (res.success && res.data) {
+			const res = await http.get(`/admin/stores/${storeId}`, { admin: true });
+			if (res?.success && res.data) {
 				setStoreDetails(res.data.store);
 			} else {
-				notyf.error(res.msg || 'Erro ao carregar detalhes da loja.');
+				notyf.error(res?.msg || 'Erro ao carregar detalhes da loja.');
 				setIsModalOpen(false);
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
 			notyf.error('Erro de conexão ao carregar detalhes.');
 			setIsModalOpen(false);
 		} finally {
@@ -133,24 +82,15 @@ const AdminStores = () => {
 
 		setActionLoading(prev => ({ ...prev, ['modal-status']: true }));
 		try {
-			const res = await apiRequest(`/admin/stores/${selectedStoreId}/status`, {
-				method: 'PATCH',
-				body: JSON.stringify({ 
-					status: selectedAction,
-					emailSubject: selectedAction === 'approved' ? undefined : emailSubject,
-					emailBody: selectedAction === 'approved' ? undefined : emailBody
-				})
+			await updateStoreStatus.mutateAsync({
+				storeId: selectedStoreId,
+				status: selectedAction,
+				emailSubject,
+				emailBody,
 			});
-			if (res.success) {
-				notyf.success(res.msg || 'Status atualizado com sucesso.');
-				setIsModalOpen(false);
-				fetchStores();
-			} else {
-				notyf.error(res.msg || 'Erro ao atualizar status.');
-			}
-		} catch (err) {
-			console.error(err);
-			notyf.error('Erro de conexão.');
+			setIsModalOpen(false);
+		} catch {
+			// handled by mutation
 		} finally {
 			setActionLoading(prev => ({ ...prev, ['modal-status']: false }));
 		}
@@ -158,8 +98,7 @@ const AdminStores = () => {
 
 	const handleSearch = (e) => {
 		e.preventDefault();
-		setPagination((prev) => ({ ...prev, page: 1 }));
-		fetchStores();
+		setPage(1);
 	};
 
 	return (
@@ -281,7 +220,7 @@ const AdminStores = () => {
 					<div className="bg-slate-50/50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
 						<button
 							disabled={pagination.page <= 1}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page - 1 }))}
+							onClick={() => setPage((prev) => prev - 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -292,7 +231,7 @@ const AdminStores = () => {
 						</span>
 						<button
 							disabled={pagination.page >= pagination.totalPages}
-							onClick={() => setPagination((prev) => ({ ...prev, page: prev.page + 1 }))}
+							onClick={() => setPage((prev) => prev + 1)}
 							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							Próxima

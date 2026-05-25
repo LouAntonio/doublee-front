@@ -12,7 +12,7 @@ import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
-import apiRequest from '../services/api';
+import http from '../services/http';
 
 /* ─── Helper components ───────────────────────────────────────────────── */
 const StarRow = ({ rating, size = 'text-sm' }) => (
@@ -56,9 +56,10 @@ const LojaDetails = () => {
 		const load = async () => {
 			setLoading(true);
 			try {
-				const resp = await apiRequest(`/stores/${id}`);
+				const resp = await http.get(`/stores/${id}`);
+
 				if (!mounted) return;
-				if (resp && resp.success) {
+				if (resp?.success) {
 					const s = resp.data.store;
 
 					const opinions = (s.reviews || []).map(r => ({
@@ -106,9 +107,9 @@ const LojaDetails = () => {
 
 					// Buscar produtos reais da API filtrando pela loja
 					try {
-						const prodResp = await apiRequest(`/products?storeId=${s.id}&limit=24`);
-						const apiProducts = (prodResp && prodResp.success && prodResp.data && prodResp.data.products) ? prodResp.data.products : [];
-						const totalProducts = prodResp && prodResp.success && prodResp.data && prodResp.data.pagination ? prodResp.data.pagination.total : apiProducts.length;
+						const prodResp = await http.get(`/products?storeId=${s.id}&limit=24`);
+						const apiProducts = (prodResp?.success && prodResp.data?.products) ? prodResp.data.products : [];
+						const totalProducts = prodResp?.success && prodResp.data?.pagination ? prodResp.data.pagination.total : apiProducts.length;
 						// Mapear para o formato esperado pelo componente
 						const mappedProducts = apiProducts.map(p => ({
 							id: p.id,

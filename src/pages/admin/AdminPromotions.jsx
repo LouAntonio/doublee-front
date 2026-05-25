@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import React, { useState } from 'react';
+import { useAdminPromotionPackages, useCreatePromotionPackage, useUpdatePromotionPackage, useDeletePromotionPackage } from '../../hooks/queries/useAdminPromotions';
 
 const AdminPromotions = () => {
-	const [packages, setPackages] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: packages = [], isLoading: loading } = useAdminPromotionPackages();
+	const createPackage = useCreatePromotionPackage();
+	const updatePackage = useUpdatePromotionPackage();
+	const deletePackage = useDeletePromotionPackage();
 	const [isCreating, setIsCreating] = useState(false);
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [editingPackage, setEditingPackage] = useState(null);
@@ -16,61 +18,14 @@ const AdminPromotions = () => {
 		price: 0
 	});
 
-	const fetchPackages = async () => {
-		setLoading(true);
-		try {
-			const res = await apiRequest('/promotions/packages', { method: 'GET' });
-			if (res.success) {
-				setPackages(res.data.packages || []);
-			} else {
-				notyf.error(res.msg || 'Erro ao carregar pacotes.');
-			}
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		const fetchPackages = async () => {
-			setLoading(true);
-			try {
-				const res = await apiRequest('/promotions/packages', { method: 'GET' });
-				if (res.success) {
-					setPackages(res.data.packages || []);
-				} else {
-					notyf.error(res.msg || 'Erro ao carregar pacotes.');
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchPackages();
-	}, []);
-
 	const handleCreate = async (e) => {
 		e.preventDefault();
 		setIsCreating(true);
 		try {
-			const res = await apiRequest('/promotions/packages', {
-				method: 'POST',
-				admin: true,
-				body: JSON.stringify(formData)
-			});
-			if (res.success) {
-				notyf.success('Pacote criado com sucesso');
-				setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
-				fetchPackages();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.error(err);
-			notyf.error('Erro ao criar pacote.');
+			await createPackage.mutateAsync(formData);
+			setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
+		} catch {
+			// handled by mutation
 		} finally {
 			setIsCreating(false);
 		}
@@ -90,22 +45,11 @@ const AdminPromotions = () => {
 		e.preventDefault();
 		setIsUpdating(true);
 		try {
-			const res = await apiRequest(`/promotions/packages/${editingPackage.id}`, {
-				method: 'PUT',
-				admin: true,
-				body: JSON.stringify(formData)
-			});
-			if (res.success) {
-				notyf.success('Pacote actualizado com sucesso');
-				setEditingPackage(null);
-				setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
-				fetchPackages();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.error(err);
-			notyf.error('Erro ao actualizar pacote.');
+			await updatePackage.mutateAsync({ id: editingPackage.id, formData });
+			setEditingPackage(null);
+			setFormData({ name: '', type: 'STORE', durationDays: 7, price: 0 });
+		} catch {
+			// handled by mutation
 		} finally {
 			setIsUpdating(false);
 		}
@@ -114,19 +58,9 @@ const AdminPromotions = () => {
 	const handleDelete = async (id) => {
 		if (!window.confirm('Tem certeza que deseja remover este pacote?')) return;
 		try {
-			const res = await apiRequest(`/promotions/packages/${id}`, {
-				method: 'DELETE',
-				admin: true
-			});
-			if (res.success) {
-				notyf.success('Pacote removido');
-				fetchPackages();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.error(err);
-			notyf.error('Erro ao remover pacote.');
+			await deletePackage.mutateAsync(id);
+		} catch {
+			// handled by mutation
 		}
 	};
 

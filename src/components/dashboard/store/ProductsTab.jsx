@@ -7,7 +7,8 @@ import {
 	IoImageOutline,
 	IoCheckmarkOutline,
 } from 'react-icons/io5';
-import apiRequest, { notyf } from '../../../services/api';
+import http from '../../../services/http';
+import { notyf } from '../../../utils/notyf';
 import { formatCurrency } from '../../../utils/currency';
 import { uploadToCloudinary } from './constants';
 import ImagePicker from './ui/ImagePicker';
@@ -53,8 +54,8 @@ const ProductsTab = ({ products, onRefresh }) => {
 	const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
 	useEffect(() => {
-		apiRequest('/categories', { method: 'GET' })
-			.then(res => { if (res.success) setAllCategories(res.data?.categories || []); })
+		http.get('/categories')
+			.then(res => { if (res?.success) setAllCategories(res.data?.categories || []); })
 			.catch(() => { });
 	}, []);
 
@@ -202,18 +203,18 @@ const ProductsTab = ({ products, onRefresh }) => {
 
 			setSavingProgress('A guardar produto...');
 			const data = editingProduct
-				? await apiRequest(`/products/${editingProduct.id}`, { method: 'PUT', body: JSON.stringify(payload) })
-				: await apiRequest('/products', { method: 'POST', body: JSON.stringify(payload) });
+				? await http.put(`/products/${editingProduct.id}`, payload)
+				: await http.post('/products', payload);
 
-			if (data.success) {
+			if (data?.success) {
 				notyf.success(editingProduct ? 'Produto actualizado!' : 'Produto adicionado!');
 				setModalOpen(false);
 				onRefresh();
 			} else {
-				notyf.error(data.msg || 'Erro ao guardar produto.');
+				notyf.error(data?.msg || 'Erro ao guardar produto.');
 			}
-		} catch (err) {
-			notyf.error(err.message || 'Erro ao conectar com o servidor.');
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setSaving(false);
 			setSavingProgress('');
@@ -224,15 +225,15 @@ const ProductsTab = ({ products, onRefresh }) => {
 		if (!window.confirm('Tem a certeza que quer eliminar este produto?')) return;
 		setDeleting(id);
 		try {
-			const data = await apiRequest(`/products/${id}`, { method: 'DELETE' });
-			if (data.success) {
+			const data = await http.delete(`/products/${id}`);
+			if (data?.success) {
 				notyf.success('Produto eliminado.');
 				onRefresh();
 			} else {
-				notyf.error(data.msg || 'Erro ao eliminar produto.');
+				notyf.error(data?.msg || 'Erro ao eliminar produto.');
 			}
-		} catch (err) {
-			notyf.error(err.message || 'Erro ao conectar com o servidor.');
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setDeleting(null);
 		}

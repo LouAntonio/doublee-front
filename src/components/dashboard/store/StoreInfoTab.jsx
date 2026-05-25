@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import apiRequest, { notyf } from '../../../services/api';
+import http from '../../../services/http';
+import { notyf } from '../../../utils/notyf';
 import { ANGOLA_PROVINCES, uploadToCloudinary } from './constants';
 import SectionTitle from './ui/SectionTitle';
 import ImagePicker from './ui/ImagePicker';
@@ -52,19 +53,16 @@ const StoreInfoTab = ({ store, onUpdated }) => {
 			}
 
 			setProgress('A guardar alterações...');
-			const data = await apiRequest('/stores/update', {
-				method: 'PUT',
-				body: JSON.stringify(payload),
-			});
+			const data = await http.put('/stores/update', payload);
 
-			if (data.success) {
+			if (data?.success) {
 				notyf.success('Informações da loja actualizadas!');
 				onUpdated?.();
 			} else {
-				notyf.error(data.msg || 'Erro ao actualizar loja.');
+				notyf.error(data?.msg || 'Erro ao actualizar loja.');
 			}
-		} catch (err) {
-			notyf.error(err.message || 'Erro ao conectar com o servidor.');
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setSaving(false);
 			setProgress('');

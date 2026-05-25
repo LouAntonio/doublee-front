@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import { IoSearchOutline, IoStarSharp, IoChevronBack, IoChevronForward, IoStorefrontOutline, IoShieldCheckmarkOutline, IoTrophyOutline } from 'react-icons/io5';
 import { FaStore, FaBoxOpen, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import apiRequest from '../services/api';
+import { useQuery } from '@tanstack/react-query';
+import { getStores, getFeaturedStores } from '../services/stores';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -17,13 +18,7 @@ const stats = [
 
 const StoreLogo = ({ logo, name }) => {
 	if (logo) {
-		return (
-			<img
-				src={logo}
-				alt={name}
-				className="w-full h-full object-cover"
-			/>
-		);
+		return <img src={logo} alt={name} className="w-full h-full object-cover" />;
 	}
 	const initials = name ? name.slice(0, 2).toUpperCase() : '??';
 	return (
@@ -33,61 +28,38 @@ const StoreLogo = ({ logo, name }) => {
 	);
 };
 
-const isStoreFeaturedNow = (store) => {
-	if (!store?.featured || !store?.featuredUntil) return false;
-	const featuredUntilMs = new Date(store.featuredUntil).getTime();
-	if (Number.isNaN(featuredUntilMs)) return false;
-	return featuredUntilMs > Date.now();
-};
-
 const Lojas = () => {
 	useDocumentTitle('Lojas - Double E');
 	const [search, setSearch] = useState('');
 	const [inputValue, setInputValue] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
-	const [stores, setStores] = useState([]);
-	const [featuredStores, setFeaturedStores] = useState([]);
-	const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
-	const [loading, setLoading] = useState(true);
-	const [loadingFeatured, setLoadingFeatured] = useState(true);
 	const debounceRef = useRef(null);
 
-	// Fetch featured stores once on mount
-	useEffect(() => {
-		const fetchFeatured = async () => {
-			setLoadingFeatured(true);
-			const res = await apiRequest('/stores/featured');
-			if (res.success) {
-				setFeaturedStores(res.data.stores);
-			}
-			setLoadingFeatured(false);
-		};
-		fetchFeatured();
-	}, []);
+	const { data: featuredStores = [], isLoading: loadingFeatured } = useQuery({
+		queryKey: ['stores', 'featured'],
+		queryFn: async () => {
+			const res = await getFeaturedStores();
+			if (!res.success) throw new Error(res.msg || 'Erro ao carregar lojas em destaque');
+			return res.data?.stores || [];
+		},
+		staleTime: 1000 * 60 * 10,
+	});
 
-	// Fetch paginated stores when page changes (immediately)
-	// When search changes, debounce the fetch and reset to page 1
-	useEffect(() => {
-		if (debounceRef.current) clearTimeout(debounceRef.current);
+	const { data: storesData, isLoading: loading } = useQuery({
+		queryKey: ['stores', { search, page: currentPage, limit: ITEMS_PER_PAGE }],
+		queryFn: async () => {
+			const params = { page: currentPage, limit: ITEMS_PER_PAGE };
+			if (search.trim()) params.search = search.trim();
+			const res = await getStores(params);
+			if (!res.success) throw new Error(res.msg || 'Erro ao carregar lojas');
+			return { stores: res.data?.stores || [], pagination: res.data?.pagination || { total: 0, totalPages: 1 } };
+		},
+		staleTime: 1000 * 60 * 2,
+	});
 
-		const doFetch = async () => {
-			setLoading(true);
-			const params = new URLSearchParams({
-				page: currentPage,
-				limit: ITEMS_PER_PAGE,
-				...(search.trim() ? { search: search.trim() } : {}),
-			});
-			const res = await apiRequest(`/stores?${params}`);
-			if (res.success) {
-				setStores(res.data.stores);
-				setPagination(res.data.pagination);
-			}
-			setLoading(false);
-		};
-
-		debounceRef.current = setTimeout(doFetch, search ? 400 : 0);
-		return () => clearTimeout(debounceRef.current);
-	}, [search, currentPage]);
+	const stores = storesData?.stores || [];
+	const pagination = storesData?.pagination || { total: 0, totalPages: 1 };
+	const totalPages = pagination.totalPages || 1;
 
 	const handleInputChange = (e) => {
 		setInputValue(e.target.value);
@@ -96,85 +68,70 @@ const Lojas = () => {
 	const handleInputKeyDown = (e) => {
 		if (e.key === 'Enter') {
 			const trimmed = inputValue.trim();
+			if (debounceRef.current) clearTimeout(debounceRef.current);
 			setSearch(trimmed);
 			setCurrentPage(1);
 		}
 	};
 
-	const totalPages = pagination.totalPages || 1;
+	const doSearch = (value) => {
+		if (debounceRef.current) clearTimeout(debounceRef.current);
+		debounceRef.current = setTimeout(() => {
+			setSearch(value.trim());
+			setCurrentPage(1);
+		}, 400);
+	};
 
 	return (
 		<div className="bg-gray-50 flex flex-col">
-			{/* Header + Hero fill 100vh */}
 			<div className="h-screen flex flex-col">
 				<Header />
-
-				{/* ── Hero ── */}
 				<div className="relative overflow-hidden flex-1">
-					<img
-						src="./images/slider/1.webp"
-						alt="Lojas"
-						className="absolute inset-0 w-full h-full object-cover"
-					/>
-					{/* Multi-layer gradient overlay */}
+					<img src="./images/slider/1.webp" alt="Lojas" className="absolute inset-0 w-full h-full object-cover" />
 					<div className="absolute inset-0 bg-gradient-to-r from-black/70 via-orange-950/60 to-orange-900/40" />
 					<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
-
-					{/* Animated background elements */}
 					<div className="absolute top-10 left-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl animate-pulse" />
 					<div className="absolute bottom-20 right-20 w-60 h-60 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
 					<div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-4 h-full py-12">
-						{/* Badge */}
 						<span className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full mb-6 border border-white/30 shadow-lg animate-in fade-in slide-in-from-top-4 duration-700">
 							<IoTrophyOutline className="text-base" /> Lojas verificadas e aprovadas
 						</span>
-
-						{/* Main Headline */}
 						<div className="mb-6 overflow-hidden">
 							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] mb-2 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-both">
-								As Melhores
+                As Melhores
 							</h1>
 							<h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.1] drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 fill-mode-both" style={{ color: '#FFA500' }}>
-								Lojas
+                Lojas
 							</h1>
 						</div>
-
-						{/* Divider */}
 						<div className="w-16 h-1.5 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mb-6 animate-in fade-in slide-in-from-left-6 duration-700 delay-200" />
-
-						{/* Subtitle */}
 						<p className="text-base sm:text-lg md:text-xl max-w-2xl opacity-95 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-							Encontre as lojas parceiras Double E e compre com total confiança. Mais de 120 estabelecimentos verificados esperando por você.
+              Encontre as lojas parceiras Double E e compre com total confiança. Mais de 120 estabelecimentos verificados esperando por você.
 						</p>
-
-						{/* Search Bar */}
 						<div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-700 delay-500">
 							<div className="relative group">
-								<div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-500/20 rounded-full blur-xl opacity-0  transition-opacity duration-300" />
+								<div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-500/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 								<IoSearchOutline className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none" />
 								<input
 									type="text"
 									placeholder="Pesquisar loja por nome..."
 									value={inputValue}
-									onChange={handleInputChange}
+									onChange={(e) => { handleInputChange(e); doSearch(e.target.value); }}
 									onKeyDown={handleInputKeyDown}
-									className="relative w-full pl-14 pr-6 py-4 sm:py-5 rounded-full text-gray-500 text-sm sm:text-base shadow-2xl focus:outline-none  transition-all duration-300 placeholder:text-gray-500 font-medium"
+									className="relative w-full pl-14 pr-6 py-4 sm:py-5 rounded-full text-gray-500 text-sm sm:text-base shadow-2xl focus:outline-none transition-all duration-300 placeholder:text-gray-500 font-medium"
 								/>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>{/* end h-screen wrapper */}
+			</div>
 
-			{/* ── Stats bar ── */}
 			<div className="bg-white border-b border-gray-100 shadow-sm">
 				<div className="max-w-[1200px] mx-auto px-4 py-5 grid grid-cols-2 md:grid-cols-4 gap-4">
 					{stats.map((s, i) => (
 						<div key={i} className="flex items-center gap-3">
-							<div className="w-11 h-11 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center flex-shrink-0">
-								{s.icon}
-							</div>
+							<div className="w-11 h-11 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center flex-shrink-0">{s.icon}</div>
 							<div>
 								<p className="text-lg font-bold text-gray-800 leading-tight">{s.value}</p>
 								<p className="text-xs text-gray-500">{s.label}</p>
@@ -184,7 +141,6 @@ const Lojas = () => {
 				</div>
 			</div>
 
-			{/* ── Destaques ── */}
 			{!search && featuredStores.length > 0 && (
 				<div className="px-4 py-10 bg-gradient-to-b from-orange-50 to-gray-50">
 					<div className="max-w-[1200px] mx-auto">
@@ -197,9 +153,7 @@ const Lojas = () => {
 								{[...Array(4)].map((_, i) => (
 									<div key={i} className="relative overflow-hidden rounded-2xl shadow-md h-52 block bg-gray-200 animate-pulse">
 										<div className="absolute inset-0 bg-gradient-to-t from-gray-300 via-gray-200/20 to-transparent" />
-										<div className="absolute top-3 left-3">
-											<div className="h-6 w-20 bg-gray-300 rounded-full" />
-										</div>
+										<div className="absolute top-3 left-3"><div className="h-6 w-20 bg-gray-300 rounded-full" /></div>
 										<div className="absolute bottom-0 left-0 right-0 p-4 flex items-end gap-3">
 											<div className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0 overflow-hidden bg-gray-300" />
 											<div className="min-w-0 flex-1">
@@ -213,25 +167,15 @@ const Lojas = () => {
 						) : (
 							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 								{featuredStores.map(store => (
-									<Link
-										to={`/loja/${store.id}`}
-										key={store.id}
-										className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-52 block bg-gray-800"
-									>
+									<Link to={`/loja/${store.id}`} key={store.id} className="group relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-52 block bg-gray-800">
 										{store.banner ? (
-											<img
-												src={store.banner}
-												alt={store.name}
-												className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-											/>
+											<img src={store.banner} alt={store.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 										) : (
 											<div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-600" />
 										)}
 										<div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 										<div className="absolute top-3 left-3">
-											<span className="bg-[#F97316] text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
-												⭐ Destaque
-											</span>
+											<span className="bg-[#F97316] text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">⭐ Destaque</span>
 										</div>
 										<div className="absolute bottom-0 left-0 right-0 p-4 flex items-end gap-3">
 											<div className="w-10 h-10 rounded-full border-2 border-white shadow flex-shrink-0 overflow-hidden">
@@ -254,7 +198,6 @@ const Lojas = () => {
 				</div>
 			)}
 
-			{/* ── All stores ── */}
 			<div className="px-4 pb-14 flex-1">
 				<div className="max-w-[1200px] mx-auto">
 					<div className="flex items-center justify-between mb-6">
@@ -272,17 +215,11 @@ const Lojas = () => {
 								<div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col animate-pulse">
 									<div className="relative h-40 bg-gray-200">
 										<div className="absolute top-3 right-3 h-6 w-20 bg-gray-300 rounded-full" />
-										<div className="absolute -bottom-6 left-4">
-											<div className="w-14 h-14 rounded-xl border-[3px] border-white shadow-md bg-gray-300" />
-										</div>
+										<div className="absolute -bottom-6 left-4"><div className="w-14 h-14 rounded-xl border-[3px] border-white shadow-md bg-gray-300" /></div>
 									</div>
 									<div className="pt-9 px-4 pb-4 flex flex-col flex-1">
-										<div className="mb-3">
-											<div className="h-5 bg-gray-200 rounded w-2/3" />
-										</div>
-										<div className="flex items-center gap-0.5 mb-4">
-											<div className="h-4 bg-gray-200 rounded w-1/3" />
-										</div>
+										<div className="mb-3"><div className="h-5 bg-gray-200 rounded w-2/3" /></div>
+										<div className="flex items-center gap-0.5 mb-4"><div className="h-4 bg-gray-200 rounded w-1/3" /></div>
 										<div className="mt-auto block text-center py-2.5 rounded-xl h-10 bg-gray-100" />
 									</div>
 								</div>
@@ -297,60 +234,37 @@ const Lojas = () => {
 					) : (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 							{stores.map(store => (
-								<div
-									key={store.id}
-									className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100 flex flex-col"
-								>
-									{/* Cover */}
+								<div key={store.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100 flex flex-col">
 									<div className="relative h-40 overflow-hidden bg-gray-100">
 										{store.banner ? (
-											<img
-												src={store.banner}
-												alt={store.name}
-												className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-											/>
+											<img src={store.banner} alt={store.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 										) : (
 											<div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 group-hover:scale-105 transition-transform duration-500" />
 										)}
 										<div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-										{isStoreFeaturedNow(store) && (
-											<span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow bg-[#F97316] text-white">
-												⭐ Destaque
-											</span>
+										{store.featured && (
+											<span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full shadow bg-[#F97316] text-white">⭐ Destaque</span>
 										)}
-										{/* Logo overlapping */}
 										<div className="absolute -bottom-6 left-4">
-											<div
-												className="w-14 h-14 rounded-xl overflow-hidden"
-												style={{ border: '3px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-											>
+											<div className="w-14 h-14 rounded-xl overflow-hidden" style={{ border: '3px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
 												<StoreLogo logo={store.logo} name={store.name} />
 											</div>
 										</div>
 									</div>
 
-									{/* Body */}
 									<div className="pt-9 px-4 pb-4 flex flex-col flex-1">
 										<div className="mb-3">
 											<h3 className="font-bold text-gray-800 text-base leading-tight truncate">{store.name}</h3>
 										</div>
-
 										<div className="flex items-center gap-0.5 mb-4">
 											{[...Array(5)].map((_, i) => (
-												<IoStarSharp
-													key={i}
-													className={i < Math.round(store.rating ?? 0) ? 'text-yellow-400 text-xs' : 'text-gray-200 text-xs'}
-												/>
+												<IoStarSharp key={i} className={i < Math.round(store.rating ?? 0) ? 'text-yellow-400 text-xs' : 'text-gray-200 text-xs'} />
 											))}
 											<span className="ml-1 text-xs font-semibold text-gray-700">{store.rating}</span>
 											<span className="text-xs text-gray-400 ml-0.5">({store.qtdRatings ?? 0})</span>
 										</div>
-
-										<Link
-											to={`/loja/${store.id}`}
-											className="mt-auto block text-center py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-[#F97316] hover:bg-[#F97316] hover:text-white transition-colors duration-200 border border-orange-100 hover:border-[#F97316]"
-										>
-											Ver Loja →
+										<Link to={`/loja/${store.id}`} className="mt-auto block text-center py-2.5 rounded-xl text-sm font-semibold bg-orange-50 text-[#F97316] hover:bg-[#F97316] hover:text-white transition-colors duration-200 border border-orange-100 hover:border-[#F97316]">
+                      Ver Loja →
 										</Link>
 									</div>
 								</div>
@@ -358,33 +272,17 @@ const Lojas = () => {
 						</div>
 					)}
 
-					{/* Pagination */}
 					{totalPages > 1 && (
 						<div className="flex items-center justify-center gap-2 mt-12">
-							<button
-								onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-								disabled={currentPage === 1}
-								className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:border-[#F97316] hover:text-[#F97316] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-							>
+							<button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:border-[#F97316] hover:text-[#F97316] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
 								<IoChevronBack />
 							</button>
 							{Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-								<button
-									key={page}
-									onClick={() => setCurrentPage(page)}
-									className={`w-10 h-10 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${currentPage === page
-										? 'bg-[#F97316] text-white border-[#F97316] shadow-md'
-										: 'border-gray-200 text-gray-600 hover:border-[#F97316] hover:text-[#F97316]'
-									}`}
-								>
+								<button key={page} onClick={() => setCurrentPage(page)} className={`w-10 h-10 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${currentPage === page ? 'bg-[#F97316] text-white border-[#F97316] shadow-md' : 'border-gray-200 text-gray-600 hover:border-[#F97316] hover:text-[#F97316]'}`}>
 									{page}
 								</button>
 							))}
-							<button
-								onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-								disabled={currentPage === totalPages}
-								className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:border-[#F97316] hover:text-[#F97316] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-							>
+							<button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:border-[#F97316] hover:text-[#F97316] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
 								<IoChevronForward />
 							</button>
 						</div>

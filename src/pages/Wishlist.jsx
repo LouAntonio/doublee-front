@@ -4,11 +4,11 @@ import { IoArrowBack, IoHeartOutline } from 'react-icons/io5';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-import { useWishlist } from '../context/WishlistContext';
+import useWishlistStore from '../stores/wishlistStore';
 
 const Wishlist = () => {
 	useDocumentTitle('Wishlist - Double E');
-	const { wishlistItems, isLoading, loadWishlist } = useWishlist();
+	const { wishlistItems, isLoading, loadWishlist } = useWishlistStore();
 
 	useEffect(() => {
 		loadWishlist();

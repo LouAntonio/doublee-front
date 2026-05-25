@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import apiRequest, { notyf } from '../services/api';
+import http from '../services/http';
+import { notyf } from '../utils/notyf';
 
 const AdminAuthContext = createContext(null);
 
@@ -49,22 +50,18 @@ export const AdminAuthProvider = ({ children }) => {
 	const login = async (email, password) => {
 		setIsLoading(true);
 		try {
-			const response = await apiRequest('/users/admin/login', {
-				method: 'POST',
-				body: JSON.stringify({ email, password }),
-			});
+			const response = await http.post('/users/admin/login', { email, password });
 
-			if (response.success && response.token && response.user) {
+			if (response?.success && response.token && response.user) {
 				localStorage.setItem('doublee_admin_token', response.token);
 				localStorage.setItem('doublee_admin', JSON.stringify(response.user));
 				setAdmin(response.user);
 				setIsAuthenticated(true);
 				return { success: true };
 			} else {
-				return { success: false, msg: response.msg || 'Erro ao realizar login.' };
+				return { success: false, msg: response?.msg || 'Erro ao realizar login.' };
 			}
-		} catch (error) {
-			console.log('Login error:', error);
+		} catch {
 			return { success: false, msg: 'Erro de conexão com o servidor.' };
 		} finally {
 			setIsLoading(false);

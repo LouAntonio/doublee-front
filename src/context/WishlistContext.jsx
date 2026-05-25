@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import apiRequest from '../services/api';
+import http from '../services/http';
 import { useAuth } from './AuthContext';
 
 const WishlistContext = createContext();
@@ -55,8 +55,8 @@ export const WishlistProvider = ({ children }) => {
 
 		setIsLoading(true);
 		try {
-			const res = await apiRequest(`/wishlist?page=${page}&limit=${limit}`, { method: 'GET' });
-			if (res && res.success && res.data?.wishlist) {
+			const res = await http.get(`/wishlist?page=${page}&limit=${limit}`);
+			if (res?.success && res.data?.wishlist) {
 				const items = Array.isArray(res.data.wishlist) ? res.data.wishlist : [];
 				setWishlistItems(items);
 				rebuildIds(items);
@@ -70,8 +70,8 @@ export const WishlistProvider = ({ children }) => {
 
 	const checkInWishlist = useCallback(async (productId) => {
 		if (!productId || !isAuthenticated || !hasToken()) return false;
-		const res = await apiRequest(`/wishlist/check/${productId}`, { method: 'GET' });
-		if (res && res.success) {
+		const res = await http.get(`/wishlist/check/${productId}`);
+		if (res?.success) {
 			const inWishlist = Boolean(res.data?.inWishlist);
 			setWishlistIds((prev) => {
 				const next = new Set(prev);
@@ -123,12 +123,9 @@ export const WishlistProvider = ({ children }) => {
 
 		setToggleLoading(productId, true);
 		try {
-			const res = await apiRequest('/wishlist/toggle', {
-				method: 'POST',
-				body: JSON.stringify({ productId })
-			});
+			const res = await http.post('/wishlist/toggle', { productId });
 
-			if (res && res.success) {
+			if (res?.success) {
 				const inWishlist = Boolean(res.data?.inWishlist);
 				setWishlistIds((prev) => {
 					const next = new Set(prev);

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoAddOutline, IoTrashOutline, IoTicketOutline, IoCheckmarkCircleOutline, IoCalendarOutline } from 'react-icons/io5';
-import apiRequest from '../../../services/api';
-import { notyf } from '../../../utils/notyf';
+import { useMyCoupons, useCreateCoupon, useDeleteCoupon } from '../../../hooks/queries/useStoreCoupons';
 
 
 const CouponsTab = () => {
-	const [coupons, setCoupons] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: coupons, isLoading: loading } = useMyCoupons();
+	const createCoupon = useCreateCoupon();
+	const deleteCoupon = useDeleteCoupon();
 	const [isCreating, setIsCreating] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -17,78 +17,27 @@ const CouponsTab = () => {
 		visible: true
 	});
 
-	const fetchCoupons = async () => {
-		setLoading(true);
-		try {
-			const res = await apiRequest('/coupons/mine', { method: 'GET' });
-			if (res.success) {
-				setCoupons(res.data || []);
-			}
-		} catch (error) {
-			console.error('Erro ao carregar cupões:', error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		const fetchCoupons = async () => {
-			setLoading(true);
-			try {
-				const res = await apiRequest('/coupons/mine', { method: 'GET' });
-				if (res.success) {
-					setCoupons(res.data || []);
-				}
-			} catch (error) {
-				console.error('Erro ao carregar cupões:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchCoupons();
-	}, []);
-
 	const handleCreate = async (e) => {
 		e.preventDefault();
 		setIsCreating(true);
 		try {
-			const res = await apiRequest('/coupons', {
-				method: 'POST',
-				body: JSON.stringify(formData)
-			});
-
-			if (res.success) {
-				notyf.success('Cupão criado com sucesso!');
-				setIsModalOpen(false);
-				setFormData({ code: '', discount: '', expiryDate: '', visible: true });
-				fetchCoupons();
-			} else {
-				notyf.error(res.msg || 'Erro ao criar cupão');
-			}
-
+			await createCoupon.mutateAsync(formData);
+			setIsModalOpen(false);
+			setFormData({ code: '', discount: '', expiryDate: '', visible: true });
 		} catch {
-			notyf.error('Erro ao conectar ao servidor');
+			// handled by mutation
 		} finally {
-
 			setIsCreating(false);
 		}
 	};
 
-
 	const handleDelete = async (id) => {
 		if (!window.confirm('Tem a certeza que deseja eliminar este cupão?')) return;
 		try {
-			const res = await apiRequest(`/coupons/${id}`, { method: 'DELETE' });
-			if (res.success) {
-				notyf.success('Cupão eliminado!');
-				fetchCoupons();
-			}
-
+			await deleteCoupon.mutateAsync(id);
 		} catch {
-			notyf.error('Erro ao eliminar cupão');
+			// handled by mutation
 		}
-
 	};
 
 

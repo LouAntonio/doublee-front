@@ -1,53 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoFlashOutline, IoCheckmarkCircleOutline, IoTimeOutline, IoWalletOutline } from 'react-icons/io5';
-import apiRequest, { notyf } from '../../../services/api';
+import { usePromotionPackages, usePromotionPurchases, usePurchasePromotion } from '../../../hooks/queries/useStorePromotions';
+import { notyf } from '../../../utils/notyf';
 
 const PromotionsTab = ({ store, products, onRefresh }) => {
-	const [packages, setPackages] = useState([]);
-	const [purchases, setPurchases] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: packages = [], isLoading: loadingPackages } = usePromotionPackages();
+	const { data: purchases = [], isLoading: loadingPurchases } = usePromotionPurchases();
+	const purchasePromotion = usePurchasePromotion();
 	const [buying, setBuying] = useState(false);
 
 	const [selectedPackage, setSelectedPackage] = useState(null);
 	const [selectedProduct, setSelectedProduct] = useState('');
 
-	const fetchData = async () => {
-		setLoading(true);
-		try {
-			const [pkgRes, purRes] = await Promise.all([
-				apiRequest('/promotions/packages?isActive=true', { method: 'GET' }),
-				apiRequest('/promotions/purchases', { method: 'GET' })
-			]);
-
-			if (pkgRes.success) setPackages(pkgRes.data.packages || []);
-			if (purRes.success) setPurchases(purRes.data.purchases || []);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		const fetchData = async () => {
-			setLoading(true);
-			try {
-				const [pkgRes, purRes] = await Promise.all([
-					apiRequest('/promotions/packages?isActive=true', { method: 'GET' }),
-					apiRequest('/promotions/purchases', { method: 'GET' })
-				]);
-
-				if (pkgRes.success) setPackages(pkgRes.data.packages || []);
-				if (purRes.success) setPurchases(purRes.data.purchases || []);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchData();
-	}, []);
+	const loading = loadingPackages || loadingPurchases;
 
 	const handlePurchase = async () => {
 		if (!selectedPackage) return;
@@ -65,32 +30,12 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 
 		setBuying(true);
 		try {
-			const res = await apiRequest('/promotions/purchase', {
-				method: 'POST',
-				body: JSON.stringify(payload)
-			});
-
-			if (res.success) {
-				notyf.success('Solicitação criada! Simulando confirmação de pagamento...');
-				// Simulating payment confirmation for now as there is no real payment gateway integration provided in the snippet
-				await apiRequest('/promotions/confirm-payment', {
-					method: 'POST',
-					body: JSON.stringify({
-						purchaseId: res.data.purchaseId,
-						transactionRef: 'MOCK-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-					})
-				});
-				notyf.success('Destaque activado com sucesso!');
-				setSelectedPackage(null);
-				setSelectedProduct('');
-				fetchData();
-				if (onRefresh) onRefresh();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.error(err);
-			notyf.error('Erro ao processar compra.');
+			await purchasePromotion.mutateAsync(payload);
+			setSelectedPackage(null);
+			setSelectedProduct('');
+			if (onRefresh) onRefresh();
+		} catch {
+			// handled by mutation
 		} finally {
 			setBuying(false);
 		}

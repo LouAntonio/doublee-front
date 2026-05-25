@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import useAuthStore from './stores/authStore';
+import useCartStore from './stores/cartStore';
+import useWishlistStore from './stores/wishlistStore';
 import Home from './pages/Home';
 import Categorias from './pages/Categorias';
 import Cupoes from './pages/Cupoes';
@@ -33,7 +34,6 @@ import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminPromotions from './pages/admin/AdminPromotions';
 import Vender from './pages/Vender';
 import ComoFunciona from './pages/ComoFunciona';
-import { AdminAuthProvider } from './context/AdminAuthContext';
 
 const ConditionalFooter = () => {
 	const location = useLocation();
@@ -41,18 +41,16 @@ const ConditionalFooter = () => {
 	return <Footer />;
 };
 
-// Redirect authenticated users away from /auth
 const AuthRoute = () => {
-	const { isAuthenticated, isLoading } = useAuth();
-
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+	const isLoading = useAuthStore((s) => s.isLoading);
 	if (!isLoading && isAuthenticated) return <Navigate to="/" replace />;
 	return <Auth />;
 };
 
-// Protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated, isLoading } = useAuth();
-
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+	const isLoading = useAuthStore((s) => s.isLoading);
 	if (isLoading) return null;
 	if (!isAuthenticated) return <Navigate to="/auth" replace />;
 	return children;
@@ -73,37 +71,14 @@ function AppRoutes() {
 				<Route path="/vender" element={<Vender />} />
 				<Route path="/como-funciona" element={<ComoFunciona />} />
 				<Route path="/cart" element={<Cart />} />
-				<Route
-					path="/wishlist"
-					element={
-						<ProtectedRoute>
-							<Wishlist />
-						</ProtectedRoute>
-					}
-				/>
+				<Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
 				<Route path="/checkout" element={<Checkout />} />
 				<Route path="/produto/:id" element={<ProductDetails />} />
 				<Route path="/promocoes" element={<Promocoes />} />
 				<Route path="/lojas" element={<Lojas />} />
 				<Route path="/loja/:id" element={<LojaDetails />} />
-				<Route
-					path="/dashboard"
-					element={
-						<ProtectedRoute>
-							<Dashboard />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/loja/dashboard"
-					element={
-						<ProtectedRoute>
-							<StoreDashboardPage />
-						</ProtectedRoute>
-					}
-				/>
-
-				{/* Admin Routes */}
+				<Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+				<Route path="/loja/dashboard" element={<ProtectedRoute><StoreDashboardPage /></ProtectedRoute>} />
 				<Route path="/dbe/login" element={<AdminLogin />} />
 				<Route path="/dbe" element={<AdminDashboardLayout />}>
 					<Route index element={<AdminDashboard />} />
@@ -115,7 +90,6 @@ function AppRoutes() {
 					<Route path="analytics" element={<AdminAnalytics />} />
 					<Route path="promotions" element={<AdminPromotions />} />
 				</Route>
-
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 			<ConditionalFooter />
@@ -124,17 +98,26 @@ function AppRoutes() {
 }
 
 function App() {
-	return (
-		<AuthProvider>
-			<AdminAuthProvider>
-				<CartProvider>
-					<WishlistProvider>
-						<AppRoutes />
-					</WishlistProvider>
-				</CartProvider>
-			</AdminAuthProvider>
-		</AuthProvider>
-	)
+	const initSession = useAuthStore((s) => s.initSession);
+	const initAdmin = useAuthStore((s) => s.initAdmin);
+	const loadCartFromApi = useCartStore((s) => s.loadCartFromApi);
+	const resetWishlist = useWishlistStore((s) => s.reset);
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+	useEffect(() => {
+		initSession();
+		initAdmin();
+	}, [initSession, initAdmin]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			loadCartFromApi();
+		} else {
+			resetWishlist();
+		}
+	}, [isAuthenticated, loadCartFromApi, resetWishlist]);
+
+	return <AppRoutes />;
 }
 
-export default App
+export default App;

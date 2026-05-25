@@ -20,36 +20,20 @@ import {
 	IoLogOutOutline,
 } from 'react-icons/io5';
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import apiRequest from '../services/api';
+import useCartStore from '../stores/cartStore';
+import useAuthStore from '../stores/authStore';
+import { useStoreStatus } from '../hooks/queries/useDashboard';
 
 const Header = () => {
-	const { getCartCount } = useCart();
-	const cartCount = getCartCount();
-	const { user, isAuthenticated, logout } = useAuth();
+	const cartCount = useCartStore((s) => s.getCartCount());
+	const user = useAuthStore((s) => s.user);
+	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+	const logout = useAuthStore((s) => s.logout);
 	const navigate = useNavigate();
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const userMenuRef = useRef(null);
-	const [hasApprovedStore, setHasApprovedStore] = useState(false);
-
-	useEffect(() => {
-		let cancelled = false;
-		const fetchStoreStatus = async () => {
-			if (!isAuthenticated) {
-				if (!cancelled) setHasApprovedStore(false);
-				return;
-			}
-			try {
-				const data = await apiRequest('/stores/status');
-				if (!cancelled) setHasApprovedStore(data?.success && data?.data?.status === 'approved');
-			} catch {
-				if (!cancelled) setHasApprovedStore(false);
-			}
-		};
-		fetchStoreStatus();
-		return () => { cancelled = true; };
-	}, [isAuthenticated]);
+	const { data: storeStatus } = useStoreStatus();
+	const hasApprovedStore = storeStatus === 'approved';
 
 	// Close user menu when clicking outside
 	useEffect(() => {

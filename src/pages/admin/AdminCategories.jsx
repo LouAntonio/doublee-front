@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
-import apiRequest, { notyf } from '../../services/api';
+import React, { useState, useRef } from 'react';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
+import { useAdminCategoriesList, useCreateCategory, useUpdateCategory } from '../../hooks/queries/useAdminCategories';
 
 const uploadToCloudinary = async (file, folder) => {
-	const auth = await apiRequest(`/cloudinary/authorize-upload-admin?folder=${folder}`, { admin: true });
-	if (!auth.success) throw new Error(auth.message || 'Falha ao autorizar upload.');
+	const auth = await http.get(`/cloudinary/authorize-upload-admin?folder=${folder}`, { admin: true });
+	if (!auth?.success) throw new Error(auth?.message || 'Falha ao autorizar upload.');
 
 	const formData = new FormData();
 	formData.append('file', file);
@@ -41,8 +43,9 @@ const CategorySkeleton = () => (
 );
 
 const AdminCategories = () => {
-	const [categories, setCategories] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { data: categories = [], isLoading: loading } = useAdminCategoriesList();
+	const createCategory = useCreateCategory();
+	const updateCategory = useUpdateCategory();
 	const [newCategoryName, setNewCategoryName] = useState('');
 	const [imageFile, setImageFile] = useState(null);
 	const [imagePreview, setImagePreview] = useState('');
@@ -56,44 +59,6 @@ const AdminCategories = () => {
 	const [editImagePreview, setEditImagePreview] = useState('');
 	const [isUpdating, setIsUpdating] = useState(false);
 	const editFileInputRef = useRef(null);
-
-	const fetchCategories = async () => {
-		setLoading(true);
-		try {
-			const res = await apiRequest('/categories', { method: 'GET' });
-			if (res.success && res.data) {
-				console.log(res.data);
-				setCategories(res.data.categories || []);
-			} else {
-				notyf.error(res.msg || 'Erro ao carregar categorias.');
-			}
-		} catch (error) {
-			console.error(error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		const load = async () => {
-			setLoading(true);
-			try {
-				const res = await apiRequest('/categories', { method: 'GET' });
-				if (res.success && res.data) {
-					console.log(res.data);
-					setCategories(res.data.categories || []);
-				} else {
-					notyf.error(res.msg || 'Erro ao carregar categorias.');
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		load();
-	}, []);
 
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
@@ -120,24 +85,13 @@ const AdminCategories = () => {
 			const payload = { name: newCategoryName.trim() };
 			if (imageUrl) payload.image = imageUrl;
 
-			const res = await apiRequest('/admin/categories', {
-				method: 'POST',
-				admin: true,
-				body: JSON.stringify(payload)
-			});
-			if (res.success) {
-				notyf.success('Categoria criada com sucesso');
-				setNewCategoryName('');
-				setImageFile(null);
-				setImagePreview('');
-				if (fileInputRef.current) fileInputRef.current.value = '';
-				fetchCategories();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.log(err);
-			notyf.error(err.message || 'Erro ao criar categoria.');
+			await createCategory.mutateAsync(payload);
+			setNewCategoryName('');
+			setImageFile(null);
+			setImagePreview('');
+			if (fileInputRef.current) fileInputRef.current.value = '';
+		} catch {
+			notyf.error('Erro ao criar categoria.');
 		} finally {
 			setIsCreating(false);
 		}
@@ -184,11 +138,7 @@ const AdminCategories = () => {
 						const filename = parts.pop().split('.')[0];
 						const folder = parts.pop();
 						const publicId = `${folder}/${filename}`;
-						await apiRequest('/admin/cloudinary', {
-							method: 'DELETE',
-							admin: true,
-							body: JSON.stringify({ publicId })
-						});
+						await http.delete('/admin/cloudinary', { data: { publicId }, admin: true });
 					} catch (e) {
 						console.log('Erro ao apagar imagem antiga:', e);
 					}
@@ -201,22 +151,10 @@ const AdminCategories = () => {
 				image: imageUrl
 			};
 
-			const res = await apiRequest('/admin/categories', {
-				method: 'PUT',
-				admin: true,
-				body: JSON.stringify(payload)
-			});
-
-			if (res.success) {
-				notyf.success('Categoria atualizada com sucesso');
-				handleCancelEdit();
-				fetchCategories();
-			} else {
-				notyf.error(res.msg);
-			}
-		} catch (err) {
-			console.log(err);
-			notyf.error(err.message || 'Erro ao atualizar categoria.');
+			await updateCategory.mutateAsync(payload);
+			handleCancelEdit();
+		} catch {
+			notyf.error('Erro ao atualizar categoria.');
 		} finally {
 			setIsUpdating(false);
 		}

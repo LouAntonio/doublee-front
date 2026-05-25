@@ -1,0 +1,72 @@
+import axios from 'axios';
+
+const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
+export const API_URL = isProd
+	? 'https://doublee-back.onrender.com'
+	: 'http://localhost:20262';
+
+const handleSessionExpired = () => {
+	localStorage.removeItem('doublee_user');
+	localStorage.removeItem('doublee_token');
+	setTimeout(() => {
+		window.location.href = '/auth';
+	}, 500);
+};
+
+const handleAdminSessionExpired = () => {
+	localStorage.removeItem('doublee_admin_token');
+	localStorage.removeItem('doublee_admin');
+	setTimeout(() => {
+		window.location.href = '/auth';
+	}, 500);
+};
+
+const http = axios.create({
+	baseURL: API_URL,
+	withCredentials: true,
+	headers: { 'Content-Type': 'application/json' },
+});
+
+http.interceptors.request.use((config) => {
+	const isAdmin = config.admin === true;
+	const tokenKey = isAdmin ? 'doublee_admin_token' : 'doublee_token';
+	const token = localStorage.getItem(tokenKey);
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	if (config.data instanceof FormData) {
+		delete config.headers['Content-Type'];
+	}
+	return config;
+});
+
+http.interceptors.response.use(
+	(response) => {
+		const data = response.data;
+		if (data && data.success === false && data.auth === true) {
+			const isAdmin = response.config.admin === true;
+			if (isAdmin) {
+				handleAdminSessionExpired();
+			} else {
+				handleSessionExpired();
+			}
+			return Promise.reject(new Error('Sessão expirada'));
+		}
+		return data;
+	},
+	(error) => {
+		if (error.response?.status === 401) {
+			const isAdmin = error.config?.admin === true;
+			if (isAdmin) {
+				handleAdminSessionExpired();
+			} else {
+				handleSessionExpired();
+			}
+			return Promise.reject(new Error('Sessão expirada'));
+		}
+		console.error('Erro na requisição:', error);
+		return Promise.reject(error);
+	}
+);
+
+export default http;

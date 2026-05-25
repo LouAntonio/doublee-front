@@ -5,7 +5,7 @@ import {
 	IoCheckmarkDoneOutline,
 	IoCloseCircleOutline,
 } from 'react-icons/io5';
-import apiRequest from '../../../services/api';
+import http from '../../../services/http';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 export const ANGOLA_PROVINCES = [
@@ -33,8 +33,8 @@ export const STATUS_COLOR = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 export const uploadToCloudinary = async (file, folder) => {
-	const auth = await apiRequest(`/cloudinary/authorize-upload?folder=${folder}`);
-	if (!auth.success) throw new Error(auth.message || 'Falha ao autorizar upload.');
+	const auth = await http.get(`/cloudinary/authorize-upload?folder=${folder}`);
+	if (!auth?.success) throw new Error(auth?.message || 'Falha ao autorizar upload.');
 	const formData = new FormData();
 	formData.append('file', file);
 	formData.append('api_key', auth.apikey);
