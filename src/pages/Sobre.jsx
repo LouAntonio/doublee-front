@@ -11,24 +11,24 @@ import TestimonialsSection from '../components/sobre/TestimonialsSection';
 import CTASection from '../components/sobre/CTASection';
 
 const Sobre = () => {
-  useDocumentTitle('Sobre - Double E');
+	useDocumentTitle('Sobre - Double E');
 
-  return (
-    <div className="min-h-screen bg-sand flex flex-col">
-      <Header />
+	return (
+		<div className="min-h-screen bg-sand flex flex-col">
+			<Header />
 
-      <main>
-        <HeroSection />
-        <StatsSection />
-        <StorySection />
-        <MissionSection />
-        <FeaturesSection />
-        <TimelineSection />
-        <TestimonialsSection />
-        <CTASection />
-      </main>
-    </div>
-  );
+			<main>
+				<HeroSection />
+				<StatsSection />
+				<StorySection />
+				<MissionSection />
+				<FeaturesSection />
+				<TimelineSection />
+				<TestimonialsSection />
+				<CTASection />
+			</main>
+		</div>
+	);
 };
 
 export default Sobre;

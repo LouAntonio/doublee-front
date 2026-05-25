@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
-export const API_URL = isProd
-	? 'https://doublee-back.onrender.com'
-	: 'http://localhost:20262';
+const apiurl = import.meta.env.VITE_API_URL || 'http://localhost:20262';
+export const API_URL = apiurl;
+
+console.log('API URL:', API_URL);
 
 const handleSessionExpired = () => {
 	localStorage.removeItem('doublee_user');
