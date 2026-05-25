@@ -18,7 +18,7 @@ import http from '../services/http';
 const StarRow = ({ rating, size = 'text-sm' }) => (
 	<div className="flex items-center gap-0.5">
 		{[1, 2, 3, 4, 5].map(i => (
-			<IoStarSharp key={i} className={`${size} ${i <= Math.round(rating) ? 'text-yellow-400' : 'text-gray-200'}`} />
+			<IoStarSharp key={i} className={`${size} ${i <= Math.round(rating) ? 'text-yellow-400' : 'text-[#E8E2DA]'}`} />
 		))}
 	</div>
 );
@@ -27,11 +27,11 @@ const RatingBar = ({ label, count, total }) => {
 	const pct = total ? Math.round((count / total) * 100) : 0;
 	return (
 		<div className="flex items-center gap-3">
-			<span className="text-xs text-gray-500 w-8 text-right">{label}★</span>
-			<div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+			<span className="font-body text-xs text-[#78716C] w-8 text-right">{label}★</span>
+			<div className="flex-1 h-2 bg-[#E8E2DA] rounded-full overflow-hidden">
 				<div className="h-full bg-yellow-400 rounded-full" style={{ width: `${pct}%` }} />
 			</div>
-			<span className="text-xs text-gray-400 w-8">{count}</span>
+			<span className="font-body text-xs text-[#78716C] w-8">{count}</span>
 		</div>
 	);
 };
@@ -176,47 +176,48 @@ const LojaDetails = () => {
 	/* ── Loading ── */
 	if (loading) {
 		return (
-			<div className="bg-gray-50 min-h-screen flex flex-col">
+			<div className="bg-sand min-h-screen flex flex-col relative">
+				<div className="geo-pattern absolute inset-0 opacity-20 pointer-events-none" />
 				<Header />
 				{/* Skeleton Hero banner */}
-				<div className="relative h-64 sm:h-80 md:h-96 w-full bg-gray-200 animate-pulse" />
+				<div className="relative h-64 sm:h-80 md:h-96 w-full bg-[#E8E2DA] animate-pulse" />
 
 				<div className="max-w-[1200px] w-full mx-auto px-4 mb-10 flex-1">
 					{/* Skeleton Store card */}
-					<div className="bg-white rounded-2xl shadow-sm border border-gray-100 -mt-10 relative z-10 p-5 sm:p-7 flex flex-col sm:flex-row gap-5">
+					<div className="bg-white rounded-2xl shadow-md border border-[#E8E2DA] -mt-10 relative z-10 p-5 sm:p-7 flex flex-col sm:flex-row gap-5">
 						<div className="flex-shrink-0">
-							<div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gray-300 border-4 border-white shadow-md animate-pulse" />
+							<div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#E8E2DA] border-4 border-white shadow-md animate-pulse" />
 						</div>
 						<div className="flex-1 min-w-0 py-2">
-							<div className="h-8 bg-gray-300 rounded w-1/2 sm:w-1/3 mb-4 animate-pulse" />
+							<div className="h-8 bg-[#E8E2DA] rounded w-1/2 sm:w-1/3 mb-4 animate-pulse" />
 							<div className="flex flex-wrap gap-4 mb-4">
-								<div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
-								<div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
-								<div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
+								<div className="h-4 bg-[#E8E2DA]/60 rounded w-20 animate-pulse" />
+								<div className="h-4 bg-[#E8E2DA]/60 rounded w-24 animate-pulse" />
+								<div className="h-4 bg-[#E8E2DA]/60 rounded w-20 animate-pulse" />
 							</div>
 							<div className="flex flex-wrap gap-2.5">
-								<div className="h-8 bg-gray-100 rounded-lg w-28 animate-pulse" />
-								<div className="h-8 bg-gray-100 rounded-lg w-32 animate-pulse" />
-								<div className="h-8 bg-gray-100 rounded-lg w-24 animate-pulse" />
+								<div className="h-8 bg-orange-50 rounded-lg w-28 animate-pulse" />
+								<div className="h-8 bg-orange-50 rounded-lg w-32 animate-pulse" />
+								<div className="h-8 bg-orange-50 rounded-lg w-24 animate-pulse" />
 							</div>
 						</div>
 					</div>
 
 					{/* Skeleton Tabs & Content */}
-					<div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-						<div className="flex border-b border-gray-100 p-4 gap-6 animate-pulse">
-							<div className="h-5 bg-gray-300 rounded w-24" />
-							<div className="h-5 bg-gray-200 rounded w-24" />
-							<div className="h-5 bg-gray-200 rounded w-24" />
+					<div className="mt-6 bg-white rounded-2xl shadow-md border border-[#E8E2DA] overflow-hidden mb-6">
+						<div className="flex border-b border-[#E8E2DA] p-4 gap-6 animate-pulse">
+							<div className="h-5 bg-[#E8E2DA] rounded w-24" />
+							<div className="h-5 bg-[#E8E2DA] rounded w-24" />
+							<div className="h-5 bg-[#E8E2DA] rounded w-24" />
 						</div>
 						<div className="p-5 sm:p-7 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-pulse">
 							{[...Array(4)].map((_, i) => (
-								<div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm flex flex-col h-64">
-									<div className="h-1/2 bg-gray-200" />
+								<div key={i} className="bg-white border border-[#E8E2DA] rounded-2xl overflow-hidden shadow-sm flex flex-col h-64">
+									<div className="h-1/2 bg-[#E8E2DA]/70" />
 									<div className="p-3 flex flex-col flex-1 gap-2">
-										<div className="h-4 bg-gray-300 rounded w-full" />
-										<div className="h-4 bg-gray-200 rounded w-2/3" />
-										<div className="h-6 bg-gray-200 rounded-xl w-full mt-auto" />
+										<div className="h-4 bg-[#E8E2DA] rounded w-full" />
+										<div className="h-4 bg-[#E8E2DA]/60 rounded w-2/3" />
+										<div className="h-6 bg-orange-50 rounded-xl w-full mt-auto" />
 									</div>
 								</div>
 							))}
@@ -230,15 +231,16 @@ const LojaDetails = () => {
 	/* ── Not found ── */
 	if (!store) {
 		return (
-			<div className="bg-gray-50 min-h-screen">
+			<div className="bg-sand min-h-screen relative">
+				<div className="geo-pattern absolute inset-0 opacity-20 pointer-events-none" />
 				<Header />
-				<div className="max-w-[1200px] mx-auto px-4 py-24 text-center">
-					<IoStorefrontOutline className="text-6xl text-gray-300 mx-auto mb-4" />
-					<h2 className="text-2xl font-bold text-gray-700 mb-2">Loja não encontrada</h2>
-					<p className="text-gray-400 mb-6">A loja que procura não existe ou foi removida.</p>
+				<div className="relative max-w-[1200px] mx-auto px-4 py-24 text-center">
+					<IoStorefrontOutline className="text-6xl text-[#E8E2DA] mx-auto mb-4" />
+					<h2 className="font-display text-2xl text-[#1C1917] mb-2">Loja não encontrada</h2>
+					<p className="font-body text-[#78716C] mb-6">A loja que procura não existe ou foi removida.</p>
 					<button
 						onClick={() => navigate('/lojas')}
-						className="px-6 py-3 bg-[#F97316] text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors"
+						className="px-6 py-3 bg-accent text-white rounded-full font-display text-base hover:bg-accent-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
 					>
 						Ver todas as lojas
 					</button>
@@ -254,7 +256,8 @@ const LojaDetails = () => {
 	];
 
 	return (
-		<div className="bg-gray-50 min-h-screen">
+		<div className="bg-sand min-h-screen relative">
+			<div className="geo-pattern absolute inset-0 opacity-20 pointer-events-none" />
 			<Header />
 
 			{/* ── Hero banner ── */}
@@ -264,12 +267,12 @@ const LojaDetails = () => {
 					alt={store.name}
 					className="w-full h-full object-cover"
 				/>
-				<div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/70" />
+				<div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-[#1C1917]/80" />
 
 				{/* Back button */}
 				<button
 					onClick={() => navigate('/lojas')}
-					className="absolute top-5 left-4 sm:left-6 flex items-center gap-1.5 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white text-sm font-medium px-3.5 py-2 rounded-full transition-all cursor-pointer"
+					className="absolute top-5 left-4 sm:left-6 flex items-center gap-1.5 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white font-display text-sm px-4 py-2 rounded-full transition-all cursor-pointer"
 				>
 					<IoChevronBack className="text-base" />
 					Lojas
@@ -285,15 +288,15 @@ const LojaDetails = () => {
 					</button>
 
 					{showShareMenu && (
-						<div className="absolute top-11 right-0 bg-white rounded-xl shadow-lg border border-gray-100 py-2 w-48 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-							<button onClick={() => handleShare('facebook')} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+						<div className="absolute top-11 right-0 bg-white rounded-xl shadow-lg border border-[#E8E2DA] py-2 w-48 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+							<button onClick={() => handleShare('facebook')} className="w-full flex items-center gap-3 px-4 py-2 font-body text-sm text-[#1C1917] hover:bg-orange-50 transition-colors cursor-pointer">
 								<FaFacebook className="text-blue-600 text-base" /> Facebook
 							</button>
-							<button onClick={() => handleShare('whatsapp')} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+							<button onClick={() => handleShare('whatsapp')} className="w-full flex items-center gap-3 px-4 py-2 font-body text-sm text-[#1C1917] hover:bg-orange-50 transition-colors cursor-pointer">
 								<FaWhatsapp className="text-green-500 text-base" /> WhatsApp
 							</button>
-							<button onClick={() => handleShare('copy')} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
-								<FaLink className="text-gray-500 text-base" /> Copiar Link
+							<button onClick={() => handleShare('copy')} className="w-full flex items-center gap-3 px-4 py-2 font-body text-sm text-[#1C1917] hover:bg-orange-50 transition-colors cursor-pointer">
+								<FaLink className="text-[#78716C] text-base" /> Copiar Link
 							</button>
 						</div>
 					)}
@@ -301,15 +304,15 @@ const LojaDetails = () => {
 
 				{/* Badge */}
 				{store.badge && (
-					<span className={`absolute top-5 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1.5 rounded-full shadow ${store.badge === 'Destaque' ? 'bg-[#F97316] text-white' : 'bg-emerald-500 text-white'}`}>
-						{store.badge === 'Destaque' ? '⭐ Destaque' : '🆕 Novo'}
+					<span className={`absolute top-5 left-1/2 -translate-x-1/2 font-display text-xs tracking-wider px-4 py-1.5 rounded-full shadow-lg ${store.badge === 'Destaque' ? 'bg-accent text-white' : 'bg-emerald-500 text-white'}`}>
+						{store.badge === 'Destaque' ? 'Destaque' : 'Novo'}
 					</span>
 				)}
 			</div>
 
 			{/* ── Store card ── */}
-			<div className="max-w-[1200px] mx-auto px-4 mb-10">
-				<div className="bg-white rounded-2xl shadow-sm border border-gray-100 -mt-10 relative z-10 p-5 sm:p-7">
+			<div className="max-w-[1200px] mx-auto px-4 mb-10 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
+				<div className="bg-white rounded-2xl shadow-md border border-[#E8E2DA] -mt-10 relative z-10 p-5 sm:p-7 transition-shadow duration-300 hover:shadow-lg">
 					<div className="flex flex-col sm:flex-row gap-5 sm:items-start">
 						{/* Logo */}
 						<div className="flex-shrink-0">
@@ -324,8 +327,8 @@ const LojaDetails = () => {
 						<div className="flex-1 min-w-0">
 							<div className="flex flex-wrap items-start justify-between gap-3">
 								<div>
-									<h1 className="text-xl sm:text-2xl font-black text-gray-800 leading-tight">{store.name}</h1>
-									<span className="inline-block mt-1 text-xs font-semibold text-[#F97316] bg-orange-50 border border-orange-100 px-2.5 py-0.5 rounded-full">
+									<h1 className="font-display text-2xl sm:text-3xl text-[#1C1917] leading-tight">{store.name}</h1>
+									<span className="inline-block mt-1.5 font-display text-xs text-accent bg-orange-50 border border-orange-100 px-3 py-0.5 rounded-full tracking-wider">
 										{store.category}
 									</span>
 								</div>
@@ -339,17 +342,17 @@ const LojaDetails = () => {
 								<div className="flex items-center gap-1.5">
 									<div className="flex items-center gap-0.5">
 										{[1, 2, 3, 4, 5].map(i => (
-											<IoStarSharp key={i} className={`text-sm ${i <= Math.round(store.rating) ? 'text-yellow-400' : 'text-gray-200'}`} />
+											<IoStarSharp key={i} className={`text-sm ${i <= Math.round(store.rating) ? 'text-yellow-400' : 'text-[#E8E2DA]'}`} />
 										))}
 									</div>
-									<span className="text-sm font-bold text-gray-800">{store.rating}</span>
-									<span className="text-sm text-gray-400">({store.reviews.toLocaleString('pt-AO')} avaliações)</span>
+									<span className="font-display text-sm font-bold text-[#1C1917]">{store.rating}</span>
+									<span className="font-body text-sm text-[#78716C]">({store.reviews.toLocaleString('pt-AO')} avaliações)</span>
 								</div>
-								<div className="flex items-center gap-1.5 text-sm text-gray-500">
-									<FaBoxOpen className="text-[#F97316]" />
+								<div className="flex items-center gap-1.5 font-body text-sm text-[#78716C]">
+									<FaBoxOpen className="text-accent" />
 									<span>{store.products.toLocaleString('pt-AO')} produtos</span>
 								</div>
-								<div className="flex items-center gap-1.5 text-sm text-gray-500">
+								<div className="flex items-center gap-1.5 font-body text-sm text-[#78716C]">
 									<IoShieldCheckmarkOutline className="text-emerald-500" />
 									<span>Loja Verificada</span>
 								</div>
@@ -365,8 +368,8 @@ const LojaDetails = () => {
 							{ icon: <IoCallOutline />, text: store.phone },
 							{ icon: <IoMailOutline />, text: store.email },
 						].map((item, i) => (
-							<div key={i} className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 text-xs text-gray-600">
-								<span className="text-[#F97316]">{item.icon}</span>
+							<div key={i} className="flex items-center gap-1.5 bg-orange-50 border border-orange-100 rounded-lg px-3 py-1.5 font-body text-xs text-[#78716C]">
+								<span className="text-accent">{item.icon}</span>
 								{item.text}
 							</div>
 						))}
@@ -374,16 +377,16 @@ const LojaDetails = () => {
 				</div>
 
 				{/* ── Tabs ── */}
-				<div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+				<div className="mt-6 bg-white rounded-2xl shadow-md border border-[#E8E2DA] overflow-hidden mb-6 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}>
 					{/* Tab bar */}
-					<div className="flex border-b border-gray-100 overflow-x-auto scrollbar-none">
+					<div className="flex border-b border-[#E8E2DA] overflow-x-auto scrollbar-none">
 						{tabs.map(tab => (
 							<button
 								key={tab.key}
 								onClick={() => setActiveTab(tab.key)}
-								className={`flex-shrink-0 px-5 py-4 text-sm font-semibold border-b-2 transition-all cursor-pointer ${activeTab === tab.key
-									? 'border-[#F97316] text-[#F97316]'
-									: 'border-transparent text-gray-500 hover:text-gray-700'
+								className={`flex-shrink-0 px-5 py-4 font-display text-sm tracking-wider border-b-2 transition-all cursor-pointer ${activeTab === tab.key
+									? 'border-accent text-accent'
+									: 'border-transparent text-[#78716C] hover:text-[#1C1917]'
 								}`}
 							>
 								{tab.label}
@@ -394,29 +397,29 @@ const LojaDetails = () => {
 					<div className="p-5 sm:p-7">
 						{/* ── Tab: Produtos ── */}
 						{activeTab === 'produtos' && (
-							<div>
+							<div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
 								{/* Toolbar */}
 								<div className="flex flex-col sm:flex-row gap-3 mb-6">
 									<div className="relative flex-1">
-										<IoSearchOutline className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+										<IoSearchOutline className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
 										<input
 											type="text"
 											placeholder="Pesquisar produto…"
 											value={productSearch}
 											onChange={e => setProductSearch(e.target.value)}
-											className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none transition-colors"
+											className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8E2DA] font-body text-sm text-[#1C1917] placeholder:text-[#78716C]/50 focus:outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/10 transition-all"
 										/>
 									</div>
-									<div className="flex items-center gap-1.5 bg-gray-100 rounded-xl p-1">
+									<div className="flex items-center gap-1.5 bg-orange-50 rounded-xl p-1">
 										<button
 											onClick={() => setGridView(true)}
-											className={`p-2 rounded-lg transition-all cursor-pointer ${gridView ? 'bg-white shadow text-[#F97316]' : 'text-gray-400'}`}
+											className={`p-2 rounded-lg transition-all cursor-pointer ${gridView ? 'bg-white shadow-sm text-accent' : 'text-[#78716C]'}`}
 										>
 											<IoGridOutline />
 										</button>
 										<button
 											onClick={() => setGridView(false)}
-											className={`p-2 rounded-lg transition-all cursor-pointer ${!gridView ? 'bg-white shadow text-[#F97316]' : 'text-gray-400'}`}
+											className={`p-2 rounded-lg transition-all cursor-pointer ${!gridView ? 'bg-white shadow-sm text-accent' : 'text-[#78716C]'}`}
 										>
 											<IoListOutline />
 										</button>
@@ -424,9 +427,9 @@ const LojaDetails = () => {
 								</div>
 
 								{filteredProducts.length === 0 ? (
-									<div className="text-center py-16 text-gray-400">
-										<FaBoxOpen className="text-4xl mx-auto mb-3 opacity-25" />
-										<p className="font-medium">Nenhum produto encontrado.</p>
+									<div className="text-center py-16">
+										<FaBoxOpen className="text-4xl mx-auto mb-3 text-[#E8E2DA]" />
+										<p className="font-body text-[#78716C]">Nenhum produto encontrado.</p>
 									</div>
 								) : (
 									<div className={`grid gap-4 ${gridView ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
@@ -440,17 +443,17 @@ const LojaDetails = () => {
 
 						{/* ── Tab: Avaliações ── */}
 						{activeTab === 'avaliacoes' && (
-							<div className="flex flex-col lg:flex-row gap-8">
+							<div className="flex flex-col lg:flex-row gap-8 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
 								{/* Summary */}
 								<div className="lg:w-64 flex-shrink-0">
-									<div className="flex flex-col items-center bg-gray-50 rounded-2xl p-6 border border-gray-100">
-										<span className="text-5xl font-black text-gray-800 leading-none">{store.rating}</span>
+									<div className="flex flex-col items-center bg-orange-50 rounded-2xl p-6 border border-orange-100">
+										<span className="font-display text-5xl text-[#1C1917] leading-none">{store.rating}</span>
 										<div className="flex items-center gap-1 my-2">
 											{[1, 2, 3, 4, 5].map(i => (
-												<IoStarSharp key={i} className={`text-xl ${i <= Math.round(store.rating) ? 'text-yellow-400' : 'text-gray-200'}`} />
+												<IoStarSharp key={i} className={`text-xl ${i <= Math.round(store.rating) ? 'text-yellow-400' : 'text-[#E8E2DA]'}`} />
 											))}
 										</div>
-										<p className="text-sm text-gray-500">{store.reviews.toLocaleString('pt-AO')} avaliações</p>
+										<p className="font-body text-sm text-[#78716C]">{store.reviews.toLocaleString('pt-AO')} avaliações</p>
 
 										<div className="w-full mt-5 flex flex-col gap-2">
 											{[5, 4, 3, 2, 1].map(star => (
@@ -468,17 +471,17 @@ const LojaDetails = () => {
 								{/* Review list */}
 								<div className="flex-1 flex flex-col gap-4">
 									{store.opinions.map(op => (
-										<div key={op.id} className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+										<div key={op.id} className="bg-white border border-[#E8E2DA] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
 											<div className="flex items-start justify-between gap-3 mb-3">
 												<div className="flex items-center gap-3">
-													<div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+													<div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center text-white font-display text-xs font-bold flex-shrink-0 shadow-sm">
 														{op.avatar}
 													</div>
 													<div>
 														<div className="flex items-center gap-2">
-															<span className="text-sm font-bold text-gray-800">{op.user}</span>
+															<span className="font-display text-sm font-semibold text-[#1C1917]">{op.user}</span>
 															{op.verified && (
-																<span className="flex items-center gap-0.5 text-emerald-600 text-[10px] font-semibold">
+																<span className="flex items-center gap-0.5 text-emerald-600 font-body text-[10px] font-semibold">
 																	<IoCheckmarkCircleOutline className="text-xs" /> Verificado
 																</span>
 															)}
@@ -486,11 +489,11 @@ const LojaDetails = () => {
 														<StarRow rating={op.rating} size="text-xs" />
 													</div>
 												</div>
-												<span className="text-xs text-gray-400 flex-shrink-0">{op.date}</span>
+												<span className="font-body text-xs text-[#78716C] flex-shrink-0">{op.date}</span>
 											</div>
-											<p className="text-sm font-semibold text-gray-800 mb-1">{op.title}</p>
-											<p className="text-sm text-gray-600 leading-relaxed">{op.comment}</p>
-											<div className="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
+											<p className="font-display text-sm font-semibold text-[#1C1917] mb-1">{op.title}</p>
+											<p className="font-body text-sm text-[#78716C] leading-relaxed">{op.comment}</p>
+											<div className="mt-3 flex items-center gap-1.5 font-body text-xs text-[#78716C]/70">
 												<IoChatbubbleOutline />
 												<span>{op.helpful} pessoas acharam útil</span>
 											</div>
@@ -502,23 +505,23 @@ const LojaDetails = () => {
 
 						{/* ── Tab: Sobre ── */}
 						{activeTab === 'sobre' && (
-							<div className="flex flex-col lg:flex-row gap-8">
+							<div className="flex flex-col lg:flex-row gap-8 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
 								{/* Description */}
 								<div className="flex-1">
-									<h3 className="text-base font-bold text-gray-800 mb-3">Sobre a {store.name}</h3>
-									<p className="text-sm text-gray-600 leading-relaxed mb-6">{store.description}</p>
+									<h3 className="font-display text-lg text-[#1C1917] mb-3">Sobre a {store.name}</h3>
+									<p className="font-body text-[#78716C] leading-relaxed mb-6">{store.description}</p>
 
 									{/* Key stats */}
 									<div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
 										{[
-											{ icon: <FaAward className="text-[#F97316] text-xl" />, label: 'Desde', value: store.createdAt },
-											{ icon: <FaBoxOpen className="text-[#F97316] text-xl" />, label: 'Produtos', value: store.products.toLocaleString('pt-AO') + '+' },
+											{ icon: <FaAward className="text-accent text-xl" />, label: 'Desde', value: store.createdAt },
+											{ icon: <FaBoxOpen className="text-accent text-xl" />, label: 'Produtos', value: store.products.toLocaleString('pt-AO') + '+' },
 										].map((stat, i) => (
-											<div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex items-center gap-3">
+											<div key={i} className="bg-white border border-[#E8E2DA] rounded-2xl p-4 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow duration-300">
 												{stat.icon}
 												<div>
-													<p className="text-lg font-black text-gray-800 leading-none">{stat.value}</p>
-													<p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
+													<p className="font-display text-lg text-[#1C1917] leading-none">{stat.value}</p>
+													<p className="font-body text-xs text-[#78716C] mt-0.5">{stat.label}</p>
 												</div>
 											</div>
 										))}
@@ -527,28 +530,28 @@ const LojaDetails = () => {
 
 								{/* Contact card */}
 								<div className="lg:w-72 flex-shrink-0">
-									<div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
-										<h3 className="text-sm font-bold text-gray-800 mb-4">Informações de Contacto</h3>
+									<div className="bg-white border border-[#E8E2DA] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
+										<h3 className="font-display text-sm text-[#1C1917] mb-4">Informações de Contacto</h3>
 										<div className="flex flex-col gap-3.5">
 											{[
-												{ icon: <IoLocationOutline className="text-[#F97316] text-base" />, label: 'Endereço', value: store.address },
-												{ icon: <IoCallOutline className="text-[#F97316] text-base" />, label: 'Telefone', value: store.phone },
-												{ icon: <IoMailOutline className="text-[#F97316] text-base" />, label: 'Email', value: store.email },
-												{ icon: <IoTimeOutline className="text-[#F97316] text-base" />, label: 'Horário', value: store.hours },
+												{ icon: <IoLocationOutline className="text-accent text-base" />, label: 'Endereço', value: store.address },
+												{ icon: <IoCallOutline className="text-accent text-base" />, label: 'Telefone', value: store.phone },
+												{ icon: <IoMailOutline className="text-accent text-base" />, label: 'Email', value: store.email },
+												{ icon: <IoTimeOutline className="text-accent text-base" />, label: 'Horário', value: store.hours },
 											].map((item, i) => (
 												<div key={i} className="flex items-start gap-2.5">
 													<div className="mt-0.5 flex-shrink-0">{item.icon}</div>
 													<div>
-														<p className="text-xs text-gray-400">{item.label}</p>
-														<p className="text-sm text-gray-700 font-medium leading-snug">{item.value}</p>
+														<p className="font-body text-xs text-[#78716C]">{item.label}</p>
+														<p className="font-body text-sm text-[#1C1917] font-medium leading-snug">{item.value}</p>
 													</div>
 												</div>
 											))}
 										</div>
 
-										<div className="mt-5 pt-4 border-t border-gray-200 flex items-center gap-2">
+										<div className="mt-5 pt-4 border-t border-[#E8E2DA] flex items-center gap-2">
 											<IoShieldCheckmarkOutline className="text-emerald-500 text-lg" />
-											<p className="text-xs text-gray-500">Loja verificada e aprovada pela Kusumba</p>
+											<p className="font-body text-xs text-[#78716C]">Loja verificada e aprovada pela Kusumba</p>
 										</div>
 									</div>
 								</div>
