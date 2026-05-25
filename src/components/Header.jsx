@@ -78,40 +78,40 @@ const Header = () => {
 				{
 					title: 'Celulares e Telefones',
 					items: [
-						{ text: 'AcessÃ³rios para Celulares' },
-						{ text: 'PeÃ§as para Celular' }
+						{ text: 'Acessórios para Celulares' },
+						{ text: 'Peças para Celular' }
 					]
 				},
 				{
-					title: 'InformÃ¡tica',
+					title: 'Informática',
 					items: [
 						{ text: 'Componentes para PC' },
 						{ text: 'Computadores' },
-						{ text: 'Tablets e AcessÃ³rios' }
+						{ text: 'Tablets e Acessórios' }
 					]
 				},
 				{
-					title: 'EletrÃ´nicos, Ãudio e VÃ­deo',
+					title: 'Eletrônicos, Áudio e Vídeo',
 					items: [
-						{ text: 'AcessÃ³rios para Ãudio e VÃ­deo' },
-						{ text: 'Ãudio PortÃ¡til e AcessÃ³rios' }
+						{ text: 'Acessórios para Áudio e Vídeo' },
+						{ text: 'Áudio Portátil e Acessórios' }
 					]
 				}
 			]
 		},
 		{
-			name: 'Casa e MÃ³veis',
+			name: 'Casa e Móveis',
 			columns: [
 				{
-					title: 'MÃ³veis',
+					title: 'Móveis',
 					items: [
-						{ text: 'SofÃ¡s' },
+						{ text: 'Sofás' },
 						{ text: 'Camas' },
 						{ text: 'Mesas' }
 					]
 				},
 				{
-					title: 'DecoraÃ§Ã£o',
+					title: 'Decoração',
 					items: [
 						{ text: 'Quadros' },
 						{ text: 'Tapetes' }
@@ -131,14 +131,14 @@ const Header = () => {
 				}
 			]
 		},
-		{ name: 'Beleza e SaÃºde', columns: [] },
+		{ name: 'Beleza e Saúde', columns: [] },
 		{ name: 'Moda', columns: [] },
 		{ name: 'Produtos', columns: [] },
 	];
 
 	return (
 		<header className="shadow-sm">
-			{/* â”€â”€ Row 1: Top bar â”€â”€ */}
+			{/* ── Row 1: Top bar ── */}
 			<div className="bg-accent">
 				<div className="max-w-[1200px] mx-auto px-4 py-4 flex items-center gap-2 md:gap-4">
 					{/* Logo */}
@@ -159,7 +159,7 @@ const Header = () => {
 							</span>
 							<input
 								type="text"
-								placeholder="Roupas, eletrÃ³nicos, gastÃ¡veis..."
+								placeholder="Roupas, eletrônicos, gastáveis..."
 								className="w-full bg-white pl-10 pr-4 py-2.5 rounded-l-full text-sm font-body text-[#1C1917] placeholder-[#78716C]/50 border-none focus:outline-none"
 							/>
 							<button className="bg-white border-l border-[#1C1917]/10 px-5 py-2.5 rounded-r-full text-sm font-display font-semibold text-accent hover:bg-sand transition-colors whitespace-nowrap focus:outline-none cursor-pointer">
@@ -283,7 +283,7 @@ const Header = () => {
 							<input
 								ref={searchInputRef}
 								type="text"
-								placeholder="Roupas, eletrÃ³nicos, gastÃ¡veis..."
+								placeholder="Roupas, eletrônicos, gastáveis..."
 								className="w-full bg-white pl-10 pr-4 py-2.5 rounded-full text-sm font-body text-[#1C1917] placeholder-[#78716C]/50 border-none focus:outline-none"
 							/>
 						</div>
@@ -291,7 +291,7 @@ const Header = () => {
 				)}
 			</div>
 
-			{/* â”€â”€ Row 2: Navigation â”€â”€ */}
+			{/* ── Row 2: Navigation ── */}
 			<div className="bg-sand border-b border-[#1C1917]/10 hidden lg:block">
 				<div className="max-w-[1200px] mx-auto px-4">
 					<div className="flex items-center gap-4 py-2 relative">
@@ -397,10 +397,10 @@ const Header = () => {
 								Produtos
 							</NavLink>
 							<NavLink to="/promocoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded font-body transition-colors ${isActive ? 'text-accent font-medium' : 'text-[#78716C] hover:text-accent'}`}>
-								PromoÃ§Ãµes
+								Promoções
 							</NavLink>
 							<NavLink to="/cupoes" className={({ isActive }) => `text-sm px-3 py-1.5 rounded font-body transition-colors ${isActive ? 'text-accent font-medium' : 'text-[#78716C] hover:text-accent'}`}>
-								CupÃµes
+								Cupões
 							</NavLink>
 							<NavLink to="/sobre" className={({ isActive }) => `text-sm px-3 py-1.5 rounded font-body transition-colors ${isActive ? 'text-accent font-medium' : 'text-[#78716C] hover:text-accent'}`}>
 								Sobre
@@ -431,7 +431,7 @@ const Header = () => {
 				</div>
 			</div>
 
-			{/* â”€â”€ Mobile Menu â”€â”€ */}
+			{/* ── Mobile Menu ── */}
 			<div
 				className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
 					menuOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
@@ -452,11 +452,11 @@ const Header = () => {
 					</NavLink>
 					<NavLink to="/promocoes" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10">
 						<IoPricetagOutline className="w-5 h-5 text-[#78716C]/60" />
-						<span>PromoÃ§Ãµes</span>
+						<span>Promoções</span>
 					</NavLink>
 					<NavLink to="/cupoes" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10">
 						<IoTicketOutline className="w-5 h-5 text-[#78716C]/60" />
-						<span>CupÃµes</span>
+						<span>Cupões</span>
 					</NavLink>
 					<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10">
 						<IoCashOutline className="w-5 h-5 text-[#78716C]/60" />
