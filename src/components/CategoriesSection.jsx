@@ -1,332 +1,178 @@
-import React, { useState, useEffect } from 'react';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import apiRequest from '../services/api';
+
+const slugify = (s) =>
+	String(s)
+		.toLowerCase()
+		.replace(/\s+/g, '-')
+		.replace(/[^a-z0-9-]/g, '');
+
+const fetchCategories = async () => {
+	const res = await apiRequest('/categories', { method: 'GET' });
+	if (!res.success) throw new Error(res.msg || 'Erro ao carregar categorias');
+	return res.data?.categories || [];
+};
+
+const placeholderColors = [
+	'from-stone-100 to-stone-200',
+	'from-amber-100 to-stone-200',
+	'from-orange-100 to-stone-200',
+	'from-yellow-100 to-stone-200',
+	'from-rose-100 to-stone-200',
+	'from-lime-100 to-stone-200',
+	'from-sky-100 to-stone-200',
+	'from-violet-100 to-stone-200',
+];
 
 const CategoriesSection = () => {
-	const [currentPage, setCurrentPage] = useState(0);
-	const [itemsPerRow, setItemsPerRow] = useState(4);
+	const { data: categories, isLoading, isError, refetch } = useQuery({
+		queryKey: ['categories'],
+		queryFn: fetchCategories,
+		staleTime: 1000 * 60 * 10,
+	});
 
-	const categories = [
-		{
-			id: 1,
-			name: 'Carros, Motos e Outros',
-			icon: '🚗',
-			image: 'https://via.placeholder.com/80x80/dc3545/fff?text=🚗',
-			link: '/categorias/veiculos'
-		},
-		{
-			id: 2,
-			name: 'Celulares e Telefones',
-			icon: '📱',
-			image: 'https://via.placeholder.com/80x80/e91e63/fff?text=📱',
-			link: '/categorias/celulares'
-		},
-		{
-			id: 3,
-			name: 'Eletrodomésticos',
-			icon: '🔌',
-			image: 'https://via.placeholder.com/80x80/9e9e9e/fff?text=🔌',
-			link: '/categorias/eletrodomesticos'
-		},
-		{
-			id: 4,
-			name: 'Ferramentas',
-			icon: '🔧',
-			image: 'https://via.placeholder.com/80x80/ff9800/fff?text=🔧',
-			link: '/categorias/ferramentas'
-		},
-		{
-			id: 5,
-			name: 'Acessórios para Veículos',
-			icon: '⚙️',
-			image: 'https://via.placeholder.com/80x80/607d8b/fff?text=⚙️',
-			link: '/categorias/acessorios-veiculos'
-		},
-		{
-			id: 6,
-			name: 'Calçados, Roupas e Bolsas',
-			icon: '👗',
-			image: 'https://via.placeholder.com/80x80/e91e63/fff?text=👗',
-			link: '/categorias/moda'
-		},
-		{
-			id: 7,
-			name: 'Esportes e Fitness',
-			icon: '🏋️',
-			image: 'https://via.placeholder.com/80x80/424242/fff?text=🏋️',
-			link: '/categorias/esportes'
-		},
-		{
-			id: 8,
-			name: 'Beleza e Cuidado Pessoal',
-			icon: '💄',
-			image: 'https://via.placeholder.com/80x80/ffc0cb/fff?text=💄',
-			link: '/categorias/beleza'
-		},
-		{
-			id: 9,
-			name: 'Casa, Móveis e Decoração',
-			icon: '🛋️',
-			image: 'https://via.placeholder.com/80x80/795548/fff?text=🛋️',
-			link: '/categorias/casa'
-		},
-		{
-			id: 10,
-			name: 'Informática',
-			icon: '💻',
-			image: 'https://via.placeholder.com/80x80/4caf50/fff?text=💻',
-			link: '/categorias/informatica'
-		},
-		{
-			id: 11,
-			name: 'Imóveis',
-			icon: '🏠',
-			image: 'https://via.placeholder.com/80x80/ff6f00/fff?text=🏠',
-			link: '/categorias/imoveis'
-		},
-		{
-			id: 12,
-			name: 'Eletrônicos, Áudio e Vídeo',
-			icon: '🎧',
-			image: 'https://via.placeholder.com/80x80/212121/fff?text=🎧',
-			link: '/categorias/eletronicos'
-		}
-	];
-
-	useEffect(() => {
-		const updateItemsPerRow = () => {
-			const width = window.innerWidth;
-			if (width >= 1200) {
-				setItemsPerRow(4);
-			} else if (width >= 900) {
-				setItemsPerRow(3);
-			} else if (width >= 600) {
-				setItemsPerRow(2);
-			} else {
-				setItemsPerRow(1);
-			}
-		};
-
-		updateItemsPerRow();
-		window.addEventListener('resize', updateItemsPerRow);
-		return () => window.removeEventListener('resize', updateItemsPerRow);
-	}, []);
-
-	const itemsPerPage = itemsPerRow * 3; // 3 rows
-	const totalPages = Math.ceil(categories.length / itemsPerPage);
-
-	const getCurrentCategories = () => {
-		const start = currentPage * itemsPerPage;
-		return categories.slice(start, start + itemsPerPage);
-	};
-
-	const nextPage = () => {
-		setCurrentPage((prev) => (prev + 1) % totalPages);
-	};
-
-	const prevPage = () => {
-		setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-	};
-
-	return (
-		<section style={{
-			backgroundColor: 'transparent',
-			display: 'flex',
-			justifyContent: 'center',
-			padding: '24px 0',
-			marginBottom: '16px'
-		}}>
-			<div style={{
-				width: 'calc(100% - 48px)',
-				maxWidth: '1180px',
-				backgroundColor: '#fff',
-				borderRadius: '10px',
-				padding: '20px 20px 24px 20px',
-				boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
-			}}>
-				{/* Header */}
-				<div style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					marginBottom: '20px'
-				}}>
-					<div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-						<h2 style={{
-							fontSize: '24px',
-							fontWeight: '400',
-							color: '#333',
-							margin: 0
-						}}>
-							Categorias
-						</h2>
-						<Link to="/categorias" style={{
-							color: '#3483fa',
-							fontSize: '14px',
-							textDecoration: 'none',
-							fontWeight: '400'
-						}}>
-							Mostrar todas as categorias
-						</Link>
+	if (isLoading) {
+		return (
+			<section className="w-full" style={{ backgroundColor: '#F5F2ED' }}>
+				<div className="max-w-[1200px] mx-auto px-6 py-12">
+					<div className="flex items-baseline justify-between mb-10">
+						<div className="h-9 w-40 cat-shimmer rounded-lg" />
+						<div className="h-5 w-32 cat-shimmer rounded" />
 					</div>
-
-					{/* Pagination Dots */}
-					<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-						{Array.from({ length: totalPages }).map((_, idx) => (
-							<button
-								key={idx}
-								onClick={() => setCurrentPage(idx)}
-								style={{
-									width: '8px',
-									height: '8px',
-									borderRadius: '50%',
-									border: 'none',
-									backgroundColor: idx === currentPage ? '#3483fa' : '#d9d9d9',
-									cursor: 'pointer',
-									padding: 0,
-									transition: 'background-color 0.3s'
-								}}
-								aria-label={`Página ${idx + 1}`}
-							/>
+					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+						{[...Array(8)].map((_, i) => (
+							<div key={i} className="bg-white rounded-2xl overflow-hidden">
+								<div className="aspect-[3/2] cat-shimmer" />
+								<div className="p-4 space-y-2">
+									<div className="h-4 w-3/4 cat-shimmer rounded" />
+									<div className="h-3 w-1/3 cat-shimmer rounded" />
+								</div>
+							</div>
 						))}
 					</div>
 				</div>
+			</section>
+		);
+	}
 
-				{/* Categories Grid with Navigation */}
-				<div style={{ position: 'relative' }}>
-					{/* Left Arrow */}
-					{currentPage > 0 && (
+	if (isError) {
+		return (
+			<section className="w-full" style={{ backgroundColor: '#F5F2ED' }}>
+				<div className="max-w-[1200px] mx-auto px-6 py-12">
+					<div className="flex flex-col items-center justify-center py-16 text-center">
+						<p className="text-sm mb-4" style={{ color: '#78716C' }}>
+							Nao foi possivel carregar as categorias.
+						</p>
 						<button
-							onClick={prevPage}
-							style={{
-								position: 'absolute',
-								left: '-20px',
-								top: '50%',
-								transform: 'translateY(-50%)',
-								zIndex: 2,
-								backgroundColor: '#fff',
-								border: '1px solid #ddd',
-								borderRadius: '50%',
-								width: '40px',
-								height: '40px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								cursor: 'pointer',
-								boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-								transition: 'all 0.2s'
-							}}
-							onMouseEnter={(e) => {
-								e.currentTarget.style.backgroundColor = '#f5f5f5';
-								e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-							}}
-							onMouseLeave={(e) => {
-								e.currentTarget.style.backgroundColor = '#fff';
-								e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-							}}
+							onClick={() => refetch()}
+							className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-[#F97316] hover:bg-[#EA580C] transition-all duration-300 cursor-pointer"
 						>
-							<IoChevronBack size={24} color="#333" />
+							Tentar novamente
 						</button>
-					)}
-
-					{/* Right Arrow */}
-					{currentPage < totalPages - 1 && (
-						<button
-							onClick={nextPage}
-							style={{
-								position: 'absolute',
-								right: '-20px',
-								top: '50%',
-								transform: 'translateY(-50%)',
-								zIndex: 2,
-								backgroundColor: '#fff',
-								border: '1px solid #ddd',
-								borderRadius: '50%',
-								width: '40px',
-								height: '40px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								cursor: 'pointer',
-								boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-								transition: 'all 0.2s'
-							}}
-							onMouseEnter={(e) => {
-								e.currentTarget.style.backgroundColor = '#f5f5f5';
-								e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-							}}
-							onMouseLeave={(e) => {
-								e.currentTarget.style.backgroundColor = '#fff';
-								e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-							}}
-						>
-							<IoChevronForward size={24} color="#333" />
-						</button>
-					)}
-
-					{/* Categories Grid */}
-					<div style={{
-						display: 'grid',
-						gridTemplateColumns: `repeat(${itemsPerRow}, 1fr)`,
-						gap: '12px',
-						overflow: 'hidden'
-					}}>
-						{getCurrentCategories().map((category) => (
-							<Link
-								key={category.id}
-								to={category.link}
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: '16px',
-									padding: '16px',
-									backgroundColor: '#f5f5f5',
-									borderRadius: '8px',
-									textDecoration: 'none',
-									cursor: 'pointer',
-									transition: 'all 0.2s',
-									border: '1px solid transparent'
-								}}
-								onMouseEnter={(e) => {
-									e.currentTarget.style.backgroundColor = '#fff';
-									e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-									e.currentTarget.style.border = '1px solid #e5e5e5';
-									e.currentTarget.style.transform = 'translateY(-2px)';
-								}}
-								onMouseLeave={(e) => {
-									e.currentTarget.style.backgroundColor = '#f5f5f5';
-									e.currentTarget.style.boxShadow = 'none';
-									e.currentTarget.style.border = '1px solid transparent';
-									e.currentTarget.style.transform = 'translateY(0)';
-								}}
-							>
-								{/* Category Icon */}
-								<div style={{
-									width: '64px',
-									height: '64px',
-									backgroundColor: '#fff',
-									borderRadius: '6px',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									flexShrink: 0,
-									fontSize: '32px'
-								}}>
-									{category.icon}
-								</div>
-
-								{/* Category Name */}
-								<div style={{
-									fontSize: '15px',
-									fontWeight: '400',
-									color: '#333',
-									lineHeight: '1.3'
-								}}>
-									{category.name}
-								</div>
-							</Link>
-						))}
 					</div>
+				</div>
+			</section>
+		);
+	}
+
+	if (!categories || categories.length === 0) return null;
+
+	return (
+		<section className="w-full" style={{ backgroundColor: '#F5F2ED' }}>
+			<div className="max-w-[1200px] mx-auto px-6 py-12">
+				<div className="flex items-baseline justify-between mb-10">
+					<div>
+						<span
+							className="text-xs font-semibold uppercase tracking-[0.15em]"
+							style={{ color: '#78716C' }}
+						>
+							Navegue por
+						</span>
+						<h2
+							className="text-3xl md:text-4xl font-bold mt-1 leading-tight"
+							style={{ color: '#1C1917' }}
+						>
+							Categorias
+						</h2>
+					</div>
+					<Link
+						to="/categorias"
+						className="hidden sm:flex items-center gap-2 text-sm font-medium text-[#F97316] hover:text-[#EA580C] transition-colors duration-300 group"
+					>
+						Explorar todas
+						<span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+					</Link>
+				</div>
+
+				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+					{categories.map((category, index) => (
+						<Link
+							key={category.id}
+							to={`/categorias/${slugify(category.name)}`}
+							className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:-translate-y-1 hover:shadow-lg hover:border-[#F97316]/30 transition-all duration-[400ms] cat-animate-in"
+							style={{
+								animationDelay: `${0.06 * index}s`,
+							}}
+						>
+							<div
+								className="aspect-[3/2] bg-cover bg-center"
+								style={
+									category.image
+										? { backgroundImage: `url(${category.image})` }
+										: undefined
+								}
+							>
+								{!category.image && (
+									<div
+										className={`w-full h-full bg-gradient-to-br ${placeholderColors[index % placeholderColors.length]} flex items-center justify-center`}
+									>
+										<span
+											className="select-none font-semibold"
+											style={{
+												fontSize: '3rem',
+												color: '#d6d3d1',
+											}}
+										>
+											{category.name.charAt(0)}
+										</span>
+									</div>
+								)}
+							</div>
+
+							<div className="p-4">
+								<h3
+									className="font-semibold leading-snug"
+									style={{
+										fontSize: '15px',
+										color: '#1C1917',
+									}}
+								>
+									{category.name}
+								</h3>
+								{category.products && (
+									<p
+										className="text-[13px] leading-relaxed mt-1"
+										style={{ color: '#78716C' }}
+									>
+										{category.products.length} produto
+										{category.products.length !== 1 ? 's' : ''}
+									</p>
+								)}
+							</div>
+						</Link>
+					))}
+				</div>
+
+				<div className="sm:hidden flex justify-center mt-8">
+					<Link
+						to="/categorias"
+						className="inline-flex items-center gap-2 text-sm font-semibold text-[#F97316] hover:text-[#EA580C] transition-colors"
+					>
+						Explorar todas as categorias
+						<span>→</span>
+					</Link>
 				</div>
 			</div>
 		</section>

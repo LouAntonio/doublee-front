@@ -376,3 +376,40 @@
 		height: 80px;
 	}
 }
+
+/* ── Category Section Theme ── */
+:root {
+	--cat-bg: #F5F2ED;
+	--cat-surface: #FFFFFF;
+	--cat-text: #1C1917;
+	--cat-text-secondary: #78716C;
+	--cat-accent: #F97316;
+	--cat-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Animations ── */
+@keyframes catFadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes catShimmer {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+.cat-animate-in {
+	animation: catFadeInUp 0.45s var(--cat-ease) both;
+}
+
+.cat-shimmer {
+	background: linear-gradient(90deg, #e7e5e4 25%, #f5f5f4 50%, #e7e5e4 75%);
+	background-size: 200% 100%;
+	animation: catShimmer 1.5s ease-in-out infinite;
+}
