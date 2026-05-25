@@ -13,7 +13,7 @@ const StorySection = () => {
 				</h2>
 				<div className="w-16 h-1 bg-accent/30 mx-auto mb-8 rounded-full" />
 				<p className="font-body text-lg md:text-xl text-[#78716C] leading-relaxed">
-          Fundada com a visão de simplificar o comércio eletrónico, a Double E começou como uma pequena startup com grandes sonhos.
+          Fundada com a visão de simplificar o comércio eletrónico, a Kusumba começou como uma pequena startup com grandes sonhos.
           Hoje, somos referência em qualidade e atendimento, conectando milhares de clientes a produtos que fazem a diferença nas suas vidas.
           Acreditamos que comprar online deve ser uma experiência prazerosa, segura e transparente.
 				</p>

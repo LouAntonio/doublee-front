@@ -20,7 +20,7 @@ export const WishlistProvider = ({ children }) => {
 	const [togglingIds, setTogglingIds] = useState([]);
 	const { isAuthenticated } = useAuth();
 
-	const hasToken = useCallback(() => Boolean(localStorage.getItem('doublee_token')), []);
+	const hasToken = useCallback(() => Boolean(localStorage.getItem('Kusumba_token')), []);
 
 	const setToggleLoading = useCallback((productId, isToggling) => {
 		setTogglingIds((prev) => {

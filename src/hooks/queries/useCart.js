@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import http from '../../services/http';
 
-const hasToken = () => Boolean(localStorage.getItem('doublee_token'));
+const hasToken = () => Boolean(localStorage.getItem('Kusumba_token'));
 
 export const useCartQuery = () =>
 	useQuery({

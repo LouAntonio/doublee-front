@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fa';
 
 const ComoFunciona = () => {
-	useDocumentTitle('Como Funciona - Double E');
+	useDocumentTitle('Como Funciona - Kusumba');
 
 	const buyerSteps = [
 		{
@@ -172,7 +172,7 @@ const ComoFunciona = () => {
 
 					<div className="relative z-10 flex flex-col items-center justify-center px-6 md:px-10 py-16 md:py-20 text-center">
 						<h1 className="vender-stagger text-4xl md:text-5xl lg:text-6xl font-bold mb-5 tracking-tight leading-[1.1]" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Como Funciona a <span className="text-orange-400">Double E</span>
+							Como Funciona a <span className="text-orange-400">Kusumba</span>
 						</h1>
 						<p className="vender-stagger text-orange-100/80 text-base md:text-lg max-w-2xl leading-relaxed" style={{ animationDelay: '200ms' }}>
 							Descubra como comprar e vender de forma simples, segura e rápida na maior plataforma de e-commerce de Angola.
@@ -269,7 +269,7 @@ const ComoFunciona = () => {
 					<div className="text-center mb-14">
 						<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Porquê Nós</span>
 						<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Por que usar a Double E?
+							Por que usar a Kusumba?
 						</h2>
 						<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
 							Recursos que tornam sua experiência única e segura
@@ -300,7 +300,7 @@ const ComoFunciona = () => {
 				<div className="max-w-[1200px] mx-auto px-4 relative z-10">
 					<div className="text-center mb-12">
 						<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Compra Protegida Double E
+							Compra Protegida Kusumba
 						</h2>
 						<p className="vender-stagger text-orange-100/70 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
 							Seu dinheiro fica seguro até você receber o produto
@@ -403,7 +403,7 @@ const ComoFunciona = () => {
 							Comece agora mesmo
 						</h2>
 						<p className="text-lg mb-8 text-orange-100/80 max-w-2xl mx-auto leading-relaxed">
-							Junte-se à Double E e faça parte da maior comunidade de compras e vendas de Angola.
+							Junte-se à Kusumba e faça parte da maior comunidade de compras e vendas de Angola.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<a

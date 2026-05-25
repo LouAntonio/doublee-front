@@ -20,7 +20,7 @@ const INITIAL_ERRORS = { name: '', email: '', subject: '', message: '' };
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 const Contato = () => {
-	useDocumentTitle('Contato - Double E');
+	useDocumentTitle('Contato - Kusumba');
 
 	const [form, setForm] = useState(INITIAL_FORM);
 	const [errors, setErrors] = useState(INITIAL_ERRORS);
@@ -91,7 +91,7 @@ const Contato = () => {
 		{
 			icon: <FaMapMarkerAlt />,
 			title: 'Endereço',
-			content: 'Centralidade do Kilamba, Edifício B15, Luanda\nAngola',
+			content: 'Centralidade do Kilamba, Ed. B15, Apt. 33, Luanda - Angola',
 		},
 		{
 			icon: <FaPhoneAlt />,
@@ -102,8 +102,8 @@ const Contato = () => {
 		{
 			icon: <FaEnvelope />,
 			title: 'E-mail',
-			content: 'contato@doublee.ao',
-			action: { label: 'Enviar e-mail', href: 'mailto:contato@doublee.ao' },
+			content: 'contato@Kusumba.ao',
+			action: { label: 'Enviar e-mail', href: 'mailto:contato@Kusumba.ao' },
 		},
 	];
 
@@ -131,7 +131,7 @@ const Contato = () => {
 							className="text-lg md:text-xl text-white/80 max-w-xl leading-relaxed animate-fade-in-up"
 							style={{ animationDelay: '0.15s' }}
 						>
-							Estamos aqui para ajudar. Dúvidas, sugestões ou parcerias - a Double E está pronta para ouvir.
+							Estamos aqui para ajudar. Dúvidas, sugestões ou parcerias - a Kusumba está pronta para ouvir.
 						</p>
 					</div>
 				</div>
@@ -150,7 +150,7 @@ const Contato = () => {
 								Envie uma mensagem
 							</h2>
 							<p className="text-[#6b7280] mb-8">
-								Preencha o formulário abaixo e responderemos em até 24h.
+								Preencha o formulário abaixo e responderemos em até dois dias úteis.
 							</p>
 
 							<form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -366,7 +366,7 @@ const Contato = () => {
 								allowFullScreen
 								loading="lazy"
 								referrerPolicy="no-referrer-when-downgrade"
-								title="Localização da Double E"
+								title="Localização da Kusumba"
 							/>
 						</div>
 

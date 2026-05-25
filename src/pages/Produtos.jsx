@@ -27,7 +27,7 @@ const sortProducts = (items, option) => {
 };
 
 const Produtos = () => {
-	useDocumentTitle('Produtos - Double E');
+	useDocumentTitle('Produtos - Kusumba');
 
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -112,7 +112,7 @@ const Produtos = () => {
 									<span className="text-orange-400">Disponíveis</span>
 								</h1>
 								<p className="text-orange-100/80 text-base md:text-lg max-w-xl leading-relaxed">
-									Explore todos os produtos disponíveis na Double E. Encontre o que precisa para o seu dia a dia.
+									Explore todos os produtos disponíveis na Kusumba. Encontre o que precisa para o seu dia a dia.
 								</p>
 							</div>
 

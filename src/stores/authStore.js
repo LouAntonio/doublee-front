@@ -4,7 +4,7 @@ import { notyf } from '../utils/notyf';
 
 const getStoredUser = () => {
 	try {
-		const saved = localStorage.getItem('doublee_user');
+		const saved = localStorage.getItem('Kusumba_user');
 		return saved ? JSON.parse(saved) : null;
 	} catch {
 		return null;
@@ -13,7 +13,7 @@ const getStoredUser = () => {
 
 const getStoredAdmin = () => {
 	try {
-		const saved = localStorage.getItem('doublee_admin');
+		const saved = localStorage.getItem('Kusumba_admin');
 		return saved ? JSON.parse(saved) : null;
 	} catch {
 		return null;
@@ -37,7 +37,7 @@ const useAuthStore = create((set) => ({
 	isAdmin: !!getStoredAdmin(),
 
 	initSession: async () => {
-		const token = localStorage.getItem('doublee_token');
+		const token = localStorage.getItem('Kusumba_token');
 		if (!token) {
 			set({ isLoading: false, user: null, isAuthenticated: false });
 			return;
@@ -45,14 +45,14 @@ const useAuthStore = create((set) => ({
 		try {
 			const res = await validateSession();
 			if (!res || res.success === false) {
-				localStorage.removeItem('doublee_user');
-				localStorage.removeItem('doublee_token');
+				localStorage.removeItem('Kusumba_user');
+				localStorage.removeItem('Kusumba_token');
 				set({ user: null, isAuthenticated: false, isLoading: false });
 				return;
 			}
 		} catch {
-			localStorage.removeItem('doublee_user');
-			localStorage.removeItem('doublee_token');
+			localStorage.removeItem('Kusumba_user');
+			localStorage.removeItem('Kusumba_token');
 			set({ user: null, isAuthenticated: false, isLoading: false });
 			return;
 		}
@@ -60,14 +60,14 @@ const useAuthStore = create((set) => ({
 	},
 
 	login: (userData, token) => {
-		localStorage.setItem('doublee_user', JSON.stringify(userData));
-		if (token) localStorage.setItem('doublee_token', token);
+		localStorage.setItem('Kusumba_user', JSON.stringify(userData));
+		if (token) localStorage.setItem('Kusumba_token', token);
 		set({ user: userData, isAuthenticated: true, isLoading: false });
 	},
 
 	logout: () => {
-		localStorage.removeItem('doublee_user');
-		localStorage.removeItem('doublee_token');
+		localStorage.removeItem('Kusumba_user');
+		localStorage.removeItem('Kusumba_token');
 		set({ user: null, isAuthenticated: false });
 	},
 
@@ -76,8 +76,8 @@ const useAuthStore = create((set) => ({
 		try {
 			const res = await loginAdmin(email, password);
 			if (res.success && res.token && res.user) {
-				localStorage.setItem('doublee_admin_token', res.token);
-				localStorage.setItem('doublee_admin', JSON.stringify(res.user));
+				localStorage.setItem('Kusumba_admin_token', res.token);
+				localStorage.setItem('Kusumba_admin', JSON.stringify(res.user));
 				set({ admin: res.user, isAdmin: true, isLoading: false });
 				return { success: true };
 			}
@@ -90,19 +90,19 @@ const useAuthStore = create((set) => ({
 	},
 
 	adminLogout: () => {
-		localStorage.removeItem('doublee_admin_token');
-		localStorage.removeItem('doublee_admin');
+		localStorage.removeItem('Kusumba_admin_token');
+		localStorage.removeItem('Kusumba_admin');
 		set({ admin: null, isAdmin: false });
 		notyf.success('Sessão terminada.');
 	},
 
 	initAdmin: () => {
-		const storedToken = localStorage.getItem('doublee_admin_token');
+		const storedToken = localStorage.getItem('Kusumba_admin_token');
 		const storedAdmin = getStoredAdmin();
 		if (storedToken && storedAdmin) {
 			if (isTokenExpired(storedToken)) {
-				localStorage.removeItem('doublee_admin_token');
-				localStorage.removeItem('doublee_admin');
+				localStorage.removeItem('Kusumba_admin_token');
+				localStorage.removeItem('Kusumba_admin');
 				set({ admin: null, isAdmin: false, isLoading: false });
 				return;
 			}

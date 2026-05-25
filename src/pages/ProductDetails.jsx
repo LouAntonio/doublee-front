@@ -35,7 +35,7 @@ const mapProduct = (p) => {
 		promotionEndDate: p.promotionalEndDate,
 		images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
 		category: p.categories?.[0]?.name || 'Diversos',
-		brand: 'Double E',
+		brand: 'Kusumba',
 		description: p.description || 'Sem descrição.',
 		rating: p.rating || 0,
 		reviews: p.qtdRatings || 0,
@@ -124,7 +124,7 @@ const ProductDetails = () => {
 		notyf.error(result.msg || 'Nao foi possivel atualizar a wishlist.');
 	};
 
-	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
+	useDocumentTitle(product ? product.title + ' - Kusumba' : 'Detalhes do Produto - Kusumba');
 
 	useEffect(() => {
 		if (!isAuthenticated || !productId || isWishlisted(productId)) return;

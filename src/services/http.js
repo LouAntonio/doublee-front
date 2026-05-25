@@ -6,16 +6,16 @@ export const API_URL = apiurl;
 console.log('API URL:', API_URL);
 
 const handleSessionExpired = () => {
-	localStorage.removeItem('doublee_user');
-	localStorage.removeItem('doublee_token');
+	localStorage.removeItem('Kusumba_user');
+	localStorage.removeItem('Kusumba_token');
 	setTimeout(() => {
 		window.location.href = '/auth';
 	}, 500);
 };
 
 const handleAdminSessionExpired = () => {
-	localStorage.removeItem('doublee_admin_token');
-	localStorage.removeItem('doublee_admin');
+	localStorage.removeItem('Kusumba_admin_token');
+	localStorage.removeItem('Kusumba_admin');
 	setTimeout(() => {
 		window.location.href = '/auth';
 	}, 500);
@@ -29,7 +29,7 @@ const http = axios.create({
 
 http.interceptors.request.use((config) => {
 	const isAdmin = config.admin === true;
-	const tokenKey = isAdmin ? 'doublee_admin_token' : 'doublee_token';
+	const tokenKey = isAdmin ? 'Kusumba_admin_token' : 'Kusumba_token';
 	const token = localStorage.getItem(tokenKey);
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;

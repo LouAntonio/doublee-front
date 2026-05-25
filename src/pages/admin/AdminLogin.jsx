@@ -62,7 +62,7 @@ const AdminLogin = () => {
 					</div>
 					<div className="text-center mb-10">
 						<h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500 mb-2">
-							Double E
+							Kusumba
 						</h2>
 						<p className="text-gray-400 text-sm">
 							Oainel de Administração
@@ -84,7 +84,7 @@ const AdminLogin = () => {
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 									className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-lg bg-gray-700/50 text-white placeholder-gray-400 focus:outline-none transition"
-									placeholder="admin@doublee.com"
+									placeholder="admin@Kusumba.com"
 								/>
 							</div>
 						</div>
@@ -119,7 +119,7 @@ const AdminLogin = () => {
 					</form>
 
 					<div className="mt-8 text-center text-xs text-gray-500">
-						&copy; {new Date().getFullYear()} Double E. Todos os direitos reservados.
+						&copy; {new Date().getFullYear()} Kusumba. Todos os direitos reservados.
 					</div>
 				</div>
 			</div>

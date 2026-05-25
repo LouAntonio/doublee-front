@@ -88,7 +88,7 @@ const LojasHero = () => {
 
 				{/* Subtitle */}
 				<p className="text-sm md:text-base text-[var(--lojas-text)] max-w-md leading-relaxed mb-8">
-					Encontra as lojas parceiras Double E e compra com total
+					Encontra as lojas parceiras Kusumba e compra com total
 					confiança. Mais de 120 estabelecimentos verificados à tua
 					espera.
 				</p>

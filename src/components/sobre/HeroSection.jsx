@@ -14,7 +14,7 @@ const HeroSection = () => {
 						<h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-[#1C1917] leading-[1.1] mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
               Sobre a
 							<br />
-							<span className="text-accent">Double E</span>
+							<span className="text-accent">Kusumba</span>
 						</h1>
 						<p className="font-body text-lg md:text-xl text-[#78716C] leading-relaxed max-w-lg mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
               Sua plataforma de confiança para descobrir e comprar os melhores produtos do mercado.

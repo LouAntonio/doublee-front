@@ -20,7 +20,7 @@ import {
 } from 'react-icons/fa';
 
 const Vender = () => {
-	useDocumentTitle('Venda Connosco - Double E');
+	useDocumentTitle('Venda Connosco - Kusumba');
 	const { isAuthenticated } = useAuthStore();
 	const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const Vender = () => {
 		{
 			number: '01',
 			title: 'Crie sua conta',
-			description: 'Registe-se na Double E e aceda ao painal do vendedor gratuitamente.',
+			description: 'Registe-se na Kusumba e aceda ao painal do vendedor gratuitamente.',
 			icon: <FaCheckCircle className="text-xl" />
 		},
 		{
@@ -119,7 +119,7 @@ const Vender = () => {
 		{
 			name: 'Carlos Mendes',
 			store: 'TechMundo Angola',
-			text: 'A Double E transformou o meu negócio. Em 6 meses tripliquei as minhas vendas e alcancei clientes em todo o país.',
+			text: 'A Kusumba transformou o meu negócio. Em 6 meses tripliquei as minhas vendas e alcancei clientes em todo o país.',
 			rating: 5
 		},
 		{
@@ -131,14 +131,14 @@ const Vender = () => {
 		{
 			name: 'João Baptista',
 			store: 'Casa & Decoração',
-			text: 'Comecei sozinho e hoje tenho uma equipa dedicada. A Double E foi fundamental em cada etapa dessa travessia.',
+			text: 'Comecei sozinho e hoje tenho uma equipa dedicada. A Kusumba foi fundamental em cada etapa dessa travessia.',
 			rating: 5
 		}
 	];
 
 	const faqs = [
 		{
-			question: 'Quanto custa vender na Double E?',
+			question: 'Quanto custa vender na Kusumba?',
 			answer: 'O cadastro é totalmente gratuito! Cobramos apenas uma pequena comissão quando realiza uma venda. As taxas variam por categoria de produto.'
 		},
 		{
@@ -190,7 +190,7 @@ const Vender = () => {
 							Para Vendedores Angolanos
 							</div>
 							<h1 className="vender-stagger text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-[1.1]" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Venda na  <span className="text-orange-400">Double E</span>
+							Venda na  <span className="text-orange-400">Kusumba</span>
 							</h1>
 							<p className="vender-stagger text-orange-100/80 text-base md:text-lg max-w-xl leading-relaxed mb-8" style={{ animationDelay: '200ms' }}>
 							Junte-se a milhares de vendedores e transforme o seu negócio com a maior plataforma de e-commerce de Angola.
@@ -230,7 +230,7 @@ const Vender = () => {
 				<div className="text-center mb-14">
 					<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Porquê Nós</span>
 					<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-						Por que vender na Double E?
+						Por que vender na Kusumba?
 					</h2>
 					<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
 						Oferecemos tudo o que precisa para levar o seu negócio ao próximo nível
@@ -376,7 +376,7 @@ const Vender = () => {
 							style={{ animationDelay: `${index * 120}ms` }}
 						>
 							{/* Decorative quote */}
-							<div className="absolute top-4 right-5 text-orange-200/30 text-6xl leading-none select-none" style={{ fontFamily: '"Georgia", serif' }}>"</div>
+							<div className="absolute top-4 right-5 text-orange-200/30 text-6xl leading-none select-none" style={{ fontFamily: '"Fredoka", sans-serif' }}>"</div>
 							<div className="flex text-yellow-400 mb-4 relative z-10">
 								{[...Array(testimonial.rating)].map((_, i) => (
 									<FaStar key={i} className="text-sm" />
@@ -406,7 +406,7 @@ const Vender = () => {
 							Perguntas frequentes
 						</h2>
 						<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-							Tire as suas dúvidas sobre como vender na Double E
+							Tire as suas dúvidas sobre como vender na Kusumba
 						</p>
 					</div>
 

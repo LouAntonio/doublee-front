@@ -45,7 +45,7 @@ const sortProducts = (items, option) => {
 };
 
 const Promocoes = () => {
-	useDocumentTitle('Produtos em Promoção - Double E');
+	useDocumentTitle('Produtos em Promoção - Kusumba');
 
 	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
 	const [drawerOpen, setDrawerOpen] = useState(false);

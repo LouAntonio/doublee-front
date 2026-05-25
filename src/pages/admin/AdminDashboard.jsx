@@ -105,7 +105,7 @@ const AdminDashboard = () => {
 			{/* Page Title */}
 			<div>
 				<h2 className="text-3xl font-bold text-slate-800 tracking-tight">Visão Geral</h2>
-				<p className="text-slate-500 mt-1">Bem-vindo ao painel de administração da Double E.</p>
+				<p className="text-slate-500 mt-1">Bem-vindo ao painel de administração da Kusumba.</p>
 			</div>
 
 			{/* Overview Cards */}

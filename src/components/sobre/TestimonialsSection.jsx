@@ -5,7 +5,7 @@ const testimonials = [
 	{
 		name: 'Maria Silva',
 		role: 'Cliente há 2 anos',
-		text: 'A Double E transformou minha experiência de compras online. Produtos de qualidade e entrega rápida!',
+		text: 'A Kusumba transformou minha experiência de compras online. Produtos de qualidade e entrega rápida!',
 	},
 	{
 		name: 'João Santos',

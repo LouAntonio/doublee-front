@@ -11,7 +11,7 @@ import TestimonialsSection from '../components/sobre/TestimonialsSection';
 import CTASection from '../components/sobre/CTASection';
 
 const Sobre = () => {
-	useDocumentTitle('Sobre - Double E');
+	useDocumentTitle('Sobre - Kusumba');
 
 	return (
 		<div className="min-h-screen bg-sand flex flex-col">

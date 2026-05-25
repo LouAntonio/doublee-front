@@ -12,7 +12,7 @@ import { useCreateOrder } from '../hooks/queries/useOrders';
 
 
 const Checkout = () => {
-	useDocumentTitle('Checkout - Double E');
+	useDocumentTitle('Checkout - Kusumba');
 	const navigate = useNavigate();
 	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const [currentStep, setCurrentStep] = useState(1);
@@ -531,7 +531,7 @@ const Checkout = () => {
 												</p>
 												<div className="space-y-2 text-sm text-blue-800">
 													<p><strong>Banco:</strong> Banco Angolano de Investimentos (BAI)</p>
-													<p><strong>Titular:</strong> Double E</p>
+													<p><strong>Titular:</strong> Kusumba</p>
 													<p><strong>IBAN:</strong> AO06 0000 0123 4567 8901 2345 6</p>
 													<p className="mt-3 text-xs">
 														Após efetuar a transferência, envie o comprovativo para o nosso WhatsApp ou email.

@@ -8,7 +8,7 @@ import OrderSummary from '../components/OrderSummary';
 import useCartStore from '../stores/cartStore';
 
 const Cart = () => {
-	useDocumentTitle('Carrinho - Double E');
+	useDocumentTitle('Carrinho - Kusumba');
 	const { cartItems } = useCartStore();
 
 	return (

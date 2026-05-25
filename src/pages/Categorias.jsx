@@ -3,7 +3,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 
 const Categorias = () => {
-	useDocumentTitle('Categorias - Double E');
+	useDocumentTitle('Categorias - Kusumba');
 	return (
 		<>
 			<Header />

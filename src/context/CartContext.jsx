@@ -29,7 +29,7 @@ export const CartProvider = ({ children }) => {
 
 	const { data: apiCartItems } = useCartQuery();
 
-	const hasToken = () => Boolean(localStorage.getItem('doublee_token'));
+	const hasToken = () => Boolean(localStorage.getItem('Kusumba_token'));
 
 	const mapApiItem = useCallback((item) => ({
 		id: item.id,

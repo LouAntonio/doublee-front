@@ -7,7 +7,7 @@ import PasswordRecovery from '../components/PasswordRecovery';
 import { IoLockClosedOutline, IoPersonAddOutline, IoKeyOutline } from 'react-icons/io5';
 
 const Auth = () => {
-	useDocumentTitle('Login / Cadastro - Double E');
+	useDocumentTitle('Login / Cadastro - Kusumba');
 	const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'recovery'
 
 	const getIcon = () => {

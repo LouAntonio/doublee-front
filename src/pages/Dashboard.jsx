@@ -46,9 +46,9 @@ const Dashboard = () => {
 
 	React.useEffect(() => {
 		if (verificationStatus) {
-			const storedUser = JSON.parse(localStorage.getItem('doublee_user')) || {};
+			const storedUser = JSON.parse(localStorage.getItem('Kusumba_user')) || {};
 			if (storedUser.verificationStatus !== verificationStatus) {
-				localStorage.setItem('doublee_user', JSON.stringify({ ...storedUser, verificationStatus }));
+				localStorage.setItem('Kusumba_user', JSON.stringify({ ...storedUser, verificationStatus }));
 			}
 		}
 	}, [verificationStatus]);
@@ -121,7 +121,7 @@ const Dashboard = () => {
 									{getGreeting()}, {user?.name || 'Cliente'}
 								</h1>
 								<p className="text-sm text-gray-500 mt-1">
-                                    Bem-vindo(a) à sua área pessoal - <span className="text-primary-600 font-medium">Double E Angola</span>
+                                    Bem-vindo(a) à sua área pessoal - <span className="text-primary-600 font-medium">Kusumba Angola</span>
 								</p>
 							</div>
 							{!isVerified && (

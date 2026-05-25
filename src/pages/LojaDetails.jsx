@@ -49,7 +49,7 @@ const LojaDetails = () => {
 	const [products, setProducts] = useState([]);
 	const [showShareMenu, setShowShareMenu] = useState(false);
 
-	useDocumentTitle(store ? `${store.name} – Double E` : 'Detalhes da Loja – Double E');
+	useDocumentTitle(store ? `${store.name} – Kusumba` : 'Detalhes da Loja – Kusumba');
 
 	useEffect(() => {
 		let mounted = true;
@@ -153,7 +153,7 @@ const LojaDetails = () => {
 	const currentUrl = window.location.href;
 
 	const handleShare = (network) => {
-		const text = `Confira a loja ${store?.name} na Double E!`;
+		const text = `Confira a loja ${store?.name} na Kusumba!`;
 		if (network === 'facebook') {
 			window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, '_blank');
 		} else if (network === 'whatsapp') {
@@ -548,7 +548,7 @@ const LojaDetails = () => {
 
 										<div className="mt-5 pt-4 border-t border-gray-200 flex items-center gap-2">
 											<IoShieldCheckmarkOutline className="text-emerald-500 text-lg" />
-											<p className="text-xs text-gray-500">Loja verificada e aprovada pela Double E</p>
+											<p className="text-xs text-gray-500">Loja verificada e aprovada pela Kusumba</p>
 										</div>
 									</div>
 								</div>

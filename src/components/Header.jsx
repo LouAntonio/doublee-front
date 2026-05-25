@@ -136,8 +136,8 @@ const Header = () => {
 					<Link to="/" className="flex-shrink-0 mr-2">
 						<img
 							src="/images/logo/logoBranco.png"
-							alt="Double E"
-							title='Double E'
+							alt="Kusumba"
+							title='Kusumba'
 							className="h-8 w-auto brightness-0 invert"
 						/>
 					</Link>

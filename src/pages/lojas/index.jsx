@@ -16,7 +16,7 @@ import './lojas.css';
 const ITEMS_PER_PAGE = 8;
 
 const Lojas = () => {
-	useDocumentTitle('Lojas - Double E');
+	useDocumentTitle('Lojas - Kusumba');
 
 	const [searchParams] = useSearchParams();
 	const search = searchParams.get('search') || '';

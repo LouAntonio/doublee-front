@@ -1,10 +1,10 @@
 import React from 'react';
 
 const milestones = [
-	{ year: '2020', title: 'Fundação', desc: 'Double E é fundada com a missão de revolucionar o e-commerce em Angola.' },
+	{ year: '2020', title: 'Fundação', desc: 'Kusumba é fundada com a missão de revolucionar o e-commerce em Angola.' },
 	{ year: '2021', title: 'Expansão', desc: 'Alcançamos 10.000 clientes e expandimos nosso catálogo para mais de 5.000 produtos.' },
 	{ year: '2023', title: 'Reconhecimento', desc: 'Premiados como a melhor plataforma de e-commerce em Angola.' },
-	{ year: '2026', title: 'Liderança', desc: 'Mais de 50.000 clientes confiam na Double E para suas compras online.' },
+	{ year: '2026', title: 'Liderança', desc: 'Mais de 50.000 clientes confiam na Kusumba para suas compras online.' },
 ];
 
 const TimelineSection = () => {

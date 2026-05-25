@@ -8,7 +8,7 @@ const AdminDashboardLayout = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const location = useLocation();
 
-	useDocumentTitle('Double E | Painel Administrativo');
+	useDocumentTitle('Kusumba | Painel Administrativo');
 
 	if (isLoading) {
 		return (
@@ -41,7 +41,7 @@ const AdminDashboardLayout = () => {
 	];
 
 	return (
-		<div className="flex h-screen bg-slate-50 font-sans overflow-hidden selection:bg-orange-500/30 selection:text-orange-900">
+		<div className="flex h-screen bg-slate-50 font-body overflow-hidden selection:bg-orange-500/30 selection:text-orange-900">
 			{/* Sidebar */}
 			<aside className={`${sidebarOpen ? 'w-72' : 'w-20'} bg-[#0f172a] text-white transition-all duration-300 ease-in-out flex flex-col relative shadow-2xl z-20`}>
 				<div className="flex items-center justify-between p-5 border-b border-slate-800 h-20">
@@ -51,7 +51,7 @@ const AdminDashboardLayout = () => {
 								<span className="text-white font-bold text-lg">D</span>
 							</div>
 							<span className="text-xl font-bold bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent whitespace-nowrap">
-								Double E
+								Kusumba
 							</span>
 						</div>
 					)}

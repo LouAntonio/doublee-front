@@ -27,7 +27,7 @@ const FeaturesSection = () => {
           — Porquê Nós
 				</span>
 				<h2 className="font-display text-3xl md:text-5xl text-[#1C1917]">
-          Por que escolher a <span className="text-accent">Double E</span>?
+          Por que escolher a <span className="text-accent">Kusumba</span>?
 				</h2>
 			</div>
 
