@@ -181,18 +181,24 @@
 }
 
 .auth-form-slide {
-	animation: slideIn 0.3s ease-out;
+	animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes slideIn {
 	from {
 		opacity: 0;
-		transform: translateY(10px);
+		transform: translateY(16px);
 	}
 	to {
 		opacity: 1;
 		transform: translateY(0);
 	}
+}
+
+/* Auth input focus accent ring */
+.auth-input:focus {
+	border-color: var(--color-accent);
+	box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 }
 
 /* Spinner animation */
