@@ -47,7 +47,9 @@ const Dashboard = () => {
 	React.useEffect(() => {
 		if (verificationStatus) {
 			const storedUser = JSON.parse(localStorage.getItem('doublee_user')) || {};
-			localStorage.setItem('doublee_user', JSON.stringify({ ...storedUser, verificationStatus }));
+			if (storedUser.verificationStatus !== verificationStatus) {
+				localStorage.setItem('doublee_user', JSON.stringify({ ...storedUser, verificationStatus }));
+			}
 		}
 	}, [verificationStatus]);
 

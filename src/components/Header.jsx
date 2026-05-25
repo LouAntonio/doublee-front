@@ -22,7 +22,7 @@ import {
 import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
-import http from '../services/http';
+import { useStoreStatus } from '../hooks/queries/useDashboard';
 
 const Header = () => {
 	const cartCount = useCartStore((s) => s.getCartCount());
@@ -32,25 +32,8 @@ const Header = () => {
 	const navigate = useNavigate();
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const userMenuRef = useRef(null);
-	const [hasApprovedStore, setHasApprovedStore] = useState(false);
-
-	useEffect(() => {
-		let cancelled = false;
-		const fetchStoreStatus = async () => {
-			if (!isAuthenticated) {
-				if (!cancelled) setHasApprovedStore(false);
-				return;
-			}
-			try {
-				const data = await http.get('/stores/status');
-				if (!cancelled) setHasApprovedStore(data?.success && data?.data?.status === 'approved');
-			} catch {
-				if (!cancelled) setHasApprovedStore(false);
-			}
-		};
-		fetchStoreStatus();
-		return () => { cancelled = true; };
-	}, [isAuthenticated]);
+	const { data: storeStatus } = useStoreStatus();
+	const hasApprovedStore = storeStatus === 'approved';
 
 	// Close user menu when clicking outside
 	useEffect(() => {
