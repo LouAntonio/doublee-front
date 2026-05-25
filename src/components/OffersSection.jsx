@@ -20,7 +20,7 @@ const useOnSaleProducts = () =>
 	useQuery({
 		queryKey: ['products', 'on-sale'],
 		queryFn: async () => {
-			const res = await getOnSaleProducts(8);
+			const res = await getOnSaleProducts({ limit: 8 });
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar ofertas');
 			return (res.data?.products || []).map(normalizeForCard);
 		},

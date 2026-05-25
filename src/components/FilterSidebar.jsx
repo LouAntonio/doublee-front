@@ -64,7 +64,7 @@ const FilterSidebar = ({
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						onKeyDown={(e) => { if (e.key === 'Enter') onSearch(); }}
-						className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
+						className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
 					/>
 				</div>
 
@@ -110,7 +110,7 @@ const FilterSidebar = ({
 							placeholder="0 Kz"
 							value={priceRange.min}
 							onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
-							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
+							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
 						/>
 					</div>
 					<div>
@@ -123,7 +123,7 @@ const FilterSidebar = ({
 							placeholder="Sem limite"
 							value={priceRange.max}
 							onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
-							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none transition"
+							className="w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
 						/>
 					</div>
 				</div>

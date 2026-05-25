@@ -417,3 +417,92 @@
 	background-size: 200% 100%;
 	animation: catShimmer 1.5s ease-in-out infinite;
 }
+
+/* ── Promoções Page ── */
+
+/* Hero wave animation */
+@keyframes waveFloat {
+	0% { transform: translateX(0) translateY(0); }
+	25% { transform: translateX(-15px) translateY(5px); }
+	50% { transform: translateX(0) translateY(0); }
+	75% { transform: translateX(15px) translateY(-5px); }
+	100% { transform: translateX(0) translateY(0); }
+}
+
+.promocoes-wave {
+  animation: waveFloat 8s ease-in-out infinite;
+}
+
+.promocoes-wave-delayed {
+  animation: waveFloat 10s ease-in-out infinite reverse;
+}
+
+/* Countdown pulse when low on time */
+@keyframes countdownPulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+	50% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); }
+}
+
+.promocoes-countdown-pulse {
+	animation: countdownPulse 2s ease-in-out infinite;
+}
+
+/* Stagger fade-in-up helper */
+.promocoes-stagger {
+	opacity: 0;
+	animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Mobile filter drawer */
+@media (max-width: 1023px) {
+	.promocoes-drawer-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 40;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+	}
+
+	.promocoes-drawer-overlay.open {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.promocoes-drawer {
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 280px;
+		max-width: 80vw;
+		background: white;
+		z-index: 50;
+		transform: translateX(-100%);
+		transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+		overflow-y: auto;
+		box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+	}
+
+	.promocoes-drawer.open {
+		transform: translateX(0);
+	}
+}
+
+/* Empty state illustration */
+.promocoes-empty-icon {
+	animation: floatEmpty 3s ease-in-out infinite;
+}
+
+@keyframes floatEmpty {
+	0%, 100% { transform: translateY(0) rotate(-2deg); }
+	50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+/* Shimmer skeleton refinado */
+.promocoes-skeleton {
+	background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	animation: catShimmer 1.5s ease-in-out infinite;
+}

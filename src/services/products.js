@@ -27,8 +27,8 @@ export const getPromotions = () => http.get('/products/promotions');
 export const getRelatedProducts = (productId, limit = 8) =>
 	http.get(`/products/${productId}/related?limit=${limit}`);
 
-export const getOnSaleProducts = (limit = 8) =>
-	http.get(`/products/on-sale?limit=${limit}`);
+export const getOnSaleProducts = (params = {}) =>
+	http.get(`/products/on-sale${buildQuery(params)}`);
 
 export const createProduct = (data) =>
 	http.post('/products', data);

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import FilterSidebar from '../components/FilterSidebar';
 import ProductSkeleton from '../components/ProductSkeleton';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { IoChevronBack, IoChevronForward, IoFilter, IoClose, IoSearchOutline } from 'react-icons/io5';
 import { useQuery } from '@tanstack/react-query';
 import { getOnSaleProducts } from '../services/products';
 
@@ -48,6 +48,7 @@ const Promocoes = () => {
 	useDocumentTitle('Produtos em Promoção - Double E');
 
 	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	useEffect(() => {
 		const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
@@ -74,7 +75,7 @@ const Promocoes = () => {
 	if (featuredOnly) queryParams.featured = 'true';
 
 	const { data, isLoading } = useQuery({
-		queryKey: ['products', 'on-sale', queryParams, fetchTrigger],
+		queryKey: ['products', 'promocoes', queryParams, fetchTrigger],
 		queryFn: async () => {
 			const res = await getOnSaleProducts(queryParams);
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar promoções');
@@ -93,76 +94,149 @@ const Promocoes = () => {
 	const totalResults = data?.total || 0;
 	const totalPages = data?.totalPages || 1;
 
-	const paginate = (pageNumber) => setCurrentPage(pageNumber);
+	const triggerSearch = () => { setCurrentPage(1); setFetchTrigger(t => t + 1); };
+
+	const isUrgent = timeLeft.hours < 1;
 
 	return (
 		<>
 			<Header />
-			<div className="min-h-screen bg-gray-50 flex flex-col">
-				<div className="max-w-[1200px] mx-auto px-4 w-full flex-1 py-8">
-					<div
-						className="relative bg-cover bg-center text-white py-12 mb-8 shadow-lg rounded-xl overflow-hidden"
-						style={{ backgroundImage: "url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=2070&auto=format&fit=crop')" }}
-					>
-						<div className="absolute inset-0 bg-black/50 z-0"></div>
-						<div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-8">
-							<div className="mb-6 md:mb-0">
-								<h1 className="text-4xl font-extrabold mb-2 tracking-tight">Produtos em Promoção</h1>
-								<p className="text-gray-100 text-lg max-w-xl">
-                  Aproveite descontos exclusivos por tempo limitado. Corra antes que o estoque acabe!
+			<div className="min-h-screen bg-[#faf8f6] flex flex-col">
+				<div className="max-w-[1200px] mx-auto px-4 w-full flex-1">
+
+					{/* ── Hero Banner ── */}
+					<div className="relative mt-4 bg-gradient-to-b from-[#1a0a00] via-[#2d1300] to-[#3d1a00] text-white rounded-2xl overflow-hidden shadow-2xl">
+						{/* SVG Waves */}
+						<div className="absolute inset-0 overflow-hidden pointer-events-none">
+							<svg className="promocoes-wave absolute -top-10 -left-10 w-[120%] h-auto opacity-[0.08]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+								<path fill="#F97316" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,208C960,192,1056,160,1152,154.7C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/>
+							</svg>
+							<svg className="promocoes-wave-delayed absolute -bottom-10 -right-10 w-[120%] h-auto opacity-[0.05]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+								<path fill="#F97316" d="M0,96L48,122.7C96,149,192,203,288,218.7C384,235,480,213,576,186.7C672,160,768,128,864,138.7C960,149,1056,203,1152,213.3C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/>
+							</svg>
+							<svg className="promocoes-wave absolute top-1/2 -translate-y-1/2 w-full h-auto opacity-[0.04]" viewBox="0 0 1440 400" preserveAspectRatio="none">
+								<path fill="#F97316" d="M0,200 C360,100 1080,300 1440,200 L1440,400 L0,400Z"/>
+							</svg>
+						</div>
+
+						{/* Radial glow */}
+						<div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-orange-500/20 rounded-full blur-[120px] pointer-events-none" />
+
+						<div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-10 md:py-14">
+							<div className="mb-6 md:mb-0 text-center md:text-left">
+								<div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-400/20 rounded-full px-4 py-1.5 text-orange-200 text-xs font-semibold uppercase tracking-wider mb-4 promocoes-stagger" style={{ animationDelay: '0ms' }}>
+									<span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping-soft" />
+									Ofertas por tempo limitado
+								</div>
+								<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 tracking-tight" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+									Produtos em<br />
+									<span className="text-orange-400">Promoção</span>
+								</h1>
+								<p className="text-orange-100/80 text-base md:text-lg max-w-xl leading-relaxed">
+									Aproveite descontos exclusivos por tempo limitado. Corra antes que o estoque acabe!
 								</p>
 							</div>
-							<div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center min-w-[300px]">
-								<p className="text-blue-50 text-sm font-semibold uppercase tracking-wider mb-3">Termina em:</p>
-								<div className="flex justify-center gap-4 text-3xl font-bold font-mono">
-									<div className="bg-white text-blue-800 rounded-lg p-2 w-16 shadow-lg">
-										{pad(timeLeft.hours)}
-										<span className="block text-xs font-sans font-normal text-blue-600 mt-1">HORAS</span>
+
+							<div className={`bg-orange-500/10 backdrop-blur-md border border-orange-400/20 rounded-xl text-center min-w-[280px] md:min-w-[300px] p-6 promocoes-stagger ${isUrgent ? 'promocoes-countdown-pulse' : ''}`} style={{ animationDelay: '150ms' }}>
+								<p className="text-orange-200 text-xs font-semibold uppercase tracking-[0.15em] mb-3">
+									<IoSearchOutline size={14} className="inline mr-1" />
+									Termina em:
+								</p>
+								<div className="flex justify-center gap-3">
+									<div className="bg-white/10 backdrop-blur rounded-lg p-2 w-16 shadow-inner shadow-orange-500/10 border border-orange-400/10">
+										<span className="block text-2xl md:text-3xl font-bold text-white tabular-nums" style={{ fontFamily: '"Fredoka", sans-serif' }}>{pad(timeLeft.hours)}</span>
+										<span className="block text-[10px] font-semibold text-orange-300/80 mt-0.5 tracking-widest">HORAS</span>
 									</div>
-									<span className="self-center -mt-6">:</span>
-									<div className="bg-white text-blue-800 rounded-lg p-2 w-16 shadow-lg">
-										{pad(timeLeft.minutes)}
-										<span className="block text-xs font-sans font-normal text-blue-600 mt-1">MIN</span>
+									<span className="self-center text-orange-400/60 text-xl font-bold -mt-4">:</span>
+									<div className="bg-white/10 backdrop-blur rounded-lg p-2 w-16 shadow-inner shadow-orange-500/10 border border-orange-400/10">
+										<span className="block text-2xl md:text-3xl font-bold text-white tabular-nums" style={{ fontFamily: '"Fredoka", sans-serif' }}>{pad(timeLeft.minutes)}</span>
+										<span className="block text-[10px] font-semibold text-orange-300/80 mt-0.5 tracking-widest">MIN</span>
 									</div>
-									<span className="self-center -mt-6">:</span>
-									<div className="bg-white text-blue-800 rounded-lg p-2 w-16 shadow-lg">
-										{pad(timeLeft.seconds)}
-										<span className="block text-xs font-sans font-normal text-blue-600 mt-1">SEG</span>
+									<span className="self-center text-orange-400/60 text-xl font-bold -mt-4">:</span>
+									<div className="bg-white/10 backdrop-blur rounded-lg p-2 w-16 shadow-inner shadow-orange-500/10 border border-orange-400/10">
+										<span className="block text-2xl md:text-3xl font-bold text-white tabular-nums" style={{ fontFamily: '"Fredoka", sans-serif' }}>{pad(timeLeft.seconds)}</span>
+										<span className="block text-[10px] font-semibold text-orange-300/80 mt-0.5 tracking-widest">SEG</span>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div className="flex gap-6">
-						<FilterSidebar
-							priceRange={priceRange}
-							setPriceRange={setPriceRange}
-							selectedCategories={selectedCategories}
-							setSelectedCategories={setSelectedCategories}
-							rating={rating}
-							setRating={setRating}
-							featuredOnly={featuredOnly}
-							setFeaturedOnly={setFeaturedOnly}
-							onSearch={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
-							onClear={() => { setCurrentPage(1); setFetchTrigger(t => t + 1); }}
-						/>
+					{/* ── Content ── */}
+					<div className="flex gap-6 py-8 relative">
+						{/* Desktop sidebar */}
+						<div className="hidden lg:block">
+							<FilterSidebar
+								priceRange={priceRange}
+								setPriceRange={setPriceRange}
+								selectedCategories={selectedCategories}
+								setSelectedCategories={setSelectedCategories}
+								rating={rating}
+								setRating={setRating}
+								featuredOnly={featuredOnly}
+								setFeaturedOnly={setFeaturedOnly}
+								onSearch={triggerSearch}
+								onClear={triggerSearch}
+							/>
+						</div>
 
-						<div className="flex-1">
-							<div className="flex items-center justify-between mb-6 bg-white p-4 rounded-lg shadow-sm">
-								<div className="flex items-center gap-2">
-									<span className="w-2 h-8 bg-blue-600 rounded-full inline-block"></span>
-									<div>
-										<h2 className="text-xl font-bold text-gray-800">Destaques do Dia</h2>
-										<span className="text-xs text-gray-500 font-medium">{totalResults} produtos encontrados</span>
+						{/* Mobile drawer overlay */}
+						{drawerOpen && (
+							<div className="promocoes-drawer-overlay open lg:hidden" onClick={() => setDrawerOpen(false)} />
+						)}
+
+						{/* Mobile drawer */}
+						<div className={`promocoes-drawer lg:hidden ${drawerOpen ? 'open' : ''}`}>
+							<div className="flex items-center justify-between p-4 border-b border-gray-100">
+								<h3 className="text-lg font-bold text-gray-800" style={{ fontFamily: '"Fredoka", sans-serif' }}>Filtros</h3>
+								<button
+									onClick={() => setDrawerOpen(false)}
+									className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors cursor-pointer"
+								>
+									<IoClose size={20} />
+								</button>
+							</div>
+							<div className="p-4">
+								<FilterSidebar
+									priceRange={priceRange}
+									setPriceRange={setPriceRange}
+									selectedCategories={selectedCategories}
+									setSelectedCategories={setSelectedCategories}
+									rating={rating}
+									setRating={setRating}
+									featuredOnly={featuredOnly}
+									setFeaturedOnly={setFeaturedOnly}
+									onSearch={() => { setDrawerOpen(false); triggerSearch(); }}
+									onClear={() => { setDrawerOpen(false); triggerSearch(); }}
+								/>
+							</div>
+						</div>
+
+						{/* Product area */}
+						<div className="flex-1 min-w-0">
+							{/* Sort header */}
+							<div className="flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+								<div className="flex items-center gap-3">
+									<button
+										onClick={() => setDrawerOpen(true)}
+										className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors cursor-pointer"
+									>
+										<IoFilter size={18} />
+									</button>
+									<div className="flex items-center gap-2">
+										<span className="w-1.5 h-8 bg-orange-500 rounded-full inline-block" />
+										<div>
+											<h2 className="text-xl font-bold text-gray-800" style={{ fontFamily: '"Fredoka", sans-serif' }}>Destaques do Dia</h2>
+											<span className="text-xs text-gray-500 font-medium">{totalResults} produtos encontrados</span>
+										</div>
 									</div>
 								</div>
 								<div className="flex items-center gap-3">
-									<span className="text-sm text-gray-600">Ordenar por:</span>
+									<span className="text-sm text-gray-500 hidden sm:inline">Ordenar por:</span>
 									<select
 										value={sortOption}
 										onChange={(e) => setSortOption(e.target.value)}
-										className="p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 bg-white"
+										className="p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 bg-white text-gray-700"
 									>
 										<option value="relevance">Relevância</option>
 										<option value="lowest">Menor Preço</option>
@@ -172,40 +246,102 @@ const Promocoes = () => {
 								</div>
 							</div>
 
+							{/* Loading state */}
 							{isLoading ? (
-								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+								<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
 									{Array.from({ length: itemsPerPage }).map((_, i) => (
-										<ProductSkeleton key={i} />
+										<div key={i} className="promocoes-skeleton rounded-xl p-0" style={{ animationDelay: `${(i % 8) * 50}ms` }}>
+											<ProductSkeleton />
+										</div>
 									))}
 								</div>
-							) : (
-								<ProductGrid products={offers} />
-							)}
+							) : offers.length > 0 ? (
+								<>
+									<ProductGrid products={offers} />
 
-							{totalPages > 1 && (
-								<div className="flex justify-center items-center mt-8 gap-2">
+									{/* Pagination */}
+									{totalPages > 1 && (
+										<div className="flex justify-center items-center mt-10 gap-2">
+											<button
+												onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+												disabled={currentPage === 1}
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
+													currentPage === 1
+														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												}`}
+											>
+												<IoChevronBack size={18} />
+											</button>
+											{Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => {
+												const pageNum = totalPages <= 7 ? i + 1 : (() => {
+													if (currentPage <= 3) return i + 1;
+													if (currentPage >= totalPages - 2) return totalPages - 6 + i;
+													return currentPage - 3 + i;
+												})();
+												const isActive = currentPage === pageNum;
+												return (
+													<button
+														key={pageNum}
+														onClick={() => setCurrentPage(pageNum)}
+														className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-semibold cursor-pointer text-sm ${
+															isActive
+																? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20 scale-105'
+																: 'bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+														}`}
+													>
+														{pageNum}
+													</button>
+												);
+											})}
+											<button
+												onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+												disabled={currentPage === totalPages}
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
+													currentPage === totalPages
+														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												}`}
+											>
+												<IoChevronForward size={18} />
+											</button>
+										</div>
+									)}
+								</>
+							) : (
+								/* Empty state */
+								<div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+									<div className="promocoes-empty-icon mb-6">
+										<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<rect x="20" y="35" width="80" height="65" rx="8" stroke="#F97316" strokeWidth="2.5" fill="#FFF7ED" />
+											<path d="M25 40L45 60" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
+											<path d="M95 40L75 60" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
+											<path d="M20 50L60 55L100 50" stroke="#F97316" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 3" />
+											<circle cx="60" cy="75" r="12" stroke="#F97316" strokeWidth="2.5" fill="#FFEDD5" />
+											<path d="M60 69V81M54 75H66" stroke="#F97316" strokeWidth="2" strokeLinecap="round" />
+											<circle cx="35" cy="28" r="12" stroke="#F97316" strokeWidth="2.5" fill="none" strokeDasharray="4 3" />
+											<path d="M31 24L39 32M39 24L31 32" stroke="#F97316" strokeWidth="2" strokeLinecap="round" />
+										</svg>
+									</div>
+									<h3 className="text-xl font-bold text-gray-700 mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+										Nenhuma promoção encontrada
+									</h3>
+									<p className="text-gray-500 text-sm max-w-md mb-6">
+										Nenhum produto corresponde aos filtros selecionados. Tente ajustar os critérios de busca.
+									</p>
 									<button
-										onClick={() => paginate(Math.max(1, currentPage - 1))}
-										disabled={currentPage === 1}
-										className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-colors cursor-pointer ${currentPage === 1 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'}`}
+										onClick={() => {
+											setPriceRange({ min: '', max: '' });
+											setSelectedCategories([]);
+											setRating(null);
+											setFeaturedOnly(false);
+											setCurrentPage(1);
+											setFetchTrigger(t => t + 1);
+										}}
+										className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold text-sm py-2.5 px-6 rounded-lg transition-colors cursor-pointer"
 									>
-										<IoChevronBack size={18} />
-									</button>
-									{Array.from({ length: totalPages }).map((_, i) => (
-										<button
-											key={i}
-											onClick={() => paginate(i + 1)}
-											className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-medium cursor-pointer ${currentPage === i + 1 ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'}`}
-										>
-											{i + 1}
-										</button>
-									))}
-									<button
-										onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-										disabled={currentPage === totalPages}
-										className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-colors cursor-pointer ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-orange-500 border-gray-200'}`}
-									>
-										<IoChevronForward size={18} />
+										<IoSearchOutline size={16} />
+										Limpar Filtros
 									</button>
 								</div>
 							)}
