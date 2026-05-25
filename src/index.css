@@ -506,3 +506,65 @@
 	background-size: 200% 100%;
 	animation: catShimmer 1.5s ease-in-out infinite;
 }
+
+/* ── Vender Page ── */
+
+/* Hero wave animation (reutiliza a mesma lógica do Promocoes) */
+.vender-wave {
+  animation: waveFloat 8s ease-in-out infinite;
+}
+
+.vender-wave-delayed {
+  animation: waveFloat 10s ease-in-out infinite reverse;
+}
+
+/* Stagger fade-in-up para os elementos da página */
+.vender-stagger {
+	opacity: 0;
+	animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Hero decorative radial pattern */
+.vender-hero-pattern {
+	background-image:
+		radial-gradient(circle at 15% 30%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+		radial-gradient(circle at 85% 20%, rgba(249, 115, 22, 0.05) 0%, transparent 45%),
+		radial-gradient(circle at 50% 85%, rgba(249, 115, 22, 0.06) 0%, transparent 40%);
+}
+
+/* Stats section geometric pattern */
+.vender-stats-pattern {
+	background-image:
+		radial-gradient(circle at 30% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+		radial-gradient(circle at 70% 50%, rgba(255,255,255,0.04) 0%, transparent 40%),
+		linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+		linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+		linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+	background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px, 60px 60px, 60px 60px;
+	background-position: 0 0, 0 0, 0 0, 0 30px, 30px -30px, -30px 0px;
+}
+
+/* Card hover lift */
+.vender-card-hover {
+	transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vender-card-hover:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 12px 40px rgba(249, 115, 22, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Step number large background */
+.vender-step-number {
+	font-size: 5rem;
+	line-height: 1;
+	font-weight: 700;
+	color: rgba(249, 115, 22, 0.4);
+	position: absolute;
+	top: -0.25rem;
+	right: 0.75rem;
+	font-family: "Fredoka", sans-serif;
+	pointer-events: none;
+	user-select: none;
+}
