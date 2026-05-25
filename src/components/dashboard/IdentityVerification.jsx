@@ -36,11 +36,11 @@ const uploadToCloudinary = async (file, folder) => {
 // ─── Componente de input de ficheiro ─────────────────────────────────────────
 const FileInput = ({ label, icon, name, multiple, accept, onChange, preview }) => (
 	<div className="space-y-2">
-		<label className="block text-sm font-medium text-gray-700">{label}</label>
-		<label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all">
+		<label className="block text-sm font-medium text-[#1C1917]">{label}</label>
+		<label className="flex flex-col items-center justify-center w-full h-32 border-2 border-accent/20 border-dashed rounded-2xl cursor-pointer bg-white hover:bg-sand transition-all">
 			<div className="flex flex-col items-center justify-center pt-5 pb-6 pointer-events-none">
 				<span className="text-2xl mb-2">{icon}</span>
-				<p className="text-sm text-gray-500 text-center px-4">
+				<p className="text-sm text-[#78716C] text-center px-4">
 					{preview || (multiple ? 'Clique para seleccionar' : 'Clique para carregar')}
 				</p>
 			</div>
@@ -53,10 +53,10 @@ const FileInput = ({ label, icon, name, multiple, accept, onChange, preview }) =
 
 const ProgressBar = ({ current, total, label }) => (
 	<div className="space-y-1">
-		<p className="text-sm text-gray-500">{label}</p>
-		<div className="w-full bg-gray-200 rounded-full h-2">
+		<p className="text-sm text-[#78716C]">{label}</p>
+		<div className="w-full bg-sand rounded-full h-2">
 			<div
-				className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+				className="bg-accent h-2 rounded-full transition-all duration-300"
 				style={{ width: `${(current / total) * 100}%` }}
 			/>
 		</div>
@@ -143,17 +143,17 @@ const IdentityVerification = () => {
 	if (verificationStatus === null) {
 		return (
 			<div className="flex items-center justify-center py-20">
-				<span className="text-gray-400 text-sm">A carregar estado de verificação...</span>
+				<span className="text-[#78716C] text-sm font-body">A carregar estado de verificação...</span>
 			</div>
 		);
 	}
 
 	if (verificationStatus === 'pending') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">⏳</span>
-				<h2 className="text-2xl font-bold text-gray-900">Verificação em análise</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Verificação em análise</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     Os seus documentos estão a ser analisados. Receberá uma notificação assim que a verificação for concluída.
 				</p>
 			</div>
@@ -162,10 +162,10 @@ const IdentityVerification = () => {
 
 	if (verificationStatus === 'verified') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">✅</span>
-				<h2 className="text-2xl font-bold text-gray-900">Identidade verificada!</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Identidade verificada!</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     A sua identidade foi verificada com sucesso. Já pode criar a sua loja e vender produtos.
 				</p>
 			</div>
@@ -173,18 +173,18 @@ const IdentityVerification = () => {
 	}
 
 	return (
-		<div>
-			<h2 className="text-2xl font-bold text-gray-900 mb-6">Verificação de Identidade</h2>
-			<p className="text-gray-500 mb-8">
+		<div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+			<h2 className="text-2xl font-bold text-[#1C1917] mb-6 font-display">Verificação de Identidade</h2>
+			<p className="text-[#78716C] mb-8 font-body leading-relaxed">
                 Para criar uma loja e vender produtos, precisamos confirmar a sua identidade.
-                Envie uma foto nítida da <strong>frente</strong> e do <strong>verso</strong> do seu BI e <strong>3 selfies</strong>.
+                Envie uma foto nítida da <strong className="text-[#1C1917]">frente</strong> e do <strong className="text-[#1C1917]">verso</strong> do seu BI e <strong className="text-[#1C1917]">3 selfies</strong>.
 			</p>
 
 			<form onSubmit={handleSubmit} className="max-w-2xl space-y-8">
 
 				{/* BI — frente e verso */}
 				<div className="space-y-4">
-					<h3 className="text-base font-semibold text-gray-800">Bilhete de Identidade (BI)</h3>
+					<h3 className="text-base font-semibold text-[#1C1917] font-display">Bilhete de Identidade (BI)</h3>
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<FileInput
 							label="Frente do BI"
@@ -207,7 +207,7 @@ const IdentityVerification = () => {
 
 				{/* 3 Selfies */}
 				<div className="space-y-4">
-					<h3 className="text-base font-semibold text-gray-800">3 Selfies de Identificação</h3>
+					<h3 className="text-base font-semibold text-[#1C1917] font-display">3 Selfies de Identificação</h3>
 					<FileInput
 						label="Seleccione 3 fotos"
 						icon="📸"
@@ -224,7 +224,7 @@ const IdentityVerification = () => {
 					{files.selfies.length > 0 && (
 						<div className="flex gap-3 flex-wrap">
 							{files.selfies.map((photo, i) => (
-								<span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-lg truncate max-w-[120px]">
+								<span key={i} className="text-xs bg-sand text-[#78716C] px-2 py-1 rounded-lg truncate max-w-[120px]">
 									{photo.name}
 								</span>
 							))}
@@ -245,7 +245,7 @@ const IdentityVerification = () => {
 					<button
 						type="submit"
 						disabled={isLoading}
-						className="w-full md:w-auto px-10 py-4 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-all shadow-xl shadow-primary-100 disabled:opacity-60 cursor-pointer"
+						className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-accent text-white font-bold rounded-full hover:bg-accent-dark transition-all duration-300 shadow-xl shadow-accent/20 hover:-translate-y-0.5 disabled:opacity-60 cursor-pointer"
 					>
 						{isLoading ? 'A enviar...' : 'Enviar para Verificação'}
 					</button>

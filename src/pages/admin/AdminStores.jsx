@@ -4,28 +4,28 @@ import { notyf } from '../../utils/notyf';
 import { useAdminStoresList, useUpdateStoreStatus } from '../../hooks/queries/useAdminStores';
 
 const StoreSkeleton = () => (
-	<tr className="animate-pulse border-b border-slate-100 last:border-0">
+	<tr className="animate-pulse border-b border-accent/10 last:border-0">
 		<td className="px-6 py-4 whitespace-nowrap">
 			<div className="flex items-center gap-4">
-				<div className="w-10 h-10 rounded-xl bg-slate-200"></div>
+				<div className="w-10 h-10 rounded-full bg-accent/20"></div>
 				<div className="space-y-2">
-					<div className="h-4 bg-slate-200 rounded w-32"></div>
-					<div className="h-3 bg-slate-100 rounded w-24"></div>
+					<div className="h-4 bg-accent/20 rounded w-32"></div>
+					<div className="h-3 bg-accent/10 rounded w-24"></div>
 				</div>
 			</div>
 		</td>
 		<td className="px-6 py-4 whitespace-nowrap">
 			<div className="space-y-2">
-				<div className="h-4 bg-slate-200 rounded w-36"></div>
-				<div className="h-3 bg-slate-100 rounded w-28"></div>
+				<div className="h-4 bg-accent/20 rounded w-36"></div>
+				<div className="h-3 bg-accent/10 rounded w-28"></div>
 			</div>
 		</td>
 		<td className="px-6 py-4 whitespace-nowrap">
-			<div className="h-6 w-20 bg-slate-200 rounded-full"></div>
+			<div className="h-6 w-20 bg-accent/20 rounded-full"></div>
 		</td>
 		<td className="px-6 py-4 whitespace-nowrap text-right">
 			<div className="flex justify-end gap-2">
-				<div className="h-8 w-20 bg-slate-200 rounded-lg"></div>
+				<div className="h-8 w-20 bg-accent/20 rounded-lg"></div>
 			</div>
 		</td>
 	</tr>
@@ -104,16 +104,16 @@ const AdminStores = () => {
 	return (
 		<div className="space-y-6 animate-fade-in-up">
 			{/* Page Header */}
-			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-accent/10">
 				<div>
-					<h2 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-						<svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+					<h2 className="text-2xl font-display font-bold text-[#1C1917] tracking-tight flex items-center gap-2">
+						<svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
 						Gestão de Lojas
 					</h2>
-					<p className="text-sm text-slate-500 mt-1">Aprove ou suspenda as lojas da plataforma e veja as suas informações.</p>
+					<p className="text-sm text-[#78716C] mt-1 font-body">Aprove ou suspenda as lojas da plataforma e veja as suas informações.</p>
 				</div>
 				<form onSubmit={handleSearch} className="flex w-full sm:w-auto mt-2 sm:mt-0 relative group">
-					<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 transition-colors">
+					<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#78716C] transition-colors">
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
 					</div>
 					<input
@@ -121,27 +121,27 @@ const AdminStores = () => {
 						placeholder="Buscar loja..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-l-xl border border-slate-200 bg-slate-50 text-sm transition-all outline-none"
+						className="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-l-xl border border-accent/20 bg-sand/50 text-sm transition-all outline-none font-body"
 					/>
-					<button type="submit" className="px-5 py-2.5 border border-transparent text-sm font-semibold rounded-r-xl text-white bg-slate-800 hover:bg-slate-900 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+					<button type="submit" className="px-5 py-2.5 border border-transparent text-sm font-display font-semibold rounded-r-xl text-white bg-accent hover:bg-accent-dark transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
 						Buscar
 					</button>
 				</form>
 			</div>
 
 			{/* Stores Table */}
-			<div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+			<div className="bg-white rounded-3xl shadow-sm border border-accent/10 overflow-hidden flex flex-col">
 				<div className="overflow-x-auto">
 					<table className="w-full text-left border-collapse">
 						<thead>
-							<tr className="bg-slate-50/80 border-b border-slate-100">
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Perfil da Loja</th>
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Proprietário & Contacto</th>
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status Atual</th>
-								<th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Ações de Gestão</th>
+							<tr className="bg-sand/50 border-b border-accent/10">
+								<th className="px-6 py-4 text-xs font-display font-bold text-[#78716C] uppercase tracking-wider">Perfil da Loja</th>
+								<th className="px-6 py-4 text-xs font-display font-bold text-[#78716C] uppercase tracking-wider">Proprietário & Contacto</th>
+								<th className="px-6 py-4 text-xs font-display font-bold text-[#78716C] uppercase tracking-wider">Status Atual</th>
+								<th className="px-6 py-4 text-xs font-display font-bold text-[#78716C] uppercase tracking-wider text-right">Ações de Gestão</th>
 							</tr>
 						</thead>
-						<tbody className="bg-white divide-y divide-slate-100 relative">
+						<tbody className="bg-white divide-y divide-accent/10 relative">
 							{loading ? (
 								<>
 									<StoreSkeleton />
@@ -152,25 +152,25 @@ const AdminStores = () => {
 								</>
 							) : stores.length > 0 ? (
 								stores.map((store) => (
-									<tr key={store.id} className="hover:bg-slate-50/80 transition-colors group">
+									<tr key={store.id} className="hover:bg-sand/50 transition-colors group">
 										<td className="px-6 py-4 whitespace-nowrap">
 											<div className="flex items-center gap-4">
 												{store.logo ? (
-													<img src={store.logo} alt={store.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shadow-sm" />
+													<img src={store.logo} alt={store.name} className="w-10 h-10 rounded-full object-cover border border-accent/20 shadow-sm" />
 												) : (
-													<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 text-orange-700 font-bold flex items-center justify-center uppercase shadow-sm border border-orange-200/50">
+													<div className="w-10 h-10 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center uppercase shadow-sm border border-accent/20">
 														{store.name.charAt(0)}
 													</div>
 												)}
 												<div>
-													<div className="text-sm font-bold text-slate-800 group-hover:text-orange-600 transition-colors">{store.name}</div>
-													<div className="text-xs text-slate-500 font-medium mt-0.5">{store.location || store.province || 'Localização não informada'}</div>
+													<div className="text-sm font-display font-bold text-[#1C1917] group-hover:text-accent transition-colors">{store.name}</div>
+													<div className="text-xs text-[#78716C] font-body mt-0.5">{store.location || store.province || 'Localização não informada'}</div>
 												</div>
 											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="text-sm font-medium text-slate-700">{store.user?.name} {store.user?.surname}</div>
-											<div className="text-xs text-slate-500 mt-0.5">{store.user?.email || store.email} • {store.user?.phone || store.phone || 'Sem telemóvel'}</div>
+											<div className="text-sm font-body font-medium text-[#1C1917]">{store.user?.name} {store.user?.surname}</div>
+											<div className="text-xs text-[#78716C] mt-0.5">{store.user?.email || store.email} • {store.user?.phone || store.phone || 'Sem telemóvel'}</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ const AdminStores = () => {
 													store.status === 'pending' ? 'bg-amber-500' :
 														'bg-rose-500'
 												}`}></span>
-												<span className={`text-sm font-bold ${store.status === 'approved' ? 'text-emerald-700' :
+												<span className={`text-sm font-display font-bold ${store.status === 'approved' ? 'text-emerald-700' :
 													store.status === 'pending' ? 'text-amber-700' :
 														'text-rose-700'
 												}`}>
@@ -192,7 +192,7 @@ const AdminStores = () => {
 											<div className="flex justify-end gap-2">
 												<button
 													onClick={() => handleViewDetails(store.id)}
-													className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 hover:border-transparent transition-all shadow-sm"
+													className="px-3 py-1.5 rounded-lg text-xs font-display font-bold bg-accent/10 text-accent hover:bg-accent hover:text-white border border-accent/20 hover:border-transparent transition-all shadow-sm cursor-pointer"
 												>
 													Ver Detalhes
 												</button>
@@ -203,10 +203,10 @@ const AdminStores = () => {
 							) : (
 								<tr>
 									<td colSpan="4" className="px-6 py-16 text-center">
-										<div className="flex flex-col items-center justify-center text-slate-400">
-											<svg className="w-12 h-12 mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-											<p className="text-base font-semibold text-slate-600">Nenhuma loja encontrada.</p>
-											<p className="text-sm mt-1">Ainda não existem lojas cadastradas na plataforma.</p>
+										<div className="flex flex-col items-center justify-center text-[#78716C]">
+											<svg className="w-12 h-12 mb-3 text-accent/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+											<p className="text-base font-display font-semibold text-[#1C1917]">Nenhuma loja encontrada.</p>
+											<p className="text-sm mt-1 font-body">Ainda não existem lojas cadastradas na plataforma.</p>
 										</div>
 									</td>
 								</tr>
@@ -217,22 +217,22 @@ const AdminStores = () => {
 
 				{/* Pagination Controls */}
 				{!loading && pagination.totalPages > 1 && (
-					<div className="bg-slate-50/50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+					<div className="bg-sand/50 px-6 py-4 border-t border-accent/10 flex items-center justify-between">
 						<button
 							disabled={pagination.page <= 1}
 							onClick={() => setPage((prev) => prev - 1)}
-							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+							className="flex items-center gap-2 px-4 py-2 bg-white border border-accent/20 text-sm font-display font-semibold rounded-xl text-[#78716C] hover:bg-sand hover:border-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
 							Anterior
 						</button>
-						<span className="text-sm font-medium text-slate-600 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
-							Página <span className="font-bold text-slate-900">{pagination.page}</span> de <span className="font-bold text-slate-900">{pagination.totalPages}</span>
+						<span className="text-sm font-body font-medium text-[#78716C] bg-white px-4 py-2 rounded-xl border border-accent/20 shadow-sm">
+							Página <span className="font-bold text-[#1C1917]">{pagination.page}</span> de <span className="font-bold text-[#1C1917]">{pagination.totalPages}</span>
 						</span>
 						<button
 							disabled={pagination.page >= pagination.totalPages}
 							onClick={() => setPage((prev) => prev + 1)}
-							className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+							className="flex items-center gap-2 px-4 py-2 bg-white border border-accent/20 text-sm font-display font-semibold rounded-xl text-[#78716C] hover:bg-sand hover:border-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
 						>
 							Próxima
 							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
@@ -243,11 +243,11 @@ const AdminStores = () => {
 
 			{/* Store Details Modal */}
 			{isModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-					<div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-						<div className="flex justify-between items-center p-6 border-b border-slate-100">
-							<h3 className="text-xl font-bold text-slate-800">Detalhes da Loja</h3>
-							<button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sand/80 backdrop-blur-sm animate-fade-in">
+					<div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+						<div className="flex justify-between items-center p-6 border-b border-accent/10">
+							<h3 className="text-xl font-display font-bold text-[#1C1917]">Detalhes da Loja</h3>
+							<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors">
 								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
 							</button>
 						</div>
@@ -255,33 +255,27 @@ const AdminStores = () => {
 						<div className="p-6 overflow-y-auto flex-1">
 							{detailsLoading ? (
 								<div className="flex flex-col items-center justify-center py-12">
-									<svg className="w-8 h-8 text-indigo-500 animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-									<p className="text-slate-500 font-medium">A carregar detalhes...</p>
+									<svg className="w-8 h-8 text-accent animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+									<p className="text-[#78716C] font-body">A carregar detalhes...</p>
 								</div>
 							) : storeDetails ? (
 								<div className="space-y-6">
 									{/* Store Info */}
 									<div className="flex items-start gap-4">
 										{storeDetails.logo ? (
-											<img src={storeDetails.logo} alt={storeDetails.name} className="w-16 h-16 rounded-xl object-cover border border-slate-200 shadow-sm" />
+											<img src={storeDetails.logo} alt={storeDetails.name} className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
 										) : (
-											<div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 text-orange-700 font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-orange-200/50">
+											<div className="w-16 h-16 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/20">
 												{storeDetails.name.charAt(0)}
 											</div>
 										)}
 										<div>
-											<h4 className="text-lg font-bold text-slate-800">{storeDetails.name}</h4>
-											<p className="text-sm text-slate-500 mt-1">{storeDetails.description || 'Sem descrição.'}</p>
+											<h4 className="text-lg font-display font-bold text-[#1C1917]">{storeDetails.name}</h4>
+											<p className="text-sm text-[#78716C] mt-1 font-body">{storeDetails.description || 'Sem descrição.'}</p>
 											<div className="mt-2 flex gap-2">
-												<span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-600">
-													Produtos: {storeDetails._count?.products || 0}
-												</span>
-												<span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-600">
-													Vendas: {storeDetails._count?.storeOrders || 0}
-												</span>
-												<span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold ${storeDetails.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
-													storeDetails.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-														'bg-rose-100 text-rose-700'
+												<span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-display font-bold ${storeDetails.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+													storeDetails.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+														'bg-rose-50 text-rose-700 border border-rose-200'
 												}`}>
 													Estado: {storeDetails.status === 'approved' ? 'Aprovada' :
 														storeDetails.status === 'pending' ? 'Pendente' :
@@ -291,91 +285,91 @@ const AdminStores = () => {
 										</div>
 									</div>
 
-									<hr className="border-slate-100" />
+									<hr className="border-accent/10" />
 
 									{/* Owner Info */}
 									<div>
-										<h5 className="text-sm font-bold text-slate-800 mb-3">Detalhes do Proprietário</h5>
-										<div className="bg-slate-50 rounded-xl p-4 border border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes do Proprietário</h5>
+										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Nome</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.user?.name} {storeDetails.user?.surname}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Nome</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.name} {storeDetails.user?.surname}</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Email</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.user?.email || storeDetails.email}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Email</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.email || storeDetails.email}</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Telefone</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.user?.phone || storeDetails.phone || 'N/A'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Telefone</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.phone || storeDetails.phone || 'N/A'}</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Localização</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.location || storeDetails.province || 'N/A'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Localização</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.location || storeDetails.province || 'N/A'}</span>
 											</div>
 										</div>
 									</div>
 
-									<hr className="border-slate-100" />
+									<hr className="border-accent/10" />
 
 									{/* Store Operation Info */}
 									<div>
-										<h5 className="text-sm font-bold text-slate-800 mb-3">Detalhes de Operação & Desempenho</h5>
-										<div className="bg-slate-50 rounded-xl p-4 border border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes de Operação & Desempenho</h5>
+										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Horário de Funcionamento</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.workingHours || 'Não definido'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Horário de Funcionamento</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.workingHours || 'Não definido'}</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Avaliação</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Avaliação</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
 													{storeDetails.rating ? `${Number(storeDetails.rating).toFixed(1)} ⭐ (${storeDetails.qtdRatings} avaliações)` : 'Sem avaliações'}
 												</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Total de Visualizações</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.views || 0} visualizações</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Visualizações</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.views || 0} visualizações</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Destaque</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Destaque</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
 													{storeDetails.featured ? `Sim ${storeDetails.featuredUntil ? `(Até ${new Date(storeDetails.featuredUntil).toLocaleDateString()})` : ''}` : 'Não'}
 												</span>
 											</div>
 										</div>
 									</div>
 
-									<hr className="border-slate-100" />
+									<hr className="border-accent/10" />
 
 									{/* Financial Info */}
 									<div>
-										<h5 className="text-sm font-bold text-slate-800 mb-3">Informações Bancárias</h5>
-										<div className="bg-slate-50 rounded-xl p-4 border border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Informações Bancárias</h5>
+										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Banco</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.bankName || 'Não definido'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Banco</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.bankName || 'Não definido'}</span>
 											</div>
 											<div>
-												<span className="block text-xs font-semibold text-slate-500 uppercase">IBAN</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.iban || 'Não definido'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">IBAN</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.iban || 'Não definido'}</span>
 											</div>
 											<div className="sm:col-span-2">
-												<span className="block text-xs font-semibold text-slate-500 uppercase">Conta PayPay</span>
-												<span className="block text-sm font-medium text-slate-800 mt-1">{storeDetails.paypayAccount || 'Não definido'}</span>
+												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Conta PayPay</span>
+												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.paypayAccount || 'Não definido'}</span>
 											</div>
 										</div>
 									</div>
 
-									<hr className="border-slate-100" />
+									<hr className="border-accent/10" />
 
 									{/* Action Section */}
 									<div>
-										<h5 className="text-sm font-bold text-slate-800 mb-3">Ações de Gestão</h5>
+										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Ações de Gestão</h5>
 										<div className="flex flex-wrap gap-2 mb-4">
 											{(storeDetails.status === 'pending' || storeDetails.status === 'suspended' || storeDetails.status === 'rejected') && (
 												<button
 													onClick={() => setSelectedAction('approved')}
-													className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${selectedAction === 'approved' ? 'bg-emerald-600 text-white border-transparent shadow-md' : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50'}`}
+													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'approved' ? 'bg-emerald-600 text-white border-transparent shadow-md' : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50'}`}
 												>
 													Aprovar Loja
 												</button>
@@ -383,7 +377,7 @@ const AdminStores = () => {
 											{(storeDetails.status === 'approved' || storeDetails.status === 'pending') && (
 												<button
 													onClick={() => setSelectedAction('suspended')}
-													className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${selectedAction === 'suspended' ? 'bg-amber-500 text-white border-transparent shadow-md' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50'}`}
+													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'suspended' ? 'bg-amber-500 text-white border-transparent shadow-md' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50'}`}
 												>
 													Suspender
 												</button>
@@ -391,7 +385,7 @@ const AdminStores = () => {
 											{(storeDetails.status === 'pending' || storeDetails.status === 'suspended') && (
 												<button
 													onClick={() => setSelectedAction('rejected')}
-													className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${selectedAction === 'rejected' ? 'bg-rose-600 text-white border-transparent shadow-md' : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'}`}
+													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'rejected' ? 'bg-rose-600 text-white border-transparent shadow-md' : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'}`}
 												>
 													Rejeitar
 												</button>
@@ -399,23 +393,23 @@ const AdminStores = () => {
 										</div>
 
 										{(selectedAction === 'rejected' || selectedAction === 'suspended') && (
-											<div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200 animate-fade-in-up mt-4">
+											<div className="space-y-4 bg-sand/50 p-4 rounded-2xl border border-accent/20 animate-fade-in-up mt-4">
 												<div>
-													<label className="block text-sm font-bold text-slate-700 mb-1">Assunto do E-mail</label>
+													<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Assunto do E-mail</label>
 													<input 
 														type="text" 
 														value={emailSubject}
 														onChange={(e) => setEmailSubject(e.target.value)}
-														className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+														className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
 														placeholder="Ex: Sua loja foi suspensa"
 													/>
 												</div>
 												<div>
-													<label className="block text-sm font-bold text-slate-700 mb-1">Corpo do E-mail (HTML permitido)</label>
+													<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Corpo do E-mail (HTML permitido)</label>
 													<textarea 
 														value={emailBody}
 														onChange={(e) => setEmailBody(e.target.value)}
-														className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+														className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
 														rows="4"
 														placeholder="<p>Lamentamos informar que...</p>"
 													></textarea>
@@ -427,17 +421,17 @@ const AdminStores = () => {
 							) : null}
 						</div>
 						
-						<div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+						<div className="p-4 border-t border-accent/10 bg-sand/50 flex justify-end gap-3">
 							<button 
 								onClick={() => setIsModalOpen(false)}
-								className="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+								className="px-4 py-2 rounded-lg text-sm font-display font-bold text-[#78716C] hover:bg-sand hover:border-accent/30 transition-colors border border-accent/20"
 							>
 								Cancelar
 							</button>
 							<button 
 								onClick={handleStatusChange}
 								disabled={!selectedAction || actionLoading['modal-status']}
-								className="px-4 py-2 rounded-lg text-sm font-bold bg-slate-800 text-white hover:bg-slate-900 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+								className="px-4 py-2 rounded-lg text-sm font-display font-bold bg-accent text-white hover:bg-accent-dark transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
 							>
 								{actionLoading['modal-status'] ? (
 									<><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> A Guardar...</>

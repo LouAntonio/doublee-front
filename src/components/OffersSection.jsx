@@ -20,7 +20,7 @@ const useOnSaleProducts = () =>
 	useQuery({
 		queryKey: ['products', 'on-sale'],
 		queryFn: async () => {
-			const res = await getOnSaleProducts(8);
+			const res = await getOnSaleProducts({ limit: 8 });
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar ofertas');
 			return (res.data?.products || []).map(normalizeForCard);
 		},
@@ -97,7 +97,7 @@ const OffersSection = () => {
 						flex: '0 0 320px', backgroundColor: '#fff', borderRadius: '6px', padding: '24px',
 						boxShadow: '0 1px 2px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column',
 					}}>
-						<h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px', color: '#333' }}>
+						<h2 className="font-display text-2xl text-[#1C1917] mb-5">
               Oferta do dia
 						</h2>
 						<div style={{ flex: 1 }}>
@@ -110,10 +110,8 @@ const OffersSection = () => {
 						boxShadow: '0 1px 2px rgba(0,0,0,0.08)', minWidth: '0',
 					}}>
 						<div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '20px' }}>
-							<h2 style={{ fontSize: '24px', fontWeight: '600', color: '#333', margin: 0 }}>Ofertas</h2>
-							<Link to="/promocoes" style={{
-								fontSize: '14px', color: '#3483fa', textDecoration: 'none', fontWeight: '600',
-							}}>
+							<h2 className="font-display text-2xl text-[#1C1917] m-0">Ofertas</h2>
+							<Link to="/promocoes" className="font-body text-sm text-accent hover:underline">
                 Mostrar todas as ofertas
 							</Link>
 						</div>

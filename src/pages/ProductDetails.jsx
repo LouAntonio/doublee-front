@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoCartOutline, IoStar, IoStarOutline, IoHeartOutline, IoHeart, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch, IoTimerOutline } from 'react-icons/io5';
+import { IoCartOutline, IoStarOutline, IoHeartOutline, IoHeart, IoChevronForward, IoShieldCheckmarkOutline, IoStorefrontOutline, IoCheckmarkCircleOutline, IoChatbubbleOutline, IoSearch, IoTimerOutline, IoStarSharp } from 'react-icons/io5';
 import Header from '../components/Header';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
@@ -35,7 +35,7 @@ const mapProduct = (p) => {
 		promotionEndDate: p.promotionalEndDate,
 		images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
 		category: p.categories?.[0]?.name || 'Diversos',
-		brand: 'Double E',
+		brand: 'Kusumba',
 		description: p.description || 'Sem descrição.',
 		rating: p.rating || 0,
 		reviews: p.qtdRatings || 0,
@@ -124,7 +124,7 @@ const ProductDetails = () => {
 		notyf.error(result.msg || 'Nao foi possivel atualizar a wishlist.');
 	};
 
-	useDocumentTitle(product ? product.title + ' - Double E' : 'Detalhes do Produto - Double E');
+	useDocumentTitle(product ? product.title + ' - Kusumba' : 'Detalhes do Produto - Kusumba');
 
 	useEffect(() => {
 		if (!isAuthenticated || !productId || isWishlisted(productId)) return;
@@ -154,8 +154,8 @@ const ProductDetails = () => {
 		for (let i = 1; i <= 5; i++) {
 			stars.push(
 				i <= rating
-					? <IoStar key={i} style={{ color: '#FFD700', fontSize: '18px' }} />
-					: <IoStarOutline key={i} style={{ color: '#FFD700', fontSize: '18px' }} />
+					? <IoStarSharp key={i} className="text-yellow-400 text-lg" />
+					: <IoStarOutline key={i} className="text-yellow-400 text-lg" />
 			);
 		}
 		return stars;
@@ -163,64 +163,52 @@ const ProductDetails = () => {
 
 	if (isLoading) {
 		return (
-			<div className="bg-[#f5f5f5] min-h-screen flex flex-col">
+			<div className="bg-sand min-h-screen flex flex-col">
 				<Header />
-				<div className="max-w-[1200px] w-full mx-auto p-5 flex-1 animate-pulse">
-					{/* Breadcrumb Skeleton */}
+				<div className="max-w-[1200px] w-full mx-auto px-4 py-6 flex-1 animate-pulse">
 					<div className="flex items-center gap-2 mb-6">
-						<div className="w-16 h-4 bg-gray-200 rounded" />
-						<IoChevronForward size={12} className="text-gray-300" />
-						<div className="w-20 h-4 bg-gray-200 rounded" />
-						<IoChevronForward size={12} className="text-gray-300" />
-						<div className="w-48 h-4 bg-gray-200 rounded" />
+						<div className="w-16 h-4 bg-[#E8E2DA] rounded" />
+						<IoChevronForward size={12} className="text-[#78716C]" />
+						<div className="w-20 h-4 bg-[#E8E2DA] rounded" />
+						<IoChevronForward size={12} className="text-[#78716C]" />
+						<div className="w-48 h-4 bg-[#E8E2DA] rounded" />
 					</div>
 
-					{/* Container Principal Skeleton */}
-					<div className="grid grid-cols-1 md:grid-cols-[auto_1fr_300px] bg-white rounded-lg overflow-hidden mb-8 shadow-sm border border-gray-100">
-						{/* Coluna Esquerda - Imagens */}
-						<div className="flex gap-3 p-6 border-r border-gray-100 items-start">
-							{/* Miniaturas Verticais */}
+					<div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_320px] bg-white rounded-xl shadow-sm border border-[#1C1917]/5 overflow-hidden mb-8">
+						<div className="flex gap-3 p-6 border-r border-[#1C1917]/10 items-start">
 							<div className="flex flex-col gap-2">
 								{[...Array(5)].map((_, i) => (
-									<div key={i} className="w-14 h-14 bg-gray-200 rounded-md" />
+									<div key={i} className="w-14 h-14 bg-[#E8E2DA] rounded-lg" />
 								))}
 							</div>
-							{/* Imagem Principal */}
-							<div className="w-[340px] h-[400px] bg-gray-200 rounded-md" />
+							<div className="w-[340px] h-[400px] bg-[#E8E2DA] rounded-lg" />
 						</div>
 
-						{/* Coluna Central - Info */}
-						<div className="p-6 border-r border-gray-100">
-							<div className="w-3/4 h-6 bg-gray-200 rounded mb-4" />
-							<div className="w-1/2 h-6 bg-gray-200 rounded mb-6" />
-
-							<div className="w-32 h-4 bg-gray-200 rounded mb-8 pb-4 border-b border-gray-100" />
-
-							<div className="w-40 h-10 bg-gray-200 rounded mb-4" />
-							<div className="w-24 h-4 bg-gray-200 rounded mb-6" />
-
-							<div className="w-3/4 h-16 bg-gray-100 rounded mb-6" />
+						<div className="p-6 border-r border-[#1C1917]/10">
+							<div className="w-3/4 h-6 bg-[#E8E2DA] rounded mb-4" />
+							<div className="w-1/2 h-6 bg-[#E8E2DA] rounded mb-6" />
+							<div className="w-32 h-4 bg-[#E8E2DA] rounded mb-8 pb-4 border-b border-[#1C1917]/10" />
+							<div className="w-40 h-10 bg-[#E8E2DA] rounded mb-4" />
+							<div className="w-24 h-4 bg-[#E8E2DA] rounded mb-6" />
+							<div className="w-3/4 h-16 bg-[#E8E2DA]/60 rounded mb-6" />
 						</div>
 
-						{/* Coluna Direita - Ação */}
 						<div className="p-6 flex flex-col gap-4">
-							<div className="w-full h-10 bg-gray-100 rounded" />
-							<div className="w-32 h-5 bg-gray-200 rounded mb-2" />
-							<div className="w-full h-10 bg-gray-200 rounded border border-gray-300" />
-							<div className="w-full h-12 bg-gray-200 rounded-lg shadow mt-2" />
-
-							<div className="w-full h-32 bg-gray-100 rounded-lg mt-4 border border-gray-200" />
+							<div className="w-full h-10 bg-[#E8E2DA]/60 rounded" />
+							<div className="w-32 h-5 bg-[#E8E2DA] rounded mb-2" />
+							<div className="w-full h-10 bg-[#E8E2DA] rounded border border-[#1C1917]/10" />
+							<div className="w-full h-12 bg-[#E8E2DA] rounded-full mt-2" />
+							<div className="w-full h-32 bg-[#E8E2DA]/60 rounded-xl mt-4 border border-[#1C1917]/10" />
 						</div>
 					</div>
 
-					{/* Descrição Skeleton */}
-					<div className="bg-white rounded-lg p-8 mb-4 shadow-sm border border-gray-100">
-						<div className="w-40 h-6 bg-gray-200 rounded mb-6" />
+					<div className="bg-white rounded-xl p-8 mb-4 shadow-sm border border-[#1C1917]/5">
+						<div className="w-40 h-6 bg-[#E8E2DA] rounded mb-6" />
 						<div className="space-y-3">
-							<div className="w-full h-4 bg-gray-200 rounded" />
-							<div className="w-full h-4 bg-gray-200 rounded" />
-							<div className="w-5/6 h-4 bg-gray-200 rounded" />
-							<div className="w-2/3 h-4 bg-gray-200 rounded" />
+							<div className="w-full h-4 bg-[#E8E2DA] rounded" />
+							<div className="w-full h-4 bg-[#E8E2DA] rounded" />
+							<div className="w-5/6 h-4 bg-[#E8E2DA] rounded" />
+							<div className="w-2/3 h-4 bg-[#E8E2DA] rounded" />
 						</div>
 					</div>
 				</div>
@@ -230,26 +218,17 @@ const ProductDetails = () => {
 
 	if (!product) {
 		return (
-			<div>
+			<div className="bg-sand min-h-screen flex flex-col">
 				<Header />
-				<div style={{
-					maxWidth: '1200px',
-					margin: '0 auto',
-					padding: '40px 20px',
-					textAlign: 'center'
-				}}>
-					<h2>Produto não encontrado</h2>
+				<div className="max-w-[1200px] mx-auto px-4 py-16 text-center flex-1 flex flex-col items-center justify-center">
+					<div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mb-6">
+						<IoStorefrontOutline size={36} className="text-accent" />
+					</div>
+					<h2 className="font-display text-3xl text-[#1C1917] mb-3">Produto não encontrado</h2>
+					<p className="font-body text-[#78716C] mb-8">O produto que procura não existe ou foi removido.</p>
 					<button
 						onClick={() => navigate('/')}
-						style={{
-							marginTop: '20px',
-							padding: '12px 24px',
-							backgroundColor: '#1a6e1a',
-							color: 'white',
-							border: 'none',
-							borderRadius: '6px',
-							cursor: 'pointer'
-						}}
+						className="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-display text-base hover:bg-accent-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
 					>
 						Voltar à página inicial
 					</button>
@@ -261,390 +240,235 @@ const ProductDetails = () => {
 	const isAdding = product ? isAddingProduct(product.id) : false;
 
 	return (
-		<div style={{ backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+		<div className="bg-sand min-h-screen flex flex-col">
 			<Header />
 
-			<div style={{
-				maxWidth: '1200px',
-				margin: '0 auto',
-				padding: '20px'
-			}}>
+			<div className="max-w-[1200px] mx-auto px-4 py-6 w-full flex-1">
 				{/* Breadcrumb */}
-				<div style={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: '8px',
-					marginBottom: '24px',
-					fontSize: '13px',
-					color: '#666'
-				}}>
-					<span onClick={() => navigate('/')} style={{ cursor: 'pointer', color: '#3483fa' }}>
+				<div className="flex items-center gap-2 mb-6 font-body text-sm text-[#78716C]">
+					<button onClick={() => navigate('/')} className="text-accent hover:text-accent-dark transition-colors cursor-pointer">
 						Início
-					</span>
-					<IoChevronForward size={12} />
-					<span onClick={() => navigate('/categorias')} style={{ cursor: 'pointer', color: '#3483fa' }}>
+					</button>
+					<IoChevronForward size={12} className="text-[#78716C]" />
+					<button onClick={() => navigate('/categorias')} className="text-accent hover:text-accent-dark transition-colors cursor-pointer">
 						{product.category}
-					</span>
-					<IoChevronForward size={12} />
-					<span>{product.title.substring(0, 30)}...</span>
+					</button>
+					<IoChevronForward size={12} className="text-[#78716C]" />
+					<span className="text-[#78716C]/60">{product.title.substring(0, 30)}...</span>
 				</div>
 
 				{/* Container Principal */}
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: 'auto 1fr 300px',
-					gap: '0',
-					marginBottom: '32px',
-					backgroundColor: 'white',
-					borderRadius: '8px',
-					overflow: 'hidden'
-				}}>
-					{/* Coluna Esquerda - Imagens */}
-					<div style={{
-						display: 'flex',
-						gap: '12px',
-						padding: '24px',
-						borderRight: '1px solid #f0f0f0',
-						alignItems: 'flex-start'
-					}}>
-						{/* Miniaturas Verticais */}
-						<div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+				<div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_320px] bg-white rounded-xl shadow-sm border border-[#1C1917]/5 overflow-hidden mb-8 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+
+					{/* Coluna Esquerda — Imagens */}
+					<div className="flex gap-3 p-6 border-r border-[#1C1917]/10 items-start">
+						<div className="flex flex-col gap-2">
 							{product.images.map((img, index) => (
-								<div
+								<button
 									key={index}
 									onClick={() => setSelectedImage(index)}
-									style={{
-										width: '56px',
-										height: '56px',
-										border: selectedImage === index ? '2px solid #3483fa' : '1px solid #ddd',
-										borderRadius: '6px',
-										overflow: 'hidden',
-										cursor: 'pointer',
-										flexShrink: 0,
-										backgroundColor: 'white'
-									}}
+									className={`w-14 h-14 rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all duration-200 ${
+										selectedImage === index
+											? 'ring-2 ring-accent ring-offset-1'
+											: 'border border-[#1C1917]/10 hover:border-accent/40'
+									}`}
 								>
 									<img
 										src={img}
 										alt={`${product.title} ${index + 1}`}
-										style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+										className="w-full h-full object-cover"
 									/>
-								</div>
+								</button>
 							))}
 						</div>
 
-						{/* Imagem Principal */}
-						<div style={{ position: 'relative', width: '340px', flexShrink: 0 }}>
+						<div className="relative w-[340px] flex-shrink-0">
 							<button
 								onClick={handleToggleWishlist}
 								title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
 								disabled={isWishToggling}
-								style={{
-									position: 'absolute',
-									top: '0',
-									right: '0',
-									width: '36px',
-									height: '36px',
-									border: 'none',
-									backgroundColor: 'transparent',
-									borderRadius: '50%',
-									cursor: 'pointer',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									zIndex: 1,
-									opacity: isWishToggling ? 0.7 : 1
-								}}
+								className="absolute top-0 right-0 w-9 h-9 flex items-center justify-center z-10 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-[#1C1917]/10 hover:bg-white transition-all"
 							>
 								{isWishToggling ? (
-									<span
-										className="inline-block w-[18px] h-[18px] border-2 border-gray-400 border-t-transparent rounded-full animate-spin"
-										aria-label="Atualizando"
-									/>
+									<span className="inline-block w-[18px] h-[18px] border-2 border-accent border-t-transparent rounded-full animate-spin" aria-label="Atualizando" />
 								) : wishlisted ? (
-									<IoHeart size={22} color="#e74c3c" />
+									<IoHeart size={20} className="text-red-500" />
 								) : (
-									<IoHeartOutline size={22} color="#aaa" />
+									<IoHeartOutline size={20} className="text-[#78716C]" />
 								)}
 							</button>
 							<img
 								src={product.images[selectedImage]}
 								alt={product.title}
-								style={{
-									width: '100%',
-									height: '400px',
-									objectFit: 'contain'
-								}}
+								className="w-full h-[400px] object-contain"
 							/>
 						</div>
 					</div>
 
-					{/* Coluna Central - Informações do Produto */}
-					<div style={{ padding: '24px', borderRight: '1px solid #f0f0f0' }}>
+					{/* Coluna Central — Informações */}
+					<div className="p-6 border-r border-[#1C1917]/10">
 
-						{/* Título */}
-						<h1 style={{ fontSize: '20px', fontWeight: '400', color: '#333', margin: '0 0 12px 0', lineHeight: '1.35' }}>
+						<h1 className="font-display text-2xl text-[#1C1917] mb-3 leading-tight">
 							{product.title}
 						</h1>
 
-						{/* Rating */}
-						<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #f0f0f0' }}>
-							<span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>{product.rating}</span>
-							<div style={{ display: 'flex', gap: '2px' }}>
+						<div className="flex items-center gap-3 mb-5 pb-5 border-b border-[#1C1917]/10">
+							<span className="font-display text-lg font-bold text-[#1C1917]">{product.rating}</span>
+							<div className="flex gap-0.5">
 								{renderStars(Math.floor(product.rating))}
 							</div>
-							<span style={{ color: '#3483fa', fontSize: '13px', cursor: 'pointer' }}>
+							<span className="font-body text-sm text-accent cursor-pointer hover:underline">
 								({product.reviews} avaliações)
 							</span>
 						</div>
 
-						{/* Preço */}
-						<div style={{ marginBottom: '16px' }}>
+						<div className="mb-4">
 							{product.oldPrice && (
-								<span style={{ fontSize: '14px', color: '#999', textDecoration: 'line-through' }}>
+								<span className="font-body text-sm text-[#78716C] line-through">
 									{formatCurrency(product.oldPrice)}
 								</span>
 							)}
-							<div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '4px', marginBottom: '4px' }}>
-								<span style={{ fontSize: '36px', fontWeight: '300', color: '#333', lineHeight: 1 }}>
+							<div className="flex items-baseline gap-2 mt-1 mb-1">
+								<span className="font-display text-4xl text-[#1C1917] leading-none font-bold">
 									{Math.floor(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
 								</span>
-								<span style={{ fontSize: '18px', fontWeight: '400', color: '#333', alignSelf: 'flex-start', marginTop: '8px' }}>
+								<span className="font-display text-lg text-[#1C1917] self-start mt-1">
 									{`,${(product.price % 1).toFixed(2).slice(2)}`}
 								</span>
-								<span style={{ fontSize: '15px', color: '#555', alignSelf: 'flex-end', marginBottom: '3px' }}>Kz</span>
+								<span className="font-body text-sm text-[#78716C] self-end mb-0.5">Kz</span>
 								{product.discount && (
-									<span style={{ padding: '3px 6px', backgroundColor: '#e8f5e9', color: '#1a6e1a', borderRadius: '4px', fontSize: '13px', fontWeight: '700' }}>
+									<span className="px-2.5 py-1 bg-accent/10 text-accent rounded-md font-display text-xs font-bold">
 										{product.discount}% OFF
 									</span>
 								)}
 							</div>
-							{/* Contador da promoção */}
 							{product.promotionEndDate && countdown && (
-								<div style={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: '8px',
-									marginTop: '10px',
-									padding: '10px 14px',
-									backgroundColor: '#fff3e0',
-									borderRadius: '8px',
-									border: '1px solid #ffcc80'
-								}}>
-									<IoTimerOutline size={18} color="#e65100" />
-									<span style={{ fontSize: '12px', color: '#e65100', fontWeight: '600' }}>Promoção termina em:</span>
-									<div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+								<div className="flex items-center gap-3 mt-3 px-4 py-3 bg-orange-50 border border-orange-200 rounded-xl">
+									<IoTimerOutline size={18} className="text-accent" />
+									<span className="font-body text-xs text-accent font-semibold">Promoção termina em:</span>
+									<div className="flex gap-1.5 items-center">
 										{[{ label: 'dias', value: countdown.days }, { label: 'h', value: countdown.hours }, { label: 'min', value: countdown.minutes }, { label: 's', value: countdown.seconds }].map(({ label, value }) => (
-											<div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-												<span style={{
-													backgroundColor: '#e65100',
-													color: 'white',
-													padding: '2px 7px',
-													borderRadius: '4px',
-													fontWeight: '700',
-													fontSize: '13px',
-													minWidth: '26px',
-													textAlign: 'center'
-												}}>
+											<div key={label} className="flex flex-col items-center">
+												<span className="bg-accent text-white px-1.5 py-0.5 rounded-md font-display text-xs font-bold min-w-[24px] text-center">
 													{String(value).padStart(2, '0')}
 												</span>
-												<span style={{ fontSize: '10px', color: '#e65100', marginTop: '2px' }}>{label}</span>
+												<span className="font-body text-[10px] text-accent mt-0.5">{label}</span>
 											</div>
 										))}
 									</div>
 								</div>
 							)}
 							{product.pricePerUnit && (
-								<div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>
+								<div className="font-body text-xs text-[#78716C] mt-1.5">
 									{product.pricePerUnit}
 								</div>
 							)}
-
 						</div>
 
-						{/* Cupom */}
 						{product.coupon && (
-							<div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', backgroundColor: '#f5f5f5', borderRadius: '6px', marginBottom: '20px' }}>
-								<span style={{ backgroundColor: '#3483fa', color: 'white', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600', whiteSpace: 'nowrap' }}>
+							<div className="flex items-center gap-3 px-4 py-3 bg-accent/5 border border-accent/15 rounded-xl mb-5">
+								<span className="bg-accent text-white px-2.5 py-0.5 rounded-md font-display text-xs font-bold whitespace-nowrap">
 									🏷️ Cupom
 								</span>
-								<span style={{ fontSize: '13px', color: '#333' }}>{product.coupon}</span>
+								<span className="font-body text-sm text-[#1C1917]">{product.coupon}</span>
 							</div>
 						)}
 
-
-
-						{/* Opções de compra */}
 						{product.purchaseOptions && (
-							<div style={{ paddingTop: '16px', borderTop: '1px solid #f0f0f0' }}>
-								<div style={{ fontSize: '14px', fontWeight: '500', color: '#333', marginBottom: '6px' }}>Opções de compra:</div>
-								<span style={{ fontSize: '13px', color: '#3483fa', cursor: 'pointer' }}>
+							<div className="pt-4 border-t border-[#1C1917]/10">
+								<div className="font-display text-sm text-[#1C1917] mb-1.5">Opções de compra:</div>
+								<span className="font-body text-sm text-accent cursor-pointer hover:underline">
 									{product.purchaseOptions.count} produtos novos a partir de {formatCurrency(product.purchaseOptions.minPrice)}
 								</span>
 							</div>
 						)}
 					</div>
 
-					{/* Coluna Direita - Ação + Loja */}
-					<div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+					{/* Coluna Direita — Ação + Loja */}
+					<div className="p-6 flex flex-col gap-5">
 
-						{/* Widget de Compra */}
 						<div>
-							{/* Stock */}
-							<div style={{ padding: '10px 12px', backgroundColor: product.stock > 10 ? '#e8f5e9' : '#fff3e0', borderRadius: '6px', marginBottom: '16px', fontSize: '13px' }}>
-								<span style={{ color: product.stock > 10 ? '#1a6e1a' : '#f57c00', fontWeight: '500' }}>
-									{product.stock > 10 ? `✓ Em estoque` : `⚠ Últimas ${product.stock} unidades!`}
-								</span>
+							<div className={`px-4 py-3 rounded-xl font-body text-sm font-medium mb-4 ${
+								product.stock > 10
+									? 'bg-accent/5 text-accent'
+									: 'bg-orange-50 text-orange-700'
+							}`}>
+								{product.stock > 10
+									? '✓ Em estoque'
+									: `⚠ Últimas ${product.stock} unidades!`
+								}
 							</div>
 
-							{/* Quantidade */}
-							<div style={{ marginBottom: '16px' }}>
-								<label style={{
-									display: 'block',
-									marginBottom: '8px',
-									fontWeight: '500',
-									fontSize: '14px',
-									color: '#333'
-								}}>
+							<div className="mb-4">
+								<label className="block mb-2 font-display text-sm text-[#1C1917]">
 									Quantidade:
 								</label>
-								<div style={{
-									display: 'inline-flex',
-									alignItems: 'center',
-									border: '1px solid #ddd',
-									borderRadius: '6px',
-									overflow: 'hidden',
-									backgroundColor: 'white'
-								}}>
+								<div className="inline-flex items-center border border-[#1C1917]/15 rounded-lg overflow-hidden bg-white">
 									<button
 										onClick={decrementQuantity}
 										disabled={quantity <= 1}
-										style={{
-											width: '35px',
-											height: '35px',
-											border: 'none',
-											backgroundColor: 'transparent',
-											cursor: quantity <= 1 ? 'not-allowed' : 'pointer',
-											fontSize: '16px',
-											color: quantity <= 1 ? '#ccc' : '#333'
-										}}
+										className="w-9 h-9 flex items-center justify-center border-none bg-transparent font-body text-base cursor-pointer disabled:cursor-not-allowed disabled:text-[#D4CFC9] text-[#1C1917] hover:bg-sand transition-colors"
 									>
 										−
 									</button>
-									<div style={{
-										minWidth: '45px',
-										height: '35px',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										borderLeft: '1px solid #ddd',
-										borderRight: '1px solid #ddd',
-										fontWeight: '400',
-										fontSize: '15px'
-									}}>
+									<div className="min-w-[44px] h-9 flex items-center justify-center border-x border-[#1C1917]/10 font-body text-sm text-[#1C1917]">
 										{quantity}
 									</div>
 									<button
 										onClick={incrementQuantity}
 										disabled={quantity >= product.stock}
-										style={{
-											width: '35px',
-											height: '35px',
-											border: 'none',
-											backgroundColor: 'transparent',
-											cursor: quantity >= product.stock ? 'not-allowed' : 'pointer',
-											fontSize: '16px',
-											color: quantity >= product.stock ? '#ccc' : '#333'
-										}}
+										className="w-9 h-9 flex items-center justify-center border-none bg-transparent font-body text-base cursor-pointer disabled:cursor-not-allowed disabled:text-[#D4CFC9] text-[#1C1917] hover:bg-sand transition-colors"
 									>
 										+
 									</button>
 								</div>
-								<div style={{
-									marginTop: '8px',
-									fontSize: '13px',
-									color: '#666'
-								}}>
+								<div className="mt-1.5 font-body text-xs text-[#78716C]">
 									({product.stock} disponíveis)
 								</div>
 							</div>
 
-							{/* Botões de Ação */}
 							<button
 								onClick={handleAddToCart}
 								disabled={product.stock === 0 || isAdding}
-								style={{
-									width: '100%',
-									padding: '13px',
-									backgroundColor: 'white',
-									color: '#3483fa',
-									border: '1px solid #3483fa',
-									borderRadius: '6px',
-									fontSize: '15px',
-									fontWeight: '500',
-									cursor: product.stock === 0 || isAdding ? 'not-allowed' : 'pointer',
-									transition: 'all 0.2s',
-									opacity: isAdding ? 0.7 : 1,
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									gap: '8px',
-								}}
-								onMouseEnter={(e) => { if (product.stock > 0 && !isAdding) e.currentTarget.style.backgroundColor = '#f5f7fa'; }}
-								onMouseLeave={(e) => { if (product.stock > 0 && !isAdding) e.currentTarget.style.backgroundColor = 'white'; }}
+								className="w-full py-3.5 bg-accent text-white rounded-full font-display text-base font-bold tracking-wide shadow-lg hover:bg-accent-dark hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2"
 							>
 								{isAdding && (
-									<span
-										style={{
-											width: '16px',
-											height: '16px',
-											border: '2px solid #3483fa',
-											borderTop: '2px solid transparent',
-											borderRadius: '999px',
-											display: 'inline-block',
-											animation: 'spin 0.8s linear infinite'
-										}}
-										aria-label="Adicionando"
-									/>
+									<span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full inline-block animate-spin" aria-label="Adicionando" />
 								)}
 								{isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
 							</button>
 
-							{/* Benefícios */}
-							<div style={{ paddingTop: '14px', borderTop: '1px solid #f0f0f0', marginTop: '14px' }}>
-								<div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-									<IoShieldCheckmarkOutline size={18} color="#1a6e1a" />
-									<div style={{ fontSize: '12px', color: '#666' }}>Compra Segura Garantida</div>
+							<div className="pt-4 border-t border-[#1C1917]/10 mt-4 space-y-3">
+								<div className="flex items-center gap-3">
+									<IoShieldCheckmarkOutline size={16} className="text-accent" />
+									<span className="font-body text-xs text-[#78716C]">Compra Segura Garantida</span>
 								</div>
-								<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-									<IoStorefrontOutline size={18} color="#3483fa" />
-									<div style={{ fontSize: '12px', color: '#666' }}>Devolução em 3 dias</div>
+								<div className="flex items-center gap-3">
+									<IoStorefrontOutline size={16} className="text-accent" />
+									<span className="font-body text-xs text-[#78716C]">Devolução em 3 dias</span>
 								</div>
 							</div>
 						</div>
 
-						{/* Card da Loja */}
-						<div style={{ border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
-							{/* Banner */}
-							<div style={{ background: 'linear-gradient(135deg, #cc0000, #880000)', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-								<span style={{ color: 'white', fontWeight: '700', fontSize: '13px', letterSpacing: '1px' }}>LOJA OFICIAL</span>
+						<div className="border border-[#1C1917]/10 rounded-xl overflow-hidden">
+							<div className="bg-gradient-to-r from-accent to-accent-dark h-14 flex items-center justify-center">
+								<span className="text-white font-display text-xs tracking-widest uppercase font-bold">LOJA OFICIAL</span>
 							</div>
-							{/* Info */}
-							<div style={{ padding: '14px' }}>
-								<div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-									<img src={product.seller.logo} alt={product.seller.name} style={{ width: '36px', height: '36px', objectFit: 'contain', borderRadius: '50%' }} />
-									<div style={{ flex: 1 }}>
-										<div style={{ fontSize: '13px', fontWeight: '600', color: '#333' }}>{product.seller.name}</div>
+							<div className="p-4">
+								<div className="flex items-center gap-3 mb-2">
+									<img src={product.seller.logo} alt={product.seller.name} className="w-9 h-9 object-contain rounded-full border border-[#1C1917]/10" />
+									<div className="flex-1 min-w-0">
+										<div className="font-display text-sm font-semibold text-[#1C1917] truncate">{product.seller.name}</div>
 									</div>
 									<button
 										onClick={() => product?.seller?.id && navigate(`/loja/${product.seller.id}`)}
-										style={{ padding: '5px 12px', backgroundColor: 'transparent', color: '#3483fa', border: '1px solid #3483fa', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+										className="shrink-0 px-3 py-1.5 bg-transparent text-accent border border-accent/30 rounded-full font-display text-xs font-bold hover:bg-accent/5 hover:border-accent transition-all cursor-pointer"
 									>
 										Ver Mais
 									</button>
 								</div>
 								{product.seller.experience && (
-									<div style={{ fontSize: '11px', color: '#1a6e1a', fontWeight: '500', marginBottom: '10px' }}>
+									<div className="font-body text-[10px] text-accent font-semibold mt-1">
 										{product.seller.experience}
 									</div>
 								)}
@@ -653,89 +477,62 @@ const ProductDetails = () => {
 					</div>
 				</div>
 
-				<div style={{
-					backgroundColor: 'white',
-					borderRadius: '8px',
-					padding: '32px',
-					marginBottom: '16px'
-				}}>
-					<h2 style={{
-						fontSize: '20px',
-						fontWeight: '600',
-						color: '#333',
-						marginBottom: '24px'
-					}}>
-						Descrição
-					</h2>
-					<p style={{
-						fontSize: '15px',
-						lineHeight: '1.8',
-						color: '#666',
-						marginBottom: '0'
-					}}>
+				{/* Descrição */}
+				<div className="bg-white rounded-xl shadow-sm border border-[#1C1917]/5 p-8 mb-4 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+					<h2 className="font-display text-xl text-[#1C1917] mb-6">Descrição</h2>
+					<p className="font-body text-base text-[#78716C] leading-relaxed mb-0">
 						{product.description}
 					</p>
 				</div>
 
 				{/* Características Técnicas */}
-				<div className="bg-white rounded-lg p-8">
-					<h2 className="text-xl font-semibold text-gray-800 mb-6">
-						Características principais
-					</h2>
-					<div className="rounded-lg overflow-hidden border border-gray-200">
-						{product.specs.map((spec, index) => (
-							<div
-								key={index}
-								className={`flex items-center px-6 py-4 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
-							>
-								<span className="w-1/2 text-sm font-semibold text-gray-700">{spec.label}</span>
-								<span className="w-1/2 text-sm text-gray-600">{spec.value}</span>
-							</div>
-						))}
+				{product.specs.length > 0 && (
+					<div className="bg-white rounded-xl shadow-sm border border-[#1C1917]/5 p-8 mb-4 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+						<h2 className="font-display text-xl text-[#1C1917] mb-6">Características principais</h2>
+						<div className="rounded-xl overflow-hidden border border-[#1C1917]/10">
+							{product.specs.map((spec, index) => (
+								<div
+									key={index}
+									className={`flex items-center px-6 py-3.5 ${index % 2 === 0 ? 'bg-sand' : 'bg-white'}`}
+								>
+									<span className="w-1/2 font-display text-sm font-semibold text-[#1C1917]">{spec.label}</span>
+									<span className="w-1/2 font-body text-sm text-[#78716C]">{spec.value}</span>
+								</div>
+							))}
+						</div>
 					</div>
-				</div>
+				)}
 
 				{/* Avaliações do produto */}
 				{product.opinions && product.opinions.length > 0 && (
-					<div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '32px', marginTop: '16px' }}>
-						{/* Cabeçalho */}
-						<h2 style={{ fontSize: '20px', fontWeight: '600', color: '#333', marginBottom: '28px' }}>
-							Avaliações dos clientes
-						</h2>
+					<div className="bg-white rounded-xl shadow-sm border border-[#1C1917]/5 p-8 mt-4 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+						<h2 className="font-display text-xl text-[#1C1917] mb-7">Avaliações dos clientes</h2>
 
-						{/* Resumo geral */}
-						<div style={{
-							display: 'flex',
-							gap: '40px',
-							alignItems: 'center',
-							paddingBottom: '28px',
-							borderBottom: '1px solid #f0f0f0',
-							marginBottom: '28px',
-							flexWrap: 'wrap'
-						}}>
-							{/* Nota global */}
-							<div style={{ textAlign: 'center', minWidth: '110px' }}>
-								<div style={{ fontSize: '64px', fontWeight: '200', color: '#1a6e1a', lineHeight: 1 }}>{product.rating.toFixed(1)}</div>
-								<div style={{ display: 'flex', gap: '3px', justifyContent: 'center', margin: '8px 0 6px' }}>
+						<div className="flex gap-10 items-center pb-7 border-b border-[#1C1917]/10 mb-7 flex-wrap">
+							<div className="text-center min-w-[110px]">
+								<div className="font-display text-6xl text-accent leading-none font-bold">{product.rating.toFixed(1)}</div>
+								<div className="flex gap-1 justify-center my-2">
 									{renderStars(Math.round(product.rating))}
 								</div>
-								<div style={{ fontSize: '12px', color: '#888' }}>{product.reviews} avaliações</div>
+								<div className="font-body text-xs text-[#78716C]">{product.reviews} avaliações</div>
 							</div>
 
-							{/* Barras de distribuição */}
 							{product.ratingDistribution && (
-								<div style={{ flex: 1, minWidth: '200px' }}>
+								<div className="flex-1 min-w-[200px]">
 									{[5, 4, 3, 2, 1].map((star) => {
 										const total = Object.values(product.ratingDistribution).reduce((a, b) => a + b, 0);
 										const count = product.ratingDistribution[star] || 0;
 										const pct = total > 0 ? (count / total) * 100 : 0;
 										return (
-											<div key={star} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-												<span style={{ fontSize: '12px', color: '#555', width: '40px', textAlign: 'right', flexShrink: 0 }}>{star} ★</span>
-												<div style={{ flex: 1, height: '8px', backgroundColor: '#f0f0f0', borderRadius: '4px', overflow: 'hidden' }}>
-													<div style={{ width: `${pct}%`, height: '100%', backgroundColor: pct > 60 ? '#1a6e1a' : pct > 30 ? '#8bc34a' : '#ffb300', borderRadius: '4px', transition: 'width 0.4s ease' }} />
+											<div key={star} className="flex items-center gap-2.5 mb-1.5">
+												<span className="font-body text-xs text-[#78716C] w-10 text-right flex-shrink-0">{star} ★</span>
+												<div className="flex-1 h-2 bg-[#E8E2DA] rounded-full overflow-hidden">
+													<div
+														className="h-full bg-yellow-400 rounded-full transition-all duration-500"
+														style={{ width: `${pct}%` }}
+													/>
 												</div>
-												<span style={{ fontSize: '12px', color: '#888', width: '36px', flexShrink: 0 }}>{count}</span>
+												<span className="font-body text-xs text-[#78716C] w-8 flex-shrink-0">{count}</span>
 											</div>
 										);
 									})}
@@ -743,54 +540,41 @@ const ProductDetails = () => {
 							)}
 						</div>
 
-						{/* Lista de avaliações */}
 						{product.opinions.map((opinion, idx) => (
-							<div key={opinion.id} style={{
-								padding: '20px 0',
-								borderBottom: idx < product.opinions.length - 1 ? '1px solid #f5f5f5' : 'none'
-							}}>
-								{/* Topo: avatar + nome + data */}
-								<div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-									<div style={{
-										width: '38px', height: '38px',
-										backgroundColor: '#e8f5e9', borderRadius: '50%',
-										display: 'flex', alignItems: 'center', justifyContent: 'center',
-										fontWeight: '700', fontSize: '12px', color: '#1a6e1a', flexShrink: 0
-									}}>
+							<div key={opinion.id} className={`py-5 ${idx < product.opinions.length - 1 ? 'border-b border-[#1C1917]/10' : ''}`}>
+								<div className="flex items-center gap-3 mb-3">
+									<div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center font-display font-bold text-xs text-accent flex-shrink-0">
 										{opinion.avatar || opinion.user.substring(0, 2).toUpperCase()}
 									</div>
 									<div>
-										<div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-											<span style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>{opinion.user}</span>
+										<div className="flex items-center gap-2 flex-wrap">
+											<span className="font-display text-sm font-semibold text-[#1C1917]">{opinion.user}</span>
 											{opinion.verified && (
-												<span style={{ fontSize: '11px', backgroundColor: '#e8f5e9', color: '#1a6e1a', padding: '2px 7px', borderRadius: '10px', fontWeight: '600' }}>
+												<span className="font-body text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-semibold">
 													✓ Compra verificada
 												</span>
 											)}
 										</div>
 										{opinion.date && (
-											<div style={{ fontSize: '12px', color: '#aaa', marginTop: '2px' }}>{opinion.date}</div>
+											<div className="font-body text-xs text-[#78716C]/60 mt-0.5">{opinion.date}</div>
 										)}
 									</div>
 								</div>
 
-								{/* Estrelas + Título */}
-								<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-									<div style={{ display: 'flex', gap: '2px' }}>{renderStars(opinion.rating)}</div>
-									<span style={{ fontSize: '14px', fontWeight: '600', color: '#222' }}>{opinion.title}</span>
+								<div className="flex items-center gap-2 mb-2">
+									<div className="flex gap-0.5">{renderStars(opinion.rating)}</div>
+									<span className="font-display text-sm font-semibold text-[#1C1917]">{opinion.title}</span>
 								</div>
 
-								{/* Comentário */}
-								<p style={{ fontSize: '14px', color: '#555', lineHeight: '1.7', margin: '0 0 12px 0' }}>{opinion.comment}</p>
+								<p className="font-body text-sm text-[#78716C] leading-relaxed mb-3">{opinion.comment}</p>
 
-								{/* Útil? */}
 								{opinion.helpful !== undefined && (
-									<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-										<span style={{ fontSize: '12px', color: '#999' }}>Esta avaliação foi útil?</span>
-										<button style={{ fontSize: '12px', padding: '3px 10px', border: '1px solid #ddd', borderRadius: '12px', backgroundColor: 'transparent', cursor: 'pointer', color: '#555' }}>
+									<div className="flex items-center gap-2.5">
+										<span className="font-body text-xs text-[#78716C]/60">Esta avaliação foi útil?</span>
+										<button className="font-body text-xs px-3 py-1 border border-[#1C1917]/15 rounded-full bg-transparent cursor-pointer text-[#78716C] hover:border-accent/30 hover:text-accent transition-all">
 											👍 Sim ({opinion.helpful})
 										</button>
-										<button style={{ fontSize: '12px', padding: '3px 10px', border: '1px solid #ddd', borderRadius: '12px', backgroundColor: 'transparent', cursor: 'pointer', color: '#555' }}>
+										<button className="font-body text-xs px-3 py-1 border border-[#1C1917]/15 rounded-full bg-transparent cursor-pointer text-[#78716C] hover:border-accent/30 hover:text-accent transition-all">
 											👎 Não
 										</button>
 									</div>
@@ -798,18 +582,8 @@ const ProductDetails = () => {
 							</div>
 						))}
 
-						{/* Botão ver mais */}
-						<div style={{ marginTop: '28px', display: 'flex', justifyContent: 'center' }}>
-							<button style={{
-								padding: '12px 32px',
-								backgroundColor: 'transparent',
-								color: '#1a6e1a',
-								border: '1px solid #1a6e1a',
-								borderRadius: '6px',
-								cursor: 'pointer',
-								fontWeight: '600',
-								fontSize: '14px'
-							}}>
+						<div className="mt-7 flex justify-center">
+							<button className="px-8 py-3 bg-transparent text-accent border-2 border-accent/30 rounded-full font-display text-sm font-bold hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
 								Ver todas as {product.reviews} avaliações
 							</button>
 						</div>
@@ -818,61 +592,35 @@ const ProductDetails = () => {
 
 				{/* Perguntas e Respostas */}
 				{product.questions && product.questions.length > 0 && (
-					<div style={{
-						backgroundColor: 'white',
-						borderRadius: '8px',
-						padding: '32px',
-						marginTop: '16px'
-					}}>
-						<h2 style={{
-							fontSize: '20px',
-							fontWeight: '600',
-							color: '#333',
-							marginBottom: '24px'
-						}}>
-							Perguntas e respostas
-						</h2>
-						<div style={{ marginBottom: '24px' }}>
-							<h3 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '12px' }}>Qual a sua dúvida?</h3>
-							<div style={{ position: 'relative' }}>
+					<div className="bg-white rounded-xl shadow-sm border border-[#1C1917]/5 p-8 mt-4 mb-4 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+						<h2 className="font-display text-xl text-[#1C1917] mb-6">Perguntas e respostas</h2>
+
+						<div className="mb-6">
+							<h3 className="font-display text-base text-[#1C1917] mb-3">Qual a sua dúvida?</h3>
+							<div className="relative">
 								<input
 									type="text"
 									placeholder="Escreva sua pergunta..."
-									style={{
-										width: '100%',
-										padding: '12px 40px 12px 16px',
-										borderRadius: '6px',
-										border: '1px solid #ddd',
-										fontSize: '15px'
-									}}
+									className="w-full pl-4 pr-12 py-3 rounded-xl border border-[#1C1917]/15 font-body text-sm text-[#1C1917] placeholder:text-[#78716C]/50 focus:outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/10 transition-all"
 								/>
-								<IoSearch size={20} color="#999" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+								<IoSearch size={18} className="text-[#78716C]/50 absolute right-4 top-1/2 -translate-y-1/2" />
 							</div>
 						</div>
 
-						<h3 style={{ fontSize: '16px', fontWeight: '500', marginBottom: '16px' }}>Últimas perguntas</h3>
+						<h3 className="font-display text-base text-[#1C1917] mb-4">Últimas perguntas</h3>
 						{product.questions.map((q) => (
-							<div key={q.id} style={{ marginBottom: '20px' }}>
-								<div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-									<IoChatbubbleOutline size={18} color="#666" />
-									<p style={{ margin: 0, fontSize: '15px', color: '#333' }}>{q.question}</p>
+							<div key={q.id} className="mb-5">
+								<div className="flex gap-2.5 items-start mb-2">
+									<IoChatbubbleOutline size={16} className="text-[#78716C] mt-0.5 flex-shrink-0" />
+									<p className="font-body text-sm text-[#1C1917] m-0">{q.question}</p>
 								</div>
-								<div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', paddingLeft: '26px' }}>
-									<span style={{ color: '#999', fontSize: '20px', lineHeight: '1' }}>↳</span>
-									<p style={{ margin: 0, fontSize: '14px', color: '#666', lineHeight: '1.5' }}>{q.answer}</p>
+								<div className="flex gap-2.5 items-start pl-[26px]">
+									<span className="text-accent font-display text-sm leading-none flex-shrink-0">↳</span>
+									<p className="font-body text-sm text-[#78716C] leading-relaxed m-0">{q.answer}</p>
 								</div>
 							</div>
 						))}
-						<button style={{
-							marginTop: '12px',
-							padding: '12px 24px',
-							backgroundColor: 'transparent',
-							color: '#3483fa',
-							border: '1px solid #3483fa',
-							borderRadius: '6px',
-							cursor: 'pointer',
-							fontWeight: '500'
-						}}>
+						<button className="mt-3 px-6 py-2.5 bg-transparent text-accent border-2 border-accent/30 rounded-full font-display text-sm font-bold hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
 							Ver todas as perguntas
 						</button>
 					</div>

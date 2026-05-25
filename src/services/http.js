@@ -1,21 +1,22 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
-const isProd = import.meta.env.VITE_PROD === 'true' || import.meta.env.PROD;
-export const API_URL = isProd
-	? 'https://doublee-back.onrender.com'
-	: 'http://localhost:20262';
+const apiurl = import.meta.env.VITE_API_URL || 'http://localhost:20262';
+export const API_URL = apiurl;
+
+console.log('API URL:', API_URL);
 
 const handleSessionExpired = () => {
-	localStorage.removeItem('doublee_user');
-	localStorage.removeItem('doublee_token');
+	localStorage.removeItem('Kusumba_user');
+	localStorage.removeItem('Kusumba_token');
+	if (window.location.pathname === '/auth') return;
 	setTimeout(() => {
 		window.location.href = '/auth';
 	}, 500);
 };
 
 const handleAdminSessionExpired = () => {
-	localStorage.removeItem('doublee_admin_token');
-	localStorage.removeItem('doublee_admin');
+	localStorage.removeItem('Kusumba_admin_token');
+	localStorage.removeItem('Kusumba_admin');
 	setTimeout(() => {
 		window.location.href = '/auth';
 	}, 500);
@@ -29,7 +30,7 @@ const http = axios.create({
 
 http.interceptors.request.use((config) => {
 	const isAdmin = config.admin === true;
-	const tokenKey = isAdmin ? 'doublee_admin_token' : 'doublee_token';
+	const tokenKey = isAdmin ? 'Kusumba_admin_token' : 'Kusumba_token';
 	const token = localStorage.getItem(tokenKey);
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
@@ -70,3 +71,4 @@ http.interceptors.response.use(
 );
 
 export default http;
+

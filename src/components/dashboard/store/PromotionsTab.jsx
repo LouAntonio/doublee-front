@@ -41,29 +41,29 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 		}
 	};
 
-	if (loading) return <div className="py-10 text-center text-gray-400">Carregando promoções...</div>;
+	if (loading) return <div className="py-10 text-center text-[#78716C]">Carregando promoções...</div>;
 
 	return (
-		<div className="space-y-8 animate-fade-in">
+		<div className="space-y-8">
 			{/* Active Promotions */}
-			<section>
-				<h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-					<IoFlashOutline className="text-orange-500" />
+			<section className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+				<h3 className="text-lg font-bold text-[#1C1917] mb-4 flex items-center gap-2 font-display">
+					<IoFlashOutline className="text-accent" />
 					Os Meus Destaques
 				</h3>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 					{purchases.filter(p => p.status === 'paid').length > 0 ? (
 						purchases.filter(p => p.status === 'paid').map(purchase => (
-							<div key={purchase.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-start gap-4">
+							<div key={purchase.id} className="bg-white p-4 rounded-2xl border border-accent/10 shadow-md flex items-start gap-4 hover:shadow-lg transition-shadow duration-300">
 								<div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-									<IoCheckmarkCircleOutline className="text-orange-500 w-6 h-6" />
+									<IoCheckmarkCircleOutline className="text-accent w-6 h-6" />
 								</div>
 								<div className="flex-1 min-w-0">
-									<p className="font-bold text-gray-800 truncate">{purchase.package.name}</p>
-									<p className="text-xs text-gray-500">
+									<p className="font-bold text-[#1C1917] truncate">{purchase.package.name}</p>
+									<p className="text-xs text-[#78716C]">
 										{purchase.store ? 'Loja em destaque' : `Produto: ${purchase.product.name}`}
 									</p>
-									<div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full w-fit">
+									<div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-accent bg-orange-50 px-2 py-0.5 rounded-full w-fit">
 										<IoTimeOutline />
 										Ativo
 									</div>
@@ -71,17 +71,17 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 							</div>
 						))
 					) : (
-						<div className="col-span-full py-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-							<p className="text-gray-500 text-sm">Ainda não possui destaques ativos.</p>
+						<div className="col-span-full py-8 text-center bg-white rounded-2xl border border-dashed border-accent/10">
+							<p className="text-[#78716C] text-sm">Ainda não possui destaques ativos.</p>
 						</div>
 					)}
 				</div>
 			</section>
 
 			{/* Available Packages */}
-			<section>
-				<h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-					<IoWalletOutline className="text-primary-600" />
+			<section className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+				<h3 className="text-lg font-bold text-[#1C1917] mb-4 flex items-center gap-2 font-display">
+					<IoWalletOutline className="text-accent" />
 					Impulsionar a Minha Loja
 				</h3>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -89,31 +89,31 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 						<div
 							key={pkg.id}
 							onClick={() => setSelectedPackage(pkg)}
-							className={`p-6 rounded-2xl border-2 transition-all cursor-pointer relative overflow-hidden ${selectedPackage?.id === pkg.id ? 'border-primary-500 bg-primary-50/30 shadow-md' : 'border-gray-100 hover:border-gray-200 bg-white'}`}
+							className={`p-6 rounded-2xl border-2 transition-all cursor-pointer relative overflow-hidden ${selectedPackage?.id === pkg.id ? 'border-accent bg-orange-50/30 shadow-md' : 'border-accent/10 hover:border-accent/30 bg-white'}`}
 						>
 							{selectedPackage?.id === pkg.id && (
-								<div className="absolute top-0 right-0 bg-primary-500 text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl">
+								<div className="absolute top-0 right-0 bg-accent text-white px-3 py-1 text-[10px] font-bold rounded-bl-xl">
 									SELECIONADO
 								</div>
 							)}
 							<div className="flex justify-between items-start mb-4">
 								<div>
-									<h4 className="font-bold text-gray-800 text-lg">{pkg.name}</h4>
+									<h4 className="font-bold text-[#1C1917] text-lg font-display">{pkg.name}</h4>
 									<span className={`text-[10px] font-bold uppercase rounded-md px-2 py-0.5 ${pkg.type === 'STORE' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}`}>
 										{pkg.type === 'STORE' ? 'Destaque Loja' : 'Destaque Produto'}
 									</span>
 								</div>
 								<div className="text-right">
-									<p className="text-2xl font-black text-gray-900">{parseFloat(pkg.price).toLocaleString('pt-AO')} Kz</p>
-									<p className="text-xs text-gray-500">{pkg.durationDays} dias de duração</p>
+									<p className="text-2xl font-black text-[#1C1917]">{parseFloat(pkg.price).toLocaleString('pt-AO')} Kz</p>
+									<p className="text-xs text-[#78716C]">{pkg.durationDays} dias de duração</p>
 								</div>
 							</div>
 
 							{selectedPackage?.id === pkg.id && pkg.type === 'PRODUCT' && (
-								<div className="mt-4 animate-fade-in" onClick={e => e.stopPropagation()}>
-									<label className="block text-xs font-bold text-gray-700 mb-2 uppercase">Escolha o Produto:</label>
+								<div className="mt-4" onClick={e => e.stopPropagation()}>
+									<label className="block text-xs font-bold text-[#1C1917] mb-2 uppercase">Escolha o Produto:</label>
 									<select
-										className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary-500/20"
+										className="w-full bg-white border border-accent/20 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-accent/20"
 										value={selectedProduct}
 										onChange={e => setSelectedProduct(e.target.value)}
 									>
@@ -133,19 +133,13 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 						<button
 							disabled={buying}
 							onClick={handlePurchase}
-							className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black shadow-xl shadow-slate-900/20 hover:scale-105 active:scale-95 transition-all disabled:bg-gray-400 disabled:scale-100"
+							className="bg-accent text-white px-10 py-4 rounded-full font-bold shadow-xl shadow-accent/20 hover:bg-accent-dark hover:scale-105 active:scale-95 transition-all disabled:bg-gray-400 disabled:scale-100"
 						>
 							{buying ? 'Processando...' : `Confirmar Destaque - ${parseFloat(selectedPackage.price).toLocaleString('pt-AO')} Kz`}
 						</button>
 					</div>
 				)}
 			</section>
-
-			<style dangerouslySetInnerHTML={{
-				__html: `
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
-            `}} />
 		</div>
 	);
 };

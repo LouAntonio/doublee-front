@@ -67,8 +67,8 @@ const StoreDashboard = () => {
 		return (
 			<div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
 				<IoAlertCircleOutline className="w-12 h-12 text-red-400" />
-				<p className="text-base font-semibold text-gray-700">Não foi possível carregar os dados da loja.</p>
-				<button onClick={fetchAll} className="mt-2 px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors">
+				<p className="text-base font-semibold text-[#1C1917]">Não foi possível carregar os dados da loja.</p>
+				<button onClick={fetchAll} className="mt-2 px-5 py-2 bg-accent text-white text-sm font-semibold rounded-full hover:bg-accent-dark transition-colors cursor-pointer">
 					Tentar novamente
 				</button>
 			</div>
@@ -78,7 +78,7 @@ const StoreDashboard = () => {
 	return (
 		<div className="space-y-0">
 			{/* Tab Bar */}
-			<div className="flex gap-1 bg-gray-50 rounded-2xl p-1 mb-6 overflow-x-auto">
+			<div className="flex gap-1 bg-white/60 rounded-2xl p-1 mb-6 overflow-x-auto shadow-sm border border-accent/5">
 				{TABS.map(tab => {
 					const Icon = tab.icon;
 					return (
@@ -86,8 +86,8 @@ const StoreDashboard = () => {
 							key={tab.id}
 							onClick={() => setActiveTab(tab.id)}
 							className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all cursor-pointer flex-1 justify-center ${activeTab === tab.id
-								? 'bg-white text-primary-700 shadow-sm border border-gray-100'
-								: 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+								? 'bg-white text-accent shadow-sm border border-accent/20 font-display'
+								: 'text-[#78716C] hover:text-[#1C1917] hover:bg-white/80'
 							}`}
 						>
 							<Icon className="w-4 h-4 shrink-0" />

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import http from '../../services/http';
 
 export const useVerificationStatus = () =>
@@ -12,7 +12,7 @@ export const useVerificationStatus = () =>
 		staleTime: 1000 * 60 * 5,
 	});
 
-export const useStoreStatus = () =>
+export const useStoreStatus = (options = {}) =>
 	useQuery({
 		queryKey: ['dashboard', 'store-status'],
 		queryFn: async () => {
@@ -21,6 +21,7 @@ export const useStoreStatus = () =>
 			return res.data?.status || 'none';
 		},
 		staleTime: 1000 * 60 * 5,
+		...options,
 	});
 
 export const useMyStore = () =>

@@ -49,53 +49,53 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 	return (
 		<form onSubmit={handleSubmit} className="space-y-5">
 			<div>
-				<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+				<label htmlFor="email" className="block font-display text-sm text-[#1C1917] mb-2">E-mail</label>
 				<div className="relative">
-					<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoMailOutline className="w-5 h-5" /></div>
+					<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoMailOutline className="w-5 h-5" /></div>
 					<input type="email" id="email" name="email" value={formData.email} onChange={handleChange}
-						className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`}
+						className={`w-full pl-11 pr-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`}
 						placeholder="seu@email.com" />
 				</div>
-				{errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+				{errors.email && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.email}</p>}
 			</div>
 
 			<div>
-				<label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+				<label htmlFor="password" className="block font-display text-sm text-[#1C1917] mb-2">Senha</label>
 				<div className="relative">
-					<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoLockClosedOutline className="w-5 h-5" /></div>
+					<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoLockClosedOutline className="w-5 h-5" /></div>
 					<input type={showPassword ? 'text' : 'password'} id="password" name="password" value={formData.password} onChange={handleChange}
-						className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`}
+						className={`w-full pl-11 pr-12 py-3 rounded-xl border ${errors.password ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`}
 						placeholder="••••••••" />
-					<button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+					<button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-accent transition-colors">
 						{showPassword ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
 					</button>
 				</div>
-				{errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+				{errors.password && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.password}</p>}
 			</div>
 
 			<div className="flex items-center justify-between">
 				<label className="flex items-center gap-2 cursor-pointer">
-					<input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
-					<span className="text-sm text-gray-700">Lembrar-me</span>
+					<input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} className="w-4 h-4 text-accent border-[#D6D3D1] rounded focus:ring-2 focus:ring-accent/30" />
+					<span className="font-body text-sm text-[#78716C]">Lembrar-me</span>
 				</label>
-				<button type="button" onClick={onSwitchToRecovery} className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer">Esqueceu a senha?</button>
+				<button type="button" onClick={onSwitchToRecovery} className="font-display text-sm text-accent hover:text-accent-dark font-semibold cursor-pointer transition-colors">Esqueceu a senha?</button>
 			</div>
 
 			<button type="submit" disabled={isLoading}
-				className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer">
-				{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Entrando...</span></> : 'Entrar'}
+				className="w-full bg-accent hover:bg-accent-dark text-white font-display text-base py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+				{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Entrando...</span></> : 'Entrar'}
 			</button>
 
 			<div className="relative my-6">
-				<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-				<div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-gray-500">Ou continue com</span></div>
+				<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#E7E5E4]"></div></div>
+				<div className="relative flex justify-center text-sm"><span className="bg-white px-4 font-body text-[#A8A29E]">Ou continue com</span></div>
 			</div>
 
 			<GoogleButton />
 
-			<div className="text-center pt-4 border-t border-gray-200">
-				<p className="text-sm text-gray-600">Não tem uma conta?{' '}
-					<button type="button" onClick={onSwitchToRegister} className="text-blue-600 hover:text-blue-700 font-semibold cursor-pointer">Criar conta</button>
+			<div className="text-center pt-4 border-t border-[#E7E5E4]">
+				<p className="font-body text-sm text-[#78716C]">Não tem uma conta?{' '}
+					<button type="button" onClick={onSwitchToRegister} className="font-display text-accent hover:text-accent-dark font-semibold cursor-pointer transition-colors">Criar conta</button>
 				</p>
 			</div>
 		</form>

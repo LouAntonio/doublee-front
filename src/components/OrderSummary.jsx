@@ -47,65 +47,59 @@ const OrderSummary = ({ showPromoCode = true }) => {
 	const total = getTotal();
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 sticky top-4">
-			<h2 className="text-lg font-bold text-gray-800 mb-4">Resumo do Pedido</h2>
+		<div className="bg-white rounded-2xl shadow-md p-6 sticky top-4">
+			<h2 className="font-display text-lg text-[#1C1917] mb-4">Resumo do Pedido</h2>
 
-			{/* Cart Items Summary */}
 			<div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
 				{cartItems.map((item) => (
 					<div key={item.id} className="flex justify-between text-sm">
 						<div className="flex-1">
-							<p className="text-gray-700 line-clamp-1">{item.name}</p>
-							<p className="text-gray-500 text-xs">Qtd: {item.quantity}</p>
+							<p className="text-[#1C1917] font-body line-clamp-1">{item.name}</p>
+							<p className="text-[#78716C] font-body text-xs">Qtd: {item.quantity}</p>
 						</div>
-						<p className="font-medium text-gray-800 ml-2">
+						<p className="font-medium text-[#1C1917] ml-2">
 							{formatCurrency(item.price * item.quantity)}
 						</p>
 					</div>
 				))}
 			</div>
 
-			<div className="border-t border-gray-200 pt-4 space-y-3">
-				{/* Subtotal */}
+			<div className="border-t border-accent/10 pt-4 space-y-3">
 				<div className="flex justify-between text-sm">
-					<span className="text-gray-600">Subtotal</span>
-					<span className="font-medium text-gray-800">{formatCurrency(subtotal)}</span>
+					<span className="text-[#78716C] font-body">Subtotal</span>
+					<span className="font-medium text-[#1C1917]">{formatCurrency(subtotal)}</span>
 				</div>
 
-				{/* Discount */}
 				{appliedCoupon && (
-					<div className="flex justify-between text-sm text-green-600">
+					<div className="flex justify-between text-sm text-accent">
 						<span>Desconto ({appliedCoupon.code})</span>
 						<span className="font-medium">-{formatCurrency(discountAmount)}</span>
 					</div>
 				)}
 
-				{/* Shipping */}
 				<div className="flex justify-between text-sm">
-					<span className="text-gray-600">Entrega</span>
-					<span className="font-medium text-gray-800">
+					<span className="text-[#78716C] font-body">Entrega</span>
+					<span className="font-medium text-[#1C1917]">
 						{shipping === 0 ? (
-							<span className="text-green-600">Grátis</span>
+							<span className="text-accent">Grátis</span>
 						) : (
 							formatCurrency(shipping)
 						)}
 					</span>
 				</div>
 
-				{/* Tax */}
 				<div className="flex justify-between text-sm">
-					<span className="text-gray-600">Impostos</span>
-					<span className="font-medium text-gray-800">{formatCurrency(tax)}</span>
+					<span className="text-[#78716C] font-body">Impostos</span>
+					<span className="font-medium text-[#1C1917]">{formatCurrency(tax)}</span>
 				</div>
 
-				{/* Promo Code */}
 				{showPromoCode && (
-					<div className="pt-3 border-t border-gray-200">
+					<div className="pt-3 border-t border-accent/10">
 						{appliedCoupon ? (
-							<div className="flex items-center justify-between bg-green-50 p-2 rounded-lg border border-green-100">
+							<div className="flex items-center justify-between bg-accent/5 p-2 rounded-xl border border-accent/20">
 								<div className="flex items-center gap-2">
-									<IoTicketOutline className="text-green-600" />
-									<span className="text-sm font-bold text-green-700">{appliedCoupon.code}</span>
+									<IoTicketOutline className="text-accent" />
+									<span className="text-sm font-bold text-accent">{appliedCoupon.code}</span>
 								</div>
 								<button
 									onClick={() => setAppliedCoupon(null)}
@@ -123,34 +117,33 @@ const OrderSummary = ({ showPromoCode = true }) => {
 											value={promoCode}
 											onChange={(e) => setPromoCode(e.target.value)}
 											placeholder="Código promocional"
-											className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full px-3 py-2 text-sm border border-accent/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 font-body text-[#1C1917] placeholder:text-[#78716C]/60"
 										/>
-										<IoTicketOutline className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+										<IoTicketOutline className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#78716C]" />
 									</div>
 									<button
 										onClick={handleApplyPromo}
-										className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors cursor-pointer"
+										className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent-dark rounded-xl transition-colors cursor-pointer font-body"
 									>
 										Aplicar
 									</button>
 								</div>
 								{error && (
-									<p className="text-xs text-red-500 mt-2">{error}</p>
+									<p className="text-xs text-red-500 mt-2 font-body">{error}</p>
 								)}
 							</>
 						)}
 					</div>
 				)}
 
-				{/* Total */}
-				<div className="flex justify-between pt-3 border-t border-gray-200">
-					<span className="text-base font-bold text-gray-800">Total</span>
-					<span className="text-lg font-bold text-blue-600">{formatCurrency(total)}</span>
+				<div className="flex justify-between pt-3 border-t border-accent/10">
+					<span className="text-base font-bold text-[#1C1917] font-display">Total</span>
+					<span className="text-lg font-bold text-accent">{formatCurrency(total)}</span>
 				</div>
 			</div>
 			<Link
 				to="/checkout"
-				className="block w-full mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-center rounded-lg transition-colors shadow-sm"
+				className="block w-full mt-4 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold text-center rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
 			>
 				Finalizar Compra
 			</Link>

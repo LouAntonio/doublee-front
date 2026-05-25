@@ -9,7 +9,7 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 	];
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 mb-6">
+		<div className="bg-white rounded-2xl shadow-md p-6 mb-6">
 			<div className="flex items-center justify-between">
 				{steps.map((step, index) => {
 					const Icon = step.icon;
@@ -19,19 +19,17 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 
 					return (
 						<React.Fragment key={step.id}>
-							{/* Step */}
 							<div
 								className={`flex flex-col items-center flex-1 ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed'
 								}`}
 								onClick={() => isClickable && onStepClick && onStepClick(step.id)}
 							>
-								{/* Icon Circle */}
 								<div
 									className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${isCompleted
-										? 'bg-green-500 text-white'
+										? 'bg-accent text-white'
 										: isActive
-											? 'bg-blue-600 text-white ring-4 ring-blue-100'
-											: 'bg-gray-200 text-gray-400'
+											? 'bg-accent text-white ring-4 ring-accent/20'
+											: 'bg-accent/15 text-[#78716C]'
 									}`}
 								>
 									{isCompleted ? (
@@ -41,29 +39,26 @@ const CheckoutSteps = ({ currentStep, onStepClick }) => {
 									)}
 								</div>
 
-								{/* Step Name */}
 								<span
-									className={`text-sm font-medium ${isActive
-										? 'text-blue-600'
+									className={`text-sm font-display ${isActive
+										? 'text-accent'
 										: isCompleted
-											? 'text-green-600'
-											: 'text-gray-400'
+											? 'text-accent'
+											: 'text-[#78716C]'
 									}`}
 								>
 									{step.name}
 								</span>
 
-								{/* Step Number (Mobile) */}
-								<span className="text-xs text-gray-400 mt-1 lg:hidden">
+								<span className="text-xs text-[#78716C] mt-1 lg:hidden">
 									Passo {step.id}
 								</span>
 							</div>
 
-							{/* Connector Line */}
 							{index < steps.length - 1 && (
 								<div className="flex-1 h-1 mx-2 lg:mx-4 mb-8">
 									<div
-										className={`h-full rounded transition-all ${currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
+										className={`h-full rounded transition-all ${currentStep > step.id ? 'bg-accent' : 'bg-accent/15'
 										}`}
 									/>
 								</div>

@@ -38,7 +38,7 @@ const Footer = () => {
 			title: 'Pagamento',
 			links: [
 				{ name: 'Formas de pagamento', url: '/pagamento' },
-				{ name: 'Cartão Double E', url: '/cartao' }
+				{ name: 'Cartão Kusumba', url: '/cartao' }
 			]
 		}
 	];
@@ -222,7 +222,7 @@ const Footer = () => {
 					color: '#999'
 				}}>
 					<div>
-						© 2026 Double E. Todos os direitos reservados.
+						© 2026 Kusumba. Todos os direitos reservados.
 					</div>
 					<div style={{
 						display: 'flex',
@@ -275,7 +275,7 @@ const Footer = () => {
 				color: '#999'
 			}}>
 				<div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-					Double E Comércio Eletrônico Angola - NUIT: 000000000 | Endereço: Luanda, Angola
+					Kusumba Comércio Eletrônico Angola - NUIT: 000000000 | Endereço: Luanda, Angola
 				</div>
 			</div>
 		</footer>

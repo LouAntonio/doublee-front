@@ -107,12 +107,10 @@ const FeaturedProductsSection = () => {
 					alignItems: 'center',
 					marginBottom: '20px',
 				}}>
-					<h2 style={{ fontSize: '24px', fontWeight: '400', color: '#333', margin: 0 }}>
+					<h2 className="font-display text-2xl text-[#1C1917] m-0">
             Produtos em destaque
 					</h2>
-					<Link to="/produtos?featured=true" style={{
-						color: '#3483fa', fontSize: '14px', textDecoration: 'none', fontWeight: '400',
-					}}>
+					<Link to="/produtos?featured=true" className="font-body text-sm text-accent hover:underline">
             Ver mais destaques
 					</Link>
 				</div>

@@ -16,7 +16,7 @@ const mapApiItem = (item) => ({
 	store: item.product?.store ?? item.store,
 });
 
-const hasToken = () => Boolean(localStorage.getItem('doublee_token'));
+const hasToken = () => Boolean(localStorage.getItem('Kusumba_token'));
 
 const useCartStore = create(
 	persist(

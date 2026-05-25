@@ -66,10 +66,10 @@ const CategoriesSection = () => {
 			<div className="max-w-[1200px] mx-auto px-6 py-12">
 				<div className="flex items-baseline justify-between mb-10">
 					<div>
-						<span className="text-xs font-semibold uppercase tracking-[0.15em]" style={{ color: '#78716C' }}>
+						<span className="text-accent font-display text-xs tracking-widest uppercase">
               Navegue por
 						</span>
-						<h2 className="text-3xl md:text-4xl font-bold mt-1 leading-tight" style={{ color: '#1C1917' }}>
+						<h2 className="font-display text-3xl md:text-4xl font-bold text-[#1C1917] mt-1 leading-tight">
               Categorias
 						</h2>
 					</div>
@@ -100,7 +100,7 @@ const CategoriesSection = () => {
 								)}
 							</div>
 							<div className="p-4">
-								<h3 className="font-semibold leading-snug" style={{ fontSize: '15px', color: '#1C1917' }}>
+								<h3 className="font-display font-semibold leading-snug text-[#1C1917]" style={{ fontSize: '15px' }}>
 									{category.name}
 								</h3>
 								{category.products && (

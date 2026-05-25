@@ -31,7 +31,7 @@ const useWishlistStore = create((set, get) => ({
 	},
 
 	loadWishlist: async ({ page = 1, limit = 50 } = {}) => {
-		const isAuthenticated = !!localStorage.getItem('doublee_token');
+		const isAuthenticated = !!localStorage.getItem('Kusumba_token');
 		if (!isAuthenticated) {
 			set({ wishlistItems: [], wishlistIds: new Set() });
 			return { success: false, msg: 'not-authenticated' };
@@ -56,7 +56,7 @@ const useWishlistStore = create((set, get) => ({
 
 	checkInWishlist: async (productId) => {
 		if (!productId) return false;
-		const isAuthenticated = !!localStorage.getItem('doublee_token');
+		const isAuthenticated = !!localStorage.getItem('Kusumba_token');
 		if (!isAuthenticated) return false;
 
 		try {
@@ -118,7 +118,7 @@ const useWishlistStore = create((set, get) => ({
 
 	toggleWishlist: async (product) => {
 		const productId = product?.id ?? product;
-		const isAuthenticated = !!localStorage.getItem('doublee_token');
+		const isAuthenticated = !!localStorage.getItem('Kusumba_token');
 		if (!productId || !isAuthenticated) {
 			return { success: false, msg: 'not-authenticated', inWishlist: false };
 		}

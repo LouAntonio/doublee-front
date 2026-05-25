@@ -34,16 +34,16 @@ const uploadToCloudinary = async (file, folder) => {
 // ─── Image Picker ─────────────────────────────────────────────────────────────
 const ImagePicker = ({ label, name, preview, onChange, aspectHint }) => (
 	<div className="space-y-2">
-		<label className="block text-sm font-medium text-gray-700">{label}</label>
-		<label className="relative flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all overflow-hidden"
+		<label className="block text-sm font-medium text-[#1C1917]">{label}</label>
+		<label className="relative flex flex-col items-center justify-center w-full border-2 border-accent/20 border-dashed rounded-2xl cursor-pointer bg-white hover:bg-sand transition-all overflow-hidden"
 			style={{ minHeight: '7rem' }}>
 			{preview ? (
 				<img src={preview} alt={label} className="w-full h-full object-cover absolute inset-0 rounded-2xl" style={{ maxHeight: '10rem' }} />
 			) : (
 				<div className="flex flex-col items-center justify-center py-6 pointer-events-none px-4 text-center">
 					<span className="text-3xl mb-2">🖼️</span>
-					<p className="text-sm text-gray-500">Clique para seleccionar</p>
-					{aspectHint && <p className="text-xs text-gray-400 mt-1">{aspectHint}</p>}
+					<p className="text-sm text-[#78716C]">Clique para seleccionar</p>
+					{aspectHint && <p className="text-xs text-[#78716C] mt-1">{aspectHint}</p>}
 				</div>
 			)}
 			<input type="file" name={name} accept="image/*" onChange={onChange} className="hidden" />
@@ -56,7 +56,7 @@ const ImagePicker = ({ label, name, preview, onChange, aspectHint }) => (
 
 // ─── Section heading ──────────────────────────────────────────────────────────
 const SectionTitle = ({ children }) => (
-	<h3 className="text-base font-semibold text-gray-800 border-b border-gray-100 pb-3 mb-5">{children}</h3>
+	<h3 className="text-base font-semibold text-[#1C1917] border-b border-accent/10 pb-3 mb-5 font-display">{children}</h3>
 );
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -151,12 +151,12 @@ const StoreCreation = ({ verificationStatus }) => {
 
 	if (verificationStatus !== 'verified') {
 		return (
-			<div className="text-center py-16 bg-blue-50 rounded-2xl border border-blue-100 p-8">
+			<div className="text-center py-16 bg-orange-50 rounded-2xl border border-accent/20 p-8 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-4xl mb-4 block">🔒</span>
-				<h3 className="text-xl font-bold text-gray-900 mb-2">Verificação Necessária</h3>
-				<p className="text-gray-600 max-w-md mx-auto">
+				<h3 className="text-xl font-bold text-[#1C1917] mb-2 font-display">Verificação Necessária</h3>
+				<p className="text-[#78716C] max-w-md mx-auto font-body">
                     Você precisa validar sua identidade antes de poder criar uma loja.
-                    Vá para a aba de <strong>Verificação</strong> para começar.
+                    Vá para a aba de <strong className="text-[#1C1917]">Verificação</strong> para começar.
 				</p>
 			</div>
 		);
@@ -165,17 +165,17 @@ const StoreCreation = ({ verificationStatus }) => {
 	if (storeStatus === null) {
 		return (
 			<div className="flex items-center justify-center py-20">
-				<span className="text-gray-400 text-sm">A carregar estado da loja...</span>
+				<span className="text-[#78716C] text-sm font-body">A carregar estado da loja...</span>
 			</div>
 		);
 	}
 
 	if (storeStatus === 'pending') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">⏳</span>
-				<h2 className="text-2xl font-bold text-gray-900">Loja em análise</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Loja em análise</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     A sua loja foi submetida e está a ser analisada pela nossa equipa.
                     Receberá uma notificação assim que for aprovada.
 				</p>
@@ -185,10 +185,10 @@ const StoreCreation = ({ verificationStatus }) => {
 
 	if (storeStatus === 'approved') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">✅</span>
-				<h2 className="text-2xl font-bold text-gray-900">Loja aprovada!</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Loja aprovada!</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     A sua loja foi aprovada com sucesso. Já pode começar a adicionar produtos e vender.
 				</p>
 			</div>
@@ -197,10 +197,10 @@ const StoreCreation = ({ verificationStatus }) => {
 
 	if (storeStatus === 'rejected') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">❌</span>
-				<h2 className="text-2xl font-bold text-gray-900">Loja rejeitada</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Loja rejeitada</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     A sua loja não foi aprovada. Entre em contacto com o suporte para mais informações.
 				</p>
 			</div>
@@ -209,10 +209,10 @@ const StoreCreation = ({ verificationStatus }) => {
 
 	if (storeStatus === 'suspended') {
 		return (
-			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+			<div className="flex flex-col items-center justify-center py-20 space-y-4 text-center opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 				<span className="text-6xl">🚫</span>
-				<h2 className="text-2xl font-bold text-gray-900">Loja suspensa</h2>
-				<p className="text-gray-500 max-w-sm">
+				<h2 className="text-2xl font-bold text-[#1C1917] font-display">Loja suspensa</h2>
+				<p className="text-[#78716C] max-w-sm font-body">
                     A sua loja foi suspensa. Entre em contacto com o suporte para resolver a situação.
 				</p>
 			</div>
@@ -220,9 +220,9 @@ const StoreCreation = ({ verificationStatus }) => {
 	}
 
 	return (
-		<div>
-			<h2 className="text-2xl font-bold text-gray-900 mb-2">Configurar Minha Loja</h2>
-			<p className="text-gray-500 mb-8">Preencha os dados da sua nova loja para começar a vender.</p>
+		<div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+			<h2 className="text-2xl font-bold text-[#1C1917] mb-2 font-display">Configurar Minha Loja</h2>
+			<p className="text-[#78716C] mb-8 font-body">Preencha os dados da sua nova loja para começar a vender.</p>
 
 			<form onSubmit={handleSubmit} className="max-w-2xl space-y-10">
 
@@ -252,26 +252,26 @@ const StoreCreation = ({ verificationStatus }) => {
 					<SectionTitle>Informações Gerais</SectionTitle>
 					<div className="space-y-5">
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Nome da Loja <span className="text-red-500">*</span></label>
+							<label className="text-sm font-medium text-[#1C1917]">Nome da Loja <span className="text-red-500">*</span></label>
 							<input
 								type="text"
 								name="name"
 								value={formData.name}
 								onChange={handleChange}
 								required
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="Nome da sua marca"
 							/>
 						</div>
 
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Descrição</label>
+							<label className="text-sm font-medium text-[#1C1917]">Descrição</label>
 							<textarea
 								name="description"
 								value={formData.description}
 								onChange={handleChange}
 								rows="4"
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="Conte um pouco sobre o que você vende..."
 							/>
 						</div>
@@ -283,13 +283,13 @@ const StoreCreation = ({ verificationStatus }) => {
 					<SectionTitle>Localização</SectionTitle>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Província <span className="text-red-500">*</span></label>
+							<label className="text-sm font-medium text-[#1C1917]">Província <span className="text-red-500">*</span></label>
 							<select
 								name="province"
 								value={formData.province}
 								onChange={handleChange}
 								required
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all bg-white"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 							>
 								<option value="">Seleccione a província</option>
 								{ANGOLA_PROVINCES.map((p) => (
@@ -299,13 +299,13 @@ const StoreCreation = ({ verificationStatus }) => {
 						</div>
 
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Localização / Endereço</label>
+							<label className="text-sm font-medium text-[#1C1917]">Localização / Endereço</label>
 							<input
 								type="text"
 								name="location"
 								value={formData.location}
 								onChange={handleChange}
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="Bairro, Rua, nº..."
 							/>
 						</div>
@@ -317,37 +317,37 @@ const StoreCreation = ({ verificationStatus }) => {
 					<SectionTitle>Contacto e Horário</SectionTitle>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Email Comercial</label>
+							<label className="text-sm font-medium text-[#1C1917]">Email Comercial</label>
 							<input
 								type="email"
 								name="email"
 								value={formData.email}
 								onChange={handleChange}
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="loja@exemplo.com"
 							/>
 						</div>
 
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Telefone Comercial</label>
+							<label className="text-sm font-medium text-[#1C1917]">Telefone Comercial</label>
 							<input
 								type="tel"
 								name="phone"
 								value={formData.phone}
 								onChange={handleChange}
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="+244 9XX XXX XXX"
 							/>
 						</div>
 
 						<div className="space-y-2 md:col-span-2">
-							<label className="text-sm font-medium text-gray-700">Horas de Trabalho</label>
+							<label className="text-sm font-medium text-[#1C1917]">Horas de Trabalho</label>
 							<input
 								type="text"
 								name="workingHours"
 								value={formData.workingHours}
 								onChange={handleChange}
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="Ex: Seg–Sex 08:00–18:00 | Sáb 08:00–13:00"
 							/>
 						</div>
@@ -360,42 +360,42 @@ const StoreCreation = ({ verificationStatus }) => {
 					<div className="space-y-5">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<div className="space-y-2">
-								<label className="text-sm font-medium text-gray-700">IBAN <span className="text-red-500">*</span></label>
+								<label className="text-sm font-medium text-[#1C1917]">IBAN <span className="text-red-500">*</span></label>
 								<input
 									type="text"
 									name="iban"
 									value={formData.iban}
 									onChange={handleChange}
 									required
-									className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 									placeholder="AO06 0006 0000 XXXX XXXX"
 								/>
 							</div>
 
 							<div className="space-y-2">
-								<label className="text-sm font-medium text-gray-700">Nome da Conta <span className="text-red-500">*</span></label>
+								<label className="text-sm font-medium text-[#1C1917]">Nome da Conta <span className="text-red-500">*</span></label>
 								<input
 									type="text"
 									name="bankName"
 									value={formData.bankName}
 									onChange={handleChange}
 									required
-									className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 									placeholder="Nome tal como consta no banco"
 								/>
 							</div>
 						</div>
 
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">
-                                Número PayPay <span className="text-gray-400 font-normal">(opcional)</span>
+							<label className="text-sm font-medium text-[#1C1917]">
+                                Número PayPay <span className="text-[#78716C] font-normal">(opcional)</span>
 							</label>
 							<input
 								type="text"
 								name="paypayAccount"
 								value={formData.paypayAccount}
 								onChange={handleChange}
-								className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 								placeholder="Número de telefone associado ao PayPay"
 							/>
 						</div>
@@ -407,12 +407,12 @@ const StoreCreation = ({ verificationStatus }) => {
 					<button
 						type="submit"
 						disabled={isLoading}
-						className="px-10 py-4 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-xl shadow-green-100 disabled:opacity-60 cursor-pointer"
+						className="inline-flex items-center gap-2 px-10 py-4 bg-accent text-white font-bold rounded-full hover:bg-accent-dark transition-all duration-300 shadow-xl shadow-accent/20 hover:-translate-y-0.5 disabled:opacity-60 cursor-pointer"
 					>
 						{isLoading ? 'A criar...' : 'Criar Minha Loja'}
 					</button>
 					{isLoading && progress && (
-						<p className="text-sm text-gray-500 animate-pulse">{progress}</p>
+						<p className="text-sm text-[#78716C] animate-pulse font-body">{progress}</p>
 					)}
 				</div>
 

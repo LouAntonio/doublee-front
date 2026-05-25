@@ -10,7 +10,7 @@ import FeaturedProductsSection from '../components/FeaturedProductsSection';
 
 
 const Home = () => {
-	useDocumentTitle('Home - Double E');
+	useDocumentTitle('Home - Kusumba');
 
 	return (
 		<div style={{ backgroundColor: '#ededed' }}>

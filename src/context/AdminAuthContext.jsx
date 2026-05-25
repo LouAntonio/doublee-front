@@ -20,14 +20,14 @@ export const AdminAuthProvider = ({ children }) => {
 
 	useEffect(() => {
 		const initAuth = async () => {
-			const storedToken = localStorage.getItem('doublee_admin_token');
-			const storedAdminDate = localStorage.getItem('doublee_admin');
+			const storedToken = localStorage.getItem('Kusumba_admin_token');
+			const storedAdminDate = localStorage.getItem('Kusumba_admin');
 
 			if (storedToken && storedAdminDate) {
 				// Verificar se o token já expirou antes de confiar nele
 				if (isTokenExpired(storedToken)) {
-					localStorage.removeItem('doublee_admin_token');
-					localStorage.removeItem('doublee_admin');
+					localStorage.removeItem('Kusumba_admin_token');
+					localStorage.removeItem('Kusumba_admin');
 					setIsLoading(false);
 					return;
 				}
@@ -38,8 +38,8 @@ export const AdminAuthProvider = ({ children }) => {
 					setIsAuthenticated(true);
 				} catch (error) {
 					console.error('Failed to parse stored admin info', error);
-					localStorage.removeItem('doublee_admin_token');
-					localStorage.removeItem('doublee_admin');
+					localStorage.removeItem('Kusumba_admin_token');
+					localStorage.removeItem('Kusumba_admin');
 				}
 			}
 			setIsLoading(false);
@@ -53,8 +53,8 @@ export const AdminAuthProvider = ({ children }) => {
 			const response = await http.post('/users/admin/login', { email, password });
 
 			if (response?.success && response.token && response.user) {
-				localStorage.setItem('doublee_admin_token', response.token);
-				localStorage.setItem('doublee_admin', JSON.stringify(response.user));
+				localStorage.setItem('Kusumba_admin_token', response.token);
+				localStorage.setItem('Kusumba_admin', JSON.stringify(response.user));
 				setAdmin(response.user);
 				setIsAuthenticated(true);
 				return { success: true };
@@ -69,8 +69,8 @@ export const AdminAuthProvider = ({ children }) => {
 	};
 
 	const logout = () => {
-		localStorage.removeItem('doublee_admin_token');
-		localStorage.removeItem('doublee_admin');
+		localStorage.removeItem('Kusumba_admin_token');
+		localStorage.removeItem('Kusumba_admin');
 		setAdmin(null);
 		setIsAuthenticated(false);
 		notyf.success('Sessão terminada.');

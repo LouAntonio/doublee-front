@@ -138,12 +138,12 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 				{steps.map((step, index) => (
 					<React.Fragment key={step.number}>
 						<div className="flex flex-col items-center gap-2">
-							<div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${currentStep > step.number ? 'bg-green-500 text-white' : currentStep === step.number ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+							<div className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-semibold transition-all ${currentStep > step.number ? 'bg-accent text-white' : currentStep === step.number ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'bg-[#E7E5E4] text-[#A8A29E]'}`}>
 								{currentStep > step.number ? <IoCheckmarkCircle className="w-6 h-6" /> : step.number}
 							</div>
-							<span className={`text-xs font-medium ${currentStep >= step.number ? 'text-gray-900' : 'text-gray-400'}`}>{step.title}</span>
+							<span className={`font-display text-xs ${currentStep >= step.number ? 'text-[#1C1917]' : 'text-[#A8A29E]'}`}>{step.title}</span>
 						</div>
-						{index < steps.length - 1 && <div className={`flex-1 h-1 mx-2 rounded ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'}`} />}
+						{index < steps.length - 1 && <div className={`flex-1 h-1 mx-2 rounded transition-all ${currentStep > step.number ? 'bg-accent' : 'bg-[#E7E5E4]'}`} />}
 					</React.Fragment>
 				))}
 			</div>
@@ -151,21 +151,21 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 			{currentStep === 1 && (
 				<div className="space-y-5">
 					<div className="text-center mb-6">
-						<h3 className="text-xl font-bold text-gray-900 mb-2">Crie sua conta</h3>
-						<p className="text-sm text-gray-600">Informe seu e-mail para começar</p>
+						<h3 className="font-display text-2xl text-[#1C1917] mb-2">Crie sua conta</h3>
+						<p className="font-body text-sm text-[#78716C]">Informe seu e-mail para começar</p>
 					</div>
 					<div>
-						<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+						<label htmlFor="email" className="block font-display text-sm text-[#1C1917] mb-2">E-mail</label>
 						<div className="relative">
-							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoMailOutline className="w-5 h-5" /></div>
+							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoMailOutline className="w-5 h-5" /></div>
 							<input type="email" id="email" name="email" value={formData.email} onChange={handleChange}
-								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="seu@email.com" />
+								className={`w-full pl-11 pr-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="seu@email.com" />
 						</div>
-						{errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+						{errors.email && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.email}</p>}
 					</div>
 					<button type="button" onClick={handleEmailSubmit} disabled={isLoading}
-						className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer">
-						{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Enviando...</span></> : <><span>Continuar</span><IoArrowForward className="w-5 h-5" /></>}
+						className="w-full bg-accent hover:bg-accent-dark text-white font-display text-base py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+						{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Enviando...</span></> : <><span>Continuar</span><IoArrowForward className="w-5 h-5" /></>}
 					</button>
 				</div>
 			)}
@@ -173,34 +173,34 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 			{currentStep === 2 && (
 				<div className="space-y-5">
 					<div className="text-center mb-6">
-						<h3 className="text-xl font-bold text-gray-900 mb-2">Verifique seu e-mail</h3>
-						<p className="text-sm text-gray-600">Enviamos um código de 6 dígitos para<br /><span className="font-semibold text-gray-900">{formData.email}</span></p>
+						<h3 className="font-display text-2xl text-[#1C1917] mb-2">Verifique seu e-mail</h3>
+						<p className="font-body text-sm text-[#78716C]">Enviamos um código de 6 dígitos para<br /><span className="font-display font-semibold text-[#1C1917]">{formData.email}</span></p>
 					</div>
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-3 text-center">Digite o código</label>
+						<label className="block font-display text-sm text-[#1C1917] mb-3 text-center">Digite o código</label>
 						<div className="flex gap-2 justify-center">
 							{formData.otp.map((digit, index) => (
 								<input key={index} ref={(el) => (otpInputRefs.current[index] = el)} type="text" inputMode="numeric" maxLength={1} value={digit}
 									onChange={(e) => handleOtpChange(index, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(index, e)}
-									className={`w-12 h-12 text-center text-xl font-bold rounded-lg border ${errors.otp ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} />
+									className={`w-12 h-12 text-center text-xl font-display font-bold rounded-xl border ${errors.otp ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 text-[#1C1917] focus:ring-2 focus:ring-accent/20 focus:border-accent`} />
 							))}
 						</div>
-						{errors.otp && <p className="mt-2 text-sm text-red-600 text-center">{errors.otp}</p>}
+						{errors.otp && <p className="mt-2 text-sm text-red-500 font-body text-center">{errors.otp}</p>}
 					</div>
 					<div className="text-center">
 						<button type="button" onClick={handleResendOtp} disabled={resendTimer !== 0 || isLoading}
-							className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed cursor-pointer">
+							className="font-display text-sm text-accent hover:text-accent-dark font-semibold disabled:text-[#A8A29E] disabled:cursor-not-allowed cursor-pointer transition-colors">
 							{resendTimer === 0 ? 'Reenviar código' : `Reenviar em ${resendTimer}s`}
 						</button>
 					</div>
 					<div className="flex gap-3">
 						<button type="button" onClick={() => setCurrentStep(1)}
-							className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer">
+							className="flex-1 bg-white text-[#78716C] font-display text-base py-3.5 rounded-full transition-all duration-300 border-2 border-[#E7E5E4] hover:border-accent hover:text-accent flex items-center justify-center gap-2 cursor-pointer">
 							<IoArrowBack className="w-5 h-5" /><span>Voltar</span>
 						</button>
 						<button type="button" onClick={handleOtpSubmit} disabled={isLoading}
-							className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer">
-							{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Verificando...</span></> : <><span>Verificar</span><IoArrowForward className="w-5 h-5" /></>}
+							className="flex-1 bg-accent hover:bg-accent-dark text-white font-display text-base py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+							{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Verificando...</span></> : <><span>Verificar</span><IoArrowForward className="w-5 h-5" /></>}
 						</button>
 					</div>
 				</div>
@@ -209,83 +209,83 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 			{currentStep === 3 && (
 				<div className="space-y-5">
 					<div className="text-center mb-6">
-						<h3 className="text-xl font-bold text-gray-900 mb-2">Complete seu cadastro</h3>
-						<p className="text-sm text-gray-600">Preencha seus dados pessoais</p>
+						<h3 className="font-display text-2xl text-[#1C1917] mb-2">Complete seu cadastro</h3>
+						<p className="font-body text-sm text-[#78716C]">Preencha seus dados pessoais</p>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+							<label htmlFor="firstName" className="block font-display text-sm text-[#1C1917] mb-2">Nome</label>
 							<div className="relative">
-								<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoPersonOutline className="w-5 h-5" /></div>
+								<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoPersonOutline className="w-5 h-5" /></div>
 								<input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange}
-									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="Seu nome" />
+									className={`w-full pl-11 pr-4 py-3 rounded-xl border ${errors.firstName ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="Seu nome" />
 							</div>
-							{errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
+							{errors.firstName && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.firstName}</p>}
 						</div>
 						<div>
-							<label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">Sobrenome</label>
+							<label htmlFor="lastName" className="block font-display text-sm text-[#1C1917] mb-2">Sobrenome</label>
 							<div className="relative">
-								<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoPersonOutline className="w-5 h-5" /></div>
+								<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoPersonOutline className="w-5 h-5" /></div>
 								<input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange}
-									className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="Seu sobrenome" />
+									className={`w-full pl-11 pr-4 py-3 rounded-xl border ${errors.lastName ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="Seu sobrenome" />
 							</div>
-							{errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
+							{errors.lastName && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.lastName}</p>}
 						</div>
 					</div>
 					<div>
-						<label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+						<label htmlFor="phone" className="block font-display text-sm text-[#1C1917] mb-2">Telefone</label>
 						<div className="relative">
-							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoCallOutline className="w-5 h-5" /></div>
+							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoCallOutline className="w-5 h-5" /></div>
 							<input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange}
-								className={`w-full pl-11 pr-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="9XX XXX XXX" />
+								className={`w-full pl-11 pr-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="9XX XXX XXX" />
 						</div>
-						{errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+						{errors.phone && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.phone}</p>}
 					</div>
 					<div>
-						<label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+						<label htmlFor="password" className="block font-display text-sm text-[#1C1917] mb-2">Senha</label>
 						<div className="relative">
-							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoLockClosedOutline className="w-5 h-5" /></div>
+							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoLockClosedOutline className="w-5 h-5" /></div>
 							<input type={showPassword ? 'text' : 'password'} id="password" name="password" value={formData.password} onChange={handleChange}
-								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="Mínimo 8 caracteres" />
-							<button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+								className={`w-full pl-11 pr-12 py-3 rounded-xl border ${errors.password ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="Mínimo 8 caracteres" />
+							<button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-accent transition-colors">
 								{showPassword ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
 							</button>
 						</div>
-						{errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+						{errors.password && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.password}</p>}
 					</div>
 					<div>
-						<label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+						<label htmlFor="confirmPassword" className="block font-display text-sm text-[#1C1917] mb-2">Confirmar Senha</label>
 						<div className="relative">
-							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoLockClosedOutline className="w-5 h-5" /></div>
+							<div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A8A29E]"><IoLockClosedOutline className="w-5 h-5" /></div>
 							<input type={showConfirmPassword ? 'text' : 'password'} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
-								className={`w-full pl-11 pr-12 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} outline-none transition-colors`} placeholder="Digite a senha novamente" />
-							<button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+								className={`w-full pl-11 pr-12 py-3 rounded-xl border ${errors.confirmPassword ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 font-body text-[#1C1917] placeholder:text-[#A8A29E] focus:ring-2 focus:ring-accent/20 focus:border-accent`} placeholder="Digite a senha novamente" />
+							<button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-accent transition-colors">
 								{showConfirmPassword ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
 							</button>
 						</div>
-						{errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+						{errors.confirmPassword && <p className="mt-1.5 text-sm text-red-500 font-body">{errors.confirmPassword}</p>}
 					</div>
 					<div className="flex gap-3">
 						<button type="button" onClick={() => setCurrentStep(2)}
-							className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer">
+							className="flex-1 bg-white text-[#78716C] font-display text-base py-3.5 rounded-full transition-all duration-300 border-2 border-[#E7E5E4] hover:border-accent hover:text-accent flex items-center justify-center gap-2 cursor-pointer">
 							<IoArrowBack className="w-5 h-5" /><span>Voltar</span>
 						</button>
 						<button type="button" onClick={handleFinalSubmit} disabled={isLoading}
-							className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer">
-							{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Criando conta...</span></> : 'Criar Conta'}
+							className="flex-1 bg-accent hover:bg-accent-dark text-white font-display text-base py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+							{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Criando conta...</span></> : 'Criar Conta'}
 						</button>
 					</div>
 					<div className="relative my-6">
-						<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-						<div className="relative flex justify-center text-sm"><span className="bg-white px-4 text-gray-500">Ou continue com</span></div>
+						<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#E7E5E4]"></div></div>
+						<div className="relative flex justify-center text-sm"><span className="bg-white px-4 font-body text-[#A8A29E]">Ou continue com</span></div>
 					</div>
 					<GoogleRegisterButton />
 				</div>
 			)}
 
-			<div className="text-center pt-4 border-t border-gray-200">
-				<p className="text-sm text-gray-600">Já tem uma conta?{' '}
-					<button type="button" onClick={onSwitchToLogin} className="text-blue-600 hover:text-blue-700 font-semibold cursor-pointer">Fazer login</button>
+			<div className="text-center pt-4 border-t border-[#E7E5E4]">
+				<p className="font-body text-sm text-[#78716C]">Já tem uma conta?{' '}
+					<button type="button" onClick={onSwitchToLogin} className="font-display text-accent hover:text-accent-dark font-semibold cursor-pointer transition-colors">Fazer login</button>
 				</p>
 			</div>
 		</div>

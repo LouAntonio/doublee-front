@@ -14,7 +14,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(() => {
-		const savedUser = localStorage.getItem('doublee_user');
+		const savedUser = localStorage.getItem('Kusumba_user');
 		return savedUser ? JSON.parse(savedUser) : null;
 	});
 
@@ -22,14 +22,14 @@ export const AuthProvider = ({ children }) => {
 
 	const login = (userData, token) => {
 		setUser(userData);
-		localStorage.setItem('doublee_user', JSON.stringify(userData));
-		if (token) localStorage.setItem('doublee_token', token);
+		localStorage.setItem('Kusumba_user', JSON.stringify(userData));
+		if (token) localStorage.setItem('Kusumba_token', token);
 	};
 
 	const logout = () => {
 		setUser(null);
-		localStorage.removeItem('doublee_user');
-		localStorage.removeItem('doublee_token');
+		localStorage.removeItem('Kusumba_user');
+		localStorage.removeItem('Kusumba_token');
 	};
 
 	// Validate session cookie on mount
