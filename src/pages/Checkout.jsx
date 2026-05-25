@@ -9,8 +9,6 @@ import useCartStore from '../stores/cartStore';
 import { notyf } from '../utils/notyf';
 import { useCreateOrder } from '../hooks/queries/useOrders';
 
-
-
 const Checkout = () => {
 	useDocumentTitle('Checkout - Kusumba');
 	const navigate = useNavigate();
@@ -33,11 +31,7 @@ const Checkout = () => {
 	});
 
 	const [paymentInfo, setPaymentInfo] = useState({
-		method: 'multicaixa', // multicaixa, tpa, transfer, credit
-		cardNumber: '',
-		cardName: '',
-		cardExpiry: '',
-		cardCVV: '',
+		method: 'multicaixa', // multicaixa, transfer
 		phoneNumber: '',
 		bankName: '',
 		accountNumber: '',
@@ -71,13 +65,7 @@ const Checkout = () => {
 		if (paymentInfo.method === 'multicaixa') {
 			if (!paymentInfo.phoneNumber.trim()) newErrors.phoneNumber = 'Número de telefone é obrigatório';
 		} else if (paymentInfo.method === 'transfer') {
-			// Transferência bancária não precisa validação adicional
 			return true;
-		} else if (paymentInfo.method === 'credit') {
-			if (!paymentInfo.cardNumber.trim()) newErrors.cardNumber = 'Número do cartão é obrigatório';
-			if (!paymentInfo.cardName.trim()) newErrors.cardName = 'Nome no cartão é obrigatório';
-			if (!paymentInfo.cardExpiry.trim()) newErrors.cardExpiry = 'Validade é obrigatória';
-			if (!paymentInfo.cardCVV.trim()) newErrors.cardCVV = 'CVV é obrigatório';
 		}
 
 		setErrors(newErrors);
@@ -127,27 +115,27 @@ const Checkout = () => {
 
 	if (orderPlaced) {
 		return (
-			<div style={{ backgroundColor: '#ededed', minHeight: '100vh' }}>
+			<div className="bg-sand min-h-screen">
 				<Header />
-				<div className="max-w-2xl mx-auto px-4 py-12 text-center">
-					<div className="bg-white rounded-lg shadow-lg p-8 lg:p-12">
-						<div className="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-							<IoCheckmarkCircle className="w-12 h-12 text-green-600" />
+				<div className="max-w-2xl mx-auto px-4 py-12">
+					<div className="bg-white rounded-2xl shadow-md p-8 lg:p-12 text-center">
+						<div className="w-20 h-20 mx-auto mb-6 bg-accent/10 rounded-full flex items-center justify-center">
+							<IoCheckmarkCircle className="w-12 h-12 text-accent" />
 						</div>
-						<h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-4">
+						<h1 className="text-2xl lg:text-3xl font-display text-[#1C1917] mb-4">
 							Pedido Realizado com Sucesso!
 						</h1>
-						<p className="text-gray-600 mb-6">
+						<p className="text-[#78716C] mb-6">
 							Obrigado pela sua compra. Você receberá um email de confirmação em breve.
 						</p>
-						<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-							<p className="text-sm text-blue-800">
+						<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-6">
+							<p className="text-sm text-accent">
 								<strong>Número do Pedido:</strong> #DBE{orderNumber}
 							</p>
 						</div>
 						<Link
 							to="/"
-							className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+							className="inline-block px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-full transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
 						>
 							Voltar para Home
 						</Link>
@@ -158,41 +146,35 @@ const Checkout = () => {
 	}
 
 	return (
-		<div style={{ backgroundColor: '#ededed', minHeight: '100vh' }}>
+		<div className="bg-sand min-h-screen">
 			<Header />
 
 			<div className="max-w-[1200px] mx-auto px-4 py-6 lg:py-8">
-				{/* Back Button */}
 				<Link
 					to="/cart"
-					className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 text-sm font-medium"
+					className="inline-flex items-center gap-2 text-accent hover:text-accent-dark mb-4 text-sm font-body"
 				>
 					<IoArrowBack className="w-4 h-4" />
 					Voltar ao Carrinho
 				</Link>
 
-				{/* Page Title */}
-				<h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6">
+				<h1 className="text-2xl lg:text-3xl font-display text-[#1C1917] mb-6">
 					Finalizar Compra
 				</h1>
 
-				{/* Checkout Steps */}
 				<CheckoutSteps currentStep={currentStep} onStepClick={setCurrentStep} />
 
-				{/* Checkout Content */}
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-					{/* Form Section */}
 					<div className="lg:col-span-2">
-						<div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-							{/* Step 1: Shipping Information */}
+						<div className="bg-white rounded-2xl shadow-md p-6 md:p-8">
 							{currentStep === 1 && (
 								<div>
-									<h2 className="text-xl font-bold text-gray-800 mb-6">
+									<h2 className="text-xl font-display text-[#1C1917] mb-6">
 										Informações de Envio
 									</h2>
 									<div className="space-y-4">
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label className="block text-sm font-body text-[#78716C] mb-1">
 												Nome Completo *
 											</label>
 											<input
@@ -201,7 +183,7 @@ const Checkout = () => {
 												onChange={(e) =>
 													setShippingInfo({ ...shippingInfo, fullName: e.target.value })
 												}
-												className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.fullName ? 'border-red-500' : 'border-gray-300'
+												className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.fullName ? 'border-red-500' : 'border-accent/20'
 												}`}
 												placeholder="João Silva"
 											/>
@@ -212,7 +194,7 @@ const Checkout = () => {
 
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
+												<label className="block text-sm font-body text-[#78716C] mb-1">
 													Email *
 												</label>
 												<input
@@ -221,7 +203,7 @@ const Checkout = () => {
 													onChange={(e) =>
 														setShippingInfo({ ...shippingInfo, email: e.target.value })
 													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.email ? 'border-red-500' : 'border-accent/20'
 													}`}
 													placeholder="joao@email.com"
 												/>
@@ -231,7 +213,7 @@ const Checkout = () => {
 											</div>
 
 											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
+												<label className="block text-sm font-body text-[#78716C] mb-1">
 													Telefone *
 												</label>
 												<input
@@ -240,7 +222,7 @@ const Checkout = () => {
 													onChange={(e) =>
 														setShippingInfo({ ...shippingInfo, phone: e.target.value })
 													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.phone ? 'border-red-500' : 'border-accent/20'
 													}`}
 													placeholder="+244 923 456 789"
 												/>
@@ -251,7 +233,7 @@ const Checkout = () => {
 										</div>
 
 										<div>
-											<label className="block text-sm font-medium text-gray-700 mb-1">
+											<label className="block text-sm font-body text-[#78716C] mb-1">
 												Endereço Completo *
 											</label>
 											<input
@@ -260,7 +242,7 @@ const Checkout = () => {
 												onChange={(e) =>
 													setShippingInfo({ ...shippingInfo, address: e.target.value })
 												}
-												className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.address ? 'border-red-500' : 'border-gray-300'
+												className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.address ? 'border-red-500' : 'border-accent/20'
 												}`}
 												placeholder="Rua da Independência, Prédio 123, Apt 4B"
 											/>
@@ -271,7 +253,7 @@ const Checkout = () => {
 
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
+												<label className="block text-sm font-body text-[#78716C] mb-1">
 													Município *
 												</label>
 												<input
@@ -280,7 +262,7 @@ const Checkout = () => {
 													onChange={(e) =>
 														setShippingInfo({ ...shippingInfo, municipality: e.target.value })
 													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.municipality ? 'border-red-500' : 'border-gray-300'
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.municipality ? 'border-red-500' : 'border-accent/20'
 													}`}
 													placeholder="Luanda"
 												/>
@@ -290,7 +272,7 @@ const Checkout = () => {
 											</div>
 
 											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
+												<label className="block text-sm font-body text-[#78716C] mb-1">
 													Província *
 												</label>
 												<select
@@ -298,7 +280,7 @@ const Checkout = () => {
 													onChange={(e) =>
 														setShippingInfo({ ...shippingInfo, province: e.target.value })
 													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.province ? 'border-red-500' : 'border-gray-300'
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.province ? 'border-red-500' : 'border-accent/20'
 													}`}
 												>
 													<option value="">Selecione uma província</option>
@@ -330,20 +312,18 @@ const Checkout = () => {
 								</div>
 							)}
 
-							{/* Step 2: Payment Method */}
 							{currentStep === 2 && (
 								<div>
-									<h2 className="text-xl font-bold text-gray-800 mb-6">
+									<h2 className="text-xl font-display text-[#1C1917] mb-6">
 										Método de Pagamento
 									</h2>
 
-									{/* Payment Method Selection */}
 									<div className="space-y-3 mb-6">
 										<div
 											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
-											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
-												? 'border-blue-600 bg-blue-50'
-												: 'border-gray-200 hover:border-gray-300'
+											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
+												? 'border-accent bg-accent/5'
+												: 'border-accent/10 hover:border-accent/30'
 											}`}
 										>
 											<div className="flex items-center gap-3">
@@ -351,22 +331,20 @@ const Checkout = () => {
 													type="radio"
 													checked={paymentInfo.method === 'multicaixa'}
 													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
-													className="w-4 h-4"
+													className="w-4 h-4 accent-accent"
 												/>
 												<div>
-													<p className="font-semibold text-gray-800">Multicaixa Express</p>
-													<p className="text-xs text-gray-500">Pagamento via telemóvel</p>
+													<p className="font-display text-[#1C1917]">Multicaixa Express</p>
+													<p className="text-xs text-[#78716C]">Pagamento via telemóvel</p>
 												</div>
 											</div>
 										</div>
 
-										{/* TPA option removed for Angola context */}
-
 										<div
 											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
-											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'transfer'
-												? 'border-blue-600 bg-blue-50'
-												: 'border-gray-200 hover:border-gray-300'
+											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'transfer'
+												? 'border-accent bg-accent/5'
+												: 'border-accent/10 hover:border-accent/30'
 											}`}
 										>
 											<div className="flex items-center gap-3">
@@ -374,128 +352,20 @@ const Checkout = () => {
 													type="radio"
 													checked={paymentInfo.method === 'transfer'}
 													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
-													className="w-4 h-4"
+													className="w-4 h-4 accent-accent"
 												/>
 												<div>
-													<p className="font-semibold text-gray-800">Transferência Bancária</p>
-													<p className="text-xs text-gray-500">BAI, BFA, BIC, Atlantico</p>
-												</div>
-											</div>
-										</div>
-
-										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
-											className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentInfo.method === 'credit'
-												? 'border-blue-600 bg-blue-50'
-												: 'border-gray-200 hover:border-gray-300'
-											}`}
-										>
-											<div className="flex items-center gap-3">
-												<input
-													type="radio"
-													checked={paymentInfo.method === 'credit'}
-													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'credit' })}
-													className="w-4 h-4"
-												/>
-												<div>
-													<p className="font-semibold text-gray-800">Cartão de Crédito</p>
-													<p className="text-xs text-gray-500">Visa, Mastercard</p>
+													<p className="font-display text-[#1C1917]">Transferência Bancária</p>
+													<p className="text-xs text-[#78716C]">Pagamento no Balcão, ATM e Apps de Online Banking</p>
 												</div>
 											</div>
 										</div>
 									</div>
 
-									{/* Credit Card Form */}
-									{paymentInfo.method === 'credit' && (
-										<div className="space-y-4 pt-4 border-t border-gray-200">
-											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
-													Número do Cartão *
-												</label>
-												<input
-													type="text"
-													value={paymentInfo.cardNumber}
-													onChange={(e) =>
-														setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })
-													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'
-													}`}
-													placeholder="1234 5678 9012 3456"
-													maxLength="19"
-												/>
-												{errors.cardNumber && (
-													<p className="text-xs text-red-500 mt-1">{errors.cardNumber}</p>
-												)}
-											</div>
-
-											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
-													Nome no Cartão *
-												</label>
-												<input
-													type="text"
-													value={paymentInfo.cardName}
-													onChange={(e) =>
-														setPaymentInfo({ ...paymentInfo, cardName: e.target.value })
-													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardName ? 'border-red-500' : 'border-gray-300'
-													}`}
-													placeholder="JOÃO SILVA"
-												/>
-												{errors.cardName && (
-													<p className="text-xs text-red-500 mt-1">{errors.cardName}</p>
-												)}
-											</div>
-
-											<div className="grid grid-cols-2 gap-4">
-												<div>
-													<label className="block text-sm font-medium text-gray-700 mb-1">
-														Validade *
-													</label>
-													<input
-														type="text"
-														value={paymentInfo.cardExpiry}
-														onChange={(e) =>
-															setPaymentInfo({ ...paymentInfo, cardExpiry: e.target.value })
-														}
-														className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardExpiry ? 'border-red-500' : 'border-gray-300'
-														}`}
-														placeholder="MM/AA"
-														maxLength="5"
-													/>
-													{errors.cardExpiry && (
-														<p className="text-xs text-red-500 mt-1">{errors.cardExpiry}</p>
-													)}
-												</div>
-
-												<div>
-													<label className="block text-sm font-medium text-gray-700 mb-1">
-														CVV *
-													</label>
-													<input
-														type="text"
-														value={paymentInfo.cardCVV}
-														onChange={(e) =>
-															setPaymentInfo({ ...paymentInfo, cardCVV: e.target.value })
-														}
-														className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.cardCVV ? 'border-red-500' : 'border-gray-300'
-														}`}
-														placeholder="123"
-														maxLength="4"
-													/>
-													{errors.cardCVV && (
-														<p className="text-xs text-red-500 mt-1">{errors.cardCVV}</p>
-													)}
-												</div>
-											</div>
-										</div>
-									)}
-
-									{/* Multicaixa Express Form */}
 									{paymentInfo.method === 'multicaixa' && (
-										<div className="space-y-4 pt-4 border-t border-gray-200">
+										<div className="space-y-4 pt-4 border-t border-accent/10">
 											<div>
-												<label className="block text-sm font-medium text-gray-700 mb-1">
+												<label className="block text-sm font-body text-[#78716C] mb-1">
 													Número de Telefone *
 												</label>
 												<input
@@ -504,7 +374,7 @@ const Checkout = () => {
 													onChange={(e) =>
 														setPaymentInfo({ ...paymentInfo, phoneNumber: e.target.value })
 													}
-													className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.phoneNumber ? 'border-red-500' : 'border-accent/20'
 													}`}
 													placeholder="+244 923 456 789"
 												/>
@@ -512,24 +382,21 @@ const Checkout = () => {
 													<p className="text-xs text-red-500 mt-1">{errors.phoneNumber}</p>
 												)}
 											</div>
-											<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-												<p className="text-sm text-blue-800">
+											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
+												<p className="text-sm text-accent">
 													Após confirmar o pedido, receberá uma notificação no seu telemóvel para autorizar o pagamento.
 												</p>
 											</div>
 										</div>
 									)}
 
-									{/* TPA instructions removed */}
-
-									{/* Transfer Instructions */}
 									{paymentInfo.method === 'transfer' && (
-										<div className="pt-4 border-t border-gray-200">
-											<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-												<p className="text-sm text-blue-800 mb-3">
+										<div className="pt-4 border-t border-accent/10">
+											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
+												<p className="text-sm text-accent mb-3">
 													<strong>Dados para Transferência Bancária:</strong>
 												</p>
-												<div className="space-y-2 text-sm text-blue-800">
+												<div className="space-y-2 text-sm text-accent">
 													<p><strong>Banco:</strong> Banco Angolano de Investimentos (BAI)</p>
 													<p><strong>Titular:</strong> Kusumba</p>
 													<p><strong>IBAN:</strong> AO06 0000 0123 4567 8901 2345 6</p>
@@ -543,76 +410,65 @@ const Checkout = () => {
 								</div>
 							)}
 
-							{/* Step 3: Review & Confirm */}
 							{currentStep === 3 && (
 								<div>
-									<h2 className="text-xl font-bold text-gray-800 mb-6">
+									<h2 className="text-xl font-display text-[#1C1917] mb-6">
 										Revisar Pedido
 									</h2>
 
-									{/* Shipping Info Review */}
 									<div className="mb-6">
-										<h3 className="font-semibold text-gray-800 mb-3">Informações de Envio</h3>
-										<div className="bg-gray-50 rounded-lg p-4 space-y-1">
-											<p className="text-sm text-gray-700">
+										<h3 className="font-display text-[#1C1917] mb-3">Informações de Envio</h3>
+										<div className="bg-accent/5 rounded-xl p-4 space-y-1">
+											<p className="text-sm text-[#1C1917]">
 												<strong>Nome:</strong> {shippingInfo.fullName}
 											</p>
-											<p className="text-sm text-gray-700">
+											<p className="text-sm text-[#1C1917]">
 												<strong>Email:</strong> {shippingInfo.email}
 											</p>
-											<p className="text-sm text-gray-700">
+											<p className="text-sm text-[#1C1917]">
 												<strong>Telefone:</strong> {shippingInfo.phone}
 											</p>
-											<p className="text-sm text-gray-700">
+											<p className="text-sm text-[#1C1917]">
 												<strong>Endereço:</strong> {shippingInfo.address}, {shippingInfo.municipality} - {shippingInfo.province}
 											</p>
 										</div>
 										<button
 											onClick={() => setCurrentStep(1)}
-											className="text-sm text-blue-600 hover:text-blue-700 mt-2"
+											className="text-sm text-accent hover:text-accent-dark mt-2 font-body cursor-pointer"
 										>
 											Editar
 										</button>
 									</div>
 
-									{/* Payment Info Review */}
 									<div className="mb-6">
-										<h3 className="font-semibold text-gray-800 mb-3">Método de Pagamento</h3>
-										<div className="bg-gray-50 rounded-lg p-4">
-											<p className="text-sm text-gray-700">
+										<h3 className="font-display text-[#1C1917] mb-3">Método de Pagamento</h3>
+										<div className="bg-accent/5 rounded-xl p-4">
+											<p className="text-sm text-[#1C1917]">
 												{paymentInfo.method === 'multicaixa' && '📱 Multicaixa Express'}
-												{/* TPA removed */}
 												{paymentInfo.method === 'transfer' && '🏦 Transferência Bancária'}
-												{paymentInfo.method === 'credit' && '💳 Cartão de Crédito'}
 											</p>
 											{paymentInfo.method === 'multicaixa' && paymentInfo.phoneNumber && (
-												<p className="text-sm text-gray-500 mt-1">
+												<p className="text-sm text-[#78716C] mt-1">
 													Telefone: {paymentInfo.phoneNumber}
-												</p>
-											)}
-											{paymentInfo.method === 'credit' && paymentInfo.cardNumber && (
-												<p className="text-sm text-gray-500 mt-1">
-													**** **** **** {paymentInfo.cardNumber.slice(-4)}
 												</p>
 											)}
 										</div>
 										<button
 											onClick={() => setCurrentStep(2)}
-											className="text-sm text-blue-600 hover:text-blue-700 mt-2"
+											className="text-sm text-accent hover:text-accent-dark mt-2 font-body cursor-pointer"
 										>
 											Editar
 										</button>
 									</div>
 
-									{/* Terms */}
-									<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-										<p className="text-xs text-gray-700">
+									<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
+										<p className="text-xs text-[#78716C]">
 											Ao finalizar a compra, você concorda com nossos{' '}
-											<a href="#" className="text-blue-600 hover:underline">
+											<a href="#" className="text-accent hover:underline">
 												Termos de Uso
 											</a>{' '}
 											e{' '}
-											<a href="#" className="text-blue-600 hover:underline">
+											<a href="#" className="text-accent hover:underline">
 												Política de Privacidade
 											</a>
 											.
@@ -621,12 +477,11 @@ const Checkout = () => {
 								</div>
 							)}
 
-							{/* Navigation Buttons */}
-							<div className="flex gap-3 mt-6 pt-6 border-t border-gray-200">
+							<div className="flex gap-3 mt-6 pt-6 border-t border-accent/10">
 								{currentStep > 1 && (
 									<button
 										onClick={handleBack}
-										className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+										className="flex-1 px-6 py-3 border-2 border-[#1C1917]/20 text-[#1C1917] font-display font-semibold rounded-xl hover:border-accent hover:text-accent transition-all duration-300 cursor-pointer"
 									>
 										Voltar
 									</button>
@@ -634,14 +489,14 @@ const Checkout = () => {
 								{currentStep < 3 ? (
 									<button
 										onClick={handleNext}
-										className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+										className="flex-1 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg cursor-pointer"
 									>
 										Continuar
 									</button>
 								) : (
 									<button
 										onClick={handlePlaceOrder}
-										className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors"
+										className="flex-1 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg cursor-pointer"
 									>
 										Finalizar Pedido
 									</button>
@@ -650,7 +505,6 @@ const Checkout = () => {
 						</div>
 					</div>
 
-					{/* Order Summary Sidebar */}
 					<div className="lg:col-span-1">
 						<OrderSummary showPromoCode={false} />
 					</div>
