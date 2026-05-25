@@ -84,15 +84,15 @@ const AccountSettings = () => {
 		}
 	};
 
-	const inputClass = 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 transition-all';
+	const inputClass = 'w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white';
 
 	return (
 		<div className="space-y-10">
 
 			{/* Email */}
-			<section>
-				<h2 className="text-xl font-semibold text-gray-900 mb-1">Alterar Email</h2>
-				<p className="text-sm text-gray-400 mb-6">
+			<section className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+				<h2 className="text-xl font-semibold text-[#1C1917] mb-1 font-display">Alterar Email</h2>
+				<p className="text-sm text-[#78716C] mb-6 font-body">
 					{emailStep === 'form'
 						? 'Confirme a sua palavra-passe e introduza o novo email. Enviaremos um código de verificação.'
 						: `Introduza o código de 6 dígitos enviado para ${emailData.newEmail}.`}
@@ -102,7 +102,7 @@ const AccountSettings = () => {
 					{emailStep === 'form' ? (
 						<form onSubmit={handleEmailRequest} className="space-y-5">
 							<div className="space-y-2">
-								<label className="text-sm font-medium text-gray-700">Novo Email</label>
+								<label className="text-sm font-medium text-[#1C1917]">Novo Email</label>
 								<input
 									type="email"
 									value={emailData.newEmail}
@@ -113,7 +113,7 @@ const AccountSettings = () => {
 								/>
 							</div>
 							<div className="space-y-2">
-								<label className="text-sm font-medium text-gray-700">Palavra-passe Actual</label>
+								<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
 								<input
 									type="password"
 									value={emailData.password}
@@ -126,7 +126,7 @@ const AccountSettings = () => {
 							<button
 								type="submit"
 								disabled={isLoadingEmail}
-								className="inline-flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 disabled:opacity-60 cursor-pointer transition-all"
+								className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark disabled:opacity-60 cursor-pointer transition-all duration-300 shadow-lg shadow-accent/20 hover:-translate-y-0.5"
 							>
 								<IoMailOutline className="w-4 h-4" />
 								{isLoadingEmail ? 'A enviar...' : 'Enviar Código'}
@@ -134,11 +134,11 @@ const AccountSettings = () => {
 						</form>
 					) : (
 						<form onSubmit={handleEmailConfirm} className="space-y-5">
-							<div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-700">
+							<div className="p-4 bg-orange-50 border border-accent/20 rounded-xl text-sm text-accent">
                                 Código enviado para <strong>{emailData.newEmail}</strong>. Verifique a caixa de entrada (e spam).
 							</div>
 							<div className="space-y-2">
-								<label className="text-sm font-medium text-gray-700">Código de Verificação</label>
+								<label className="text-sm font-medium text-[#1C1917]">Código de Verificação</label>
 								<input
 									type="text"
 									inputMode="numeric"
@@ -154,7 +154,7 @@ const AccountSettings = () => {
 								<button
 									type="submit"
 									disabled={isLoadingEmail || otpCode.length < 6}
-									className="inline-flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 disabled:opacity-60 cursor-pointer transition-all"
+									className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark disabled:opacity-60 cursor-pointer transition-all duration-300 shadow-lg shadow-accent/20 hover:-translate-y-0.5"
 								>
 									<IoCheckmarkCircleOutline className="w-4 h-4" />
 									{isLoadingEmail ? 'A confirmar...' : 'Confirmar Email'}
@@ -162,7 +162,7 @@ const AccountSettings = () => {
 								<button
 									type="button"
 									onClick={() => { setEmailStep('form'); setOtpCode(''); }}
-									className="px-5 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm hover:bg-gray-50 cursor-pointer transition-all"
+									className="px-5 py-3 rounded-full border border-accent/20 text-[#78716C] text-sm hover:bg-sand cursor-pointer transition-all"
 								>
                                     Voltar
 								</button>
@@ -172,15 +172,15 @@ const AccountSettings = () => {
 				</div>
 			</section>
 
-			<hr className="border-gray-100" />
+			<hr className="border-accent/10" />
 
 			{/* Palavra-passe */}
-			<section>
-				<h3 className="text-xl font-semibold text-gray-900 mb-1">Alterar Palavra-passe</h3>
-				<p className="text-sm text-gray-400 mb-6">Use uma palavra-passe forte com pelo menos 8 caracteres.</p>
+			<section className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+				<h3 className="text-xl font-semibold text-[#1C1917] mb-1 font-display">Alterar Palavra-passe</h3>
+				<p className="text-sm text-[#78716C] mb-6 font-body">Use uma palavra-passe forte com pelo menos 8 caracteres.</p>
 				<form onSubmit={handlePassSubmit} className="max-w-2xl space-y-5">
 					<div className="space-y-2">
-						<label className="text-sm font-medium text-gray-700">Palavra-passe Actual</label>
+						<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
 						<input
 							type="password"
 							value={passData.currentPassword}
@@ -191,7 +191,7 @@ const AccountSettings = () => {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Nova Palavra-passe</label>
+							<label className="text-sm font-medium text-[#1C1917]">Nova Palavra-passe</label>
 							<input
 								type="password"
 								value={passData.newPassword}
@@ -201,7 +201,7 @@ const AccountSettings = () => {
 							/>
 						</div>
 						<div className="space-y-2">
-							<label className="text-sm font-medium text-gray-700">Confirmar Nova Palavra-passe</label>
+							<label className="text-sm font-medium text-[#1C1917]">Confirmar Nova Palavra-passe</label>
 							<input
 								type="password"
 								value={passData.confirmPassword}
@@ -214,7 +214,7 @@ const AccountSettings = () => {
 					<button
 						type="submit"
 						disabled={isLoadingPass}
-						className="px-8 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 disabled:opacity-60 cursor-pointer transition-all"
+						className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark disabled:opacity-60 cursor-pointer transition-all duration-300 shadow-lg shadow-accent/20 hover:-translate-y-0.5"
 					>
 						{isLoadingPass ? 'A actualizar...' : 'Alterar Palavra-passe'}
 					</button>

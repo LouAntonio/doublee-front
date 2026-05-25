@@ -107,30 +107,31 @@ const Dashboard = () => {
 	const isPending  = verificationStatus === 'pending';
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col">
+		<div className="min-h-screen bg-sand flex flex-col">
 			<Header />
 
 			<main className="flex-grow">
 				{/* Welcome Banner */}
-				<div className="bg-white border-b border-gray-100">
-					<div className="max-w-[1200px] mx-auto px-4 py-6">
+				<div className="relative overflow-hidden bg-white border-b border-accent/10">
+					<div className="geo-pattern absolute inset-0 opacity-30" />
+					<div className="relative max-w-[1200px] mx-auto px-4 py-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
 						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 							<div>
-								<p className="text-sm text-gray-400 capitalize">{formatDate()}</p>
-								<h1 className="text-2xl font-bold text-gray-900 mt-0.5">
+								<p className="text-sm text-[#78716C] capitalize font-body">{formatDate()}</p>
+								<h1 className="text-2xl font-bold text-[#1C1917] mt-0.5 font-display">
 									{getGreeting()}, {user?.name || 'Cliente'}
 								</h1>
-								<p className="text-sm text-gray-500 mt-1">
-                                    Bem-vindo(a) à sua área pessoal - <span className="text-primary-600 font-medium">Kusumba Angola</span>
+								<p className="text-sm text-[#78716C] mt-1 font-body">
+                                    Bem-vindo(a) à sua área pessoal — <span className="text-accent font-semibold">Kusumba Angola</span>
 								</p>
 							</div>
 							{!isVerified && (
 								<button
 									onClick={() => setActiveTab('verification')}
-									className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+									className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 ${
 										isPending
 											? 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
-											: 'bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100'
+											: 'bg-orange-50 border border-accent/20 text-accent hover:bg-orange-100'
 									}`}
 								>
 									<IoAlertCircleOutline className="w-4 h-4 shrink-0" />
@@ -148,8 +149,8 @@ const Dashboard = () => {
 						<aside className="w-full lg:w-72 shrink-0 space-y-4">
 
 							{/* Profile Card */}
-							<div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-								<div className="h-16 bg-gradient-to-r from-primary-600 to-primary-500" />
+							<div className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden opacity-0 animate-fade-in-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+								<div className="h-16 bg-gradient-to-r from-accent to-accent-dark" />
 								<div className="px-5 pb-5 -mt-8">
 									<div className="w-16 h-16 rounded-full bg-white border-4 border-white shadow overflow-hidden">
 										<img
@@ -158,15 +159,15 @@ const Dashboard = () => {
 											className="w-full h-full object-cover"
 											onError={(e) => {
 												e.currentTarget.style.display = 'none';
-												e.currentTarget.parentElement.classList.add('flex', 'items-center', 'justify-center', 'text-primary-700', 'text-xl', 'font-bold');
+												e.currentTarget.parentElement.classList.add('flex', 'items-center', 'justify-center', 'text-accent', 'text-xl', 'font-bold');
 												e.currentTarget.parentElement.insertAdjacentText('beforeend', initials);
 											}}
 										/>
 									</div>
-									<h2 className="mt-2 text-base font-semibold text-gray-900 leading-tight">
+									<h2 className="mt-2 text-base font-semibold text-[#1C1917] leading-tight font-display">
 										{user?.name} {user?.surname}
 									</h2>
-									<p className="text-xs text-gray-400 truncate">{user?.email}</p>
+									<p className="text-xs text-[#78716C] truncate font-body">{user?.email}</p>
 
 									<div className="mt-3 flex items-center gap-1.5">
 										{isVerified ? (
@@ -182,13 +183,13 @@ const Dashboard = () => {
 												<IoTimeOutline className="w-3.5 h-3.5" /> Não verificado
 											</span>
 										)}
-										<span className="text-xs text-gray-400 bg-gray-50 border border-gray-100 px-2 py-1 rounded-full">Cliente</span>
+										<span className="text-xs text-[#78716C] bg-sand border border-accent/10 px-2 py-1 rounded-full font-body">Cliente</span>
 									</div>
 								</div>
 							</div>
 
 							{/* Navigation */}
-							<nav className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2">
+							<nav className="bg-white rounded-2xl border border-accent/10 shadow-md p-2 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
 								{tabs.map((tab) => {
 									const locked = tab.requiresVerification && !isVerified;
 									return (
@@ -199,38 +200,38 @@ const Dashboard = () => {
 											title={locked ? 'Verifique a sua identidade para aceder' : undefined}
 											className={`w-full group flex items-center justify-between gap-3 px-3 py-3 rounded-xl text-left transition-all ${
 												locked
-													? 'opacity-50 cursor-not-allowed text-gray-400'
+													? 'opacity-50 cursor-not-allowed text-[#78716C]'
 													: activeTab === tab.id
-														? 'bg-primary-50 text-primary-700 cursor-pointer'
-														: 'text-gray-600 hover:bg-gray-50 cursor-pointer'
+														? 'bg-orange-50 text-accent cursor-pointer'
+														: 'text-[#78716C] hover:bg-sand cursor-pointer'
 											}`}
 										>
 											<div className="flex items-center gap-3">
 												<span className={`p-2 rounded-lg ${
 													locked
-														? 'bg-gray-100 text-gray-400'
+														? 'bg-sand text-[#78716C]'
 														: activeTab === tab.id
-															? 'bg-primary-100 text-primary-700'
-															: 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
+															? 'bg-orange-100 text-accent'
+															: 'bg-sand text-[#78716C] group-hover:bg-orange-50'
 												}`}>
 													{tab.icon}
 												</span>
 												<div>
-													<p className="text-sm font-medium leading-tight">{tab.label}</p>
-													<p className="text-xs text-gray-400 leading-tight mt-0.5">
+													<p className="text-sm font-semibold leading-tight font-display">{tab.label}</p>
+													<p className="text-xs text-[#78716C] leading-tight mt-0.5 font-body">
 														{locked ? 'Requer verificação de identidade' : tab.description}
 													</p>
 												</div>
 											</div>
 											{locked
-												? <IoLockClosedOutline className="w-4 h-4 shrink-0 text-gray-300" />
-												: <IoChevronForwardOutline className={`w-4 h-4 shrink-0 transition-transform ${activeTab === tab.id ? 'translate-x-0.5 text-primary-500' : 'text-gray-300'}`} />
+												? <IoLockClosedOutline className="w-4 h-4 shrink-0 text-[#78716C]/50" />
+												: <IoChevronForwardOutline className={`w-4 h-4 shrink-0 transition-transform ${activeTab === tab.id ? 'translate-x-0.5 text-accent' : 'text-[#78716C]/50'}`} />
 											}
 										</button>
 									);
 								})}
 
-								<div className="border-t border-gray-100 mt-2 pt-2">
+								<div className="border-t border-accent/10 mt-2 pt-2">
 									<button
 										onClick={logout}
 										className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
@@ -244,31 +245,34 @@ const Dashboard = () => {
 							</nav>
 
 							{/* Help Card */}
-							<div className="bg-primary-600 rounded-2xl p-4 text-white text-sm">
-								<p className="font-semibold">Precisa de ajuda?</p>
-								<p className="text-primary-200 text-xs mt-1 leading-snug">
+							<div className="bg-gradient-to-br from-accent to-accent-dark rounded-2xl p-5 text-white text-sm shadow-lg opacity-0 animate-fade-in-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
+								<p className="font-semibold font-display">Precisa de ajuda?</p>
+								<p className="text-orange-200 text-xs mt-1 leading-snug font-body">
                                     A nossa equipa está disponível para o atender!
 								</p>
 								<NavLink
 									to="/contato"
-									className="mt-3 inline-block px-3 py-1.5 bg-white text-primary-700 rounded-lg text-xs font-semibold hover:bg-primary-50 transition-colors"
+									className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-white text-accent rounded-full text-xs font-semibold hover:bg-orange-50 transition-all duration-300 hover:-translate-y-0.5 shadow-md"
 								>
                                     Contactar suporte
+									<svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+										<path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+									</svg>
 								</NavLink>
 							</div>
 						</aside>
 
 						{/* Main Content */}
-						<section className="flex-grow min-w-0">
-							<div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+						<section className="flex-grow min-w-0 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+							<div className="bg-white rounded-2xl border border-accent/10 shadow-md">
 								{/* Tab Header */}
-								<div className="px-6 py-5 border-b border-gray-100 flex items-center gap-3">
-									<span className="p-2 rounded-xl bg-primary-50 text-primary-600">
+								<div className="px-6 py-5 border-b border-accent/10 flex items-center gap-3">
+									<span className="p-2 rounded-xl bg-orange-50 text-accent">
 										{tabs.find(t => t.id === activeTab)?.icon}
 									</span>
 									<div>
-										<h2 className="text-base font-semibold text-gray-900">{tabs.find(t => t.id === activeTab)?.label}</h2>
-										<p className="text-xs text-gray-400">{tabs.find(t => t.id === activeTab)?.description}</p>
+										<h2 className="text-base font-semibold text-[#1C1917] font-display">{tabs.find(t => t.id === activeTab)?.label}</h2>
+										<p className="text-xs text-[#78716C] font-body">{tabs.find(t => t.id === activeTab)?.description}</p>
 									</div>
 								</div>
 
