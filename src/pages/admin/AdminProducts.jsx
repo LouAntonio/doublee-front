@@ -3,28 +3,7 @@ import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminProductsList, useAdminAllStores, useUpdateProductStatus } from '../../hooks/queries/useAdminProducts';
 import Modal from '../../components/admin/Modal';
-
-const isPromotionValid = (product, now) => {
-	if (!product?.promotionalPrice) return false;
-
-	const promotionEndDate = getPromotionEndDate(product.promotionalEndDate);
-	if (!promotionEndDate) return true;
-
-	return promotionEndDate.getTime() >= now;
-};
-
-const getPromotionEndDate = (promotionalEndDate) => {
-	if (!promotionalEndDate) return null;
-
-	const parsedDate = new Date(promotionalEndDate);
-	if (Number.isNaN(parsedDate.getTime())) return null;
-
-	if (typeof promotionalEndDate === 'string' && !promotionalEndDate.includes('T')) {
-		parsedDate.setHours(23, 59, 59, 999);
-	}
-
-	return parsedDate;
-};
+import { isPromotionActive } from '../../utils/date';
 
 const ProductSkeleton = () => (
 	<tr className="animate-pulse border-b border-accent/10 last:border-0">
@@ -87,9 +66,7 @@ const AdminProducts = () => {
 	const [motive, setMotive] = useState('');
 	const [updatingStatus, setUpdatingStatus] = useState(false);
 
-	const [currentTime] = useState(() => Date.now());
-
-	const detailsHasValidPromotion = isPromotionValid(selectedProductDetails, currentTime);
+	const detailsHasValidPromotion = selectedProductDetails?.promotionalPrice && isPromotionActive(selectedProductDetails.promotionalEndDate);
 
 	const handleSearch = (e) => {
 		e.preventDefault();
@@ -267,7 +244,7 @@ const AdminProducts = () => {
 								</>
 							) : products.length > 0 ? (
 								products.map((product) => {
-									const hasValidPromotion = isPromotionValid(product, currentTime);
+									const hasValidPromotion = product.promotionalPrice && isPromotionActive(product.promotionalEndDate);
 
 									return (
 										<tr key={product.id} className="hover:bg-sand/50/80 transition-colors group">

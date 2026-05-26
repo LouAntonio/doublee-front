@@ -6,6 +6,7 @@ import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import useWishlistStore from '../stores/wishlistStore';
 import { formatCurrency } from '../utils/currency';
+import { isPromotionActive } from '../utils/date';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
 import { useProduct } from '../hooks/queries/useProducts';
@@ -26,8 +27,7 @@ const parseSpecs = (p) => {
 
 const mapProduct = (p) => {
 	if (!p) return null;
-	const now = new Date();
-	const hasValidPromotion = p.promotionalPrice && (!p.promotionalEndDate || new Date(p.promotionalEndDate) >= now);
+	const hasValidPromotion = p.promotionalPrice && isPromotionActive(p.promotionalEndDate);
 	return {
 		id: p.id,
 		title: p.name,

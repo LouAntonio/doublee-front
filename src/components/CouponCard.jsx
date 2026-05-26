@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { IoHardwareChipOutline, IoCopyOutline, IoCheckmarkCircleOutline, IoCalendarOutline } from 'react-icons/io5';
+import { isPromotionActive } from '../utils/date';
 
 const CouponCard = ({ coupon, index = 0 }) => {
 	const [copied, setCopied] = useState(false);
@@ -19,7 +20,7 @@ const CouponCard = ({ coupon, index = 0 }) => {
 		setTimeout(() => setCopied(false), 2000);
 	};
 
-	const isExpired = coupon.expiryDate && new Date(coupon.expiryDate) < new Date();
+	const isExpired = coupon.expiryDate ? !isPromotionActive(coupon.expiryDate) : false;
 
 	return (
 		<div

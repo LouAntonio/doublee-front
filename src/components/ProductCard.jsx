@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { IoCartOutline, IoHeartOutline, IoHeart } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/currency';
+import { isPromotionActive } from '../utils/date';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import useWishlistStore from '../stores/wishlistStore';
@@ -11,7 +12,6 @@ const ProductCard = ({ product, onClick }) => {
 	const { addToCart, isAddingProduct } = useCartStore();
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
-	const [currentTimestamp, setCurrentTimestamp] = React.useState(null);
 	const navigate = useNavigate();
 	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));
 	const productId = product?.id;
@@ -20,20 +20,6 @@ const ProductCard = ({ product, onClick }) => {
 	const productOldPrice = product?.oldPrice;
 	const productImage = product?.image;
 
-	const parsePromotionEndDate = (dateValue) => {
-		if (!dateValue) return null;
-
-		const parsed = new Date(dateValue);
-		if (Number.isNaN(parsed.getTime())) return null;
-
-		if (typeof dateValue === 'string' && !dateValue.includes('T')) {
-			parsed.setHours(23, 59, 59, 999);
-		}
-
-		return parsed;
-	};
-
-	const promotionEndDate = parsePromotionEndDate(product?.promotionalEndDate ?? product?.promotionEndDate);
 	const basePrice = productOldPrice ?? productPrice;
 	const promotionalPrice = product?.promotionalPrice;
 	const basePriceNumber = Number(basePrice);
@@ -42,8 +28,7 @@ const ProductCard = ({ product, onClick }) => {
 		&& Number.isFinite(promotionalPriceNumber)
 		&& basePriceNumber > promotionalPriceNumber
 		&& promotionalPriceNumber >= 0;
-	const isPromotionInDate = !promotionEndDate || currentTimestamp === null || promotionEndDate.getTime() >= currentTimestamp;
-	const hasValidPromotion = hasPromotionCandidate && isPromotionInDate;
+	const hasValidPromotion = hasPromotionCandidate && isPromotionActive(product?.promotionalEndDate ?? product?.promotionEndDate);
 	const displayPrice = hasValidPromotion ? promotionalPriceNumber : (Number.isFinite(basePriceNumber) ? basePriceNumber : Number(productPrice) || 0);
 	const displayOldPrice = hasValidPromotion ? basePriceNumber : null;
 	const discountPercent = displayOldPrice && displayOldPrice > 0
@@ -73,14 +58,6 @@ const ProductCard = ({ product, onClick }) => {
 		syncWishlist();
 		return () => { active = false; };
 	}, [checkInWishlist, isAuthenticated, isWishlisted, productId]);
-
-	useEffect(() => {
-		const updateTimestamp = () => setCurrentTimestamp(Date.now());
-		updateTimestamp();
-
-		const intervalId = setInterval(updateTimestamp, 60 * 1000);
-		return () => clearInterval(intervalId);
-	}, []);
 
 	const handleAddToCart = (e) => {
 		e?.stopPropagation();

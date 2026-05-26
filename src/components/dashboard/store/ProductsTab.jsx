@@ -12,6 +12,7 @@ import {
 import http from '../../../services/http';
 import { notyf } from '../../../utils/notyf';
 import { formatCurrency } from '../../../utils/currency';
+import { isPromotionActive, toDateInputValue, minDateLuanda } from '../../../utils/date';
 import { uploadToCloudinary } from './constants';
 import ImagePicker from './ui/ImagePicker';
 import EmptyState from './ui/EmptyState';
@@ -41,8 +42,7 @@ const PRODUCT_STATUS_MAP = {
 
 const isPromoValid = product => {
 	if (!product.promotionalPrice) return false;
-	if (!product.promotionalEndDate) return true;
-	return new Date(product.promotionalEndDate) >= new Date();
+	return isPromotionActive(product.promotionalEndDate);
 };
 
 const ProductsTab = ({ products, pagination, onRefresh }) => {
@@ -104,7 +104,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 			price: product.price || '',
 			promotionalPrice: product.promotionalPrice || '',
 			promotionalEndDate: product.promotionalEndDate
-				? new Date(product.promotionalEndDate).toISOString().slice(0, 10)
+				? toDateInputValue(product.promotionalEndDate)
 				: '',
 			stock: product.stock || '',
 		});
@@ -472,7 +472,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 								<div className="space-y-1.5">
 									<label className="text-sm font-medium text-[#1C1917]">Data de fim da promoção</label>
 									<input type="date" name="promotionalEndDate" value={form.promotionalEndDate} onChange={handleChange}
-										min={new Date().toISOString().slice(0, 10)}
+										min={minDateLuanda()}
 										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" />
 								</div>
 							)}
