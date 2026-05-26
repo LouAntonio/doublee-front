@@ -72,7 +72,7 @@ const StoreCreation = ({ verificationStatus }) => {
 			try {
 				const data = await http.get('/stores/status');
 				if (data?.success) {
-					setStoreStatus(data.data.status);
+					setStoreStatus(data.data.status || 'none');
 				} else setStoreStatus('none');
 			} catch {
 				setStoreStatus('none');

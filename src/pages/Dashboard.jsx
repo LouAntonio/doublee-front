@@ -154,7 +154,7 @@ const Dashboard = () => {
 								<div className="px-5 pb-5 -mt-8">
 									<div className="w-16 h-16 rounded-full bg-white border-4 border-white shadow overflow-hidden">
 										<img
-											src="/images/user.png"
+											src={user?.avatar || "/images/user.png"}
 											alt={initials}
 											className="w-full h-full object-cover"
 											onError={(e) => {
