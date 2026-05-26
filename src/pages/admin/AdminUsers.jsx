@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { notyf } from '../../utils/notyf';
 import { useAdminUsersList, useToggleUserStatus, useToggleUserRole } from '../../hooks/queries/useAdminUsers';
+import Modal from '../../components/admin/Modal';
 
 const UserSkeleton = () => (
 	<tr className="animate-pulse border-b border-accent/10 last:border-0">
@@ -45,6 +46,9 @@ const AdminUsers = () => {
 
 	const users = usersData?.users || [];
 	const pagination = usersData?.pagination || { page: 1, limit: 10, totalPages: 1 };
+
+	const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+	const [selectedUserDetails, setSelectedUserDetails] = useState(null);
 
 	const toggleStatus = async (userId) => {
 		setActionLoading(prev => ({ ...prev, [`${userId}-status`]: true }));
@@ -136,6 +140,7 @@ const AdminUsers = () => {
 												<div>
 													<div className="text-sm font-display font-bold text-[#1C1917] group-hover:text-accent transition-colors">{user.name} {user.surname}</div>
 													<div className="text-xs text-[#78716C] font-body mt-0.5">Criado a {new Date(user.createdAt).toLocaleDateString('pt-PT')}</div>
+													<div className="text-[10px] text-[#78716C] mt-0.5">Último acesso: {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('pt-PT') : 'Nunca'}</div>
 												</div>
 											</div>
 										</td>
@@ -176,6 +181,12 @@ const AdminUsers = () => {
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-right">
 											<div className="flex justify-end gap-2">
+												<button
+													onClick={() => { setSelectedUserDetails(user); setDetailsModalOpen(true); }}
+													className="px-3 py-1.5 rounded-lg text-xs font-display font-bold bg-sand/50 text-[#1C1917] hover:bg-accent/20 border border-accent/20 transition-all shadow-sm"
+												>
+													Ver Detalhes
+												</button>
 												<button
 													onClick={() => toggleRole(user.id)}
 													disabled={actionLoading[`${user.id}-role`]}
@@ -238,6 +249,75 @@ const AdminUsers = () => {
 				)}
 			</div>
 
+			<Modal isOpen={detailsModalOpen} onClose={() => setDetailsModalOpen(false)} size="md">
+				<div className="p-6 border-b border-accent/10 flex justify-between items-center">
+					<h3 className="text-xl font-bold text-[#1C1917]">Detalhes do Utilizador</h3>
+					<button onClick={() => setDetailsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917]">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
+				</div>
+				<div className="p-6 space-y-6 bg-sand/50">
+					{selectedUserDetails && (
+						<>
+							<div className="flex items-center gap-4">
+								{selectedUserDetails.avatar ? (
+									<img src={selectedUserDetails.avatar} alt="" className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
+								) : (
+									<div className="w-16 h-16 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/30">
+										{selectedUserDetails.name.charAt(0)}
+									</div>
+								)}
+								<div>
+									<h4 className="text-lg font-bold text-[#1C1917]">{selectedUserDetails.name} {selectedUserDetails.surname}</h4>
+									<p className="text-sm text-[#78716C]">{selectedUserDetails.email}</p>
+								</div>
+							</div>
+
+							<div className="bg-white p-4 rounded-xl border border-accent/10 grid grid-cols-2 gap-4 shadow-sm">
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Telefone</span>
+									<span className="block text-sm font-medium text-[#1C1917] mt-1">{selectedUserDetails.phone || 'Não informado'}</span>
+								</div>
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Função</span>
+									<span className="block text-sm font-medium text-[#1C1917] mt-1">{selectedUserDetails.role === 'ft' ? 'Administrador' : 'Utilizador Comum'}</span>
+								</div>
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Status</span>
+									<span className={`block text-sm font-medium mt-1 ${selectedUserDetails.status === 'active' ? 'text-emerald-700' : 'text-rose-700'}`}>
+										{selectedUserDetails.status === 'active' ? 'Ativo' : 'Suspenso'}
+									</span>
+								</div>
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Vendedor</span>
+									<span className="block text-sm font-medium text-[#1C1917] mt-1">
+										{selectedUserDetails.seller ? (selectedUserDetails.validatedSeller ? 'Verificado' : 'Pendente') : 'Não'}
+									</span>
+								</div>
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Registado em</span>
+									<span className="block text-sm font-medium text-[#1C1917] mt-1">{new Date(selectedUserDetails.createdAt).toLocaleDateString('pt-PT')}</span>
+								</div>
+								<div>
+									<span className="block text-xs font-semibold text-[#78716C] uppercase">Último Acesso</span>
+									<span className="block text-sm font-medium text-[#1C1917] mt-1">{selectedUserDetails.lastLogin ? new Date(selectedUserDetails.lastLogin).toLocaleDateString('pt-PT') : 'Nunca'}</span>
+								</div>
+							</div>
+
+							{selectedUserDetails.details && (
+								<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
+									<h5 className="font-bold text-[#1C1917] mb-2">Morada / Localização</h5>
+									<ul className="text-sm text-[#78716C] space-y-1">
+										<li><span className="font-semibold text-[#1C1917]">País:</span> {selectedUserDetails.details.country || 'Não informado'}</li>
+										<li><span className="font-semibold text-[#1C1917]">Província:</span> {selectedUserDetails.details.province || 'Não informado'}</li>
+										<li><span className="font-semibold text-[#1C1917]">Endereço:</span> {selectedUserDetails.details.shippingAddress || 'Não informado'}</li>
+									</ul>
+								</div>
+							)}
+						</>
+					)}
+				</div>
+			</Modal>
 		</div>
 	);
 };

@@ -282,6 +282,13 @@ const AdminStores = () => {
 								</div>
 							</div>
 
+							{storeDetails.banner && (
+								<div>
+									<h5 className="text-sm font-display font-bold text-[#1C1917] mb-2">Banner da Loja</h5>
+									<img src={storeDetails.banner} alt="Banner da loja" className="w-full h-32 object-cover rounded-xl border border-accent/20 shadow-sm" />
+								</div>
+							)}
+
 							<hr className="border-accent/10" />
 
 							<div>
@@ -322,8 +329,20 @@ const AdminStores = () => {
 										</span>
 									</div>
 									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Produtos</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails._count?.products ?? 0} produtos</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Pedidos</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails._count?.storeOrders ?? 0} pedidos</span>
+									</div>
+									<div>
 										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Visualizações</span>
 										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.views || 0} visualizações</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Vendas Realizadas</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.salesCount || 0} vendas</span>
 									</div>
 									<div>
 										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Destaque</span>

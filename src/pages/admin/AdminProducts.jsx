@@ -508,16 +508,44 @@ const AdminProducts = () => {
 								</div>
 							</div>
 
+							{selectedProductDetails.gallery?.length > 0 && (
+								<div>
+									<h5 className="font-bold text-[#1C1917] mb-2">Galeria de Imagens</h5>
+									<div className="flex gap-2 overflow-x-auto pb-2">
+										{selectedProductDetails.gallery.map((img, i) => (
+											<img key={i} src={img} alt={`${selectedProductDetails.name} ${i + 1}`} className="w-24 h-24 object-cover rounded-xl border border-accent/20 flex-shrink-0" />
+										))}
+									</div>
+								</div>
+							)}
+
 							<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
 								<h5 className="font-bold text-[#1C1917] mb-2">Informações Adicionais</h5>
 								<ul className="text-sm text-[#78716C] space-y-2">
-									<li><span className="font-semibold text-[#1C1917]">ID da Loja:</span> {selectedProductDetails.storeId}</li>
-									<li><span className="font-semibold text-[#1C1917]">Em Destaque:</span> {selectedProductDetails.featured ? 'Sim' : 'Não'}</li>
+									<li><span className="font-semibold text-[#1C1917]">Loja:</span> {selectedProductDetails.store?.name || selectedProductDetails.storeId}</li>
+									<li><span className="font-semibold text-[#1C1917]">Categorias:</span> {selectedProductDetails.categories?.length > 0 ? selectedProductDetails.categories.map(c => c.name).join(', ') : 'Sem categoria'}</li>
+									<li><span className="font-semibold text-[#1C1917]">Em Destaque:</span> {selectedProductDetails.featured ? `Sim${selectedProductDetails.featuredUntil ? ` (até ${new Date(selectedProductDetails.featuredUntil).toLocaleDateString('pt-PT')})` : ''}` : 'Não'}</li>
+									<li><span className="font-semibold text-[#1C1917]">Promoção Válida Até:</span> {detailsHasValidPromotion && selectedProductDetails.promotionalEndDate ? new Date(selectedProductDetails.promotionalEndDate).toLocaleDateString('pt-PT') : '-'}</li>
 									<li><span className="font-semibold text-[#1C1917]">Views:</span> {selectedProductDetails.views || 0}</li>
 									<li><span className="font-semibold text-[#1C1917]">Vendas:</span> {selectedProductDetails.salesCount || 0}</li>
-									<li><span className="font-semibold text-[#1C1917]">Avaliação:</span> {selectedProductDetails.rating} ({selectedProductDetails.qtdRatings} avaliações)</li>
+									<li><span className="font-semibold text-[#1C1917]">Avaliação:</span> {selectedProductDetails.rating || 0} ({selectedProductDetails.qtdRatings || 0} avaliações)</li>
+									<li><span className="font-semibold text-[#1C1917]">Criado em:</span> {new Date(selectedProductDetails.createdAt).toLocaleDateString('pt-PT')}</li>
 								</ul>
 							</div>
+
+							{selectedProductDetails.characteristics && typeof selectedProductDetails.characteristics === 'object' && Object.keys(selectedProductDetails.characteristics).length > 0 && (
+								<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
+									<h5 className="font-bold text-[#1C1917] mb-2">Características</h5>
+									<div className="grid grid-cols-2 gap-2 text-sm">
+										{Object.entries(selectedProductDetails.characteristics).map(([key, value]) => (
+											<div key={key}>
+												<span className="font-semibold text-[#1C1917] capitalize">{key.replace(/_/g, ' ')}:</span>
+												<span className="text-[#78716C] ml-1">{String(value)}</span>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 					) : (
 						<p className="text-center text-[#78716C] py-10">Não foi possível carregar os detalhes.</p>
