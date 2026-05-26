@@ -266,7 +266,7 @@ const ProductsTab = ({ products, onRefresh }) => {
 						<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
 							<div className="relative h-40 bg-sand">
 								{product.image ? (
-									<img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+									<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
 								) : (
 									<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
 										<IoImageOutline className="w-12 h-12" />

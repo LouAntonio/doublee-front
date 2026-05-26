@@ -136,7 +136,7 @@ const StatisticsTab = ({ orders = [] }) => {
 								<div key={index} className="flex items-center gap-3">
 									<div className="w-10 h-10 rounded-lg bg-sand border border-accent/10 overflow-hidden shrink-0">
 										{product.image ? (
-											<img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+											<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
 										) : (
 											<div className="w-full h-full flex items-center justify-center text-[#78716C]">
 												<IoBasketOutline className="w-6 h-6" />

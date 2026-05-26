@@ -277,6 +277,7 @@ const ProductDetails = () => {
 										src={img}
 										alt={`${product.title} ${index + 1}`}
 										className="w-full h-full object-cover"
+										onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 									/>
 								</button>
 							))}
@@ -301,6 +302,7 @@ const ProductDetails = () => {
 								src={product.images[selectedImage]}
 								alt={product.title}
 								className="w-full h-[400px] object-contain"
+								onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 							/>
 						</div>
 					</div>

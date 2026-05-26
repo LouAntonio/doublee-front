@@ -29,6 +29,7 @@ const CartItem = ({ item }) => {
 					src={item.image || '/images/produto.png'}
 					alt={item.name}
 					className="w-full h-full object-cover"
+					onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 				/>
 			</div>
 

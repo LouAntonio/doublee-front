@@ -154,7 +154,7 @@ const ProductCard = ({ product, onClick }) => {
 				)}
 
 				<div className="w-full h-full">
-					<img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+					<img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
 				</div>
 			</div>
 

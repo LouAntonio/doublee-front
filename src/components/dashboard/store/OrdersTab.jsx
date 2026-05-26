@@ -62,7 +62,7 @@ const OrdersTab = ({ orders, onRefresh }) => {
 											<div key={item.id} className="flex items-center justify-between text-xs">
 												<div className="flex items-center gap-2">
 													{item.product?.image && (
-														<img src={item.product.image} alt={item.product?.name} className="w-7 h-7 rounded-lg object-cover" />
+														<img src={item.product.image} alt={item.product?.name} className="w-7 h-7 rounded-lg object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
 													)}
 													<span className="text-[#1C1917] font-medium">{item.product?.name || 'Produto'}</span>
 													<span className="text-[#78716C]">x{item.quantity}</span>
