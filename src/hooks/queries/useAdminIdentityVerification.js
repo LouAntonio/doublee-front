@@ -11,6 +11,7 @@ export const useSellerVerifications = () =>
 			return [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useApproveSeller = () => {

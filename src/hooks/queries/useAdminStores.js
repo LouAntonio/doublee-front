@@ -17,6 +17,7 @@ export const useAdminStoresList = ({ page, limit, search }) =>
 			return { stores: [], pagination: { page, limit, totalPages: 1 } };
 		},
 		staleTime: 1000 * 30,
+		refetchOnMount: 'always',
 		keepPreviousData: true,
 	});
 

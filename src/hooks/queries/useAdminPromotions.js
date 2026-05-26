@@ -11,6 +11,7 @@ export const useAdminPromotionPackages = () =>
 			return res.data?.packages || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useCreatePromotionPackage = () => {

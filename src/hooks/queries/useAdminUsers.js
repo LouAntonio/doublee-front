@@ -16,6 +16,7 @@ export const useAdminUsersList = ({ page, limit, search }) =>
 			return { users: [], pagination: { page, limit, totalPages: 1 } };
 		},
 		staleTime: 1000 * 30,
+		refetchOnMount: 'always',
 		keepPreviousData: true,
 	});
 

@@ -11,6 +11,7 @@ export const usePromotionPackages = () =>
 			return res.data?.packages || [];
 		},
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});
 
 export const usePromotionPurchases = () =>
@@ -22,6 +23,7 @@ export const usePromotionPurchases = () =>
 			return res.data?.purchases || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const usePurchasePromotion = () => {

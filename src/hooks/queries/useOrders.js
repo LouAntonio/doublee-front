@@ -11,6 +11,7 @@ export const useMyOrders = () =>
 			return res.data?.orders || res.data || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useCreateOrder = () =>

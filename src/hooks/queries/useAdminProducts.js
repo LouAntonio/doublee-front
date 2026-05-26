@@ -21,6 +21,7 @@ export const useAdminProductsList = ({ page, limit, search, filters, storeId, mi
 			};
 		},
 		staleTime: 1000 * 30,
+		refetchOnMount: 'always',
 		keepPreviousData: true,
 	});
 
@@ -33,6 +34,7 @@ export const useAdminAllStores = () =>
 			return [];
 		},
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});
 
 export const useUpdateProductStatus = () => {

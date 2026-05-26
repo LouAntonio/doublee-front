@@ -59,4 +59,5 @@ export const useCategoriesSimple = () =>
 			return res.data?.categories || [];
 		},
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});

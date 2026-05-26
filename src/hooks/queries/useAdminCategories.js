@@ -11,6 +11,7 @@ export const useAdminCategoriesList = () =>
 			return res.data?.categories || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useCreateCategory = () => {

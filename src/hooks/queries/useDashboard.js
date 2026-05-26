@@ -10,6 +10,7 @@ export const useVerificationStatus = () =>
 			return res.status || 'none';
 		},
 		staleTime: 1000 * 60 * 5,
+		refetchOnMount: 'always',
 	});
 
 export const useStoreStatus = (options = {}) =>
@@ -21,6 +22,7 @@ export const useStoreStatus = (options = {}) =>
 			return res.data?.status || 'none';
 		},
 		staleTime: 1000 * 60 * 5,
+		refetchOnMount: 'always',
 		...options,
 	});
 
@@ -33,6 +35,7 @@ export const useMyStore = () =>
 			return res.data?.store || res.data || null;
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useMyProducts = () =>
@@ -44,6 +47,7 @@ export const useMyProducts = () =>
 			return res.data?.products || res.data || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useMyStoreOrders = () =>
@@ -55,4 +59,5 @@ export const useMyStoreOrders = () =>
 			return res.data?.orders || res.data || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});

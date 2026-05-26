@@ -10,6 +10,7 @@ export const useAdminUsers = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar utilizadores');
 			return res.data?.users || [];
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useUpdateUserStatus = () => {
@@ -33,6 +34,7 @@ export const useAdminStores = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar lojas');
 			return res.data?.stores || [];
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useAdminProducts = () =>
@@ -43,6 +45,7 @@ export const useAdminProducts = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar produtos');
 			return res.data?.products || [];
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useAdminCategories = () =>
@@ -53,6 +56,7 @@ export const useAdminCategories = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar categorias');
 			return res.data?.categories || [];
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useAdminIdentityVerifications = () =>
@@ -63,6 +67,7 @@ export const useAdminIdentityVerifications = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar verificaçoes');
 			return res.data?.verifications || [];
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useAdminAnalytics = () =>
@@ -73,6 +78,7 @@ export const useAdminAnalytics = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar analíticos');
 			return res.data || {};
 		},
+		refetchOnMount: 'always',
 	});
 
 export const useAdminPromotions = () =>
@@ -83,4 +89,5 @@ export const useAdminPromotions = () =>
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar promoções');
 			return res.data?.promotions || [];
 		},
+		refetchOnMount: 'always',
 	});

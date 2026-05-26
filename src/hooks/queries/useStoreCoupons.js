@@ -11,6 +11,7 @@ export const useMyCoupons = () =>
 			return res.data || [];
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useCreateCoupon = () => {
