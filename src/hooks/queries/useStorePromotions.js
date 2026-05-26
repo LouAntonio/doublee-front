@@ -14,9 +14,9 @@ export const usePromotionPackages = () =>
 		refetchOnMount: 'always',
 	});
 
-export const usePromotionPurchases = () =>
+export const usePromotionPurchases = (storeId) =>
 	useQuery({
-		queryKey: ['promotions', 'purchases'],
+		queryKey: ['promotions', 'purchases', storeId],
 		queryFn: async () => {
 			const res = await http.get('/promotions/purchases');
 			if (!res?.success) return [];

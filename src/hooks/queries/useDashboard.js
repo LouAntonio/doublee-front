@@ -42,9 +42,9 @@ export const useMyProducts = () =>
 	useQuery({
 		queryKey: ['products', 'mine'],
 		queryFn: async () => {
-			const res = await http.get('/products/mine');
-			if (!res?.success) return [];
-			return res.data?.products || res.data || [];
+			const res = await http.get('/products/mine?limit=200');
+			if (!res?.success) return { products: [], pagination: { total: 0, page: 1, limit: 200, totalPages: 0 } };
+			return { products: res.data?.products || [], pagination: res.data?.pagination || { total: 0, page: 1, limit: 200, totalPages: 0 } };
 		},
 		staleTime: 1000 * 60 * 2,
 		refetchOnMount: 'always',

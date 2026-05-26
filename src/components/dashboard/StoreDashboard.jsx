@@ -42,9 +42,12 @@ const StoreDashboard = () => {
 	} = useMyStore();
 
 	const {
-		data: products = [],
+		data: productsData,
 		refetch: refetchProducts,
 	} = useMyProducts();
+
+	const products = productsData?.products ?? [];
+	const productsPagination = productsData?.pagination;
 
 	const {
 		data: orders = [],
@@ -100,7 +103,7 @@ const StoreDashboard = () => {
 			{/* Tab Content */}
 			{activeTab === 'overview' && <OverviewTab store={store} products={products} orders={orders} />}
 			{activeTab === 'info' && <StoreInfoTab store={store} onUpdated={fetchAll} />}
-			{activeTab === 'products' && <ProductsTab products={products} onRefresh={fetchAll} />}
+			{activeTab === 'products' && <ProductsTab products={products} pagination={productsPagination} onRefresh={fetchAll} />}
 			{activeTab === 'orders' && <OrdersTab orders={orders} onRefresh={fetchAll} />}
 			{activeTab === 'statistics' && <StatisticsTab orders={orders} />}
 			{activeTab === 'promotions' && <PromotionsTab store={store} products={products} onRefresh={fetchAll} />}

@@ -47,6 +47,8 @@ const LojaDetails = () => {
 	const [productSearch, setProductSearch] = useState('');
 	const [gridView, setGridView] = useState(true);
 	const [products, setProducts] = useState([]);
+	const [page, setPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 	const [showShareMenu, setShowShareMenu] = useState(false);
 
 	useDocumentTitle(store ? `${store.name} – Kusumba` : 'Detalhes da Loja – Kusumba');
@@ -105,31 +107,7 @@ const LojaDetails = () => {
 						opinions,
 					};
 
-					// Buscar produtos reais da API filtrando pela loja
-					try {
-						const prodResp = await http.get(`/products?storeId=${s.id}&limit=24`);
-						const apiProducts = (prodResp?.success && prodResp.data?.products) ? prodResp.data.products : [];
-						const totalProducts = prodResp?.success && prodResp.data?.pagination ? prodResp.data.pagination.total : apiProducts.length;
-						// Mapear para o formato esperado pelo componente
-						const mappedProducts = apiProducts.map(p => ({
-							id: p.id,
-							title: p.name,
-							price: p.price,
-							promotionalPrice: p.promotionalPrice,
-							promotionalEndDate: p.promotionalEndDate,
-							image: p.image || `https://via.placeholder.com/400x400/f8f8f8/999?text=${encodeURIComponent(p.name.split(' ').slice(0, 2).join('+'))}`,
-							rating: p.rating ?? 0,
-							reviewCount: p.qtdRatings ?? 0,
-						}));
-
-						mapped.products = totalProducts || mappedProducts.length;
-						setStore(mapped);
-						setProducts(mappedProducts);
-					} catch (err) {
-						console.error('Error fetching products:', err);
-						setStore(mapped);
-						setProducts([]);
-					}
+					setStore(mapped);
 				} else {
 					setStore(null);
 					notyf.error(resp?.msg || 'Erro ao obter a loja.');
@@ -149,6 +127,44 @@ const LojaDetails = () => {
 
 		return () => { mounted = false; };
 	}, [id]);
+
+	// Separate effect for product loading with pagination
+	useEffect(() => {
+		if (!id) return;
+		let mounted = true;
+		const loadProducts = async () => {
+			try {
+				const prodResp = await http.get(`/products?storeId=${id}&page=${page}&limit=24`);
+				if (!mounted) return;
+				const apiProducts = (prodResp?.success && prodResp.data?.products) ? prodResp.data.products : [];
+				const pag = prodResp?.success && prodResp.data?.pagination ? prodResp.data.pagination : null;
+				const totalProducts = pag ? pag.total : apiProducts.length;
+				setTotalPages(pag ? pag.totalPages : 1);
+				const mappedProducts = apiProducts.map(p => ({
+					id: p.id,
+					title: p.name,
+					price: p.price,
+					promotionalPrice: p.promotionalPrice,
+					promotionalEndDate: p.promotionalEndDate,
+					image: p.image || `https://via.placeholder.com/400x400/f8f8f8/999?text=${encodeURIComponent(p.name.split(' ').slice(0, 2).join('+'))}`,
+					rating: p.rating ?? 0,
+					reviewCount: p.qtdRatings ?? 0,
+				}));
+
+				setProducts(mappedProducts);
+				setStore(prev => prev ? { ...prev, products: totalProducts || mappedProducts.length } : prev);
+			} catch (err) {
+				console.error('Error fetching products:', err);
+				if (mounted) {
+					setProducts([]);
+				}
+			}
+		};
+
+		loadProducts();
+
+		return () => { mounted = false; };
+	}, [id, page]);
 
 	const currentUrl = window.location.href;
 
@@ -432,11 +448,55 @@ const LojaDetails = () => {
 										<p className="font-body text-[#78716C]">Nenhum produto encontrado.</p>
 									</div>
 								) : (
-									<div className={`grid gap-4 ${gridView ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-										{filteredProducts.map(product => (
-											<ProductCard key={product.id} product={product} />
-										))}
-									</div>
+									<>
+										<div className={`grid gap-4 ${gridView ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+											{filteredProducts.map(product => (
+												<ProductCard key={product.id} product={product} />
+											))}
+										</div>
+										{totalPages > 1 && (
+											<div className="flex items-center justify-center gap-2 mt-8">
+												<button
+													onClick={() => setPage(p => Math.max(1, p - 1))}
+													disabled={page <= 1}
+													className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+												>
+													<IoChevronBack className="w-4 h-4" />
+												</button>
+												{Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+													let pageNum;
+													if (totalPages <= 7) {
+														pageNum = i + 1;
+													} else if (page <= 4) {
+														pageNum = i + 1;
+													} else if (page >= totalPages - 3) {
+														pageNum = totalPages - 6 + i;
+													} else {
+														pageNum = page - 3 + i;
+													}
+													return (
+														<button
+															key={pageNum}
+															onClick={() => setPage(pageNum)}
+															className={`min-w-[36px] h-9 rounded-xl text-sm font-medium transition-all cursor-pointer ${page === pageNum
+																? 'bg-accent text-white shadow-md'
+																: 'border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent'
+															}`}
+														>
+															{pageNum}
+														</button>
+													);
+												})}
+												<button
+													onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+													disabled={page >= totalPages}
+													className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+												>
+													<IoChevronForward className="w-4 h-4" />
+												</button>
+											</div>
+										)}
+									</>
 								)}
 							</div>
 						)}

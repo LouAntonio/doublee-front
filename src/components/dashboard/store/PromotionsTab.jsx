@@ -5,7 +5,7 @@ import { notyf } from '../../../utils/notyf';
 
 const PromotionsTab = ({ store, products, onRefresh }) => {
 	const { data: packages = [], isLoading: loadingPackages } = usePromotionPackages();
-	const { data: purchases = [], isLoading: loadingPurchases } = usePromotionPurchases();
+	const { data: purchases = [], isLoading: loadingPurchases } = usePromotionPurchases(store?.id);
 	const purchasePromotion = usePurchasePromotion();
 	const [buying, setBuying] = useState(false);
 

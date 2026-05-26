@@ -6,6 +6,8 @@ import {
 	IoCloseOutline,
 	IoImageOutline,
 	IoCheckmarkOutline,
+	IoChevronBack,
+	IoChevronForward,
 } from 'react-icons/io5';
 import http from '../../../services/http';
 import { notyf } from '../../../utils/notyf';
@@ -43,12 +45,14 @@ const isPromoValid = product => {
 	return new Date(product.promotionalEndDate) >= new Date();
 };
 
-const ProductsTab = ({ products, onRefresh }) => {
+const ProductsTab = ({ products, pagination, onRefresh }) => {
 	const [saving, setSaving] = useState(false);
 	const [savingProgress, setSavingProgress] = useState('');
 	const [deleting, setDeleting] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingProduct, setEditingProduct] = useState(null);
+	const [page, setPage] = useState(1);
+	const pageSize = 12;
 
 	// Categories
 	const [allCategories, setAllCategories] = useState([]);
@@ -240,12 +244,25 @@ const ProductsTab = ({ products, onRefresh }) => {
 		}
 	};
 
+	const totalPages = pagination?.totalPages ?? Math.ceil(products.length / pageSize);
+	const paginatedProducts = products.slice((page - 1) * pageSize, page * pageSize);
+
+	const handlePageChange = (newPage) => {
+		if (newPage < 1 || newPage > totalPages) return;
+		setPage(newPage);
+	};
+
+	const productLabel = () => {
+		const total = pagination?.total ?? products.length;
+		return `${total} produto${total !== 1 ? 's' : ''} na sua loja.`;
+	};
+
 	return (
 		<div className="opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 			<div className="flex items-center justify-between mb-6">
 				<div>
 					<h2 className="text-lg font-bold text-[#1C1917] font-display">Produtos</h2>
-					<p className="text-sm text-[#78716C]">{products.length} produto{products.length !== 1 ? 's' : ''} na sua loja.</p>
+					<p className="text-sm text-[#78716C]">{productLabel()}</p>
 				</div>
 				<button onClick={openNew}
 					className="flex items-center gap-2 px-5 py-2.5 bg-accent text-white text-sm font-semibold rounded-full hover:bg-accent-dark transition-all cursor-pointer shadow-lg shadow-accent/20">
@@ -261,59 +278,104 @@ const ProductsTab = ({ products, onRefresh }) => {
 						</button>
 					} />
 			) : (
-				<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-					{products.map((product, idx) => (
-						<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
-							<div className="relative h-40 bg-sand">
-								{product.image ? (
-									<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
-								) : (
-									<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
-										<IoImageOutline className="w-12 h-12" />
+				<>
+					<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+						{paginatedProducts.map((product, idx) => (
+							<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
+								<div className="relative h-40 bg-sand">
+									{product.image ? (
+										<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+									) : (
+										<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
+											<IoImageOutline className="w-12 h-12" />
+										</div>
+									)}
+									<div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+										<button onClick={() => openEdit(product)}
+											className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-accent hover:bg-orange-50 transition-colors">
+											<IoPencilOutline className="w-3.5 h-3.5" />
+										</button>
+										<button onClick={() => handleDelete(product.id)} disabled={deleting === product.id}
+											className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-red-600 hover:bg-red-50 transition-colors">
+											{deleting === product.id ? '...' : <IoTrashOutline className="w-3.5 h-3.5" />}
+										</button>
 									</div>
-								)}
-								<div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-									<button onClick={() => openEdit(product)}
-										className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-accent hover:bg-orange-50 transition-colors">
-										<IoPencilOutline className="w-3.5 h-3.5" />
-									</button>
-									<button onClick={() => handleDelete(product.id)} disabled={deleting === product.id}
-										className="p-1.5 bg-white rounded-lg shadow text-[#78716C] hover:text-red-600 hover:bg-red-50 transition-colors">
-										{deleting === product.id ? '...' : <IoTrashOutline className="w-3.5 h-3.5" />}
-									</button>
+								</div>
+								<div className="p-3">
+									<div className="flex items-start justify-between gap-2 mb-1">
+										<p className="font-semibold text-[#1C1917] text-sm truncate">{product.name}</p>
+										{(() => {
+											const st = PRODUCT_STATUS_MAP[product.status] || PRODUCT_STATUS_MAP.pending;
+											return <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium border ${st.cls}`}>{st.label}</span>;
+										})()}
+									</div>
+									<div className="flex items-center justify-between mt-1">
+										<div>
+											{isPromoValid(product) ? (
+												<>
+													<span className="text-xs text-[#78716C] line-through mr-1">{formatCurrency(product.price)}</span>
+													<span className="text-sm font-bold text-green-600">{formatCurrency(product.promotionalPrice)}</span>
+												</>
+											) : (
+												<span className="text-sm font-bold text-[#1C1917]">{formatCurrency(product.price)}</span>
+											)}
+										</div>
+										<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+										}`}>
+											{product.stock > 0 ? `${product.stock} em stock` : 'Sem stock'}
+										</span>
+									</div>
+									{product.promotionalPrice && !isPromoValid(product) && (
+										<p className="text-xs text-amber-600 mt-1">⚠ Promoção expirada</p>
+									)}
 								</div>
 							</div>
-							<div className="p-3">
-								<div className="flex items-start justify-between gap-2 mb-1">
-									<p className="font-semibold text-[#1C1917] text-sm truncate">{product.name}</p>
-									{(() => {
-										const st = PRODUCT_STATUS_MAP[product.status] || PRODUCT_STATUS_MAP.pending;
-										return <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium border ${st.cls}`}>{st.label}</span>;
-									})()}
-								</div>
-								<div className="flex items-center justify-between mt-1">
-									<div>
-										{isPromoValid(product) ? (
-											<>
-												<span className="text-xs text-[#78716C] line-through mr-1">{formatCurrency(product.price)}</span>
-												<span className="text-sm font-bold text-green-600">{formatCurrency(product.promotionalPrice)}</span>
-											</>
-										) : (
-											<span className="text-sm font-bold text-[#1C1917]">{formatCurrency(product.price)}</span>
-										)}
-									</div>
-									<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
-									}`}>
-										{product.stock > 0 ? `${product.stock} em stock` : 'Sem stock'}
-									</span>
-								</div>
-								{product.promotionalPrice && !isPromoValid(product) && (
-									<p className="text-xs text-amber-600 mt-1">⚠ Promoção expirada</p>
-								)}
-							</div>
+						))}
+					</div>
+
+					{totalPages > 1 && (
+						<div className="flex items-center justify-center gap-2 mt-8">
+							<button
+								onClick={() => handlePageChange(page - 1)}
+								disabled={page <= 1}
+								className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+							>
+								<IoChevronBack className="w-4 h-4" />
+							</button>
+							{Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+								let pageNum;
+								if (totalPages <= 7) {
+									pageNum = i + 1;
+								} else if (page <= 4) {
+									pageNum = i + 1;
+								} else if (page >= totalPages - 3) {
+									pageNum = totalPages - 6 + i;
+								} else {
+									pageNum = page - 3 + i;
+								}
+								return (
+									<button
+										key={pageNum}
+										onClick={() => handlePageChange(pageNum)}
+										className={`min-w-[36px] h-9 rounded-xl text-sm font-medium transition-all cursor-pointer ${page === pageNum
+											? 'bg-accent text-white shadow-md'
+											: 'border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent'
+										}`}
+									>
+										{pageNum}
+									</button>
+								);
+							})}
+							<button
+								onClick={() => handlePageChange(page + 1)}
+								disabled={page >= totalPages}
+								className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+							>
+								<IoChevronForward className="w-4 h-4" />
+							</button>
 						</div>
-					))}
-				</div>
+					)}
+				</>
 			)}
 
 			<DashboardModal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="md">
