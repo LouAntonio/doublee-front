@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { IoFlashOutline, IoCheckmarkCircleOutline, IoTimeOutline, IoWalletOutline } from 'react-icons/io5';
 import { usePromotionPackages, usePromotionPurchases, usePurchasePromotion } from '../../../hooks/queries/useStorePromotions';
 import { notyf } from '../../../utils/notyf';
@@ -13,6 +13,16 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 	const [selectedProduct, setSelectedProduct] = useState('');
 
 	const loading = loadingPackages || loadingPurchases;
+
+	const activePurchases = useMemo(() => {
+		const cutoff = new Date();
+		return purchases.filter(p => {
+			if (p.status !== 'paid') return false;
+			const createdAt = new Date(p.createdAt);
+			const durationMs = p.package.durationDays * 24 * 60 * 60 * 1000;
+			return cutoff.getTime() < createdAt.getTime() + durationMs;
+		});
+	}, [purchases]);
 
 	const handlePurchase = async () => {
 		if (!selectedPackage) return;
@@ -52,24 +62,29 @@ const PromotionsTab = ({ store, products, onRefresh }) => {
 					Os Meus Destaques
 				</h3>
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-					{purchases.filter(p => p.status === 'paid').length > 0 ? (
-						purchases.filter(p => p.status === 'paid').map(purchase => (
-							<div key={purchase.id} className="bg-white p-4 rounded-2xl border border-accent/10 shadow-md flex items-start gap-4 hover:shadow-lg transition-shadow duration-300">
-								<div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-									<IoCheckmarkCircleOutline className="text-accent w-6 h-6" />
-								</div>
-								<div className="flex-1 min-w-0">
-									<p className="font-bold text-[#1C1917] truncate">{purchase.package.name}</p>
-									<p className="text-xs text-[#78716C]">
-										{purchase.store ? 'Loja em destaque' : `Produto: ${purchase.product.name}`}
-									</p>
-									<div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-accent bg-orange-50 px-2 py-0.5 rounded-full w-fit">
-										<IoTimeOutline />
-										Ativo
+					{activePurchases.length > 0 ? (
+						activePurchases.map(purchase => {
+							const createdAt = new Date(purchase.createdAt);
+							const durationMs = purchase.package.durationDays * 24 * 60 * 60 * 1000;
+							const expiryDate = new Date(createdAt.getTime() + durationMs);
+							return (
+								<div key={purchase.id} className="bg-white p-4 rounded-2xl border border-accent/10 shadow-md flex items-start gap-4 hover:shadow-lg transition-shadow duration-300">
+									<div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+										<IoCheckmarkCircleOutline className="text-accent w-6 h-6" />
+									</div>
+									<div className="flex-1 min-w-0">
+										<p className="font-bold text-[#1C1917] truncate">{purchase.package.name}</p>
+										<p className="text-xs text-[#78716C]">
+											{purchase.store ? 'Loja em destaque' : `Produto: ${purchase.product.name}`}
+										</p>
+										<div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-accent bg-orange-50 px-2 py-0.5 rounded-full w-fit">
+											<IoTimeOutline />
+											Ativo até {expiryDate.toLocaleDateString('pt-AO')}
+										</div>
 									</div>
 								</div>
-							</div>
-						))
+							);
+						})
 					) : (
 						<div className="col-span-full py-8 text-center bg-white rounded-2xl border border-dashed border-accent/10">
 							<p className="text-[#78716C] text-sm">Ainda não possui destaques ativos.</p>

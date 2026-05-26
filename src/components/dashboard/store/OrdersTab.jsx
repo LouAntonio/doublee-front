@@ -11,7 +11,7 @@ const OrdersTab = ({ orders, onRefresh }) => {
 	const handleStatusChange = async (orderId, newStatus) => {
 		setUpdatingId(orderId);
 		try {
-			const data = await http.patch(`/stores/orders/${orderId}/status`, { status: newStatus });
+			const data = await http.patch(`/orders/store/orders/${orderId}/status`, { status: newStatus });
 			if (data?.success) {
 				notyf.success('Estado actualizado!');
 				onRefresh();

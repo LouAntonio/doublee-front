@@ -54,7 +54,7 @@ export const useMyStoreOrders = () =>
 	useQuery({
 		queryKey: ['stores', 'orders'],
 		queryFn: async () => {
-			const res = await http.get('/stores/orders');
+			const res = await http.get('/orders/store/my-orders');
 			if (!res?.success) return [];
 			return res.data?.orders || res.data || [];
 		},

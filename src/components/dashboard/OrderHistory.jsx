@@ -10,9 +10,9 @@ const OrderHistory = () => {
 	useEffect(() => {
 		const fetchOrders = async () => {
 			try {
-				const data = await http.get('/users/orders');
+				const data = await http.get('/orders');
 				if (data?.success) {
-					setOrders(data.orders || []);
+					setOrders(data.data?.orders || []);
 				} else {
 					notyf.error('Erro ao carregar histórico de pedidos.');
 				}
