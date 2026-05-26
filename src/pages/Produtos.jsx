@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import { IoChevronBack, IoChevronForward, IoFilter, IoClose, IoSearchOutline } from 'react-icons/io5';
@@ -28,7 +29,9 @@ const sortProducts = (items, option) => {
 
 const Produtos = () => {
 	useDocumentTitle('Produtos - Kusumba');
+	const [searchParams] = useSearchParams();
 
+	const urlSearch = searchParams.get('search') || '';
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
@@ -37,10 +40,18 @@ const Produtos = () => {
 	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [rating, setRating] = useState(null);
-	const [searchQuery, setSearchQuery] = useState('');
+	const [searchQuery, setSearchQuery] = useState(urlSearch);
 	const [selectedBrand, setSelectedBrand] = useState('');
 	const [featuredOnly, setFeaturedOnly] = useState(false);
-	const [fetchTrigger, setFetchTrigger] = useState(0);
+	const [fetchTrigger, setFetchTrigger] = useState(urlSearch ? 1 : 0);
+	const resultsRef = useRef(null);
+
+	// Scroll suave até aos resultados quando a pesquisa é acionada
+	useEffect(() => {
+		if (resultsRef.current && (searchQuery || fetchTrigger > 0)) {
+			resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	}, [fetchTrigger, searchQuery]);
 
 	const queryParams = {
 		page: currentPage,
@@ -133,7 +144,7 @@ const Produtos = () => {
 					</div>
 
 					{/* ── Content ── */}
-					<div className="flex gap-6 py-8 relative">
+					<div ref={resultsRef} className="flex gap-6 py-8 relative">
 						{/* Desktop sidebar */}
 						<div className="hidden lg:block">
 							<FilterSidebar

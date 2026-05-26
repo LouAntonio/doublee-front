@@ -32,6 +32,7 @@ const Header = () => {
 	const navigate = useNavigate();
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const [searchOpen, setSearchOpen] = useState(false);
+	const [headerSearch, setHeaderSearch] = useState('');
 	const searchInputRef = useRef(null);
 	const userMenuRef = useRef(null);
 	const { data: storeStatus } = useStoreStatus(user?.id, { enabled: isAuthenticated });
@@ -59,6 +60,14 @@ const Header = () => {
 		logout();
 		setUserMenuOpen(false);
 		navigate('/auth');
+	};
+
+	const handleSearch = () => {
+		const query = headerSearch.trim();
+		if (!query) return;
+		setHeaderSearch('');
+		setSearchOpen(false);
+		navigate(`/produtos?search=${encodeURIComponent(query)}`);
 	};
 
 	const slugify = (s) =>
@@ -159,10 +168,16 @@ const Header = () => {
 							</span>
 							<input
 								type="text"
+								value={headerSearch}
+								onChange={(e) => setHeaderSearch(e.target.value)}
+								onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
 								placeholder="Roupas, eletrônicos, gastáveis..."
 								className="w-full bg-white pl-10 pr-4 py-2.5 rounded-l-full text-sm font-body text-[#1C1917] placeholder-[#78716C]/50 border-none focus:outline-none"
 							/>
-							<button className="bg-white border-l border-[#1C1917]/10 px-5 py-2.5 rounded-r-full text-sm font-display font-semibold text-accent hover:bg-sand transition-colors whitespace-nowrap focus:outline-none cursor-pointer">
+							<button
+								onClick={handleSearch}
+								className="bg-white border-l border-[#1C1917]/10 px-5 py-2.5 rounded-r-full text-sm font-display font-semibold text-accent hover:bg-sand transition-colors whitespace-nowrap focus:outline-none cursor-pointer"
+							>
 								Buscar
 							</button>
 						</div>
@@ -283,6 +298,9 @@ const Header = () => {
 							<input
 								ref={searchInputRef}
 								type="text"
+								value={headerSearch}
+								onChange={(e) => setHeaderSearch(e.target.value)}
+								onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
 								placeholder="Roupas, eletrônicos, gastáveis..."
 								className="w-full bg-white pl-10 pr-4 py-2.5 rounded-full text-sm font-body text-[#1C1917] placeholder-[#78716C]/50 border-none focus:outline-none"
 							/>
