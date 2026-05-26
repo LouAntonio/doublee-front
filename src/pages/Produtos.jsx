@@ -24,6 +24,7 @@ const sortProducts = (items, option) => {
 	if (option === 'lowest') return [...items].sort((a, b) => (a.price || 0) - (b.price || 0));
 	if (option === 'highest') return [...items].sort((a, b) => (b.price || 0) - (a.price || 0));
 	if (option === 'name') return [...items].sort((a, b) => String(a.title).localeCompare(String(b.title)));
+	if (option === 'best-sellers') return items;
 	return items;
 };
 
@@ -32,10 +33,11 @@ const Produtos = () => {
 	const [searchParams] = useSearchParams();
 
 	const urlSearch = searchParams.get('search') || '';
+	const urlSort = searchParams.get('sort') || '';
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
-	const [sortOption, setSortOption] = useState('relevance');
+	const [sortOption, setSortOption] = useState(urlSort === 'best-sellers' ? 'best-sellers' : 'relevance');
 
 	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 	const [selectedCategories, setSelectedCategories] = useState([]);
@@ -62,6 +64,7 @@ const Produtos = () => {
 	if (priceRange.min) queryParams.minPrice = priceRange.min;
 	if (priceRange.max) queryParams.maxPrice = priceRange.max;
 	if (featuredOnly) queryParams.featured = 'true';
+	if (sortOption === 'best-sellers') queryParams.orderBy = JSON.stringify({ salesCount: 'desc' });
 
 	const { data, isLoading } = useQuery({
 		queryKey: ['products', 'list', queryParams, fetchTrigger],
@@ -232,6 +235,7 @@ const Produtos = () => {
 										className="p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 bg-white text-gray-700"
 									>
 										<option value="relevance">Relevância</option>
+										<option value="best-sellers">Mais Vendidos</option>
 										<option value="lowest">Menor Preço</option>
 										<option value="highest">Maior Preço</option>
 										<option value="name">Nome (A-Z)</option>
