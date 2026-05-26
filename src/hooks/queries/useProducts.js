@@ -27,6 +27,7 @@ export const useProducts = (params = {}) =>
 			};
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 export const useProduct = (id) =>
@@ -42,6 +43,7 @@ export const useFeaturedProducts = () =>
 		queryKey: ['products', 'featured'],
 		queryFn: () => getFeaturedProducts().then(extractSuccess),
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});
 
 export const useBestSellers = () =>
@@ -49,6 +51,7 @@ export const useBestSellers = () =>
 		queryKey: ['products', 'best-sellers'],
 		queryFn: () => getBestSellers().then(extractSuccess),
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});
 
 export const useLatestProducts = () =>
@@ -56,6 +59,7 @@ export const useLatestProducts = () =>
 		queryKey: ['products', 'latest'],
 		queryFn: () => getLatestProducts().then(extractSuccess),
 		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
 	});
 
 export const usePromotions = () =>
@@ -63,6 +67,7 @@ export const usePromotions = () =>
 		queryKey: ['products', 'promotions'],
 		queryFn: () => getPromotions().then(extractSuccess),
 		staleTime: 1000 * 60 * 5,
+		refetchOnMount: 'always',
 	});
 
 export const useProductsByRandomCategory = (limit = 20) =>
@@ -70,4 +75,5 @@ export const useProductsByRandomCategory = (limit = 20) =>
 		queryKey: ['products', 'random-by-category', limit],
 		queryFn: () => getProductsByRandomCategory(limit).then(extractSuccess),
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});

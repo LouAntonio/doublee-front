@@ -88,6 +88,7 @@ const Promocoes = () => {
 			};
 		},
 		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
 	});
 
 	const offers = data?.offers || [];
@@ -109,13 +110,13 @@ const Promocoes = () => {
 						{/* SVG Waves */}
 						<div className="absolute inset-0 overflow-hidden pointer-events-none">
 							<svg className="promocoes-wave absolute -top-10 -left-10 w-[120%] h-auto opacity-[0.08]" viewBox="0 0 1440 320" preserveAspectRatio="none">
-								<path fill="#F97316" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,208C960,192,1056,160,1152,154.7C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/>
+								<path fill="#F97316" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,208C960,192,1056,160,1152,154.7C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
 							</svg>
 							<svg className="promocoes-wave-delayed absolute -bottom-10 -right-10 w-[120%] h-auto opacity-[0.05]" viewBox="0 0 1440 320" preserveAspectRatio="none">
-								<path fill="#F97316" d="M0,96L48,122.7C96,149,192,203,288,218.7C384,235,480,213,576,186.7C672,160,768,128,864,138.7C960,149,1056,203,1152,213.3C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/>
+								<path fill="#F97316" d="M0,96L48,122.7C96,149,192,203,288,218.7C384,235,480,213,576,186.7C672,160,768,128,864,138.7C960,149,1056,203,1152,213.3C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
 							</svg>
 							<svg className="promocoes-wave absolute top-1/2 -translate-y-1/2 w-full h-auto opacity-[0.04]" viewBox="0 0 1440 400" preserveAspectRatio="none">
-								<path fill="#F97316" d="M0,200 C360,100 1080,300 1440,200 L1440,400 L0,400Z"/>
+								<path fill="#F97316" d="M0,200 C360,100 1080,300 1440,200 L1440,400 L0,400Z" />
 							</svg>
 						</div>
 
@@ -265,10 +266,9 @@ const Promocoes = () => {
 											<button
 												onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
 												disabled={currentPage === 1}
-												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
-													currentPage === 1
-														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${currentPage === 1
+													? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+													: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
 												}`}
 											>
 												<IoChevronBack size={18} />
@@ -284,10 +284,9 @@ const Promocoes = () => {
 													<button
 														key={pageNum}
 														onClick={() => setCurrentPage(pageNum)}
-														className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-semibold cursor-pointer text-sm ${
-															isActive
-																? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20 scale-105'
-																: 'bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+														className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-semibold cursor-pointer text-sm ${isActive
+															? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20 scale-105'
+															: 'bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
 														}`}
 													>
 														{pageNum}
@@ -297,10 +296,9 @@ const Promocoes = () => {
 											<button
 												onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
 												disabled={currentPage === totalPages}
-												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
-													currentPage === totalPages
-														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${currentPage === totalPages
+													? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+													: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
 												}`}
 											>
 												<IoChevronForward size={18} />

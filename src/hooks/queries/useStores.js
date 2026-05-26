@@ -17,6 +17,7 @@ export const useStores = (params = {}) =>
 			return mapped;
 		},
 		staleTime: 1000 * 60 * 5,
+		refetchOnMount: 'always',
 	});
 
 export const useStore = (id) =>
