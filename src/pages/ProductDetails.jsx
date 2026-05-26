@@ -33,7 +33,7 @@ const mapProduct = (p) => {
 		oldPrice: p.promotionalPrice ? p.price : undefined,
 		discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
 		promotionEndDate: p.promotionalEndDate,
-		images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/logo/placeholder.png'],
+		images: p.image || p.gallery?.length ? [p.image, ...(p.gallery || [])].filter(Boolean) : ['/images/produto.png'],
 		category: p.categories?.[0]?.name || 'Diversos',
 		brand: 'Kusumba',
 		description: p.description || 'Sem descrição.',

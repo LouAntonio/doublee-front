@@ -26,7 +26,7 @@ const CartItem = ({ item }) => {
 		<div className="flex gap-4 p-4 bg-white rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
 			<div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-xl overflow-hidden">
 				<img
-					src={item.image || '/images/placeholder.png'}
+					src={item.image || '/images/produto.png'}
 					alt={item.name}
 					className="w-full h-full object-cover"
 				/>

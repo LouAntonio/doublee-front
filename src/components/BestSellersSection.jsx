@@ -10,7 +10,7 @@ const normalizeForCard = (product) => ({
 	price: product.promotionalPrice ?? product.price,
 	oldPrice: product.promotionalPrice ? product.price : product.oldPrice,
 	promotionalEndDate: product.promotionalEndDate,
-	image: product.image || '/images/logo/placeholder.png',
+	image: product.image || '/images/produto.png',
 	rating: product.rating,
 	reviewCount: product.qtdRatings ?? product.reviewCount,
 });

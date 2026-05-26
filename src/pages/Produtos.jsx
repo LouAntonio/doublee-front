@@ -14,8 +14,9 @@ const normalizeProduct = (p) => ({
 	title: p.name,
 	price: p.promotionalPrice ?? p.price,
 	oldPrice: p.promotionalPrice ? p.price : undefined,
+	promotionalPrice: p.promotionalPrice,
 	promotionalEndDate: p.promotionalEndDate,
-	image: p.image || '/images/logo/placeholder.png',
+	image: p.image || '/images/produto.png',
 	rating: p.rating,
 	reviewCount: p.qtdRatings,
 });

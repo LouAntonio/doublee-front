@@ -35,9 +35,9 @@ const ProductCard = ({ product, onClick }) => {
 
 	const promotionEndDate = parsePromotionEndDate(product?.promotionalEndDate ?? product?.promotionEndDate);
 	const basePrice = productOldPrice ?? productPrice;
-	const promotionalPrice = product?.promotionalPrice ?? (productOldPrice ? productPrice : null);
+	const promotionalPrice = product?.promotionalPrice;
 	const basePriceNumber = Number(basePrice);
-	const promotionalPriceNumber = Number(promotionalPrice);
+	const promotionalPriceNumber = promotionalPrice != null ? Number(promotionalPrice) : NaN;
 	const hasPromotionCandidate = Number.isFinite(basePriceNumber)
 		&& Number.isFinite(promotionalPriceNumber)
 		&& basePriceNumber > promotionalPriceNumber

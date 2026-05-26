@@ -31,7 +31,7 @@ const normalizeProduct = (p) => ({
 	price: p.promotionalPrice ?? p.price,
 	oldPrice: p.promotionalPrice ? p.price : undefined,
 	promotionalEndDate: p.promotionalEndDate,
-	image: p.image || '/images/logo/placeholder.png',
+	image: p.image || '/images/produto.png',
 	rating: p.rating,
 	reviewCount: p.qtdRatings,
 	discount: p.promotionalPrice && p.price ? Math.round(((p.price - p.promotionalPrice) / p.price) * 100) : 0,
