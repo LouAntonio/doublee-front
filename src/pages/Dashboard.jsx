@@ -42,7 +42,7 @@ const Dashboard = () => {
 	const { user, logout } = useAuthStore();
 	const [activeTab, setActiveTab] = useState('profile');
 	const { data: verificationStatus } = useVerificationStatus();
-	const { data: storeStatus } = useStoreStatus();
+	const { data: storeStatus } = useStoreStatus(user?.id);
 
 	React.useEffect(() => {
 		if (verificationStatus) {

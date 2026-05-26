@@ -13,9 +13,9 @@ export const useVerificationStatus = () =>
 		refetchOnMount: 'always',
 	});
 
-export const useStoreStatus = (options = {}) =>
+export const useStoreStatus = (userId, options = {}) =>
 	useQuery({
-		queryKey: ['dashboard', 'store-status'],
+		queryKey: ['dashboard', 'store-status', userId],
 		queryFn: async () => {
 			const res = await http.get('/stores/status');
 			if (!res?.success) return 'none';

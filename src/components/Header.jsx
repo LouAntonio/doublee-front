@@ -34,7 +34,7 @@ const Header = () => {
 	const [searchOpen, setSearchOpen] = useState(false);
 	const searchInputRef = useRef(null);
 	const userMenuRef = useRef(null);
-	const { data: storeStatus } = useStoreStatus({ enabled: isAuthenticated });
+	const { data: storeStatus } = useStoreStatus(user?.id, { enabled: isAuthenticated });
 	const hasApprovedStore = storeStatus === 'approved';
 
 	// Close user menu when clicking outside

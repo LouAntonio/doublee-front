@@ -1,6 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
+
+export const useGetProfile = () =>
+	useQuery({
+		queryKey: ['user', 'profile'],
+		queryFn: () => http.get('/users/profile'),
+	});
 
 export const useUpdateProfile = () => {
 	const qc = useQueryClient();
@@ -9,12 +15,28 @@ export const useUpdateProfile = () => {
 		onSuccess: (res) => {
 			if (res?.success) {
 				notyf.success('Perfil atualizado com sucesso!');
-				qc.invalidateQueries({ queryKey: ['auth', 'user'] });
+				qc.invalidateQueries({ queryKey: ['user', 'profile'] });
 			} else {
 				notyf.error(res?.msg || 'Erro ao atualizar perfil.');
 			}
 		},
-		onError: () => notyf.error('Erro ao conectar com o servidor.'),
+		onError: (err) => notyf.error(err?.message || 'Erro ao conectar com o servidor.'),
+	});
+};
+
+export const useUpdateAvatar = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: (avatarUrl) => http.put('/users/avatar', { avatar: avatarUrl }),
+		onSuccess: (res) => {
+			if (res?.success) {
+				notyf.success('Avatar atualizado com sucesso!');
+				qc.invalidateQueries({ queryKey: ['user', 'profile'] });
+			} else {
+				notyf.error(res?.msg || 'Erro ao atualizar avatar.');
+			}
+		},
+		onError: (err) => notyf.error(err?.message || 'Erro ao conectar com o servidor.'),
 	});
 };
 
