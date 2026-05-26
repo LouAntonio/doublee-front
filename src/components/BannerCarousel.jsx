@@ -9,7 +9,7 @@ const BannerCarousel = () => {
 	const banners = [
 		{
 			id: 1,
-			image: './images/slider/1.webp',
+			image: './images/slider/1.png',
 			alt: 'Eletrônicos em destaque',
 			bgColor: '#FFE600',
 			badge: 'Kutambula MARKETPLACE',
@@ -19,7 +19,7 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 2,
-			image: './images/slider/2.webp',
+			image: './images/slider/2.png',
 			alt: 'promoções e promoção',
 			bgColor: '#2968C8',
 			badge: 'promoções',
@@ -29,7 +29,7 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 3,
-			image: './images/slider/3.webp',
+			image: './images/slider/3.png',
 			alt: 'Moda e acessórios',
 			bgColor: '#FF6F00',
 			badge: 'Moda',
@@ -39,27 +39,7 @@ const BannerCarousel = () => {
 		},
 		{
 			id: 4,
-			image: './images/slider/4.webp',
-			alt: 'Casa e decoração',
-			bgColor: '#00A650',
-			badge: 'Casa',
-			title: 'Ideias para Sua Casa',
-			subtitle: 'Decoração, utilidades e móveis com estilo.',
-			cta: 'Ver Coleção'
-		},
-		{
-			id: 5,
-			image: './images/slider/5.webp',
-			alt: 'Casa e decoração',
-			bgColor: '#00A650',
-			badge: 'Casa',
-			title: 'Ideias para Sua Casa',
-			subtitle: 'Decoração, utilidades e móveis com estilo.',
-			cta: 'Ver Coleção'
-		},
-		{
-			id: 6,
-			image: './images/slider/6.webp',
+			image: './images/slider/4.png',
 			alt: 'Casa e decoração',
 			bgColor: '#00A650',
 			badge: 'Casa',
