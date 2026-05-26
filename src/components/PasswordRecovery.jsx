@@ -30,14 +30,18 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const data = await requestPasswordReset(formData.email);
-			if (data.success) {
-				notyf.success('Código OTP enviado para o seu e-mail!');
-				setCurrentStep(2);
-				setResendTimer(60);
-			} else {
-				notyf.error(data.msg || 'Erro ao solicitar recuperação de senha.');
-				if (data.msg) setErrors({ email: data.msg });
+			try {
+				const data = await requestPasswordReset(formData.email);
+				if (data.success) {
+					notyf.success('Código OTP enviado para o seu e-mail!');
+					setCurrentStep(2);
+					setResendTimer(60);
+				} else {
+					notyf.error(data.msg || 'Erro ao solicitar recuperação de senha.');
+					if (data.msg) setErrors({ email: data.msg });
+				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao solicitar recuperação de senha.');
 			}
 			setIsLoading(false);
 		}
@@ -56,6 +60,20 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 		if (e.key === 'Backspace' && !formData.otp[index] && index > 0) otpInputRefs.current[index - 1]?.focus();
 	};
 
+	const handleOtpPaste = (e) => {
+		e.preventDefault();
+		const pastedData = e.clipboardData.getData('text').slice(0, 6).replace(/\D/g, '');
+		if (pastedData) {
+			const newOtp = [...formData.otp];
+			for (let i = 0; i < pastedData.length; i++) {
+				if (i < 6) newOtp[i] = pastedData[i];
+			}
+			setFormData(prev => ({ ...prev, otp: newOtp }));
+			const nextIndex = Math.min(pastedData.length, 5);
+			otpInputRefs.current[nextIndex]?.focus();
+		}
+	};
+
 	const handleOtpSubmit = () => {
 		const otpValue = formData.otp.join('');
 		const newErrors = {};
@@ -67,12 +85,16 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 	const handleResendOtp = async () => {
 		if (resendTimer !== 0) return;
 		setIsLoading(true);
-		const data = await requestPasswordReset(formData.email);
-		if (data.success) {
-			notyf.success('Código OTP reenviado!');
-			setResendTimer(60);
-			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
-		} else notyf.error(data.msg || 'Erro ao reenviar código.');
+		try {
+			const data = await requestPasswordReset(formData.email);
+			if (data.success) {
+				notyf.success('Código OTP reenviado!');
+				setResendTimer(60);
+				setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+			} else notyf.error(data.msg || 'Erro ao reenviar código.');
+		} catch (err) {
+			notyf.error(err.message || 'Erro ao reenviar código.');
+		}
 		setIsLoading(false);
 	};
 
@@ -85,17 +107,21 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const otpValue = formData.otp.join('');
-			const data = await resetPassword(formData.email, otpValue, formData.newPassword);
-			if (data.success) {
-				notyf.success('Senha redefinida com sucesso!');
-				setCurrentStep(4);
-			} else {
-				notyf.error(data.msg || 'Erro ao redefinir senha.');
-				if (data.msg && (data.msg.includes('OTP') || data.msg.includes('código'))) {
-					setCurrentStep(2);
-					setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+			try {
+				const otpValue = formData.otp.join('');
+				const data = await resetPassword(formData.email, otpValue, formData.newPassword);
+				if (data.success) {
+					notyf.success('Senha redefinida com sucesso!');
+					setCurrentStep(4);
+				} else {
+					notyf.error(data.msg || 'Erro ao redefinir senha.');
+					if (data.msg && (data.msg.includes('OTP') || data.msg.includes('código'))) {
+						setCurrentStep(2);
+						setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+					}
 				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao redefinir senha.');
 			}
 			setIsLoading(false);
 		}
@@ -143,7 +169,7 @@ const PasswordRecovery = ({ onSwitchToLogin }) => {
 						<div className="flex gap-2 justify-center">
 							{formData.otp.map((digit, index) => (
 								<input key={index} ref={(el) => (otpInputRefs.current[index] = el)} type="text" inputMode="numeric" maxLength={1} value={digit}
-									onChange={(e) => handleOtpChange(index, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(index, e)}
+									onChange={(e) => handleOtpChange(index, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(index, e)} onPaste={handleOtpPaste}
 									className={`w-12 h-12 text-center text-xl font-display font-bold rounded-xl border ${errors.otp ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 text-[#1C1917] focus:ring-2 focus:ring-accent/20 focus:border-accent`} />
 							))}
 						</div>

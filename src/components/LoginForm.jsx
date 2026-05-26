@@ -28,13 +28,17 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const res = await loginUser(formData.email, formData.password);
-			if (res.success) {
-				login(res.user, res.token);
-				notyf.success('Login realizado com sucesso!');
-				navigate('/');
-			} else {
-				notyf.error(res.msg || 'Erro ao fazer login.');
+			try {
+				const res = await loginUser(formData.email, formData.password);
+				if (res.success) {
+					login(res.user, res.token);
+					notyf.success('Login realizado com sucesso!');
+					navigate('/');
+				} else {
+					notyf.error(res.msg || 'Erro ao fazer login.');
+				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao fazer login.');
 			}
 			setIsLoading(false);
 		}

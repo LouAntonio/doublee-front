@@ -56,7 +56,9 @@ http.interceptors.response.use(
 		return data;
 	},
 	(error) => {
-		if (error.response?.status === 401) {
+		const status = error.response?.status;
+		const data = error.response?.data;
+		if (status === 401) {
 			const isAdmin = error.config?.admin === true;
 			if (isAdmin) {
 				handleAdminSessionExpired();
@@ -64,6 +66,13 @@ http.interceptors.response.use(
 				handleSessionExpired();
 			}
 			return Promise.reject(new Error('Sessão expirada'));
+		}
+		if (status === 429) {
+			const msg = data?.msg || 'Muitas tentativas. Tente novamente mais tarde.';
+			return Promise.reject(new Error(msg));
+		}
+		if (data?.msg) {
+			return Promise.reject(new Error(data.msg));
 		}
 		console.error('Erro na requisição:', error);
 		return Promise.reject(error);

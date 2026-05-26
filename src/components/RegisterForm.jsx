@@ -34,17 +34,21 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const data = await checkEmail(formData.email);
-			if (data.success && data.exists) {
-				notyf.error('Este e-mail já está registado.');
-				setErrors({ email: 'Este e-mail já está registado' });
-			} else if (data.success && !data.exists) {
-				notyf.success('Código OTP enviado para o seu e-mail!');
-				setOtpSent(true);
-				setCurrentStep(2);
-				setResendTimer(60);
-			} else {
-				notyf.error(data.msg || 'Erro ao verificar e-mail.');
+			try {
+				const data = await checkEmail(formData.email);
+				if (data.success && data.exists) {
+					notyf.error('Este e-mail já está registado.');
+					setErrors({ email: 'Este e-mail já está registado' });
+				} else if (data.success && !data.exists) {
+					notyf.success('Código OTP enviado para o seu e-mail!');
+					setOtpSent(true);
+					setCurrentStep(2);
+					setResendTimer(60);
+				} else {
+					notyf.error(data.msg || 'Erro ao verificar e-mail.');
+				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao verificar e-mail.');
 			}
 			setIsLoading(false);
 		}
@@ -63,6 +67,20 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 		if (e.key === 'Backspace' && !formData.otp[index] && index > 0) otpInputRefs.current[index - 1]?.focus();
 	};
 
+	const handleOtpPaste = (e) => {
+		e.preventDefault();
+		const pastedData = e.clipboardData.getData('text').slice(0, 6).replace(/\D/g, '');
+		if (pastedData) {
+			const newOtp = [...formData.otp];
+			for (let i = 0; i < pastedData.length; i++) {
+				if (i < 6) newOtp[i] = pastedData[i];
+			}
+			setFormData(prev => ({ ...prev, otp: newOtp }));
+			const nextIndex = Math.min(pastedData.length, 5);
+			otpInputRefs.current[nextIndex]?.focus();
+		}
+	};
+
 	const handleOtpSubmit = async () => {
 		const otpValue = formData.otp.join('');
 		const newErrors = {};
@@ -71,13 +89,17 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const data = await verifyOtp(formData.email, otpValue);
-			if (data.success) {
-				notyf.success('Código verificado com sucesso!');
-				setCurrentStep(3);
-			} else {
-				notyf.error(data.msg || 'Código OTP inválido.');
-				setErrors({ otp: data.msg || 'Código OTP inválido' });
+			try {
+				const data = await verifyOtp(formData.email, otpValue);
+				if (data.success) {
+					notyf.success('Código verificado com sucesso!');
+					setCurrentStep(3);
+				} else {
+					notyf.error(data.msg || 'Código OTP inválido.');
+					setErrors({ otp: data.msg || 'Código OTP inválido' });
+				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao verificar código.');
 			}
 			setIsLoading(false);
 		}
@@ -86,13 +108,17 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 	const handleResendOtp = async () => {
 		if (resendTimer !== 0) return;
 		setIsLoading(true);
-		const data = await resendOtp(formData.email);
-		if (data.success) {
-			notyf.success('Código OTP reenviado!');
-			setResendTimer(60);
-			setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
-		} else {
-			notyf.error(data.msg || 'Erro ao reenviar código.');
+		try {
+			const data = await resendOtp(formData.email);
+			if (data.success) {
+				notyf.success('Código OTP reenviado!');
+				setResendTimer(60);
+				setFormData(prev => ({ ...prev, otp: ['', '', '', '', '', ''] }));
+			} else {
+				notyf.error(data.msg || 'Erro ao reenviar código.');
+			}
+		} catch (err) {
+			notyf.error(err.message || 'Erro ao reenviar código.');
 		}
 		setIsLoading(false);
 	};
@@ -108,15 +134,19 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 		if (Object.keys(newErrors).length === 0) {
 			setIsLoading(true);
-			const data = await completeRegistration({
-				email: formData.email, name: formData.firstName, surname: formData.lastName,
-				phone: formData.phone, password: formData.password,
-			});
-			if (data.success) {
-				notyf.success('Conta criada com sucesso!');
-				onSwitchToLogin();
-			} else {
-				notyf.error(data.msg || 'Erro ao criar conta.');
+			try {
+				const data = await completeRegistration({
+					email: formData.email, name: formData.firstName, surname: formData.lastName,
+					phone: formData.phone, password: formData.password,
+				});
+				if (data.success) {
+					notyf.success('Conta criada com sucesso!');
+					onSwitchToLogin();
+				} else {
+					notyf.error(data.msg || 'Erro ao criar conta.');
+				}
+			} catch (err) {
+				notyf.error(err.message || 'Erro ao criar conta.');
 			}
 			setIsLoading(false);
 		}
@@ -177,7 +207,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 						<div className="flex gap-2 justify-center">
 							{formData.otp.map((digit, index) => (
 								<input key={index} ref={(el) => (otpInputRefs.current[index] = el)} type="text" inputMode="numeric" maxLength={1} value={digit}
-									onChange={(e) => handleOtpChange(index, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(index, e)}
+									onChange={(e) => handleOtpChange(index, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(index, e)} onPaste={handleOtpPaste}
 									className={`w-12 h-12 text-center text-xl font-display font-bold rounded-xl border ${errors.otp ? 'border-red-500' : 'border-[#D6D3D1]'} outline-none transition-all duration-200 text-[#1C1917] focus:ring-2 focus:ring-accent/20 focus:border-accent`} />
 							))}
 						</div>
