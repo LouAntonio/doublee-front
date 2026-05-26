@@ -14,6 +14,7 @@ import { uploadToCloudinary } from './constants';
 import ImagePicker from './ui/ImagePicker';
 import EmptyState from './ui/EmptyState';
 import SectionTitle from './ui/SectionTitle';
+import DashboardModal from '../DashboardModal';
 
 const EMPTY_PRODUCT = {
 	name: '', description: '', price: '', promotionalPrice: '',
@@ -315,183 +316,178 @@ const ProductsTab = ({ products, onRefresh }) => {
 				</div>
 			)}
 
-			{/* ── Product Modal ──────────────────────────────────────────── */}
-			{modalOpen && (
-				<div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 bg-black/50 overflow-y-auto">
-					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mb-10">
-						<div className="flex items-center justify-between px-6 py-4 border-b border-accent/10 sticky top-0 bg-white rounded-t-2xl z-10">
-							<h3 className="font-bold text-[#1C1917] font-display">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h3>
-							<button type="button" onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-sand transition-colors cursor-pointer">
-								<IoCloseOutline className="w-5 h-5 text-[#78716C]" />
-							</button>
-						</div>
+			<DashboardModal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="md">
+				<div className="flex items-center justify-between px-6 py-4 border-b border-accent/10 sticky top-0 bg-white rounded-t-2xl z-10">
+					<h3 className="font-bold text-[#1C1917] font-display">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h3>
+					<button type="button" onClick={() => setModalOpen(false)} className="p-2 rounded-xl hover:bg-sand transition-colors cursor-pointer">
+						<IoCloseOutline className="w-5 h-5 text-[#78716C]" />
+					</button>
+				</div>
 
-						<form onSubmit={handleSubmit} className="p-6 space-y-7">
+				<form onSubmit={handleSubmit} className="p-6 space-y-7">
 
-							{/* Imagens */}
-							<div>
-								<SectionTitle>Imagens</SectionTitle>
-								<div className="space-y-4">
-									<ImagePicker label="Imagem Principal" name="productImage" preview={imagePreview}
-										onChange={handleImageChange} aspectHint="Recomendado: 800×800 px" />
+					{/* Imagens */}
+					<div>
+						<SectionTitle>Imagens</SectionTitle>
+						<div className="space-y-4">
+							<ImagePicker label="Imagem Principal" name="productImage" preview={imagePreview}
+								onChange={handleImageChange} aspectHint="Recomendado: 800×800 px" />
 
-									{/* Gallery */}
-									<div className="space-y-2">
-										<label className="text-sm font-medium text-[#1C1917]">
-											Galeria <span className="text-[#78716C] font-normal">(até 8 imagens)</span>
-										</label>
-										<div className="flex flex-wrap gap-2">
-											{/* Existing uploaded images */}
-											{existingGallery.map((url, idx) => (
-												<div key={`ex-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-accent/10 group/thumb">
-													<img src={url} alt="" className="w-full h-full object-cover" />
-													<button type="button" onClick={() => removeExistingGalleryImage(idx)}
-														className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
-														<IoTrashOutline className="w-4 h-4" />
-													</button>
-												</div>
-											))}
-											{/* New files pending upload */}
-											{galleryPreviews.map((url, idx) => (
-												<div key={`new-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-accent/30 group/thumb">
-													<img src={url} alt="" className="w-full h-full object-cover" />
-													<button type="button" onClick={() => removeNewGalleryImage(idx)}
-														className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
-														<IoTrashOutline className="w-4 h-4" />
-													</button>
-												</div>
-											))}
-											{/* Add button */}
-											{(existingGallery.length + galleryFiles.length) < 8 && (
-												<label className="w-20 h-20 rounded-xl border-2 border-dashed border-accent/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent hover:bg-orange-50 transition-all text-[#78716C] text-xs gap-1">
-													<IoAddOutline className="w-5 h-5" />
-													<span>Adicionar</span>
-													<input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryAdd} />
-												</label>
-											)}
-										</div>
-									</div>
-								</div>
-							</div>
-
-							{/* Informações Gerais */}
-							<div>
-								<SectionTitle>Informações Gerais</SectionTitle>
-								<div className="space-y-4">
-									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-[#1C1917]">Nome <span className="text-red-500">*</span></label>
-										<input type="text" name="name" value={form.name} onChange={handleChange} required
-											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Nome do produto" />
-									</div>
-									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-[#1C1917]">Descrição</label>
-										<textarea name="description" value={form.description} onChange={handleChange} rows="3"
-											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white resize-none" placeholder="Descreva o produto com detalhes..." />
-									</div>
-								</div>
-							</div>
-
-							{/* Preço & Stock */}
-							<div>
-								<SectionTitle>Preço & Stock</SectionTitle>
-								<div className="space-y-4">
-									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-[#1C1917]">Preço (Kz) <span className="text-red-500">*</span></label>
-											<input type="number" name="price" value={form.price} onChange={handleChange} required min="0" step="0.01"
-												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="0.00" />
-										</div>
-										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-[#1C1917]">Preço Promocional (Kz)</label>
-											<input type="number" name="promotionalPrice" value={form.promotionalPrice} onChange={handleChange} min="0" step="0.01"
-												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Opcional" />
-										</div>
-									</div>
-
-									{form.promotionalPrice && (
-										<div className="space-y-1.5">
-											<label className="text-sm font-medium text-[#1C1917]">Data de fim da promoção</label>
-											<input type="date" name="promotionalEndDate" value={form.promotionalEndDate} onChange={handleChange}
-												min={new Date().toISOString().slice(0, 10)}
-												className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" />
-										</div>
-									)}
-
-									<div className="space-y-1.5">
-										<label className="text-sm font-medium text-[#1C1917]">Stock <span className="text-red-500">*</span></label>
-										<input type="number" name="stock" value={form.stock} onChange={handleChange} required min="0"
-											className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Quantidade disponível" />
-									</div>
-								</div>
-							</div>
-
-							{/* Características */}
-							<div>
-								<SectionTitle>Características</SectionTitle>
-								<div className="space-y-2">
-									{chars.map((c, idx) => (
-										<div key={idx} className="flex gap-2 items-center">
-											<input type="text" value={c.key} onChange={e => handleCharChange(idx, 'key', e.target.value)}
-												className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Cor" />
-											<input type="text" value={c.value} onChange={e => handleCharChange(idx, 'value', e.target.value)}
-												className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Vermelho" />
-											<button type="button" onClick={() => removeChar(idx)} disabled={chars.length === 1}
-												className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+							{/* Gallery */}
+							<div className="space-y-2">
+								<label className="text-sm font-medium text-[#1C1917]">
+									Galeria <span className="text-[#78716C] font-normal">(até 8 imagens)</span>
+								</label>
+								<div className="flex flex-wrap gap-2">
+									{/* Existing uploaded images */}
+									{existingGallery.map((url, idx) => (
+										<div key={`ex-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-accent/10 group/thumb">
+											<img src={url} alt="" className="w-full h-full object-cover" />
+											<button type="button" onClick={() => removeExistingGalleryImage(idx)}
+												className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
 												<IoTrashOutline className="w-4 h-4" />
 											</button>
 										</div>
 									))}
-									<button type="button" onClick={addChar}
-										className="flex items-center gap-1.5 text-sm text-accent font-medium hover:text-accent-dark transition-colors mt-1 cursor-pointer">
-										<IoAddOutline className="w-4 h-4" /> Adicionar característica
-									</button>
+									{/* New files pending upload */}
+									{galleryPreviews.map((url, idx) => (
+										<div key={`new-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-accent/30 group/thumb">
+											<img src={url} alt="" className="w-full h-full object-cover" />
+											<button type="button" onClick={() => removeNewGalleryImage(idx)}
+												className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
+												<IoTrashOutline className="w-4 h-4" />
+											</button>
+										</div>
+									))}
+									{/* Add button */}
+									{(existingGallery.length + galleryFiles.length) < 8 && (
+										<label className="w-20 h-20 rounded-xl border-2 border-dashed border-accent/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent hover:bg-orange-50 transition-all text-[#78716C] text-xs gap-1">
+											<IoAddOutline className="w-5 h-5" />
+											<span>Adicionar</span>
+											<input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryAdd} />
+										</label>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Informações Gerais */}
+					<div>
+						<SectionTitle>Informações Gerais</SectionTitle>
+						<div className="space-y-4">
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium text-[#1C1917]">Nome <span className="text-red-500">*</span></label>
+								<input type="text" name="name" value={form.name} onChange={handleChange} required
+									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Nome do produto" />
+							</div>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium text-[#1C1917]">Descrição</label>
+								<textarea name="description" value={form.description} onChange={handleChange} rows="3"
+									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white resize-none" placeholder="Descreva o produto com detalhes..." />
+							</div>
+						</div>
+					</div>
+
+					{/* Preço & Stock */}
+					<div>
+						<SectionTitle>Preço & Stock</SectionTitle>
+						<div className="space-y-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<div className="space-y-1.5">
+									<label className="text-sm font-medium text-[#1C1917]">Preço (Kz) <span className="text-red-500">*</span></label>
+									<input type="number" name="price" value={form.price} onChange={handleChange} required min="0" step="0.01"
+										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="0.00" />
+								</div>
+								<div className="space-y-1.5">
+									<label className="text-sm font-medium text-[#1C1917]">Preço Promocional (Kz)</label>
+									<input type="number" name="promotionalPrice" value={form.promotionalPrice} onChange={handleChange} min="0" step="0.01"
+										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Opcional" />
 								</div>
 							</div>
 
-							{/* Categorias */}
-							<div>
-								<SectionTitle>Categorias</SectionTitle>
-								{allCategories.length === 0 ? (
-									<p className="text-sm text-[#78716C]">Nenhuma categoria disponível.</p>
-								) : (
-									<div className="flex flex-wrap gap-2">
-										{allCategories.map(cat => {
-											const selected = selectedCategoryIds.includes(cat.id);
-											return (
-												<button
-													key={cat.id}
-													type="button"
-													onClick={() => toggleCategory(cat.id)}
-													className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all cursor-pointer
-														${selected
-													? 'bg-accent text-white border-accent shadow-sm'
-													: 'bg-white text-[#78716C] border-accent/20 hover:border-accent hover:text-accent'
-												}`}
-												>
-													{selected && <IoCheckmarkOutline className="w-3.5 h-3.5" />}
-													{cat.name}
-												</button>
-											);
-										})}
-									</div>
-								)}
-							</div>
+							{form.promotionalPrice && (
+								<div className="space-y-1.5">
+									<label className="text-sm font-medium text-[#1C1917]">Data de fim da promoção</label>
+									<input type="date" name="promotionalEndDate" value={form.promotionalEndDate} onChange={handleChange}
+										min={new Date().toISOString().slice(0, 10)}
+										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" />
+								</div>
+							)}
 
-							{/* Actions */}
-							<div className="flex items-center gap-3 pt-1">
-								<button type="button" onClick={() => setModalOpen(false)}
-									className="flex-1 px-4 py-3 rounded-full border border-accent/20 text-[#78716C] font-medium hover:bg-sand transition-all cursor-pointer">
-									Cancelar
-								</button>
-								<button type="submit" disabled={saving}
-									className="flex-1 px-4 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark transition-all disabled:opacity-60 cursor-pointer shadow-lg shadow-accent/20">
-									{saving ? (savingProgress || 'A guardar...') : (editingProduct ? 'Guardar Alterações' : 'Adicionar Produto')}
-								</button>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium text-[#1C1917]">Stock <span className="text-red-500">*</span></label>
+								<input type="number" name="stock" value={form.stock} onChange={handleChange} required min="0"
+									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Quantidade disponível" />
 							</div>
-						</form>
+						</div>
 					</div>
-				</div>
-			)}
+
+					{/* Características */}
+					<div>
+						<SectionTitle>Características</SectionTitle>
+						<div className="space-y-2">
+							{chars.map((c, idx) => (
+								<div key={idx} className="flex gap-2 items-center">
+									<input type="text" value={c.key} onChange={e => handleCharChange(idx, 'key', e.target.value)}
+										className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Cor" />
+									<input type="text" value={c.value} onChange={e => handleCharChange(idx, 'value', e.target.value)}
+										className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Ex: Vermelho" />
+									<button type="button" onClick={() => removeChar(idx)} disabled={chars.length === 1}
+										className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+										<IoTrashOutline className="w-4 h-4" />
+									</button>
+								</div>
+							))}
+							<button type="button" onClick={addChar}
+								className="flex items-center gap-1.5 text-sm text-accent font-medium hover:text-accent-dark transition-colors mt-1 cursor-pointer">
+								<IoAddOutline className="w-4 h-4" /> Adicionar característica
+							</button>
+						</div>
+					</div>
+
+					{/* Categorias */}
+					<div>
+						<SectionTitle>Categorias</SectionTitle>
+						{allCategories.length === 0 ? (
+							<p className="text-sm text-[#78716C]">Nenhuma categoria disponível.</p>
+						) : (
+							<div className="flex flex-wrap gap-2">
+								{allCategories.map(cat => {
+									const selected = selectedCategoryIds.includes(cat.id);
+									return (
+										<button
+											key={cat.id}
+											type="button"
+											onClick={() => toggleCategory(cat.id)}
+											className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all cursor-pointer
+												${selected
+											? 'bg-accent text-white border-accent shadow-sm'
+											: 'bg-white text-[#78716C] border-accent/20 hover:border-accent hover:text-accent'
+										}`}
+										>
+											{selected && <IoCheckmarkOutline className="w-3.5 h-3.5" />}
+											{cat.name}
+										</button>
+									);
+								})}
+							</div>
+						)}
+					</div>
+
+					{/* Actions */}
+					<div className="flex items-center gap-3 pt-1">
+						<button type="button" onClick={() => setModalOpen(false)}
+							className="flex-1 px-4 py-3 rounded-full border border-accent/20 text-[#78716C] font-medium hover:bg-sand transition-all cursor-pointer">
+							Cancelar
+						</button>
+						<button type="submit" disabled={saving}
+							className="flex-1 px-4 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark transition-all disabled:opacity-60 cursor-pointer shadow-lg shadow-accent/20">
+							{saving ? (savingProgress || 'A guardar...') : (editingProduct ? 'Guardar Alterações' : 'Adicionar Produto')}
+						</button>
+					</div>
+				</form>
+			</DashboardModal>
 		</div>
 	);
 };

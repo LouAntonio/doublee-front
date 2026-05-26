@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IoAddOutline, IoTrashOutline, IoTicketOutline, IoCheckmarkCircleOutline, IoCalendarOutline } from 'react-icons/io5';
 import { useMyCoupons, useCreateCoupon, useDeleteCoupon } from '../../../hooks/queries/useStoreCoupons';
+import DashboardModal from '../DashboardModal';
 
 
 const CouponsTab = () => {
@@ -125,83 +126,78 @@ const CouponsTab = () => {
 				</div>
 			)}
 
-			{/* Modal de Criação */}
-			{isModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-					<div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
-						<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand">
-							<h3 className="text-lg font-bold text-[#1C1917] font-display">Novo Cupão</h3>
-							<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors">
-								<IoAddOutline className="w-6 h-6 rotate-45" />
-							</button>
-						</div>
-						<form onSubmit={handleCreate} className="p-6 space-y-4">
-							<div>
-								<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">CÓDIGO (EX: VERAO24)</label>
-								<input
-									type="text"
-									required
-									value={formData.code}
-									onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-									placeholder="DIGITE O CÓDIGO"
-									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all font-mono tracking-widest text-lg bg-white"
-								/>
-							</div>
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">DESCONTO (%)</label>
-									<input
-										type="number"
-										required
-										min="1"
-										max="100"
-										value={formData.discount}
-										onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
-										placeholder="%"
-										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all bg-white"
-									/>
-								</div>
-								<div>
-									<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">VALIDADE</label>
-									<input
-										type="date"
-										required
-										min={new Date().toISOString().split('T')[0]}
-										value={formData.expiryDate}
-										onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-										className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all bg-white"
-									/>
-								</div>
-							</div>
-							<div className="flex items-center gap-3 py-2">
-								<input
-									type="checkbox"
-									id="visible"
-									checked={formData.visible}
-									onChange={(e) => setFormData({ ...formData, visible: e.target.checked })}
-									className="w-4 h-4 text-accent rounded focus:ring-accent"
-								/>
-								<label htmlFor="visible" className="text-sm text-[#78716C] font-medium select-none">Mostrar na página pública de cupões</label>
-							</div>
-							<button
-								type="submit"
-								disabled={isCreating}
-								className={`w-full bg-accent text-white py-4 rounded-full font-bold hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 mt-2 cursor-pointer flex items-center justify-center gap-2 ${isCreating ? 'opacity-70 cursor-not-allowed' : ''}`}
-							>
-								{isCreating ? (
-									<>
-										<div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-										A processar...
-									</>
-								) : (
-									'Criar Cupão'
-								)}
-							</button>
-
-						</form>
-					</div>
+			<DashboardModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="sm">
+				<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand rounded-t-2xl">
+					<h3 className="text-lg font-bold text-[#1C1917] font-display">Novo Cupão</h3>
+					<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer">
+						<IoAddOutline className="w-6 h-6 rotate-45" />
+					</button>
 				</div>
-			)}
+				<form onSubmit={handleCreate} className="p-6 space-y-4">
+					<div>
+						<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">CÓDIGO (EX: VERAO24)</label>
+						<input
+							type="text"
+							required
+							value={formData.code}
+							onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+							placeholder="DIGITE O CÓDIGO"
+							className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all font-mono tracking-widest text-lg bg-white"
+						/>
+					</div>
+					<div className="grid grid-cols-2 gap-4">
+						<div>
+							<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">DESCONTO (%)</label>
+							<input
+								type="number"
+								required
+								min="1"
+								max="100"
+								value={formData.discount}
+								onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+								placeholder="%"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all bg-white"
+							/>
+						</div>
+						<div>
+							<label className="block text-xs font-bold text-[#78716C] uppercase mb-1 tracking-wider">VALIDADE</label>
+							<input
+								type="date"
+								required
+								min={new Date().toISOString().split('T')[0]}
+								value={formData.expiryDate}
+								onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:border-accent outline-none transition-all bg-white"
+							/>
+						</div>
+					</div>
+					<div className="flex items-center gap-3 py-2">
+						<input
+							type="checkbox"
+							id="visible"
+							checked={formData.visible}
+							onChange={(e) => setFormData({ ...formData, visible: e.target.checked })}
+							className="w-4 h-4 text-accent rounded focus:ring-accent"
+						/>
+						<label htmlFor="visible" className="text-sm text-[#78716C] font-medium select-none">Mostrar na página pública de cupões</label>
+					</div>
+					<button
+						type="submit"
+						disabled={isCreating}
+						className={`w-full bg-accent text-white py-4 rounded-full font-bold hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 mt-2 cursor-pointer flex items-center justify-center gap-2 ${isCreating ? 'opacity-70 cursor-not-allowed' : ''}`}
+					>
+						{isCreating ? (
+							<>
+								<div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+								A processar...
+							</>
+						) : (
+							'Criar Cupão'
+						)}
+					</button>
+
+				</form>
+			</DashboardModal>
 		</div>
 	);
 };
