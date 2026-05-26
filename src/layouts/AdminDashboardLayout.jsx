@@ -5,7 +5,10 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const AdminDashboardLayout = () => {
 	const { isAdmin, isLoading, adminLogout, admin } = useAuthStore();
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [sidebarOpen, setSidebarOpen] = useState(() => {
+		const stored = localStorage.getItem('adminSidebarOpen');
+		return stored !== null ? JSON.parse(stored) : true;
+	});
 	const location = useLocation();
 
 	useDocumentTitle('Kusumba | Painel Administrativo');
@@ -55,7 +58,11 @@ const AdminDashboardLayout = () => {
 						</div>
 					)}
 					<button
-						onClick={() => setSidebarOpen(!sidebarOpen)}
+						onClick={() => {
+							const next = !sidebarOpen;
+							setSidebarOpen(next);
+							localStorage.setItem('adminSidebarOpen', JSON.stringify(next));
+						}}
 						className={`p-2 rounded-xl transition-all duration-200 text-[#78716C] hover:text-accent hover:bg-accent/10 cursor-pointer ${!sidebarOpen ? 'mx-auto' : ''}`}
 					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d={sidebarOpen ? "M4 6h16M4 12h16M4 18h16" : "M4 6h16M4 12h16M4 18h16"}></path></svg>
