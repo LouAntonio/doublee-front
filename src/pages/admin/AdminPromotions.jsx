@@ -65,7 +65,7 @@ const AdminPromotions = () => {
 	};
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl shadow-sm border border-accent/10">
 				<div>
 					<h2 className="text-2xl font-display font-bold text-[#1C1917] tracking-tight flex items-center gap-2">

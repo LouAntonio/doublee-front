@@ -1,6 +1,8 @@
 ﻿import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { notyf } from '../../utils/notyf';
 import { useSellerVerifications, useApproveSeller, useRejectSeller } from '../../hooks/queries/useAdminIdentityVerification';
+import Modal from '../../components/admin/Modal';
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) => {
@@ -14,8 +16,7 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 
 	return (
 		<>
-			{/* Lightbox */}
-			{lightboxSrc && (
+			{lightboxSrc && createPortal(
 				<div
 					className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] flex items-center justify-center p-4"
 					onClick={() => setLightboxSrc(null)}
@@ -31,203 +32,195 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 						</button>
 						<img src={lightboxSrc} alt="Documento" className="w-full rounded-2xl shadow-2xl object-contain max-h-[80vh]" />
 					</div>
-				</div>
+				</div>,
+				document.body
 			)}
 
-			{/* Modal backdrop */}
-			<div
-				className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 "
-				onClick={onClose}
-			>
-				<div
-					className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{/* Header */}
-					<div className="p-6 border-b border-accent/10 flex items-center justify-between bg-sand/50/60 flex-shrink-0">
-						<div className="flex items-center gap-4">
-							<div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold text-lg flex items-center justify-center uppercase shadow-sm border border-indigo-200/50">
-								{user.name.charAt(0)}
-							</div>
-							<div>
-								<h3 className="text-base font-bold text-[#1C1917]">{user.name} {user.surname}</h3>
-								<p className="text-sm text-[#78716C]">{user.email}</p>
-							</div>
+			<Modal isOpen={!!user} onClose={onClose} size="md">
+				{/* Header */}
+				<div className="p-6 border-b border-accent/10 flex items-center justify-between bg-sand/50/60 flex-shrink-0">
+					<div className="flex items-center gap-4">
+						<div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold text-lg flex items-center justify-center uppercase shadow-sm border border-indigo-200/50">
+							{user.name.charAt(0)}
 						</div>
-						<div className="flex items-center gap-3">
-							{user.validatedSeller ? (
-								<span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-display font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-									<svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-									Verificado
-								</span>
-							) : (
-								<span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-display font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-									<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-									Pendente
-								</span>
-							)}
-							<button onClick={onClose} className="p-2 rounded-xl text-[#78716C] hover:text-[#1C1917] hover:bg-accent/20 transition-colors">
-								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-								</svg>
-							</button>
+						<div>
+							<h3 className="text-base font-bold text-[#1C1917]">{user.name} {user.surname}</h3>
+							<p className="text-sm text-[#78716C]">{user.email}</p>
 						</div>
 					</div>
-
-					{/* Body */}
-					{actionMode ? (
-						<div className="p-6 flex-1 flex flex-col">
-							<h4 className="text-base font-bold text-[#1C1917] mb-4">
-								{actionMode === 'reject' ? 'Rejeitar Candidatura' : 'Revogar Verificação'}
-							</h4>
-							{actionMode === 'reject' && (
-								<div className="mb-5 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 flex items-start gap-3">
-									<svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-									</svg>
-									<p className="text-sm">
-										<strong>Atenção:</strong> Ao rejeitar, todos os documentos enviados pelo utilizador serão <strong>permanentemente eliminados</strong> da plataforma.
-									</p>
-								</div>
-							)}
-							<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">
-								Motivo da {actionMode === 'reject' ? 'rejeição' : 'revogação'} (enviado por email ao utilizador)
-							</label>
-							<textarea
-								className="w-full p-4 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:ring-2 focus:ring-rose-500/30 focus:border-rose-400 outline-none transition-all resize-none min-h-[120px]"
-								placeholder="Especifique o motivo..."
-								value={reason}
-								onChange={(e) => setReason(e.target.value)}
-								autoFocus
-							/>
-						</div>
-					) : (
-						<div className="overflow-y-auto p-6 space-y-6 flex-1">
-							{/* Info grid */}
-							<div className="grid grid-cols-2 gap-3">
-								{[
-									{ label: 'Telemóvel', value: user.phone || 'Sem telefone' },
-									{ label: 'Registado em', value: user.createdAt && !isNaN(new Date(user.createdAt).getTime()) ? new Date(user.createdAt).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Data não disponível' },
-									{ label: 'Tipo de conta', value: user.seller ? 'Vendedor' : 'Comprador' },
-									{ label: 'Verificação', value: user.validatedSeller ? 'Concluída' : 'Aguardando revisão' },
-								].map(({ label, value }) => (
-									<div key={label} className="bg-sand/50 rounded-xl p-3 border border-accent/10">
-										<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wide mb-1">{label}</p>
-										<p className="text-sm font-bold text-[#1C1917]">{value}</p>
-									</div>
-								))}
-							</div>
-
-							{/* Documentos */}
-							{docs ? (
-								<>
-									{docs.bi?.length > 0 && (
-										<div>
-											<div className="flex items-center gap-2 mb-3">
-												<svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" /></svg>
-												<h4 className="text-sm font-bold text-[#1C1917]">BI / Passaporte</h4>
-												<span className="text-xs text-[#78716C] font-medium">{docs.bi.length} ficheiro(s)</span>
-											</div>
-											<div className="grid grid-cols-2 gap-3">
-												{docs.bi.map((src, i) => (
-													<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
-														<img src={src} alt={`BI ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
-														<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-															<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
-														</div>
-														<div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 bg-gradient-to-t from-black/50 to-transparent">
-															<span className="text-white text-xs font-semibold">Frente/Verso {i + 1}</span>
-														</div>
-													</div>
-												))}
-											</div>
-										</div>
-									)}
-									{docs.pics?.length > 0 && (
-										<div>
-											<div className="flex items-center gap-2 mb-3">
-												<svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-												<h4 className="text-sm font-bold text-[#1C1917]">Selfie / Foto de identificação</h4>
-												<span className="text-xs text-[#78716C] font-medium">{docs.pics.length} foto(s)</span>
-											</div>
-											<div className="grid grid-cols-2 gap-3">
-												{docs.pics.map((src, i) => (
-													<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
-														<img src={src} alt={`Selfie ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
-														<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-															<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
-														</div>
-													</div>
-												))}
-											</div>
-										</div>
-									)}
-								</>
-							) : (
-								<div className="py-10 flex flex-col items-center justify-center text-[#78716C] bg-sand/50 rounded-2xl border border-dashed border-accent/20">
-									<svg className="w-12 h-12 text-accent/20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-									<p className="font-semibold text-[#78716C]">Nenhum documento submetido</p>
-									<p className="text-sm mt-1">O utilizador ainda não enviou os documentos de identificação.</p>
-								</div>
-							)}
-						</div>
-					)}
-
-					{/* Footer */}
-					{actionMode ? (
-						<div className="p-5 border-t border-accent/10 bg-sand/30 flex items-center justify-end gap-3 flex-shrink-0">
-							<button
-								onClick={() => setActionMode(null)}
-								className="px-5 py-2.5 rounded-xl text-sm font-display font-semibold text-[#78716C] hover:bg-accent/20 transition-colors"
-							>
-								Cancelar
-							</button>
-							<button
-								onClick={() => { if (reason.trim()) { onReject(user.id, reason); onClose(); } }}
-								disabled={!reason.trim()}
-								className="px-6 py-2.5 rounded-xl text-sm font-bold bg-rose-600 text-white hover:bg-rose-700 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-							>
-								Confirmar {actionMode === 'reject' ? 'Rejeição' : 'Revogação'}
-							</button>
-						</div>
-					) : (
-						<>
-							{!user.validatedSeller && docs && (
-								<div className="p-5 border-t border-accent/10 bg-sand/30 flex items-center justify-end gap-3 flex-shrink-0">
-									<button
-										onClick={() => setActionMode('reject')}
-										className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
-									>
-										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
-										Rejeitar
-									</button>
-									<button
-										onClick={() => { onApprove(user.id); onClose(); }}
-										className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm"
-									>
-										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
-										Aprovar Verificação
-									</button>
-								</div>
-							)}
-							{user.validatedSeller && (
-								<div className="p-5 border-t border-accent/10 bg-emerald-50/50 flex items-center justify-between flex-shrink-0">
-									<div className="flex items-center gap-2 text-emerald-700">
-										<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-										<span className="text-sm font-bold">Identidade verificada com sucesso</span>
-									</div>
-									<button
-										onClick={() => setActionMode('revoke')}
-										className="text-xs font-semibold text-[#78716C] hover:text-rose-600 underline transition-colors cursor-pointer"
-									>
-										Revogar verificação
-									</button>
-								</div>
-							)}
-						</>
-					)}
+					<div className="flex items-center gap-3">
+						{user.validatedSeller ? (
+							<span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-display font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+								<svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+									Verificado
+							</span>
+						) : (
+							<span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-display font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+								<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+									Pendente
+							</span>
+						)}
+						<button onClick={onClose} className="p-2 rounded-xl text-[#78716C] hover:text-[#1C1917] hover:bg-accent/20 transition-colors">
+							<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
+					</div>
 				</div>
-			</div>
+
+				{/* Body */}
+				{actionMode ? (
+					<div className="p-6 flex-1 flex flex-col">
+						<h4 className="text-base font-bold text-[#1C1917] mb-4">
+							{actionMode === 'reject' ? 'Rejeitar Candidatura' : 'Revogar Verificação'}
+						</h4>
+						{actionMode === 'reject' && (
+							<div className="mb-5 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 flex items-start gap-3">
+								<svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+								</svg>
+								<p className="text-sm">
+									<strong>Atenção:</strong> Ao rejeitar, todos os documentos enviados pelo utilizador serão <strong>permanentemente eliminados</strong> da plataforma.
+								</p>
+							</div>
+						)}
+						<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">
+								Motivo da {actionMode === 'reject' ? 'rejeição' : 'revogação'} (enviado por email ao utilizador)
+						</label>
+						<textarea
+							className="w-full p-4 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:ring-2 focus:ring-rose-500/30 focus:border-rose-400 outline-none transition-all resize-none min-h-[120px]"
+							placeholder="Especifique o motivo..."
+							value={reason}
+							onChange={(e) => setReason(e.target.value)}
+							autoFocus
+						/>
+					</div>
+				) : (
+					<div className="overflow-y-auto p-6 space-y-6 flex-1">
+						{/* Info grid */}
+						<div className="grid grid-cols-2 gap-3">
+							{[
+								{ label: 'Telemóvel', value: user.phone || 'Sem telefone' },
+								{ label: 'Registado em', value: user.createdAt && !isNaN(new Date(user.createdAt).getTime()) ? new Date(user.createdAt).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Data não disponível' },
+								{ label: 'Tipo de conta', value: user.seller ? 'Vendedor' : 'Comprador' },
+								{ label: 'Verificação', value: user.validatedSeller ? 'Concluída' : 'Aguardando revisão' },
+							].map(({ label, value }) => (
+								<div key={label} className="bg-sand/50 rounded-xl p-3 border border-accent/10">
+									<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wide mb-1">{label}</p>
+									<p className="text-sm font-bold text-[#1C1917]">{value}</p>
+								</div>
+							))}
+						</div>
+
+						{/* Documentos */}
+						{docs ? (
+							<>
+								{docs.bi?.length > 0 && (
+									<div>
+										<div className="flex items-center gap-2 mb-3">
+											<svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" /></svg>
+											<h4 className="text-sm font-bold text-[#1C1917]">BI / Passaporte</h4>
+											<span className="text-xs text-[#78716C] font-medium">{docs.bi.length} ficheiro(s)</span>
+										</div>
+										<div className="grid grid-cols-2 gap-3">
+											{docs.bi.map((src, i) => (
+												<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
+													<img src={src} alt={`BI ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
+													<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+														<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+													</div>
+													<div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 bg-gradient-to-t from-black/50 to-transparent">
+														<span className="text-white text-xs font-semibold">Frente/Verso {i + 1}</span>
+													</div>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+								{docs.pics?.length > 0 && (
+									<div>
+										<div className="flex items-center gap-2 mb-3">
+											<svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+											<h4 className="text-sm font-bold text-[#1C1917]">Selfie / Foto de identificação</h4>
+											<span className="text-xs text-[#78716C] font-medium">{docs.pics.length} foto(s)</span>
+										</div>
+										<div className="grid grid-cols-2 gap-3">
+											{docs.pics.map((src, i) => (
+												<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
+													<img src={src} alt={`Selfie ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
+													<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+														<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+													</div>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+							</>
+						) : (
+							<div className="py-10 flex flex-col items-center justify-center text-[#78716C] bg-sand/50 rounded-2xl border border-dashed border-accent/20">
+								<svg className="w-12 h-12 text-accent/20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+								<p className="font-semibold text-[#78716C]">Nenhum documento submetido</p>
+								<p className="text-sm mt-1">O utilizador ainda não enviou os documentos de identificação.</p>
+							</div>
+						)}
+					</div>
+				)}
+
+				{/* Footer */}
+				{actionMode ? (
+					<div className="p-5 border-t border-accent/10 bg-sand/30 flex items-center justify-end gap-3 flex-shrink-0">
+						<button
+							onClick={() => setActionMode(null)}
+							className="px-5 py-2.5 rounded-xl text-sm font-display font-semibold text-[#78716C] hover:bg-accent/20 transition-colors"
+						>
+								Cancelar
+						</button>
+						<button
+							onClick={() => { if (reason.trim()) { onReject(user.id, reason); onClose(); } }}
+							disabled={!reason.trim()}
+							className="px-6 py-2.5 rounded-xl text-sm font-bold bg-rose-600 text-white hover:bg-rose-700 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+								Confirmar {actionMode === 'reject' ? 'Rejeição' : 'Revogação'}
+						</button>
+					</div>
+				) : (
+					<>
+						{!user.validatedSeller && docs && (
+							<div className="p-5 border-t border-accent/10 bg-sand/30 flex items-center justify-end gap-3 flex-shrink-0">
+								<button
+									onClick={() => setActionMode('reject')}
+									className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 transition-all shadow-sm"
+								>
+									<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+										Rejeitar
+								</button>
+								<button
+									onClick={() => { onApprove(user.id); onClose(); }}
+									className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm"
+								>
+									<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
+										Aprovar Verificação
+								</button>
+							</div>
+						)}
+						{user.validatedSeller && (
+							<div className="p-5 border-t border-accent/10 bg-emerald-50/50 flex items-center justify-between flex-shrink-0">
+								<div className="flex items-center gap-2 text-emerald-700">
+									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+									<span className="text-sm font-bold">Identidade verificada com sucesso</span>
+								</div>
+								<button
+									onClick={() => setActionMode('revoke')}
+									className="text-xs font-semibold text-[#78716C] hover:text-rose-600 underline transition-colors cursor-pointer"
+								>
+										Revogar verificação
+								</button>
+							</div>
+						)}
+					</>
+				)}
+			</Modal>
 		</>
 	);
 };
@@ -322,7 +315,7 @@ const AdminIdentityVerification = () => {
 	];
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			<DetailModal
 				key={`${selectedUser?.id || 'none'}-${modalMode || 'none'}`}
 				user={selectedUser}
@@ -491,14 +484,6 @@ const AdminIdentityVerification = () => {
 				</div>
 			</div>
 
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				.animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
-				`}} />
 		</div>
 	);
 };

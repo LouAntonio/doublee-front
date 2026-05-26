@@ -2,6 +2,7 @@
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminStoresList, useUpdateStoreStatus } from '../../hooks/queries/useAdminStores';
+import Modal from '../../components/admin/Modal';
 
 const StoreSkeleton = () => (
 	<tr className="animate-pulse border-b border-accent/10 last:border-0">
@@ -102,7 +103,7 @@ const AdminStores = () => {
 	};
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			{/* Page Header */}
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-accent/10">
 				<div>
@@ -241,224 +242,196 @@ const AdminStores = () => {
 				)}
 			</div>
 
-			{/* Store Details Modal */}
-			{isModalOpen && (
-				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up" onClick={() => setIsModalOpen(false)}>
-					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
-						<div className="flex justify-between items-center p-6 border-b border-accent/10">
-							<h3 className="text-xl font-display font-bold text-[#1C1917]">Detalhes da Loja</h3>
-							<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors">
-								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-							</button>
-						</div>
-						
-						<div className="p-6 overflow-y-auto flex-1">
-							{detailsLoading ? (
-								<div className="flex flex-col items-center justify-center py-12">
-									<svg className="w-8 h-8 text-accent animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-									<p className="text-[#78716C] font-body">A carregar detalhes...</p>
-								</div>
-							) : storeDetails ? (
-								<div className="space-y-6">
-									{/* Store Info */}
-									<div className="flex items-start gap-4">
-										{storeDetails.logo ? (
-											<img src={storeDetails.logo} alt={storeDetails.name} className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
-										) : (
-											<div className="w-16 h-16 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/20">
-												{storeDetails.name.charAt(0)}
-											</div>
-										)}
-										<div>
-											<h4 className="text-lg font-display font-bold text-[#1C1917]">{storeDetails.name}</h4>
-											<p className="text-sm text-[#78716C] mt-1 font-body">{storeDetails.description || 'Sem descrição.'}</p>
-											<div className="mt-2 flex gap-2">
-												<span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-display font-bold ${storeDetails.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-													storeDetails.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-														'bg-rose-50 text-rose-700 border border-rose-200'
-												}`}>
-													Estado: {storeDetails.status === 'approved' ? 'Aprovada' :
-														storeDetails.status === 'pending' ? 'Pendente' :
-															storeDetails.status === 'suspended' ? 'Suspensa' : 'Rejeitada'}
-												</span>
-											</div>
-										</div>
-									</div>
-
-									<hr className="border-accent/10" />
-
-									{/* Owner Info */}
-									<div>
-										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes do Proprietário</h5>
-										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Nome</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.name} {storeDetails.user?.surname}</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Email</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.email || storeDetails.email}</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Telefone</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.phone || storeDetails.phone || 'N/A'}</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Localização</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.location || storeDetails.province || 'N/A'}</span>
-											</div>
-										</div>
-									</div>
-
-									<hr className="border-accent/10" />
-
-									{/* Store Operation Info */}
-									<div>
-										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes de Operação & Desempenho</h5>
-										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Horário de Funcionamento</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.workingHours || 'Não definido'}</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Avaliação</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
-													{storeDetails.rating ? `${Number(storeDetails.rating).toFixed(1)} ⭐ (${storeDetails.qtdRatings} avaliações)` : 'Sem avaliações'}
-												</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Visualizações</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.views || 0} visualizações</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Destaque</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
-													{storeDetails.featured ? `Sim ${storeDetails.featuredUntil ? `(Até ${new Date(storeDetails.featuredUntil).toLocaleDateString()})` : ''}` : 'Não'}
-												</span>
-											</div>
-										</div>
-									</div>
-
-									<hr className="border-accent/10" />
-
-									{/* Financial Info */}
-									<div>
-										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Informações Bancárias</h5>
-										<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Banco</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.bankName || 'Não definido'}</span>
-											</div>
-											<div>
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">IBAN</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.iban || 'Não definido'}</span>
-											</div>
-											<div className="sm:col-span-2">
-												<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Conta PayPay</span>
-												<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.paypayAccount || 'Não definido'}</span>
-											</div>
-										</div>
-									</div>
-
-									<hr className="border-accent/10" />
-
-									{/* Action Section */}
-									<div>
-										<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Ações de Gestão</h5>
-										<div className="flex flex-wrap gap-2 mb-4">
-											{(storeDetails.status === 'pending' || storeDetails.status === 'suspended' || storeDetails.status === 'rejected') && (
-												<button
-													onClick={() => setSelectedAction('approved')}
-													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'approved' ? 'bg-emerald-600 text-white border-transparent shadow-md' : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50'}`}
-												>
-													Aprovar Loja
-												</button>
-											)}
-											{(storeDetails.status === 'approved' || storeDetails.status === 'pending') && (
-												<button
-													onClick={() => setSelectedAction('suspended')}
-													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'suspended' ? 'bg-amber-500 text-white border-transparent shadow-md' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50'}`}
-												>
-													Suspender
-												</button>
-											)}
-											{(storeDetails.status === 'pending' || storeDetails.status === 'suspended') && (
-												<button
-													onClick={() => setSelectedAction('rejected')}
-													className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'rejected' ? 'bg-rose-600 text-white border-transparent shadow-md' : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'}`}
-												>
-													Rejeitar
-												</button>
-											)}
-										</div>
-
-										{(selectedAction === 'rejected' || selectedAction === 'suspended') && (
-											<div className="space-y-4 bg-sand/50 p-4 rounded-2xl border border-accent/20 animate-fade-in-up mt-4">
-												<div>
-													<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Assunto do E-mail</label>
-													<input 
-														type="text" 
-														value={emailSubject}
-														onChange={(e) => setEmailSubject(e.target.value)}
-														className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
-														placeholder="Ex: Sua loja foi suspensa"
-													/>
-												</div>
-												<div>
-													<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Corpo do E-mail (HTML permitido)</label>
-													<textarea 
-														value={emailBody}
-														onChange={(e) => setEmailBody(e.target.value)}
-														className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
-														rows="4"
-														placeholder="<p>Lamentamos informar que...</p>"
-													></textarea>
-												</div>
-											</div>
-										)}
-									</div>
-								</div>
-							) : null}
-						</div>
-						
-						<div className="p-4 border-t border-accent/10 bg-sand/50 flex justify-end gap-3">
-							<button 
-								onClick={() => setIsModalOpen(false)}
-								className="px-4 py-2 rounded-lg text-sm font-display font-bold text-[#78716C] hover:bg-sand hover:border-accent/30 transition-colors border border-accent/20"
-							>
-								Cancelar
-							</button>
-							<button 
-								onClick={handleStatusChange}
-								disabled={!selectedAction || actionLoading['modal-status']}
-								className="px-4 py-2 rounded-lg text-sm font-display font-bold bg-accent text-white hover:bg-accent-dark transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-							>
-								{actionLoading['modal-status'] ? (
-									<><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> A Guardar...</>
-								) : 'Confirmar Ação'}
-							</button>
-						</div>
-					</div>
+			<Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="md">
+				<div className="flex justify-between items-center p-6 border-b border-accent/10">
+					<h3 className="text-xl font-display font-bold text-[#1C1917]">Detalhes da Loja</h3>
+					<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
 				</div>
-			)}
 
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				@keyframes fadeIn {
-					from { opacity: 0; }
-					to { opacity: 1; }
-				}
-				.animate-fade-in-up {
-					animation: fadeInUp 0.4s ease-out forwards;
-				}
-				.animate-fade-in {
-					animation: fadeIn 0.2s ease-out forwards;
-				}
-			`}} />
+				<div className="p-6 overflow-y-auto flex-1">
+					{detailsLoading ? (
+						<div className="flex flex-col items-center justify-center py-12">
+							<svg className="w-8 h-8 text-accent animate-spin mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+							<p className="text-[#78716C] font-body">A carregar detalhes...</p>
+						</div>
+					) : storeDetails ? (
+						<div className="space-y-6">
+							<div className="flex items-start gap-4">
+								{storeDetails.logo ? (
+									<img src={storeDetails.logo} alt={storeDetails.name} className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
+								) : (
+									<div className="w-16 h-16 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/20">
+										{storeDetails.name.charAt(0)}
+									</div>
+								)}
+								<div>
+									<h4 className="text-lg font-display font-bold text-[#1C1917]">{storeDetails.name}</h4>
+									<p className="text-sm text-[#78716C] mt-1 font-body">{storeDetails.description || 'Sem descrição.'}</p>
+									<div className="mt-2 flex gap-2">
+										<span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-display font-bold ${storeDetails.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+											storeDetails.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+												'bg-rose-50 text-rose-700 border border-rose-200'
+										}`}>
+											Estado: {storeDetails.status === 'approved' ? 'Aprovada' :
+												storeDetails.status === 'pending' ? 'Pendente' :
+													storeDetails.status === 'suspended' ? 'Suspensa' : 'Rejeitada'}
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<hr className="border-accent/10" />
+
+							<div>
+								<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes do Proprietário</h5>
+								<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Nome</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.name} {storeDetails.user?.surname}</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Email</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.email || storeDetails.email}</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Telefone</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.user?.phone || storeDetails.phone || 'N/A'}</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Localização</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.location || storeDetails.province || 'N/A'}</span>
+									</div>
+								</div>
+							</div>
+
+							<hr className="border-accent/10" />
+
+							<div>
+								<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Detalhes de Operação & Desempenho</h5>
+								<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Horário de Funcionamento</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.workingHours || 'Não definido'}</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Avaliação</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
+											{storeDetails.rating ? `${Number(storeDetails.rating).toFixed(1)} ⭐ (${storeDetails.qtdRatings} avaliações)` : 'Sem avaliações'}
+										</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Total de Visualizações</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.views || 0} visualizações</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Destaque</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">
+											{storeDetails.featured ? `Sim ${storeDetails.featuredUntil ? `(Até ${new Date(storeDetails.featuredUntil).toLocaleDateString()})` : ''}` : 'Não'}
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<hr className="border-accent/10" />
+
+							<div>
+								<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Informações Bancárias</h5>
+								<div className="bg-sand/50 rounded-2xl p-4 border border-accent/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Banco</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.bankName || 'Não definido'}</span>
+									</div>
+									<div>
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">IBAN</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.iban || 'Não definido'}</span>
+									</div>
+									<div className="sm:col-span-2">
+										<span className="block text-xs font-display font-semibold text-[#78716C] uppercase">Conta PayPay</span>
+										<span className="block text-sm font-body font-medium text-[#1C1917] mt-1">{storeDetails.paypayAccount || 'Não definido'}</span>
+									</div>
+								</div>
+							</div>
+
+							<hr className="border-accent/10" />
+
+							<div>
+								<h5 className="text-sm font-display font-bold text-[#1C1917] mb-3">Ações de Gestão</h5>
+								<div className="flex flex-wrap gap-2 mb-4">
+									{(storeDetails.status === 'pending' || storeDetails.status === 'suspended' || storeDetails.status === 'rejected') && (
+										<button
+											onClick={() => setSelectedAction('approved')}
+											className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'approved' ? 'bg-emerald-600 text-white border-transparent shadow-md' : 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50'}`}
+										>
+											Aprovar Loja
+										</button>
+									)}
+									{(storeDetails.status === 'approved' || storeDetails.status === 'pending') && (
+										<button
+											onClick={() => setSelectedAction('suspended')}
+											className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'suspended' ? 'bg-amber-500 text-white border-transparent shadow-md' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50'}`}
+										>
+											Suspender
+										</button>
+									)}
+									{(storeDetails.status === 'pending' || storeDetails.status === 'suspended') && (
+										<button
+											onClick={() => setSelectedAction('rejected')}
+											className={`px-4 py-2 rounded-lg text-sm font-display font-bold transition-all border ${selectedAction === 'rejected' ? 'bg-rose-600 text-white border-transparent shadow-md' : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'}`}
+										>
+											Rejeitar
+										</button>
+									)}
+								</div>
+
+								{(selectedAction === 'rejected' || selectedAction === 'suspended') && (
+									<div className="space-y-4 bg-sand/50 p-4 rounded-2xl border border-accent/20 animate-fade-in-up mt-4">
+										<div>
+											<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Assunto do E-mail</label>
+											<input
+												type="text"
+												value={emailSubject}
+												onChange={(e) => setEmailSubject(e.target.value)}
+												className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
+												placeholder="Ex: Sua loja foi suspensa"
+											/>
+										</div>
+										<div>
+											<label className="block text-sm font-display font-bold text-[#78716C] mb-1">Corpo do E-mail (HTML permitido)</label>
+											<textarea
+												value={emailBody}
+												onChange={(e) => setEmailBody(e.target.value)}
+												className="w-full px-3 py-2 border border-accent/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 font-body"
+												rows="4"
+												placeholder="<p>Lamentamos informar que...</p>"
+											></textarea>
+										</div>
+									</div>
+								)}
+							</div>
+						</div>
+					) : null}
+				</div>
+
+				<div className="p-4 border-t border-accent/10 bg-sand/50 flex justify-end gap-3">
+					<button
+						onClick={() => setIsModalOpen(false)}
+						className="px-4 py-2 rounded-lg text-sm font-display font-bold text-[#78716C] hover:bg-sand hover:border-accent/30 transition-colors border border-accent/20"
+					>
+						Cancelar
+					</button>
+					<button
+						onClick={handleStatusChange}
+						disabled={!selectedAction || actionLoading['modal-status']}
+						className="px-4 py-2 rounded-lg text-sm font-display font-bold bg-accent text-white hover:bg-accent-dark transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+					>
+						{actionLoading['modal-status'] ? (
+							<><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> A Guardar...</>
+						) : 'Confirmar Ação'}
+					</button>
+				</div>
+			</Modal>
 		</div>
 	);
 };

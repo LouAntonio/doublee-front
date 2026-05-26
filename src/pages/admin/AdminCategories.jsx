@@ -2,6 +2,7 @@
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminCategoriesList, useCreateCategory, useUpdateCategory } from '../../hooks/queries/useAdminCategories';
+import Modal from '../../components/admin/Modal';
 
 const uploadToCloudinary = async (file, folder) => {
 	const auth = await http.get(`/cloudinary/authorize-upload-admin?folder=${folder}`, { admin: true });
@@ -161,7 +162,7 @@ const AdminCategories = () => {
 	};
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			{/* Page Header & Create Form */}
 			<div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl shadow-sm border border-accent/10">
 				<div className="max-w-md">
@@ -275,74 +276,58 @@ const AdminCategories = () => {
 				</div>
 			</div>
 
-			{/* Edit Modal */}
-			{editingCategory && (
-				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in-up" onClick={handleCancelEdit}>
-					<div className="bg-white rounded-2xl shadow-2xl border border-accent/10 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
-						<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
-							<h3 className="text-lg font-display font-bold text-[#1C1917]">Editar Categoria</h3>
-							<button onClick={handleCancelEdit} className="text-[#78716C] hover:text-[#78716C] transition-colors">
-								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-							</button>
-						</div>
-						<form onSubmit={handleUpdateCategory} className="p-6 space-y-4">
-							<div>
-								<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Imagem da Categoria</label>
-								<div className="flex items-center gap-4">
-									{editImagePreview ? (
-										<div className="relative w-16 h-16 shrink-0">
-											<img src={editImagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-xl border border-accent/20 shadow-sm" />
-											<button type="button" onClick={() => { setEditImageFile(null); setEditImagePreview(''); if (editFileInputRef.current) editFileInputRef.current.value = ''; }} className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-rose-600 shadow-sm transition-colors" title="Remover Imagem">×</button>
-										</div>
-									) : (
-										<div className="w-16 h-16 shrink-0 bg-sand/50 rounded-xl border border-accent/20 flex items-center justify-center text-[#78716C]">
-											<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-										</div>
-									)}
-									<button type="button" onClick={() => editFileInputRef.current?.click()} className="px-4 py-2 bg-white border border-accent/20 text-[#78716C] text-sm font-display font-semibold rounded-lg hover:bg-sand/50 transition-colors shadow-sm">
-										Alterar Imagem
-									</button>
-									<input type="file" ref={editFileInputRef} onChange={handleEditImageChange} accept="image/*" className="hidden" />
-								</div>
-							</div>
-							<div>
-								<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Nome da Categoria</label>
-								<input
-									type="text"
-									value={editCategoryName}
-									onChange={(e) => setEditCategoryName(e.target.value)}
-									className="w-full px-4 py-2.5 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all outline-none"
-									placeholder="Ex: Eletrônicos"
-								/>
-							</div>
-							<div className="pt-4 flex justify-end gap-3">
-								<button type="button" onClick={handleCancelEdit} className="px-5 py-2.5 text-sm font-display font-semibold text-[#78716C] hover:text-[#1C1917] hover:bg-sand rounded-xl transition-colors">
-									Cancelar
-								</button>
-								<button type="submit" disabled={isUpdating} className="px-6 py-2.5 text-sm font-display font-semibold text-white bg-accent hover:bg-accent-dark rounded-xl transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:bg-[#78716C]/50 flex items-center gap-2">
-									{isUpdating ? (
-										<>
-											<svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-											Salvando...
-										</>
-									) : 'Salvar Alterações'}
-								</button>
-							</div>
-						</form>
-					</div>
+			<Modal isOpen={!!editingCategory} onClose={handleCancelEdit} size="sm">
+				<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
+					<h3 className="text-lg font-display font-bold text-[#1C1917]">Editar Categoria</h3>
+					<button onClick={handleCancelEdit} className="text-[#78716C] hover:text-[#78716C] transition-colors">
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
 				</div>
-			)}
-
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				.animate-fade-in-up {
-					animation: fadeInUp 0.4s ease-out forwards;
-				}
-			`}} />
+				<form onSubmit={handleUpdateCategory} className="p-6 space-y-4">
+					<div>
+						<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Imagem da Categoria</label>
+						<div className="flex items-center gap-4">
+							{editImagePreview ? (
+								<div className="relative w-16 h-16 shrink-0">
+									<img src={editImagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-xl border border-accent/20 shadow-sm" />
+									<button type="button" onClick={() => { setEditImageFile(null); setEditImagePreview(''); if (editFileInputRef.current) editFileInputRef.current.value = ''; }} className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-rose-600 shadow-sm transition-colors" title="Remover Imagem">×</button>
+								</div>
+							) : (
+								<div className="w-16 h-16 shrink-0 bg-sand/50 rounded-xl border border-accent/20 flex items-center justify-center text-[#78716C]">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+								</div>
+							)}
+							<button type="button" onClick={() => editFileInputRef.current?.click()} className="px-4 py-2 bg-white border border-accent/20 text-[#78716C] text-sm font-display font-semibold rounded-lg hover:bg-sand/50 transition-colors shadow-sm">
+								Alterar Imagem
+							</button>
+							<input type="file" ref={editFileInputRef} onChange={handleEditImageChange} accept="image/*" className="hidden" />
+						</div>
+					</div>
+					<div>
+						<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Nome da Categoria</label>
+						<input
+							type="text"
+							value={editCategoryName}
+							onChange={(e) => setEditCategoryName(e.target.value)}
+							className="w-full px-4 py-2.5 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all outline-none"
+							placeholder="Ex: Eletrônicos"
+						/>
+					</div>
+					<div className="pt-4 flex justify-end gap-3">
+						<button type="button" onClick={handleCancelEdit} className="px-5 py-2.5 text-sm font-display font-semibold text-[#78716C] hover:text-[#1C1917] hover:bg-sand rounded-xl transition-colors">
+							Cancelar
+						</button>
+						<button type="submit" disabled={isUpdating} className="px-6 py-2.5 text-sm font-display font-semibold text-white bg-accent hover:bg-accent-dark rounded-xl transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:bg-[#78716C]/50 flex items-center gap-2">
+							{isUpdating ? (
+								<>
+									<svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+									Salvando...
+								</>
+							) : 'Salvar Alterações'}
+						</button>
+					</div>
+				</form>
+			</Modal>
 		</div>
 	);
 };

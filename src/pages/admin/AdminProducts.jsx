@@ -2,6 +2,7 @@
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminProductsList, useAdminAllStores, useUpdateProductStatus } from '../../hooks/queries/useAdminProducts';
+import Modal from '../../components/admin/Modal';
 
 const isPromotionValid = (product, now) => {
 	if (!product?.promotionalPrice) return false;
@@ -148,7 +149,7 @@ const AdminProducts = () => {
 	};
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			{/* Page Header and Filters */}
 			<div className="bg-white p-6 rounded-2xl shadow-sm border border-accent/10 flex flex-col gap-4">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -396,154 +397,133 @@ const AdminProducts = () => {
 				)}
 			</div>
 
-			{/* Status Modal */}
-			{statusModalOpen && selectedProductForStatus && (
-				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setStatusModalOpen(false)}>
-					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-						<div className="p-6 border-b border-accent/10">
-							<h3 className="text-xl font-bold text-[#1C1917]">Alterar Status do Produto</h3>
-							<p className="text-sm text-[#78716C] mt-1">
-								Selecione o novo status para o produto <strong>"{selectedProductForStatus.name}"</strong>.
-							</p>
-						</div>
-						<div className="p-6 space-y-4 bg-sand/50">
-							<div>
-								<label className="block text-sm font-bold text-[#1C1917] mb-2">Novo Status</label>
-								<select
-									value={statusAction}
-									onChange={(e) => setStatusAction(e.target.value)}
-									className="w-full px-4 py-2.5 rounded-xl border border-accent/20 text-sm outline-none"
-								>
-									<option value="active">Ativo</option>
-									<option value="inactive">Inativo</option>
-									<option value="outOfStock">Sem Stock</option>
-									<option value="discontinued">Descontinuado</option>
-									<option value="suspended">Suspenso</option>
-									<option value="pending">Pendente</option>
-								</select>
-							</div>
-
-							{statusAction !== 'active' && (
-								<div>
-									<label className="block text-sm font-bold text-[#1C1917] mb-2">Motivo da Ação (Obrigatório)</label>
-									<p className="text-xs text-[#78716C] mb-2">Este motivo será enviado por email para a loja proprietária do produto.</p>
-									<textarea
-										value={motive}
-										onChange={(e) => setMotive(e.target.value)}
-										rows="3"
-										className="w-full px-4 py-3 rounded-xl border border-accent/20 text-sm outline-none resize-none"
-										placeholder={`Descreva o motivo de alterar para ${statusAction === 'suspended' ? 'suspenso' : 'inativo'}...`}
-										required
-									></textarea>
-								</div>
-							)}
-						</div>
-						<div className="p-6 border-t border-accent/10 flex justify-end gap-3 bg-white">
-							<button
-								onClick={() => setStatusModalOpen(false)}
-								className="px-5 py-2.5 rounded-xl text-sm font-bold text-[#78716C] bg-sand hover:bg-accent/20 transition-colors"
-								disabled={updatingStatus}
-							>
-								Cancelar
-							</button>
-							<button
-								onClick={confirmStatusChange}
-								className={`px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors flex items-center gap-2 bg-orange-600 hover:bg-orange-700`}
-								disabled={updatingStatus}
-							>
-								{updatingStatus ? (
-									<svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-								) : 'Confirmar Alteração'}
-							</button>
-						</div>
-					</div>
+			<Modal isOpen={statusModalOpen && !!selectedProductForStatus} onClose={() => setStatusModalOpen(false)} size="sm">
+				<div className="p-6 border-b border-accent/10">
+					<h3 className="text-xl font-bold text-[#1C1917]">Alterar Status do Produto</h3>
+					<p className="text-sm text-[#78716C] mt-1">
+						Selecione o novo status para o produto <strong>"{selectedProductForStatus?.name}"</strong>.
+					</p>
 				</div>
-			)}
+				<div className="p-6 space-y-4 bg-sand/50">
+					<div>
+						<label className="block text-sm font-bold text-[#1C1917] mb-2">Novo Status</label>
+						<select
+							value={statusAction}
+							onChange={(e) => setStatusAction(e.target.value)}
+							className="w-full px-4 py-2.5 rounded-xl border border-accent/20 text-sm outline-none"
+						>
+							<option value="active">Ativo</option>
+							<option value="inactive">Inativo</option>
+							<option value="outOfStock">Sem Stock</option>
+							<option value="discontinued">Descontinuado</option>
+							<option value="suspended">Suspenso</option>
+							<option value="pending">Pendente</option>
+						</select>
+					</div>
 
-			{/* Details Modal */}
-			{detailsModalOpen && (
-				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setDetailsModalOpen(false)}>
-					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-						<div className="p-6 border-b border-accent/10 flex justify-between items-center">
-							<h3 className="text-xl font-bold text-[#1C1917]">Detalhes do Produto</h3>
-							<button onClick={() => setDetailsModalOpen(false)} className="text-[#78716C] hover:text-[#78716C]">
-								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-							</button>
+					{statusAction !== 'active' && (
+						<div>
+							<label className="block text-sm font-bold text-[#1C1917] mb-2">Motivo da Ação (Obrigatório)</label>
+							<p className="text-xs text-[#78716C] mb-2">Este motivo será enviado por email para a loja proprietária do produto.</p>
+							<textarea
+								value={motive}
+								onChange={(e) => setMotive(e.target.value)}
+								rows="3"
+								className="w-full px-4 py-3 rounded-xl border border-accent/20 text-sm outline-none resize-none"
+								placeholder={`Descreva o motivo de alterar para ${statusAction === 'suspended' ? 'suspenso' : 'inativo'}...`}
+								required
+							></textarea>
 						</div>
+					)}
+				</div>
+				<div className="p-6 border-t border-accent/10 flex justify-end gap-3 bg-white">
+					<button
+						onClick={() => setStatusModalOpen(false)}
+						className="px-5 py-2.5 rounded-xl text-sm font-bold text-[#78716C] bg-sand hover:bg-accent/20 transition-colors"
+						disabled={updatingStatus}
+					>
+						Cancelar
+					</button>
+					<button
+						onClick={confirmStatusChange}
+						className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors flex items-center gap-2 bg-orange-600 hover:bg-orange-700"
+						disabled={updatingStatus}
+					>
+						{updatingStatus ? (
+							<svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+						) : 'Confirmar Alteração'}
+					</button>
+				</div>
+			</Modal>
 
-						<div className="p-6 flex-1 overflow-y-auto bg-sand/50">
-							{loadingDetails ? (
-								<div className="flex flex-col items-center justify-center py-10">
-									<svg className="animate-spin h-8 w-8 text-accent mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-									<p className="text-[#78716C] font-medium">A carregar detalhes...</p>
-								</div>
-							) : selectedProductDetails ? (
-								<div className="space-y-6">
-									<div className="flex flex-col md:flex-row gap-6 items-start">
-										{selectedProductDetails.image ? (
-											<img src={selectedProductDetails.image} alt={selectedProductDetails.name} className="w-full md:w-48 h-48 object-cover rounded-xl shadow-sm border border-accent/20" />
-										) : (
-											<div className="w-full md:w-48 h-48 bg-accent/20 rounded-xl flex items-center justify-center text-[#78716C]">Sem Imagem</div>
-										)}
+			<Modal isOpen={detailsModalOpen} onClose={() => setDetailsModalOpen(false)} size="lg">
+				<div className="p-6 border-b border-accent/10 flex justify-between items-center">
+					<h3 className="text-xl font-bold text-[#1C1917]">Detalhes do Produto</h3>
+					<button onClick={() => setDetailsModalOpen(false)} className="text-[#78716C] hover:text-[#78716C]">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
+				</div>
 
-										<div className="flex-1 space-y-4">
-											<div>
-												<h4 className="text-2xl font-display font-bold text-[#1C1917]">{selectedProductDetails.name}</h4>
-												<p className="text-sm text-[#78716C] mt-1">{selectedProductDetails.description || 'Sem descrição.'}</p>
-											</div>
+				<div className="p-6 flex-1 overflow-y-auto bg-sand/50">
+					{loadingDetails ? (
+						<div className="flex flex-col items-center justify-center py-10">
+							<svg className="animate-spin h-8 w-8 text-accent mb-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+							<p className="text-[#78716C] font-medium">A carregar detalhes...</p>
+						</div>
+					) : selectedProductDetails ? (
+						<div className="space-y-6">
+							<div className="flex flex-col md:flex-row gap-6 items-start">
+								{selectedProductDetails.image ? (
+									<img src={selectedProductDetails.image} alt={selectedProductDetails.name} className="w-full md:w-48 h-48 object-cover rounded-xl shadow-sm border border-accent/20" />
+								) : (
+									<div className="w-full md:w-48 h-48 bg-accent/20 rounded-xl flex items-center justify-center text-[#78716C]">Sem Imagem</div>
+								)}
 
-											<div className="grid grid-cols-2 gap-4">
-												<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
-													<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Preço Base</p>
-													<p className="text-lg font-display font-bold text-[#1C1917]">{Number(selectedProductDetails.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}</p>
-												</div>
-												<div className={`p-3 rounded-xl border shadow-sm ${detailsHasValidPromotion ? 'bg-accent/10 border-orange-100' : 'bg-white border-accent/10'}`}>
-													<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Preço Promo</p>
-													<p className={`text-lg font-display font-bold ${detailsHasValidPromotion ? 'text-accent-dark' : 'text-[#1C1917]'}`}>
-														{detailsHasValidPromotion ? Number(selectedProductDetails.promotionalPrice).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : '-'}
-													</p>
-												</div>
-												<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
-													<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Stock Atual</p>
-													<p className="text-lg font-display font-bold text-[#1C1917]">{selectedProductDetails.stock} uni.</p>
-												</div>
-												<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
-													<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Status</p>
-													<p className="text-sm font-bold text-[#1C1917] mt-1 capitalize">{selectedProductDetails.status || 'Pendente'}</p>
-												</div>
-											</div>
+								<div className="flex-1 space-y-4">
+									<div>
+										<h4 className="text-2xl font-display font-bold text-[#1C1917]">{selectedProductDetails.name}</h4>
+										<p className="text-sm text-[#78716C] mt-1">{selectedProductDetails.description || 'Sem descrição.'}</p>
+									</div>
+
+									<div className="grid grid-cols-2 gap-4">
+										<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
+											<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Preço Base</p>
+											<p className="text-lg font-display font-bold text-[#1C1917]">{Number(selectedProductDetails.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' })}</p>
+										</div>
+										<div className={`p-3 rounded-xl border shadow-sm ${detailsHasValidPromotion ? 'bg-accent/10 border-orange-100' : 'bg-white border-accent/10'}`}>
+											<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Preço Promo</p>
+											<p className={`text-lg font-display font-bold ${detailsHasValidPromotion ? 'text-accent-dark' : 'text-[#1C1917]'}`}>
+												{detailsHasValidPromotion ? Number(selectedProductDetails.promotionalPrice).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : '-'}
+											</p>
+										</div>
+										<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
+											<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Stock Atual</p>
+											<p className="text-lg font-display font-bold text-[#1C1917]">{selectedProductDetails.stock} uni.</p>
+										</div>
+										<div className="bg-white p-3 rounded-xl border border-accent/10 shadow-sm">
+											<p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider">Status</p>
+											<p className="text-sm font-bold text-[#1C1917] mt-1 capitalize">{selectedProductDetails.status || 'Pendente'}</p>
 										</div>
 									</div>
-
-									<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
-										<h5 className="font-bold text-[#1C1917] mb-2">Informações Adicionais</h5>
-										<ul className="text-sm text-[#78716C] space-y-2">
-											<li><span className="font-semibold text-[#1C1917]">ID da Loja:</span> {selectedProductDetails.storeId}</li>
-											<li><span className="font-semibold text-[#1C1917]">Em Destaque:</span> {selectedProductDetails.featured ? 'Sim' : 'Não'}</li>
-											<li><span className="font-semibold text-[#1C1917]">Views:</span> {selectedProductDetails.views || 0}</li>
-											<li><span className="font-semibold text-[#1C1917]">Vendas:</span> {selectedProductDetails.salesCount || 0}</li>
-											<li><span className="font-semibold text-[#1C1917]">Avaliação:</span> {selectedProductDetails.rating} ({selectedProductDetails.qtdRatings} avaliações)</li>
-										</ul>
-									</div>
 								</div>
-							) : (
-								<p className="text-center text-[#78716C] py-10">Não foi possível carregar os detalhes.</p>
-							)}
-						</div>
-					</div>
-				</div>
-			)}
+							</div>
 
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				.animate-fade-in-up {
-					animation: fadeInUp 0.4s ease-out forwards;
-				}
-			`}} />
+							<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
+								<h5 className="font-bold text-[#1C1917] mb-2">Informações Adicionais</h5>
+								<ul className="text-sm text-[#78716C] space-y-2">
+									<li><span className="font-semibold text-[#1C1917]">ID da Loja:</span> {selectedProductDetails.storeId}</li>
+									<li><span className="font-semibold text-[#1C1917]">Em Destaque:</span> {selectedProductDetails.featured ? 'Sim' : 'Não'}</li>
+									<li><span className="font-semibold text-[#1C1917]">Views:</span> {selectedProductDetails.views || 0}</li>
+									<li><span className="font-semibold text-[#1C1917]">Vendas:</span> {selectedProductDetails.salesCount || 0}</li>
+									<li><span className="font-semibold text-[#1C1917]">Avaliação:</span> {selectedProductDetails.rating} ({selectedProductDetails.qtdRatings} avaliações)</li>
+								</ul>
+							</div>
+						</div>
+					) : (
+						<p className="text-center text-[#78716C] py-10">Não foi possível carregar os detalhes.</p>
+					)}
+				</div>
+			</Modal>
 		</div>
 	);
 };

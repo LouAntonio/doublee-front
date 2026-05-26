@@ -56,7 +56,7 @@ const AdminAnalytics = () => {
 
 	if (loading && !stats) {
 		return (
-			<div className="space-y-8 animate-fade-in-up">
+			<div className="space-y-8">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 					<StatSkeleton />
 					<StatSkeleton />
@@ -103,8 +103,7 @@ const AdminAnalytics = () => {
 	];
 
 	return (
-		<div className="space-y-8 animate-fade-in-up">
-			{/* Quick Stats Grid */}
+		<div className="space-y-8">
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				{statCards.map((card, idx) => (
 					<div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-accent/10 hover:shadow-md transition-all duration-300 group overflow-hidden relative">
@@ -126,7 +125,6 @@ const AdminAnalytics = () => {
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				{/* Recent Activity: Orders */}
 				<div className="bg-white rounded-2xl shadow-sm border border-accent/10 p-6">
 					<div className="flex items-center justify-between mb-6">
 						<h3 className="text-lg font-display font-bold text-[#1C1917] flex items-center gap-2">
@@ -160,7 +158,6 @@ const AdminAnalytics = () => {
 					</div>
 				</div>
 
-				{/* Recent Activity: Stores */}
 				<div className="bg-white rounded-2xl shadow-sm border border-accent/10 p-6">
 					<div className="flex items-center justify-between mb-6">
 						<h3 className="text-lg font-display font-bold text-[#1C1917] flex items-center gap-2">
@@ -196,17 +193,6 @@ const AdminAnalytics = () => {
 					</div>
 				</div>
 			</div>
-
-			<style dangerouslySetInnerHTML={{
-				__html: `
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in-up {
-                    animation: fadeInUp 0.4s ease-out forwards;
-                }
-            `}} />
 		</div>
 	);
 };

@@ -75,7 +75,7 @@ const AdminUsers = () => {
 	};
 
 	return (
-		<div className="space-y-6 animate-fade-in-up">
+		<div className="space-y-6">
 			{/* Page Header */}
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-accent/10">
 				<div>
@@ -238,16 +238,6 @@ const AdminUsers = () => {
 				)}
 			</div>
 
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				.animate-fade-in-up {
-					animation: fadeInUp 0.4s ease-out forwards;
-				}
-			`}} />
 		</div>
 	);
 };

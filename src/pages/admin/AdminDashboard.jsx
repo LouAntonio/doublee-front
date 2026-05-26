@@ -27,7 +27,7 @@ const AdminDashboard = () => {
 
 	if (loading) {
 		return (
-			<div className="space-y-8 animate-fade-in-up">
+			<div className="space-y-8">
 				{/* Title Skeleton */}
 				<div>
 					<div className="h-9 w-48 bg-accent/20 rounded-lg animate-pulse"></div>
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
 	];
 
 	return (
-		<div className="space-y-8 animate-fade-in-up">
+		<div className="space-y-8">
 			{/* Page Title */}
 			<div>
 				<h2 className="text-3xl font-display font-bold text-[#1C1917] tracking-tight">Visão Geral</h2>
@@ -112,7 +112,6 @@ const AdminDashboard = () => {
 			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 				{statCards.map((card, index) => (
 					<div key={index} className="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover:shadow-accent/10 border border-accent/10 p-6 flex items-center transition-all duration-300 relative overflow-hidden">
-						{/* Background gradient line */}
 						<div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
 
 						<div className={`p-4 rounded-xl ${card.bg} ${card.text} shadow-inner group-hover:scale-110 transition-transform duration-300`}>
@@ -127,7 +126,6 @@ const AdminDashboard = () => {
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-				{/* Recent Stores */}
 				<div className="bg-white rounded-3xl shadow-sm border border-accent/10 overflow-hidden flex flex-col">
 					<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
 						<h3 className="text-xl font-display font-bold text-[#1C1917] flex items-center gap-2">
@@ -184,7 +182,6 @@ const AdminDashboard = () => {
 				</div>
 			</div>
 
-			{/* Recent Orders */}
 			<div className="bg-white rounded-3xl shadow-sm border border-accent/10 overflow-hidden flex flex-col">
 				<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
 					<h3 className="text-xl font-display font-bold text-[#1C1917] flex items-center gap-2">
@@ -242,17 +239,6 @@ const AdminDashboard = () => {
 					</table>
 				</div>
 			</div>
-
-			<style dangerouslySetInnerHTML={{
-				__html: `
-				@keyframes fadeInUp {
-					from { opacity: 0; transform: translateY(10px); }
-					to { opacity: 1; transform: translateY(0); }
-				}
-				.animate-fade-in-up {
-					animation: fadeInUp 0.5s ease-out forwards;
-				}
-			`}} />
 		</div>
 	);
 };
