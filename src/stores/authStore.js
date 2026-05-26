@@ -65,6 +65,13 @@ const useAuthStore = create((set) => ({
 		set({ user: userData, isAuthenticated: true, isLoading: false });
 	},
 
+	updateUser: (updates) => {
+		const current = getStoredUser() || {};
+		const updated = { ...current, ...updates };
+		localStorage.setItem('Kusumba_user', JSON.stringify(updated));
+		set({ user: updated });
+	},
+
 	logout: () => {
 		localStorage.removeItem('Kusumba_user');
 		localStorage.removeItem('Kusumba_token');

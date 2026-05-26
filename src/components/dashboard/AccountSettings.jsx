@@ -1,11 +1,16 @@
 ﻿import React, { useState } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
-import { IoMailOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { IoMailOutline, IoCheckmarkCircleOutline, IoLogoGoogle } from 'react-icons/io5';
+import useAuthStore from '../../stores/authStore';
+import { unlinkGoogle } from '../../services/auth';
+import { GoogleLinkButton } from '../GoogleButton';
 
 const AccountSettings = () => {
+	const { user, updateUser } = useAuthStore();
 	const [isLoadingEmail, setIsLoadingEmail] = useState(false);
 	const [isLoadingPass, setIsLoadingPass] = useState(false);
+	const [isUnlinking, setIsUnlinking] = useState(false);
 
 	// Fluxo email: 'form'  envia OTP | 'otp'  confirma com código
 	const [emailStep, setEmailStep] = useState('form');
@@ -81,6 +86,28 @@ const AccountSettings = () => {
 			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoadingPass(false);
+		}
+	};
+
+	const handleLinkSuccess = (googleId, avatar) => {
+		updateUser({ googleId, avatar });
+	};
+
+	const handleUnlink = async () => {
+		if (!window.confirm('Tem a certeza que deseja desvincular a sua conta Google? Depois de desvincular, terá de usar e-mail e palavra-passe para iniciar sessão.')) return;
+		setIsUnlinking(true);
+		try {
+			const data = await unlinkGoogle();
+			if (data.success) {
+				updateUser({ googleId: null, avatar: null });
+				notyf.success('Conta Google desvinculada com sucesso.');
+			} else {
+				notyf.error(data.msg || 'Erro ao desvincular.');
+			}
+		} catch (err) {
+			notyf.error(err.message || 'Erro ao comunicar com o servidor.');
+		} finally {
+			setIsUnlinking(false);
 		}
 	};
 
@@ -219,6 +246,40 @@ const AccountSettings = () => {
 						{isLoadingPass ? 'A actualizar...' : 'Alterar Palavra-passe'}
 					</button>
 				</form>
+			</section>
+
+			<hr className="border-accent/10" />
+
+			{/* Contas Vinculadas */}
+			<section className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+				<h3 className="text-xl font-semibold text-[#1C1917] mb-1 font-display">Contas Vinculadas</h3>
+				<p className="text-sm text-[#78716C] mb-6 font-body">Vincule a sua conta Google para iniciar sessão rapidamente.</p>
+
+				<div className="max-w-2xl">
+					{user?.googleId ? (
+						<div className="p-5 bg-green-50 border border-green-200 rounded-xl">
+							<div className="flex items-center gap-3 mb-4">
+								<IoLogoGoogle className="w-6 h-6 text-green-600 shrink-0" />
+								<div>
+									<p className="text-sm font-semibold text-green-800">Conta Google vinculada</p>
+									<p className="text-xs text-green-600">Pode iniciar sessão com o Google</p>
+								</div>
+							</div>
+							<button
+								onClick={handleUnlink}
+								disabled={isUnlinking}
+								className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-sm font-semibold hover:bg-red-100 disabled:opacity-60 cursor-pointer transition-all"
+							>
+								{isUnlinking ? 'A desvincular...' : 'Desvincular conta Google'}
+							</button>
+						</div>
+					) : (
+						<div>
+							<p className="text-sm text-[#78716C] mb-4">Ao vincular, poderá entrar na sua conta usando o Google sem necessidade de palavra-passe.</p>
+							<GoogleLinkButton onLinkSuccess={handleLinkSuccess} />
+						</div>
+					)}
+				</div>
 			</section>
 		</div>
 	);

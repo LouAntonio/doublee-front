@@ -29,3 +29,9 @@ export const resetPassword = (email, code, newPassword) =>
 
 export const googleAuth = (credential) =>
 	http.post('/auth/google', { credential });
+
+export const linkGoogle = (credential) =>
+	http.post('/auth/google/link', { credential });
+
+export const unlinkGoogle = () =>
+	http.post('/auth/google/unlink');
