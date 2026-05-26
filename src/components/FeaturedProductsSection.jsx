@@ -19,24 +19,9 @@ const normalizeProducts = (products) =>
 const FeaturedProductsSection = () => {
 	const { data: rawProducts, isLoading } = useFeaturedProducts();
 
-	const products = normalizeProducts(rawProducts?.products ?? rawProducts);
-
-	const firstRow = products.slice(0, 4);
-	const secondRow = products.slice(4, 8);
-
-	const rowStyle = {
-		display: 'flex',
-		gap: '12px',
-		marginBottom: '12px',
-	};
-
-	const cardWrapperStyle = {
-		flex: '1 1 0',
-		minWidth: 0,
-	};
+	const products = normalizeProducts(rawProducts?.products ?? rawProducts).slice(0, 20);
 
 	if (isLoading && products.length === 0) {
-		const skeletonRows = [1, 2, 3, 4];
 		return (
 			<section style={{
 				backgroundColor: 'transparent',
@@ -62,18 +47,9 @@ const FeaturedProductsSection = () => {
 						<div className="h-6 bg-gray-200 rounded w-48 animate-pulse"></div>
 						<div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
 					</div>
-					<div style={rowStyle}>
-						{skeletonRows.map((_, i) => (
-							<div key={`skel-1-${i}`} style={cardWrapperStyle}>
-								<ProductSkeleton />
-							</div>
-						))}
-					</div>
-					<div style={rowStyle}>
-						{skeletonRows.map((_, i) => (
-							<div key={`skel-2-${i}`} style={cardWrapperStyle}>
-								<ProductSkeleton />
-							</div>
+					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+						{[...Array(8)].map((_, i) => (
+							<div key={i}><ProductSkeleton /></div>
 						))}
 					</div>
 				</div>
@@ -108,38 +84,18 @@ const FeaturedProductsSection = () => {
 					marginBottom: '20px',
 				}}>
 					<h2 className="font-display text-2xl text-[#1C1917] m-0">
-            Produtos em destaque
+                        Produtos em destaque
 					</h2>
 					<Link to="/produtos?featured=true" className="font-body text-sm text-accent hover:underline">
-            Ver mais destaques
+                        Ver mais destaques
 					</Link>
 				</div>
 
-				{firstRow.length > 0 && (
-					<div style={rowStyle}>
-						{firstRow.map((product) => (
-							<div key={product.id} style={cardWrapperStyle}>
-								<ProductCard product={product} />
-							</div>
-						))}
-						{Array.from({ length: Math.max(0, 4 - firstRow.length) }).map((_, i) => (
-							<div key={`empty-1-${i}`} style={cardWrapperStyle} />
-						))}
-					</div>
-				)}
-
-				{secondRow.length > 0 && (
-					<div style={rowStyle}>
-						{secondRow.map((product) => (
-							<div key={product.id} style={cardWrapperStyle}>
-								<ProductCard product={product} />
-							</div>
-						))}
-						{Array.from({ length: Math.max(0, 4 - secondRow.length) }).map((_, i) => (
-							<div key={`empty-2-${i}`} style={cardWrapperStyle} />
-						))}
-					</div>
-				)}
+				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+					{products.map((product) => (
+						<ProductCard key={product.id} product={product} />
+					))}
+				</div>
 			</div>
 		</section>
 	);

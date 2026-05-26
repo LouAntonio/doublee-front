@@ -243,8 +243,8 @@ const AdminStores = () => {
 
 			{/* Store Details Modal */}
 			{isModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sand/80 backdrop-blur-sm animate-fade-in">
-					<div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up" onClick={() => setIsModalOpen(false)}>
+					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
 						<div className="flex justify-between items-center p-6 border-b border-accent/10">
 							<h3 className="text-xl font-display font-bold text-[#1C1917]">Detalhes da Loja</h3>
 							<button onClick={() => setIsModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors">

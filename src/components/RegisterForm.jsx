@@ -150,10 +150,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
 			{currentStep === 1 && (
 				<div className="space-y-5">
-					<div className="text-center mb-6">
-						<h3 className="font-display text-2xl text-[#1C1917] mb-2">Crie sua conta</h3>
-						<p className="font-body text-sm text-[#78716C]">Informe seu e-mail para começar</p>
-					</div>
 					<div>
 						<label htmlFor="email" className="block font-display text-sm text-[#1C1917] mb-2">E-mail</label>
 						<div className="relative">

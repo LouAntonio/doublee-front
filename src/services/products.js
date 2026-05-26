@@ -30,6 +30,9 @@ export const getRelatedProducts = (productId, limit = 8) =>
 export const getOnSaleProducts = (params = {}) =>
 	http.get(`/products/on-sale${buildQuery(params)}`);
 
+export const getProductsByRandomCategory = (limit = 20) =>
+	http.get(`/products/random-by-category?limit=${limit}`);
+
 export const createProduct = (data) =>
 	http.post('/products', data);
 

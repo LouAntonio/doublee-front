@@ -398,8 +398,8 @@ const AdminProducts = () => {
 
 			{/* Status Modal */}
 			{statusModalOpen && selectedProductForStatus && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-accent-dark/50 backdrop-blur-sm animate-fade-in-up">
-					<div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setStatusModalOpen(false)}>
+					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
 						<div className="p-6 border-b border-accent/10">
 							<h3 className="text-xl font-bold text-[#1C1917]">Alterar Status do Produto</h3>
 							<p className="text-sm text-[#78716C] mt-1">
@@ -462,8 +462,8 @@ const AdminProducts = () => {
 
 			{/* Details Modal */}
 			{detailsModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-accent-dark/50 backdrop-blur-sm animate-fade-in-up">
-					<div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+				<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setDetailsModalOpen(false)}>
+					<div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
 						<div className="p-6 border-b border-accent/10 flex justify-between items-center">
 							<h3 className="text-xl font-bold text-[#1C1917]">Detalhes do Produto</h3>
 							<button onClick={() => setDetailsModalOpen(false)} className="text-[#78716C] hover:text-[#78716C]">

@@ -17,10 +17,10 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 			{/* Lightbox */}
 			{lightboxSrc && (
 				<div
-					className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+					className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] flex items-center justify-center p-4"
 					onClick={() => setLightboxSrc(null)}
 				>
-					<div className="relative max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
+					<div className="relative max-w-3xl w-full animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
 						<button
 							onClick={() => setLightboxSrc(null)}
 							className="absolute -top-4 -right-4 w-9 h-9 rounded-full bg-white shadow-lg flex items-center justify-center text-[#1C1917] hover:bg-rose-50 hover:text-rose-600 transition-colors z-10"

@@ -277,8 +277,8 @@ const AdminCategories = () => {
 
 			{/* Edit Modal */}
 			{editingCategory && (
-				<div className="fixed inset-0 bg-[#1C1917]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-					<div className="bg-white rounded-2xl shadow-xl border border-accent/10 w-full max-w-md overflow-hidden animate-fade-in-up">
+				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in-up" onClick={handleCancelEdit}>
+					<div className="bg-white rounded-2xl shadow-2xl border border-accent/10 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
 						<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
 							<h3 className="text-lg font-display font-bold text-[#1C1917]">Editar Categoria</h3>
 							<button onClick={handleCancelEdit} className="text-[#78716C] hover:text-[#78716C] transition-colors">

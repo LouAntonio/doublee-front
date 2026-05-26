@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProducts, getProduct, getFeaturedProducts, getBestSellers, getLatestProducts, getPromotions } from '../../services/products';
+import { getProducts, getProduct, getFeaturedProducts, getBestSellers, getLatestProducts, getPromotions, getProductsByRandomCategory } from '../../services/products';
 
 const extractSuccess = (res, fallback = []) => {
 	if (!res.success) throw new Error(res.msg || 'Erro ao carregar dados');
@@ -63,4 +63,11 @@ export const usePromotions = () =>
 		queryKey: ['products', 'promotions'],
 		queryFn: () => getPromotions().then(extractSuccess),
 		staleTime: 1000 * 60 * 5,
+	});
+
+export const useProductsByRandomCategory = (limit = 20) =>
+	useQuery({
+		queryKey: ['products', 'random-by-category', limit],
+		queryFn: () => getProductsByRandomCategory(limit).then(extractSuccess),
+		staleTime: 1000 * 60 * 2,
 	});
