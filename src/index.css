@@ -496,6 +496,15 @@
 	}
 }
 
+/* ── BannerCarousel altura responsiva ── */
+.banner-carousel {
+	--banner-vh: 40vh;
+	height: calc(var(--banner-vh) - var(--header-h, 0px));
+}
+@media (width >= 640px) { .banner-carousel { --banner-vh: 50vh; } }
+@media (width >= 768px) { .banner-carousel { --banner-vh: 60vh; } }
+@media (width >= 1024px) { .banner-carousel { --banner-vh: 70vh; } }
+
 /* Empty state illustration */
 .promocoes-empty-icon {
 	animation: floatEmpty 3s ease-in-out infinite;

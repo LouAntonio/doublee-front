@@ -90,10 +90,8 @@ const BannerCarousel = () => {
 
 	return (
 		<div
-			className="relative overflow-hidden"
-			style={{
-				height: `calc(70vh - ${headerHeight}px)`
-			}}
+			className="banner-carousel relative overflow-hidden"
+			style={{ '--header-h': `${headerHeight}px` }}
 		>
 			{/* Carrossel Container */}
 			<div className="relative mx-auto h-full">
