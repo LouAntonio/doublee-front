@@ -193,6 +193,11 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 						className="w-full bg-accent hover:bg-accent-dark text-white font-display text-base py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
 						{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Enviando...</span></> : <><span>Continuar</span><IoArrowForward className="w-5 h-5" /></>}
 					</button>
+					<div className="relative">
+						<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#E7E5E4]"></div></div>
+						<div className="relative flex justify-center text-sm"><span className="bg-white px-4 font-body text-[#A8A29E]">Ou continue com</span></div>
+					</div>
+					<GoogleRegisterButton />
 				</div>
 			)}
 
@@ -301,11 +306,6 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 							{isLoading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span className="font-display">Criando conta...</span></> : 'Criar Conta'}
 						</button>
 					</div>
-					<div className="relative my-6">
-						<div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[#E7E5E4]"></div></div>
-						<div className="relative flex justify-center text-sm"><span className="bg-white px-4 font-body text-[#A8A29E]">Ou continue com</span></div>
-					</div>
-					<GoogleRegisterButton />
 				</div>
 			)}
 

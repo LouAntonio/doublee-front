@@ -44,7 +44,6 @@ const CategoryProducts = () => {
 
 	const categoryId = category?.id;
 	const categoryName = category?.name || '';
-	const categoryImage = category?.image || '';
 
 	useDocumentTitle(
 		categoryName ? `${categoryName} - Kusumba` : 'Categoria - Kusumba'

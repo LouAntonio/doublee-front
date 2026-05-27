@@ -72,13 +72,19 @@ const AccountSettings = () => {
 			return notyf.error('A nova palavra-passe deve ter pelo menos 8 caracteres.');
 		setIsLoadingPass(true);
 		try {
-			const data = await http.put('/users/update-password', {
-				oldPassword: passData.currentPassword,
-				newPassword: passData.newPassword,
-			});
+			const body = { newPassword: passData.newPassword };
+			if (user?.hasPassword) {
+				if (!passData.currentPassword) {
+					setIsLoadingPass(false);
+					return notyf.error('A palavra-passe actual é obrigatória.');
+				}
+				body.oldPassword = passData.currentPassword;
+			}
+			const data = await http.put('/users/update-password', body);
 			if (data?.success) {
-				notyf.success('Palavra-passe actualizada com sucesso!');
+				notyf.success(user?.hasPassword ? 'Palavra-passe actualizada com sucesso!' : 'Palavra-passe definida com sucesso!');
 				setPassData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+				updateUser({ hasPassword: true });
 			} else {
 				notyf.error(data?.msg || 'Erro ao actualizar palavra-passe.');
 			}
@@ -139,17 +145,19 @@ const AccountSettings = () => {
 									placeholder="novo@email.com"
 								/>
 							</div>
-							<div className="space-y-2">
-								<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
-								<input
-									type="password"
-									value={emailData.password}
-									onChange={(e) => setEmailData({ ...emailData, password: e.target.value })}
-									required
-									className={inputClass}
-									placeholder="Confirme a sua palavra-passe"
-								/>
-							</div>
+							{user?.hasPassword && (
+								<div className="space-y-2">
+									<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
+									<input
+										type="password"
+										value={emailData.password}
+										onChange={(e) => setEmailData({ ...emailData, password: e.target.value })}
+										required
+										className={inputClass}
+										placeholder="Confirme a sua palavra-passe"
+									/>
+								</div>
+							)}
 							<button
 								type="submit"
 								disabled={isLoadingEmail}
@@ -203,19 +211,27 @@ const AccountSettings = () => {
 
 			{/* Palavra-passe */}
 			<section className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
-				<h3 className="text-xl font-semibold text-[#1C1917] mb-1 font-display">Alterar Palavra-passe</h3>
-				<p className="text-sm text-[#78716C] mb-6 font-body">Use uma palavra-passe forte com pelo menos 8 caracteres.</p>
+				<h3 className="text-xl font-semibold text-[#1C1917] mb-1 font-display">
+					{user?.hasPassword ? 'Alterar Palavra-passe' : 'Definir Palavra-passe'}
+				</h3>
+				<p className="text-sm text-[#78716C] mb-6 font-body">
+					{user?.hasPassword
+						? 'Use uma palavra-passe forte com pelo menos 8 caracteres.'
+						: 'A sua conta foi criada com o Google. Defina uma palavra-passe para poder fazer login com email e palavra-passe.'}
+				</p>
 				<form onSubmit={handlePassSubmit} className="max-w-2xl space-y-5">
-					<div className="space-y-2">
-						<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
-						<input
-							type="password"
-							value={passData.currentPassword}
-							onChange={(e) => setPassData({ ...passData, currentPassword: e.target.value })}
-							required
-							className={inputClass}
-						/>
-					</div>
+					{user?.hasPassword && (
+						<div className="space-y-2">
+							<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
+							<input
+								type="password"
+								value={passData.currentPassword}
+								onChange={(e) => setPassData({ ...passData, currentPassword: e.target.value })}
+								required
+								className={inputClass}
+							/>
+						</div>
+					)}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-[#1C1917]">Nova Palavra-passe</label>
@@ -243,7 +259,7 @@ const AccountSettings = () => {
 						disabled={isLoadingPass}
 						className="inline-flex items-center gap-2 px-8 py-3 bg-accent text-white font-semibold rounded-full hover:bg-accent-dark disabled:opacity-60 cursor-pointer transition-all duration-300 shadow-lg shadow-accent/20 hover:-translate-y-0.5"
 					>
-						{isLoadingPass ? 'A actualizar...' : 'Alterar Palavra-passe'}
+						{isLoadingPass ? 'A guardar...' : (user?.hasPassword ? 'Alterar Palavra-passe' : 'Definir Palavra-passe')}
 					</button>
 				</form>
 			</section>

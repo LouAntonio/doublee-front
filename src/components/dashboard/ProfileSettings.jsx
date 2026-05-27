@@ -167,7 +167,6 @@ const ProfileSettings = () => {
 							name="phone"
 							value={formData.phone}
 							onChange={handleChange}
-							required
 							className="w-full px-4 py-3 rounded-r-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white"
 							placeholder="9xx xxx xxx"
 						/>
