@@ -8,6 +8,7 @@ console.log('API URL:', API_URL);
 const handleSessionExpired = () => {
 	localStorage.removeItem('Kusumba_user');
 	localStorage.removeItem('Kusumba_token');
+	localStorage.removeItem('cart');
 	if (window.location.pathname === '/auth') return;
 	setTimeout(() => {
 		window.location.href = '/auth';

@@ -39,19 +39,16 @@ const formatDate = () => {
 };
 
 const Dashboard = () => {
-	const { user, logout } = useAuthStore();
+	const { user, logout, updateUser } = useAuthStore();
 	const [activeTab, setActiveTab] = useState('profile');
-	const { data: verificationStatus } = useVerificationStatus();
+	const { data: verificationStatus } = useVerificationStatus(user?.id);
 	const { data: storeStatus } = useStoreStatus(user?.id);
 
 	React.useEffect(() => {
 		if (verificationStatus) {
-			const storedUser = JSON.parse(localStorage.getItem('Kusumba_user')) || {};
-			if (storedUser.verificationStatus !== verificationStatus) {
-				localStorage.setItem('Kusumba_user', JSON.stringify({ ...storedUser, verificationStatus }));
-			}
+			updateUser({ verificationStatus });
 		}
-	}, [verificationStatus]);
+	}, [verificationStatus, updateUser]);
 
 	const tabs = useMemo(() => [
 		{

@@ -9,6 +9,7 @@ import {
 	IoTicketOutline,
 } from 'react-icons/io5';
 
+import useAuthStore from '../../stores/authStore';
 import { useMyStore, useMyProducts, useMyStoreOrders } from '../../hooks/queries/useDashboard';
 import OverviewTab from './store/OverviewTab';
 import StoreInfoTab from './store/StoreInfoTab';
@@ -32,6 +33,8 @@ const TABS = [
 
 
 const StoreDashboard = () => {
+	const user = useAuthStore((s) => s.user);
+	const userId = user?.id;
 	const [activeTab, setActiveTab] = useState('overview');
 
 	const {
@@ -39,12 +42,12 @@ const StoreDashboard = () => {
 		isLoading: storeLoading,
 		isError: storeError,
 		refetch: refetchStore,
-	} = useMyStore();
+	} = useMyStore(userId);
 
 	const {
 		data: productsData,
 		refetch: refetchProducts,
-	} = useMyProducts();
+	} = useMyProducts(userId);
 
 	const products = productsData?.products ?? [];
 	const productsPagination = productsData?.pagination;
@@ -52,7 +55,7 @@ const StoreDashboard = () => {
 	const {
 		data: orders = [],
 		refetch: refetchOrders,
-	} = useMyStoreOrders();
+	} = useMyStoreOrders(userId);
 
 	const loading = storeLoading;
 	const error = storeError;

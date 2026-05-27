@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { validateSession, loginAdmin } from '../services/auth';
 import { notyf } from '../utils/notyf';
+import queryClient from '../lib/queryClient';
 
 const getStoredUser = () => {
 	try {
@@ -75,6 +76,8 @@ const useAuthStore = create((set) => ({
 	logout: () => {
 		localStorage.removeItem('Kusumba_user');
 		localStorage.removeItem('Kusumba_token');
+		localStorage.removeItem('cart');
+		queryClient.clear();
 		set({ user: null, isAuthenticated: false });
 	},
 
@@ -99,6 +102,9 @@ const useAuthStore = create((set) => ({
 	adminLogout: () => {
 		localStorage.removeItem('Kusumba_admin_token');
 		localStorage.removeItem('Kusumba_admin');
+		localStorage.removeItem('adminSidebarOpen');
+		localStorage.removeItem('cart');
+		queryClient.clear();
 		set({ admin: null, isAdmin: false });
 		notyf.success('Sessão terminada.');
 	},
