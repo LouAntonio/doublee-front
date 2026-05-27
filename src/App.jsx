@@ -101,6 +101,7 @@ function App() {
 	const initSession = useAuthStore((s) => s.initSession);
 	const initAdmin = useAuthStore((s) => s.initAdmin);
 	const loadCartFromApi = useCartStore((s) => s.loadCartFromApi);
+	const resetCart = useCartStore((s) => s.resetCart);
 	const resetWishlist = useWishlistStore((s) => s.reset);
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
@@ -113,9 +114,10 @@ function App() {
 		if (isAuthenticated) {
 			loadCartFromApi();
 		} else {
+			resetCart();
 			resetWishlist();
 		}
-	}, [isAuthenticated, loadCartFromApi, resetWishlist]);
+	}, [isAuthenticated, loadCartFromApi, resetCart, resetWishlist]);
 
 	return <AppRoutes />;
 }

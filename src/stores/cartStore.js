@@ -205,6 +205,8 @@ const useCartStore = create(
 				set({ cartItems: [] });
 			},
 
+			resetCart: () => set({ cartItems: [] }),
+
 			getCartTotal: () => get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
 			getCartCount: () => get().cartItems.reduce((count, item) => count + item.quantity, 0),
 			getSubtotal: () => get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0),

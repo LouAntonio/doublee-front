@@ -41,7 +41,7 @@ const Cart = () => {
 								Adicione produtos ao seu carrinho para continuar comprando
 							</p>
 							<Link
-								to="/"
+								to="/produtos"
 								className="inline-block px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
 							>
 								Explorar Produtos
