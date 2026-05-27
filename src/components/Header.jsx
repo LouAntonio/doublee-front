@@ -9,9 +9,7 @@ import {
 	IoPricetagOutline,
 	IoStorefrontOutline,
 	IoShirtOutline,
-	IoCashOutline,
 	IoChatbubbleOutline,
-	IoPersonAddOutline,
 	IoTicketOutline,
 	IoHeartOutline,
 	IoPersonOutline,
@@ -477,7 +475,7 @@ const Header = () => {
 						<span>Cupões</span>
 					</NavLink>
 					<NavLink to="/sobre" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10">
-						<IoCashOutline className="w-5 h-5 text-[#78716C]/60" />
+						<IoBookOutline className="w-5 h-5 text-[#78716C]/60" />
 						<span>Sobre</span>
 					</NavLink>
 					<NavLink to="/contato" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10">
@@ -494,44 +492,6 @@ const Header = () => {
 							<span>Como Funciona</span>
 						</NavLink>
 					</div>
-					{isAuthenticated ? (
-						<>
-							<div className="px-4 py-2 border-b border-[#1C1917]/10">
-								<p className="text-sm font-display font-semibold text-[#1C1917]">{user?.name} {user?.surname}</p>
-								<p className="text-xs font-body text-[#78716C]">{user?.email}</p>
-							</div>
-							<NavLink
-								to="/dashboard"
-								onClick={() => setMenuOpen(false)}
-								className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10"
-							>
-								<IoPersonOutline className="w-5 h-5 text-[#78716C]/60" />
-								<span>Minha Conta</span>
-							</NavLink>
-							{hasApprovedStore && (
-								<NavLink
-									to="/loja/dashboard"
-									onClick={() => setMenuOpen(false)}
-									className="flex items-center gap-3 px-4 py-3 text-sm font-body text-[#78716C] hover:bg-sand border-b border-[#1C1917]/10"
-								>
-									<IoStorefrontOutline className="w-5 h-5 text-[#78716C]/60" />
-									<span>Gerir Loja</span>
-								</NavLink>
-							)}
-							<button
-								onClick={handleLogout}
-								className="flex items-center gap-3 px-4 py-3 text-sm font-body text-red-500 hover:bg-red-50 w-full cursor-pointer"
-							>
-								<IoLogOutOutline className="w-5 h-5" />
-								<span>Sair</span>
-							</button>
-						</>
-					) : (
-						<NavLink to="/auth" className="flex items-center gap-3 px-4 py-3 text-sm font-body text-accent hover:bg-sand font-medium">
-							<IoPersonAddOutline className="w-5 h-5 text-accent" />
-							<span>Conta</span>
-						</NavLink>
-					)}
 				</nav>
 			</div>
 		</header>
