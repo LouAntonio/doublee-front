@@ -1,0 +1,181 @@
+/* ── Theme Variables ── */
+:root {
+	--cat-page-bg: #f8f5f0;
+	--cat-page-surface: #ffffff;
+	--cat-page-charcoal: #1c1612;
+	--cat-page-text: #4a4040;
+	--cat-page-muted: #9a8c82;
+	--cat-page-accent: #F97316;
+	--cat-page-accent-dark: #EA580C;
+	--cat-page-gold: #d4a04a;
+	--cat-page-border: #ece3da;
+	--cat-page-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Grain / Noise Overlay ── */
+.cat-page-grain::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+	opacity: 0.03;
+	pointer-events: none;
+	mix-blend-mode: overlay;
+}
+
+/* ── Dot Grid Pattern ── */
+.cat-page-dot-grid {
+	background-image: radial-gradient(circle, #e0d6cc 1px, transparent 1px);
+	background-size: 28px 28px;
+}
+
+/* ── Hero Gradient Elements ── */
+.cat-page-hero-gradient-text {
+	background: linear-gradient(135deg, #fbbf24 0%, #F97316 50%, #EA580C 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	filter: drop-shadow(0 2px 12px rgba(249, 115, 22, 0.25));
+}
+
+/* ── Hero Ornament ── */
+.cat-page-ornament {
+	width: 60px;
+	height: 3px;
+	background: linear-gradient(90deg, #F97316, #fbbf24, transparent);
+	border-radius: 2px;
+}
+
+/* ── Search Input Focus ── */
+.cat-page-search:focus {
+	border-color: rgba(249, 115, 22, 0.35) !important;
+	box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Float Animations ── */
+@keyframes catPageFloat {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-6px); }
+}
+
+.cat-page-float {
+	animation: catPageFloat 4s ease-in-out infinite;
+}
+
+.cat-page-float-delayed {
+	animation: catPageFloat 5s ease-in-out infinite reverse;
+}
+
+/* ── Decorative Circle Pulse ── */
+@keyframes catPageCirclePulse {
+	0%, 100% { transform: scale(1); opacity: 0.12; }
+	50% { transform: scale(1.06); opacity: 0.2; }
+}
+
+.cat-page-circle-pulse {
+	animation: catPageCirclePulse 6s ease-in-out infinite;
+}
+
+/* ── Scroll Reveal ── */
+.cat-page-reveal {
+	opacity: 0;
+	transform: translateY(24px);
+	transition: opacity 0.6s var(--cat-page-ease), transform 0.6s var(--cat-page-ease);
+}
+
+.cat-page-reveal.cat-page-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── Shimmer Loading ── */
+.cat-page-shimmer {
+	background: linear-gradient(90deg, #ede8e2 25%, #f5f0eb 50%, #ede8e2 75%);
+	background-size: 200% 100%;
+	animation: catPageShimmerBg 1.5s ease-in-out infinite;
+}
+
+@keyframes catPageShimmerBg {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+/* ── Card Hover ── */
+.cat-page-card-hover {
+	transition: transform 0.4s var(--cat-page-ease),
+	            box-shadow 0.4s var(--cat-page-ease),
+	            border-color 0.4s var(--cat-page-ease);
+}
+
+.cat-page-card-hover:hover {
+	transform: translateY(-4px);
+	border-color: rgba(249, 115, 22, 0.2);
+	box-shadow: 0 12px 32px rgba(249, 115, 22, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Card Enter Stagger ── */
+@keyframes catPageCardEnter {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.cat-page-card-enter {
+	opacity: 0;
+	animation: catPageCardEnter 0.5s var(--cat-page-ease) forwards;
+}
+
+/* ── Letter initial large decorative ── */
+.cat-page-initial {
+	font-family: 'Fredoka', sans-serif;
+	font-size: 4rem;
+	font-weight: 700;
+	line-height: 1;
+	color: rgba(154, 140, 130, 0.25);
+	user-select: none;
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* ── Empty State Float ── */
+@keyframes catPageEmptyFloat {
+	0%, 100% { transform: translateY(0) rotate(-2deg); }
+	50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+.cat-page-empty-float {
+	animation: catPageEmptyFloat 3.5s ease-in-out infinite;
+}
+
+/* ── Hero large icon backdrop ── */
+.cat-page-hero-glyph {
+	font-family: 'Fredoka', sans-serif;
+	font-size: 14rem;
+	font-weight: 700;
+	line-height: 1;
+	color: rgba(255, 255, 255, 0.03);
+	user-select: none;
+	pointer-events: none;
+	position: absolute;
+	bottom: -0.15em;
+	right: -0.05em;
+}
+
+/* ── Badge Pulse ── */
+@keyframes catPageBadgePulse {
+	0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.35); }
+	70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+	100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+
+.cat-page-badge-pulse {
+	animation: catPageBadgePulse 2.5s ease-in-out infinite;
+}

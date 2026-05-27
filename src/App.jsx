@@ -5,6 +5,7 @@ import useCartStore from './stores/cartStore';
 import useWishlistStore from './stores/wishlistStore';
 import Home from './pages/Home';
 import Categorias from './pages/Categorias';
+import CategoryProducts from './pages/CategoryProducts';
 import Cupoes from './pages/Cupoes';
 import Auth from './pages/Auth';
 import Contato from './pages/Contato';
@@ -63,6 +64,7 @@ function AppRoutes() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/categorias" element={<Categorias />} />
+				<Route path="/categorias/:slug" element={<CategoryProducts />} />
 				<Route path="/produtos" element={<Produtos />} />
 				<Route path="/cupoes" element={<Cupoes />} />
 				<Route path="/auth" element={<AuthRoute />} />
