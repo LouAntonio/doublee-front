@@ -6,7 +6,7 @@ import BestSellersSection from '../components/BestSellersSection';
 import CategoriesSection from '../components/CategoriesSection';
 import FeaturedProductsSection from '../components/FeaturedProductsSection';
 import NewProductsSection from '../components/NewProductsSection';
-import RandomCategoryProductsSection from '../components/RandomCategoryProductsSection';
+import LatestProductsSection from '../components/LatestProductsSection';
 
 
 const Home = () => {
@@ -20,7 +20,7 @@ const Home = () => {
 			<CategoriesSection />
 			<NewProductsSection />
 			<BestSellersSection />
-			<RandomCategoryProductsSection />
+			<LatestProductsSection />
 		</div>
 	);
 };
