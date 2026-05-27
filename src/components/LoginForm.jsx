@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import { notyf } from '../utils/notyf';
 import useAuthStore from '../stores/authStore';
-import { loginUser } from '../services/auth';
+import { loginUser, checkEmail } from '../services/auth';
 import GoogleButton from './GoogleButton';
 
 const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
@@ -34,11 +34,18 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 					login(res.user, res.token);
 					notyf.success('Login realizado com sucesso!');
 					navigate('/');
-				} else {
-					notyf.error(res.msg || 'Erro ao fazer login.');
+					return;
 				}
+				throw new Error(res.msg || 'Erro ao fazer login.');
 			} catch (err) {
-				notyf.error(err.message || 'Erro ao fazer login.');
+				const check = await checkEmail(formData.email).catch(() => null);
+				if (check?.success && check.exists) {
+					notyf.error('Esta conta utiliza login com Google. Faça login com o Google abaixo.');
+				} else if (check?.success && !check.exists) {
+					notyf.error('Conta não encontrada. Verifique o e-mail ou crie uma nova conta.');
+				} else {
+					notyf.error(err.message || 'Erro ao fazer login.');
+				}
 			}
 			setIsLoading(false);
 		}
