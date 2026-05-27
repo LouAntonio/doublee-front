@@ -64,25 +64,19 @@ const Promocoes = () => {
 	const [fetchTrigger, setFetchTrigger] = useState(0);
 	const itemsPerPage = 12;
 
-	const queryParams = {
-		page: currentPage,
-		limit: itemsPerPage,
-		onPromotion: 'true',
-	};
-	if (selectedCategories?.length) queryParams.categoryIds = selectedCategories.join(',');
-	if (priceRange.min) queryParams.minPrice = priceRange.min;
-	if (priceRange.max) queryParams.maxPrice = priceRange.max;
-	if (featuredOnly) queryParams.featured = 'true';
-
 	const { data, isLoading } = useQuery({
-		queryKey: ['products', 'promocoes', queryParams, fetchTrigger],
+		queryKey: ['products', 'promocoes', currentPage, itemsPerPage, fetchTrigger],
 		queryFn: async () => {
-			const res = await getOnSaleProducts(queryParams);
+			const params = { page: currentPage, limit: itemsPerPage, onPromotion: 'true' };
+			if (selectedCategories?.length) params.categoryIds = selectedCategories.join(',');
+			if (priceRange.min) params.minPrice = priceRange.min;
+			if (priceRange.max) params.maxPrice = priceRange.max;
+			if (featuredOnly) params.featured = 'true';
+			const res = await getOnSaleProducts(params);
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar promoções');
 			const items = (res.data?.products || []).map(normalizeProduct);
-			const sorted = sortProducts(items, sortOption);
 			return {
-				offers: sorted,
+				offers: items,
 				total: res.data?.pagination?.total || 0,
 				totalPages: res.data?.pagination?.totalPages || 1,
 			};
@@ -91,7 +85,8 @@ const Promocoes = () => {
 		refetchOnMount: 'always',
 	});
 
-	const offers = data?.offers || [];
+	const rawOffers = data?.offers || [];
+	const offers = sortProducts(rawOffers, sortOption);
 	const totalResults = data?.total || 0;
 	const totalPages = data?.totalPages || 1;
 

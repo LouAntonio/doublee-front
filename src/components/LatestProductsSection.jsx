@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { IoAppsOutline } from 'react-icons/io5';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 import { useProducts } from '../hooks/queries/useProducts';
@@ -16,10 +17,23 @@ const normalizeForCard = (product) => ({
 });
 
 const LatestProductsSection = () => {
-	const { data, isLoading } = useProducts({ sort: 'newest', limit: 80 });
-	const products = (data?.products ?? []).map(normalizeForCard);
+	const [page, setPage] = useState(1);
+	const [allProducts, setAllProducts] = useState([]);
+	const loadedPagesRef = useRef(new Set());
 
-	if (isLoading && products.length === 0) {
+	const { data, isLoading, isFetching } = useProducts({ sort: 'newest', limit: 10, page });
+	const total = data?.total ?? 0;
+
+	useEffect(() => {
+		const products = data?.products ?? [];
+		if (products.length > 0 && !loadedPagesRef.current.has(page)) {
+			loadedPagesRef.current.add(page);
+			const normalized = products.map(normalizeForCard);
+			setAllProducts(prev => [...prev, ...normalized]);
+		}
+	}, [data, page]);
+
+	if (isLoading && allProducts.length === 0) {
 		return (
 			<section style={{
 				backgroundColor: 'transparent', display: 'flex', justifyContent: 'center',
@@ -44,9 +58,11 @@ const LatestProductsSection = () => {
 		);
 	}
 
-	if (!isLoading && products.length === 0) {
+	if (!isLoading && allProducts.length === 0) {
 		return null;
 	}
+
+	const hasMore = allProducts.length < total;
 
 	return (
 		<section style={{
@@ -68,10 +84,26 @@ const LatestProductsSection = () => {
 				</div>
 
 				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-					{products.map((product) => (
+					{allProducts.map((product) => (
 						<ProductCard key={product.id} product={product} />
 					))}
 				</div>
+
+				{hasMore && (
+					<div className="flex justify-center mt-6 pb-2">
+						{isFetching ? (
+							<span className="inline-block w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+						) : (
+							<button
+								onClick={() => setPage(p => p + 1)}
+								className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-[#1C1917] hover:border-accent hover:text-accent transition-all duration-200"
+							>
+								<IoAppsOutline className="text-lg" />
+								Carregar mais
+							</button>
+						)}
+					</div>
+				)}
 			</div>
 		</section>
 	);

@@ -1,10 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 
-const SCROLL_SPEED = 1;
-const SCROLL_INTERVAL = 30;
 const DRAG_THRESHOLD = 5;
 
 const HorizontalProductSlider = ({
@@ -17,8 +16,9 @@ const HorizontalProductSlider = ({
 	renderProduct,
 }) => {
 	const scrollRef = useRef(null);
-	const intervalRef = useRef(null);
-	const [isPaused, setIsPaused] = useState(false);
+	const [showLeftArrow, setShowLeftArrow] = useState(false);
+	const [showRightArrow, setShowRightArrow] = useState(true);
+	const [itemsPerView, setItemsPerView] = useState(1);
 
 	const pointerState = useRef({
 		isDown: false,
@@ -27,39 +27,41 @@ const HorizontalProductSlider = ({
 		isDragged: false,
 	});
 
-	const duplicated = [...products, ...products];
-
-	const startScroll = useCallback(() => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => {
-			const el = scrollRef.current;
-			if (!el) return;
-			const half = el.scrollWidth / 2;
-			if (el.scrollLeft >= half) {
-				el.scrollLeft = 0;
-			} else {
-				el.scrollLeft += SCROLL_SPEED;
-			}
-		}, SCROLL_INTERVAL);
+	const checkScroll = useCallback(() => {
+		const el = scrollRef.current;
+		if (!el) return;
+		const { scrollLeft, scrollWidth, clientWidth } = el;
+		setShowLeftArrow(scrollLeft > 0);
+		setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 1);
 	}, []);
 
-	const stopScroll = useCallback(() => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
-	}, []);
+	const scrollByItems = useCallback((direction) => {
+		const el = scrollRef.current;
+		if (!el) return;
+		const firstCard = el.querySelector('[data-card]');
+		if (!firstCard) return;
+		const cardWidth = firstCard.offsetWidth;
+		const gap = 12;
+		const itemWidth = cardWidth + gap;
+		const scrollAmount = itemsPerView * itemWidth;
+		const maxScroll = el.scrollWidth - el.clientWidth;
+		const newScrollLeft =
+			direction === 'left'
+				? Math.max(0, el.scrollLeft - scrollAmount)
+				: Math.min(maxScroll, el.scrollLeft + scrollAmount);
+
+		el.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+		setTimeout(checkScroll, 350);
+	}, [itemsPerView, checkScroll]);
 
 	const handlePointerDown = useCallback((clientX) => {
-		stopScroll();
-		setIsPaused(true);
 		pointerState.current = {
 			isDown: true,
 			startX: clientX,
 			startScrollLeft: scrollRef.current?.scrollLeft || 0,
 			isDragged: false,
 		};
-	}, [stopScroll]);
+	}, []);
 
 	const handlePointerMove = useCallback((clientX) => {
 		const ps = pointerState.current;
@@ -73,8 +75,8 @@ const HorizontalProductSlider = ({
 
 	const handlePointerUp = useCallback(() => {
 		pointerState.current.isDown = false;
-		setIsPaused(false);
-	}, []);
+		checkScroll();
+	}, [checkScroll]);
 
 	const handleClickCapture = useCallback((e) => {
 		if (pointerState.current.isDragged) {
@@ -102,16 +104,6 @@ const HorizontalProductSlider = ({
 		}
 	}, [handlePointerMove]);
 
-	const handleMouseEnter = useCallback(() => {
-		setIsPaused(true);
-		stopScroll();
-	}, [stopScroll]);
-
-	const handleMouseLeave = useCallback(() => {
-		if (pointerState.current.isDown) return;
-		setIsPaused(false);
-	}, []);
-
 	useEffect(() => {
 		const onWindowMouseUp = () => {
 			if (pointerState.current.isDown) {
@@ -123,10 +115,24 @@ const HorizontalProductSlider = ({
 	}, [handlePointerUp]);
 
 	useEffect(() => {
-		if (isPaused || products.length === 0) return;
-		startScroll();
-		return stopScroll;
-	}, [isPaused, products.length, startScroll, stopScroll]);
+		const el = scrollRef.current;
+		if (!el || products.length === 0) return;
+
+		const observer = new ResizeObserver(() => {
+			const firstCard = el.querySelector('[data-card]');
+			if (!firstCard) return;
+			const cardWidth = firstCard.offsetWidth;
+			const gap = 12;
+			const itemWidth = cardWidth + gap;
+			const containerWidth = el.clientWidth;
+			const newItemsPerView = Math.max(1, Math.floor(containerWidth / itemWidth));
+			setItemsPerView(newItemsPerView);
+			checkScroll();
+		});
+
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [products.length, checkScroll]);
 
 	if (isLoading && products.length === 0) {
 		return (
@@ -178,24 +184,45 @@ const HorizontalProductSlider = ({
 					)}
 				</div>
 
-				<div
-					ref={scrollRef}
-					className="flex gap-3 overflow-hidden select-none"
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handlePointerUp}
-					onMouseLeave={handleMouseLeave}
-					onMouseEnter={handleMouseEnter}
-					onTouchStart={handleTouchStart}
-					onTouchMove={handleTouchMove}
-					onTouchEnd={handlePointerUp}
-					onClickCapture={handleClickCapture}
-				>
-					{duplicated.map((product, index) => (
-						<div key={`${product.id}-${index}`} className={`flex-shrink-0 ${cardWidthClass}`}>
-							{renderProduct ? renderProduct(product) : <ProductCard product={product} />}
-						</div>
-					))}
+				<div className="relative">
+					{showLeftArrow && products.length > itemsPerView && (
+						<button
+							onClick={() => scrollByItems('left')}
+							className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-gray-50 p-2.5 rounded-full shadow-lg transition-all z-10 flex items-center justify-center"
+							aria-label="Rolar para esquerda"
+						>
+							<IoChevronBack className="w-5 h-5 text-gray-700" />
+						</button>
+					)}
+
+					<div
+						ref={scrollRef}
+						className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth select-none"
+						onMouseDown={handleMouseDown}
+						onMouseMove={handleMouseMove}
+						onMouseUp={handlePointerUp}
+						onTouchStart={handleTouchStart}
+						onTouchMove={handleTouchMove}
+						onTouchEnd={handlePointerUp}
+						onClickCapture={handleClickCapture}
+						onScroll={checkScroll}
+					>
+						{products.map((product, index) => (
+							<div key={product.id} data-card={index === 0 ? '' : undefined} className={`flex-shrink-0 ${cardWidthClass}`}>
+								{renderProduct ? renderProduct(product) : <ProductCard product={product} />}
+							</div>
+						))}
+					</div>
+
+					{showRightArrow && products.length > itemsPerView && (
+						<button
+							onClick={() => scrollByItems('right')}
+							className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-gray-50 p-2.5 rounded-full shadow-lg transition-all z-10 flex items-center justify-center"
+							aria-label="Rolar para direita"
+						>
+							<IoChevronForward className="w-5 h-5 text-gray-700" />
+						</button>
+					)}
 				</div>
 			</div>
 		</section>

@@ -35,6 +35,7 @@ const Produtos = () => {
 
 	const urlSearch = searchParams.get('search') || '';
 	const urlSort = searchParams.get('sort') || '';
+	const urlFeatured = searchParams.get('featured') === 'true';
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = 12;
@@ -45,8 +46,8 @@ const Produtos = () => {
 	const [rating, setRating] = useState(null);
 	const [searchQuery, setSearchQuery] = useState(urlSearch);
 	const [selectedBrand, setSelectedBrand] = useState('');
-	const [featuredOnly, setFeaturedOnly] = useState(false);
-	const [fetchTrigger, setFetchTrigger] = useState(urlSearch ? 1 : 0);
+	const [featuredOnly, setFeaturedOnly] = useState(urlFeatured);
+	const [fetchTrigger, setFetchTrigger] = useState(urlSearch || urlFeatured ? 1 : 0);
 	const resultsRef = useRef(null);
 
 	// Scroll suave até aos resultados quando a pesquisa é acionada
@@ -56,26 +57,21 @@ const Produtos = () => {
 		}
 	}, [fetchTrigger, searchQuery]);
 
-	const queryParams = {
-		page: currentPage,
-		limit: itemsPerPage,
-	};
-	if (searchQuery) queryParams.search = searchQuery;
-	if (selectedCategories?.length) queryParams.categoryIds = selectedCategories.join(',');
-	if (priceRange.min) queryParams.minPrice = priceRange.min;
-	if (priceRange.max) queryParams.maxPrice = priceRange.max;
-	if (featuredOnly) queryParams.featured = 'true';
-	if (sortOption === 'best-sellers') queryParams.orderBy = JSON.stringify({ salesCount: 'desc' });
-
 	const { data, isLoading } = useQuery({
-		queryKey: ['products', 'list', queryParams, fetchTrigger],
+		queryKey: ['products', 'list', currentPage, itemsPerPage, fetchTrigger],
 		queryFn: async () => {
-			const res = await getProducts(queryParams);
+			const params = { page: currentPage, limit: itemsPerPage };
+			if (searchQuery) params.search = searchQuery;
+			if (selectedCategories?.length) params.categoryIds = selectedCategories.join(',');
+			if (priceRange.min) params.minPrice = priceRange.min;
+			if (priceRange.max) params.maxPrice = priceRange.max;
+			if (featuredOnly) params.featured = 'true';
+			if (sortOption === 'best-sellers') params.orderBy = JSON.stringify({ salesCount: 'desc' });
+			const res = await getProducts(params);
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar produtos');
 			const items = (res.data?.products || []).map(normalizeProduct);
-			const sorted = sortProducts(items, sortOption);
 			return {
-				products: sorted,
+				products: items,
 				total: res.data?.pagination?.total || 0,
 				totalPages: res.data?.pagination?.totalPages || 1,
 			};
@@ -84,7 +80,8 @@ const Produtos = () => {
 		refetchOnMount: 'always',
 	});
 
-	const products = data?.products || [];
+	const rawProducts = data?.products || [];
+	const products = sortProducts(rawProducts, sortOption);
 	const totalResults = data?.total || 0;
 	const totalPages = data?.totalPages || 1;
 
