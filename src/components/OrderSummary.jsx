@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { notyf } from '../utils/notyf';
 import { useValidateCoupon } from '../hooks/queries/useProfile';
 
-const OrderSummary = ({ showPromoCode = true }) => {
-	const { cartItems, getSubtotal, getShipping, getTax, getTotal, appliedCoupon, setAppliedCoupon, getDiscount } = useCartStore();
+const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0, deliveryZoneName }) => {
+	const { cartItems, getSubtotal, getTax, appliedCoupon, setAppliedCoupon, getDiscount } = useCartStore();
 	const [promoCode, setPromoCode] = useState('');
 	const [error, setError] = useState('');
 	const { mutateAsync: validateCoupon } = useValidateCoupon();
@@ -41,10 +41,10 @@ const OrderSummary = ({ showPromoCode = true }) => {
 	};
 
 	const subtotal = getSubtotal();
-	const shipping = getShipping();
 	const tax = getTax();
 	const discountAmount = getDiscount();
-	const total = getTotal();
+	const shipping = deliveryOption === 'delivery' ? deliveryPrice : 0;
+	const total = subtotal + shipping + tax - discountAmount;
 
 	return (
 		<div className="bg-white rounded-2xl shadow-md p-6 sticky top-4">
@@ -78,10 +78,13 @@ const OrderSummary = ({ showPromoCode = true }) => {
 				)}
 
 				<div className="flex justify-between text-sm">
-					<span className="text-[#78716C] font-body">Entrega</span>
+					<span className="text-[#78716C] font-body">
+						{deliveryOption === 'pickup' ? 'Levantamento' : 'Entrega'}
+						{deliveryZoneName && <span className="block text-xs">({deliveryZoneName})</span>}
+					</span>
 					<span className="font-medium text-[#1C1917]">
 						{shipping === 0 ? (
-							<span className="text-accent">Grátis</span>
+							<span className="text-accent">{deliveryOption === 'pickup' ? 'Grátis' : 'Grátis'}</span>
 						) : (
 							formatCurrency(shipping)
 						)}

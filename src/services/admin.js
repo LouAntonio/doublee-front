@@ -50,3 +50,16 @@ export const updatePromotion = (promotionId, data) =>
 
 export const deletePromotion = (promotionId) =>
 	adminDelete(`/admin/promotions/${promotionId}`);
+
+// ─── Delivery Zones ──────────────────────────────────────────
+
+export const getAdminDeliveryZones = () => adminGet('/admin/delivery-zones');
+
+export const createDeliveryZone = (data) =>
+	adminPost('/admin/delivery-zones', data);
+
+export const updateDeliveryZone = (id, data) =>
+	adminPut(`/admin/delivery-zones/${id}`, data);
+
+export const deleteDeliveryZone = (id) =>
+	adminDelete(`/admin/delivery-zones/${id}`);
