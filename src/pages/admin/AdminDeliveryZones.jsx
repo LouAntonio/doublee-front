@@ -22,7 +22,17 @@ const AdminDeliveryZones = () => {
 		}
 	};
 
-	React.useEffect(() => { fetchZones(); }, []);
+	React.useEffect(() => {
+		(async () => {
+			setLoading(true);
+			try {
+				const res = await http.get('/admin/delivery-zones', { admin: true });
+				if (res?.success) setZones(res.data?.zones || []);
+			} catch { } finally {
+				setLoading(false);
+			}
+		})();
+	}, []);
 
 	const openNew = () => {
 		setEditingZone(null);

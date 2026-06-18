@@ -26,6 +26,7 @@ export default defineConfig([
 			'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
 			'indent': ['error', 'tab', { 'SwitchCase': 1, 'VariableDeclarator': 1 }],
 			'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
+			'no-empty': ['error', { allowEmptyCatch: true }],
 		},
 	},
 ])
