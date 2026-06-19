@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoArrowBack, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoArrowBack, IoCheckmarkCircle, IoCloudUploadOutline, IoTrashOutline, IoEyeOutline } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import CheckoutSteps from '../components/CheckoutSteps';
@@ -9,6 +9,7 @@ import useCartStore from '../stores/cartStore';
 import { notyf } from '../utils/notyf';
 import { formatCurrency } from '../utils/currency';
 import { useCreateOrder } from '../hooks/queries/useOrders';
+import { uploadToCloudinary } from '../services/cloudinary';
 import http from '../services/http';
 
 const Checkout = () => {
@@ -18,7 +19,7 @@ const Checkout = () => {
 	const [currentStep, setCurrentStep] = useState(1);
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
-	const [orderNumber] = useState(() => Math.floor(Math.random() * 1000000));
+	const [orderId, setOrderId] = useState('');
 	const { mutateAsync: createOrder } = useCreateOrder();
 
 	// Delivery state
@@ -67,7 +68,10 @@ const Checkout = () => {
 		phoneNumber: '',
 		bankName: '',
 		accountNumber: '',
+		paymentProof: null,
+		paymentProofUrl: '',
 	});
+	const [uploadingProof, setUploadingProof] = useState(false);
 
 	const [errors, setErrors] = useState({});
 
@@ -94,14 +98,37 @@ const Checkout = () => {
 		return Object.keys(newErrors).length === 0;
 	};
 
+	const getPaymentMethodEnum = (method) => {
+		if (method === 'multicaixa') return 'multicaixa_express';
+		if (method === 'transfer') return 'transferencia_bancaria';
+		return null;
+	};
+
+	const handleProofUpload = async (file) => {
+		setUploadingProof(true);
+		try {
+			const result = await uploadToCloudinary(file, 'payment_proofs');
+			if (result.success) {
+				setPaymentInfo({ ...paymentInfo, paymentProof: file, paymentProofUrl: result.url });
+				notyf.success('Comprovativo carregado!');
+			} else {
+				notyf.error(result.msg || 'Erro ao fazer upload do comprovativo.');
+			}
+		} catch {
+			notyf.error('Erro ao fazer upload do comprovativo.');
+		} finally {
+			setUploadingProof(false);
+		}
+	};
+
+	const removeProof = () => {
+		setPaymentInfo({ ...paymentInfo, paymentProof: null, paymentProofUrl: '' });
+	};
+
 	const validateStep2 = () => {
 		const newErrors = {};
 
-		if (paymentInfo.method === 'multicaixa') {
-			if (!paymentInfo.phoneNumber.trim()) newErrors.phoneNumber = 'Número de telefone é obrigatório';
-		} else if (paymentInfo.method === 'transfer') {
-			return true;
-		}
+		if (!paymentInfo.paymentProofUrl) newErrors.paymentProof = 'Faça upload do comprovativo de pagamento';
 
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
@@ -137,6 +164,8 @@ const Checkout = () => {
 					: 'Levantar na Sede',
 				couponCode: appliedCoupon?.code,
 				deliveryOption,
+				paymentMethod: getPaymentMethodEnum(paymentInfo.method),
+				paymentProof: paymentInfo.paymentProofUrl || undefined,
 			};
 			if (deliveryOption === 'delivery' && selectedZoneId) {
 				payload.deliveryZoneId = selectedZoneId;
@@ -146,6 +175,7 @@ const Checkout = () => {
 
 			if (res?.success) {
 				setOrderPlaced(true);
+				setOrderId(res?.data?.orderId || '');
 				clearCart();
 				setAppliedCoupon(null);
 			} else {
@@ -169,11 +199,14 @@ const Checkout = () => {
 							Pedido Realizado com Sucesso!
 						</h1>
 						<p className="text-[#78716C] mb-6">
-							Obrigado pela sua compra. Você receberá um email de confirmação em breve.
+							Obrigado pela sua compra. O comprovativo de pagamento foi submetido e será analisado em breve.
+						</p>
+						<p className="text-xs text-[#78716C] mb-6">
+							Acompanhe o estado do pagamento no seu <Link to="/dashboard" className="text-accent hover:underline">painel de cliente</Link>.
 						</p>
 						<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-6">
 							<p className="text-sm text-accent">
-								<strong>Número do Pedido:</strong> #DBE{orderNumber}
+								<strong>Número do Pedido:</strong> #{orderId.slice(0, 8).toUpperCase()}
 							</p>
 						</div>
 						<Link
@@ -396,7 +429,7 @@ const Checkout = () => {
 
 									<div className="space-y-3 mb-6">
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProof: null, paymentProofUrl: '' })}
 											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
 												? 'border-accent bg-accent/5'
 												: 'border-accent/10 hover:border-accent/30'
@@ -406,7 +439,7 @@ const Checkout = () => {
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'multicaixa'}
-													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa' })}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProof: null, paymentProofUrl: '' })}
 													className="w-4 h-4 accent-accent"
 												/>
 												<div>
@@ -417,7 +450,7 @@ const Checkout = () => {
 										</div>
 
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProof: null, paymentProofUrl: '' })}
 											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'transfer'
 												? 'border-accent bg-accent/5'
 												: 'border-accent/10 hover:border-accent/30'
@@ -427,7 +460,7 @@ const Checkout = () => {
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'transfer'}
-													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer' })}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProof: null, paymentProofUrl: '' })}
 													className="w-4 h-4 accent-accent"
 												/>
 												<div>
@@ -438,51 +471,81 @@ const Checkout = () => {
 										</div>
 									</div>
 
-									{paymentInfo.method === 'multicaixa' && (
-										<div className="space-y-4 pt-4 border-t border-accent/10">
-											<div>
-												<label className="block text-sm font-body text-[#78716C] mb-1">
-													Número de Telefone *
-												</label>
-												<input
-													type="tel"
-													value={paymentInfo.phoneNumber}
-													onChange={(e) =>
-														setPaymentInfo({ ...paymentInfo, phoneNumber: e.target.value })
-													}
-													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.phoneNumber ? 'border-red-500' : 'border-accent/20'
-													}`}
-													placeholder="+244 923 456 789"
-												/>
-												{errors.phoneNumber && (
-													<p className="text-xs text-red-500 mt-1">{errors.phoneNumber}</p>
-												)}
-											</div>
-											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
-												<p className="text-sm text-accent">
-													Após confirmar o pedido, receberá uma notificação no seu telemóvel para autorizar o pagamento.
+									<div className="space-y-4 pt-4 border-t border-accent/10">
+										{paymentInfo.method === 'multicaixa' && (
+											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
+												<p className="text-sm text-accent mb-2"><strong>Multicaixa Express</strong></p>
+												<p className="text-xs text-[#78716C]">
+													Faça o pagamento via Multicaixa Express para o número <strong>+244 923 456 789</strong> (Kusumba) e faça upload do comprovativo (print do ecrã).
 												</p>
 											</div>
-										</div>
-									)}
+										)}
 
-									{paymentInfo.method === 'transfer' && (
-										<div className="pt-4 border-t border-accent/10">
-											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
-												<p className="text-sm text-accent mb-3">
-													<strong>Dados para Transferência Bancária:</strong>
-												</p>
-												<div className="space-y-2 text-sm text-accent">
+										{paymentInfo.method === 'transfer' && (
+											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
+												<p className="text-sm text-accent mb-2"><strong>Transferência Bancária</strong></p>
+												<div className="space-y-1 text-xs text-[#78716C]">
 													<p><strong>Banco:</strong> Banco Angolano de Investimentos (BAI)</p>
 													<p><strong>Titular:</strong> Kusumba</p>
 													<p><strong>IBAN:</strong> AO06 0000 0123 4567 8901 2345 6</p>
-													<p className="mt-3 text-xs">
-														Após efetuar a transferência, envie o comprovativo para o nosso WhatsApp ou email.
-													</p>
 												</div>
 											</div>
+										)}
+
+										<div>
+											<label className="block text-sm font-body text-[#78716C] mb-2">
+												Comprovativo de Pagamento *
+											</label>
+
+											{!paymentInfo.paymentProofUrl ? (
+												<div
+													onClick={() => document.getElementById('proof-upload').click()}
+													className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all hover:border-accent hover:bg-accent/5 ${errors.paymentProof ? 'border-red-500' : 'border-accent/20'}`}
+												>
+													<input
+														id="proof-upload"
+														type="file"
+														accept="image/*"
+														className="hidden"
+														onChange={(e) => {
+															const file = e.target.files?.[0];
+															if (file) handleProofUpload(file);
+														}}
+													/>
+													<IoCloudUploadOutline className="w-10 h-10 mx-auto mb-2 text-[#78716C]" />
+													<p className="text-sm text-[#78716C] font-medium">
+														{uploadingProof ? 'A carregar...' : 'Clique para fazer upload do comprovativo'}
+													</p>
+													<p className="text-xs text-[#78716C]/60 mt-1">JPG, PNG (max. 5MB)</p>
+												</div>
+											) : (
+												<div className="bg-accent/5 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
+													<img
+														src={paymentInfo.paymentProofUrl}
+														alt="Comprovativo"
+														className="w-16 h-16 object-cover rounded-lg border border-accent/10"
+													/>
+													<div className="flex-1 min-w-0">
+														<p className="text-sm text-[#1C1917] font-medium truncate">Comprovativo carregado</p>
+														<p className="text-xs text-[#78716C]">Clique no olho para ver</p>
+													</div>
+													<div className="flex gap-2">
+														<a href={paymentInfo.paymentProofUrl} target="_blank" rel="noopener noreferrer"
+															className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors">
+															<IoEyeOutline className="w-5 h-5" />
+														</a>
+														<button onClick={removeProof}
+															className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
+															<IoTrashOutline className="w-5 h-5" />
+														</button>
+													</div>
+												</div>
+											)}
+											{errors.paymentProof && (
+												<p className="text-xs text-red-500 mt-1">{errors.paymentProof}</p>
+											)}
 										</div>
-									)}
+									</div>
 								</div>
 							)}
 
@@ -531,15 +594,16 @@ const Checkout = () => {
 
 									<div className="mb-6">
 										<h3 className="font-display text-[#1C1917] mb-3">Método de Pagamento</h3>
-										<div className="bg-accent/5 rounded-xl p-4">
+										<div className="bg-accent/5 rounded-xl p-4 space-y-2">
 											<p className="text-sm text-[#1C1917]">
-												{paymentInfo.method === 'multicaixa' && '📱 Multicaixa Express'}
-												{paymentInfo.method === 'transfer' && '🏦 Transferência Bancária'}
+												{paymentInfo.method === 'multicaixa' && 'Multicaixa Express'}
+												{paymentInfo.method === 'transfer' && 'Transferência Bancária'}
 											</p>
-											{paymentInfo.method === 'multicaixa' && paymentInfo.phoneNumber && (
-												<p className="text-sm text-[#78716C] mt-1">
-													Telefone: {paymentInfo.phoneNumber}
-												</p>
+											{paymentInfo.paymentProofUrl && (
+												<div className="flex items-center gap-2">
+													<img src={paymentInfo.paymentProofUrl} alt="Comprovativo" className="w-12 h-12 object-cover rounded-lg border border-accent/10" />
+													<a href={paymentInfo.paymentProofUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">Ver comprovativo</a>
+												</div>
 											)}
 										</div>
 										<button

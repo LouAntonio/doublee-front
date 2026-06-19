@@ -2,7 +2,9 @@ import http from './http';
 
 export const uploadToCloudinary = async (file, folder = 'products') => {
 	try {
-		const res = await http.get('/cloudinary/auth', { admin: true });
+		const isAdmin = folder === 'bis' || folder === 'photos';
+		const endpoint = isAdmin ? '/cloudinary/authorize-upload-admin' : '/cloudinary/authorize-upload';
+		const res = await http.get(`${endpoint}?folder=${folder}`, { admin: isAdmin });
 		if (!res?.success) throw new Error(res?.msg || 'Erro ao obter autenticação cloudinary');
 
 		const d = res.data;

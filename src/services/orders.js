@@ -21,3 +21,18 @@ export const updateOrderStatus = (storeId, orderId, status) =>
 
 export const createOrder = (data) =>
 	http.post('/orders', data);
+
+export const submitPaymentProof = (orderId, data) =>
+	http.post(`/orders/${orderId}/payment-proof`, data);
+
+export const getAdminOrders = (params) =>
+	http.post('/admin/orders', params, { admin: true });
+
+export const getAdminOrderById = (id) =>
+	http.get(`/admin/orders/${id}`, { admin: true });
+
+export const adminConfirmPayment = (orderId) =>
+	http.patch(`/admin/orders/${orderId}/confirm-payment`, {}, { admin: true });
+
+export const adminRejectPayment = (orderId, reason) =>
+	http.patch(`/admin/orders/${orderId}/reject-payment`, { reason }, { admin: true });
