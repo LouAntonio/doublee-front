@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoArrowBack, IoCheckmarkCircle, IoCloudUploadOutline, IoTrashOutline, IoEyeOutline } from 'react-icons/io5';
+import { IoArrowBack, IoCheckmarkCircle, IoCloudUploadOutline, IoTrashOutline, IoDocumentOutline } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import CheckoutSteps from '../components/CheckoutSteps';
 import OrderSummary from '../components/OrderSummary';
 import useCartStore from '../stores/cartStore';
+import useAuthStore from '../stores/authStore';
 import { notyf } from '../utils/notyf';
 import { formatCurrency } from '../utils/currency';
 import { useCreateOrder } from '../hooks/queries/useOrders';
@@ -16,11 +17,13 @@ const Checkout = () => {
 	useDocumentTitle('Checkout - Kusumba');
 	const navigate = useNavigate();
 	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
+	const { user } = useAuthStore();
 	const [currentStep, setCurrentStep] = useState(1);
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderId, setOrderId] = useState('');
-	const { mutateAsync: createOrder } = useCreateOrder();
+	const [submittedProof, setSubmittedProof] = useState(false);
+	const { mutateAsync: createOrder, isPending: creatingOrder } = useCreateOrder();
 
 	// Delivery state
 	const [deliveryOption, setDeliveryOption] = useState('delivery');
@@ -28,6 +31,24 @@ const Checkout = () => {
 	const [selectedZoneId, setSelectedZoneId] = useState('');
 	const [selectedZonePrice, setSelectedZonePrice] = useState(0);
 	const [zonesLoading, setZonesLoading] = useState(false);
+
+	// User saved address
+	const [savedAddress, setSavedAddress] = useState('');
+	const [profileLoaded, setProfileLoaded] = useState(false);
+
+	// Form states
+	const [shippingInfo, setShippingInfo] = useState({
+		useSavedAddress: true,
+		address: '',
+	});
+
+	const [paymentInfo, setPaymentInfo] = useState({
+		method: 'multicaixa',
+		paymentProofFile: null,
+	});
+	const [uploadingProof, setUploadingProof] = useState(false);
+
+	const [errors, setErrors] = useState({});
 
 	// Fetch delivery zones
 	useEffect(() => {
@@ -45,57 +66,26 @@ const Checkout = () => {
 		fetchZones();
 	}, []);
 
+	// Fetch user profile for saved address
+	useEffect(() => {
+		const fetchProfile = async () => {
+			try {
+				const res = await http.get('/users/profile');
+				if (res?.success && res.user?.details?.shippingAddress) {
+					setSavedAddress(res.user.details.shippingAddress);
+				}
+			} catch { } finally {
+				setProfileLoaded(true);
+			}
+		};
+		if (user) fetchProfile(); else setProfileLoaded(true);
+	}, [user]);
+
 	// Update price when zone changes
 	const handleZoneChange = (zoneId) => {
 		setSelectedZoneId(zoneId);
 		const zone = deliveryZones.find(z => z.id === zoneId);
 		setSelectedZonePrice(zone ? Number(zone.price) : 0);
-	};
-
-	// Form states
-	const [shippingInfo, setShippingInfo] = useState({
-		fullName: '',
-		email: '',
-		phone: '',
-		address: '',
-		municipality: '',
-		province: '',
-		country: 'Angola',
-	});
-
-	const [paymentInfo, setPaymentInfo] = useState({
-		method: 'multicaixa',
-		phoneNumber: '',
-		bankName: '',
-		accountNumber: '',
-		paymentProof: null,
-		paymentProofUrl: '',
-	});
-	const [uploadingProof, setUploadingProof] = useState(false);
-
-	const [errors, setErrors] = useState({});
-
-	// Redirect if cart is empty
-	useEffect(() => {
-		if (cartItems.length === 0 && !orderPlaced) {
-			navigate('/cart');
-		}
-	}, [cartItems, navigate, orderPlaced]);
-
-	const validateStep1 = () => {
-		const newErrors = {};
-		if (!shippingInfo.fullName.trim()) newErrors.fullName = 'Nome completo é obrigatório';
-		if (!shippingInfo.email.trim()) newErrors.email = 'Email é obrigatório';
-		if (!shippingInfo.phone.trim()) newErrors.phone = 'Telefone é obrigatório';
-		if (deliveryOption === 'delivery') {
-			if (!shippingInfo.address.trim()) newErrors.address = 'Endereço é obrigatório';
-			if (!shippingInfo.municipality.trim()) newErrors.municipality = 'Município é obrigatório';
-			if (!shippingInfo.province.trim()) newErrors.province = 'Província é obrigatória';
-			if (!selectedZoneId) newErrors.deliveryZone = 'Seleccione uma zona de entrega';
-		}
-
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
 	};
 
 	const getPaymentMethodEnum = (method) => {
@@ -104,34 +94,26 @@ const Checkout = () => {
 		return null;
 	};
 
-	const handleProofUpload = async (file) => {
-		setUploadingProof(true);
-		try {
-			const result = await uploadToCloudinary(file, 'payment_proofs');
-			if (result.success) {
-				setPaymentInfo({ ...paymentInfo, paymentProof: file, paymentProofUrl: result.url });
-				notyf.success('Comprovativo carregado!');
-			} else {
-				notyf.error(result.msg || 'Erro ao fazer upload do comprovativo.');
-			}
-		} catch {
-			notyf.error('Erro ao fazer upload do comprovativo.');
-		} finally {
-			setUploadingProof(false);
-		}
+	const handleProofFileSelect = (file) => {
+		setPaymentInfo({ ...paymentInfo, paymentProofFile: file });
 	};
 
-	const removeProof = () => {
-		setPaymentInfo({ ...paymentInfo, paymentProof: null, paymentProofUrl: '' });
+	const removeProofFile = () => {
+		setPaymentInfo({ ...paymentInfo, paymentProofFile: null });
+	};
+
+	const validateStep1 = () => {
+		const newErrors = {};
+		if (deliveryOption === 'delivery') {
+			if (!shippingInfo.address.trim()) newErrors.address = 'Endereço é obrigatório';
+			if (!selectedZoneId) newErrors.deliveryZone = 'Seleccione uma zona de entrega';
+		}
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
 	};
 
 	const validateStep2 = () => {
-		const newErrors = {};
-
-		if (!paymentInfo.paymentProofUrl) newErrors.paymentProof = 'Faça upload do comprovativo de pagamento';
-
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
+		return true;
 	};
 
 	const handleNext = () => {
@@ -157,15 +139,27 @@ const Checkout = () => {
 
 	const handlePlaceOrder = async () => {
 		try {
+			let paymentProofUrl = '';
+			if (paymentInfo.paymentProofFile) {
+				setUploadingProof(true);
+				const uploadRes = await uploadToCloudinary(paymentInfo.paymentProofFile, 'payment_proofs');
+				if (!uploadRes.success) {
+					notyf.error(uploadRes.msg || 'Erro ao fazer upload do comprovativo.');
+					setUploadingProof(false);
+					return;
+				}
+				paymentProofUrl = uploadRes.url;
+				setSubmittedProof(true);
+				setUploadingProof(false);
+			}
+
 			const payload = {
 				items: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
-				shippingAddress: deliveryOption === 'delivery'
-					? `${shippingInfo.address}, ${shippingInfo.municipality}, ${shippingInfo.province}`
-					: 'Levantar na Sede',
+				shippingAddress: deliveryOption === 'delivery' ? shippingInfo.address : 'Levantar na Sede',
 				couponCode: appliedCoupon?.code,
 				deliveryOption,
 				paymentMethod: getPaymentMethodEnum(paymentInfo.method),
-				paymentProof: paymentInfo.paymentProofUrl || undefined,
+				paymentProof: paymentProofUrl || undefined,
 			};
 			if (deliveryOption === 'delivery' && selectedZoneId) {
 				payload.deliveryZoneId = selectedZoneId;
@@ -198,9 +192,15 @@ const Checkout = () => {
 						<h1 className="text-2xl lg:text-3xl font-display text-[#1C1917] mb-4">
 							Pedido Realizado com Sucesso!
 						</h1>
-						<p className="text-[#78716C] mb-6">
-							Obrigado pela sua compra. O comprovativo de pagamento foi submetido e será analisado em breve.
-						</p>
+						{submittedProof ? (
+							<p className="text-[#78716C] mb-6">
+								O comprovativo de pagamento foi submetido e será analisado em breve. Receberá uma notificação assim que for confirmado.
+							</p>
+						) : (
+							<p className="text-[#78716C] mb-6">
+								Faça o pagamento através de <strong>Multicaixa Express</strong> ou <strong>Transferência Bancária</strong> e envie o comprovativo pelo seu painel de cliente.
+							</p>
+						)}
 						<p className="text-xs text-[#78716C] mb-6">
 							Acompanhe o estado do pagamento no seu <Link to="/dashboard" className="text-accent hover:underline">painel de cliente</Link>.
 						</p>
@@ -209,12 +209,22 @@ const Checkout = () => {
 								<strong>Número do Pedido:</strong> #{orderId.slice(0, 8).toUpperCase()}
 							</p>
 						</div>
-						<Link
-							to="/"
-							className="inline-block px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-full transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-						>
-							Voltar para Home
-						</Link>
+						{!submittedProof && (
+							<Link
+								to="/dashboard"
+								className="inline-block px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-full transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg mb-3"
+							>
+								Enviar Comprovativo
+							</Link>
+						)}
+						<div>
+							<Link
+								to="/"
+								className="inline-block px-6 py-3 border-2 border-accent/20 text-accent font-display font-semibold rounded-full transition-all duration-300 hover:bg-accent/5"
+							>
+								Voltar para Home
+							</Link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -292,132 +302,87 @@ const Checkout = () => {
 									</div>
 
 									{deliveryOption === 'delivery' && (
-										<div className="mb-6">
-											<h3 className="text-sm font-semibold text-[#1C1917] mb-3">Zona de Entrega</h3>
-											<select
-												value={selectedZoneId}
-												onChange={(e) => handleZoneChange(e.target.value)}
-												className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.deliveryZone ? 'border-red-500' : 'border-accent/20'
-												}`}
-											>
-												<option value="">Seleccione a zona de entrega</option>
-												{zonesLoading ? (
-													<option disabled>A carregar...</option>
-												) : deliveryZones.length === 0 ? (
-													<option disabled>Nenhuma zona disponível</option>
-												) : (
-													deliveryZones.map(zone => (
-														<option key={zone.id} value={zone.id}>
-															{zone.name} — {formatCurrency(Number(zone.price))}
-														</option>
-													))
+										<>
+											<div className="mb-6">
+												<h3 className="text-sm font-semibold text-[#1C1917] mb-3">Zona de Entrega</h3>
+												<select
+													value={selectedZoneId}
+													onChange={(e) => handleZoneChange(e.target.value)}
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.deliveryZone ? 'border-red-500' : 'border-accent/20'
+													}`}
+												>
+													<option value="">Seleccione a zona de entrega</option>
+													{zonesLoading ? (
+														<option disabled>A carregar...</option>
+													) : deliveryZones.length === 0 ? (
+														<option disabled>Nenhuma zona disponível</option>
+													) : (
+														deliveryZones.map(zone => (
+															<option key={zone.id} value={zone.id}>
+																{zone.name} — {formatCurrency(Number(zone.price))}
+															</option>
+														))
+													)}
+												</select>
+												{errors.deliveryZone && (
+													<p className="text-xs text-red-500 mt-1">{errors.deliveryZone}</p>
 												)}
-											</select>
-											{errors.deliveryZone && (
-												<p className="text-xs text-red-500 mt-1">{errors.deliveryZone}</p>
-											)}
-											{selectedZonePrice > 0 && (
-												<p className="text-xs text-accent mt-2">
-													Custo de entrega: {formatCurrency(selectedZonePrice)}
-												</p>
-											)}
-										</div>
-									)}
-
-									<div className="space-y-4">
-										<div>
-											<label className="block text-sm font-body text-[#78716C] mb-1">
-												Nome Completo *
-											</label>
-											<input type="text" value={shippingInfo.fullName}
-												onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
-												className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.fullName ? 'border-red-500' : 'border-accent/20'}`}
-												placeholder="João Silva" />
-											{errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
-										</div>
-
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div>
-												<label className="block text-sm font-body text-[#78716C] mb-1">Email *</label>
-												<input type="email" value={shippingInfo.email}
-													onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.email ? 'border-red-500' : 'border-accent/20'}`}
-													placeholder="joao@email.com" />
-												{errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+												{selectedZonePrice > 0 && (
+													<p className="text-xs text-accent mt-2">
+														Custo de entrega: {formatCurrency(selectedZonePrice)}
+													</p>
+												)}
 											</div>
-											<div>
-												<label className="block text-sm font-body text-[#78716C] mb-1">Telefone *</label>
-												<input type="tel" value={shippingInfo.phone}
-													onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
-													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.phone ? 'border-red-500' : 'border-accent/20'}`}
-													placeholder="+244 923 456 789" />
-												{errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-											</div>
-										</div>
 
-										{deliveryOption === 'delivery' && (
-											<>
+											<div className="mb-6">
+												<h3 className="text-sm font-semibold text-[#1C1917] mb-3">Morada de Entrega</h3>
+
+												{savedAddress && (
+													<div className="mb-3">
+														<label className="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all ${shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}">
+															<input type="radio" checked={shippingInfo.useSavedAddress}
+																onChange={() => setShippingInfo({ useSavedAddress: true, address: savedAddress })}
+																className="w-4 h-4 accent-accent" />
+															<div>
+																<p className="text-sm font-display text-[#1C1917]">Usar morada guardada</p>
+																<p className="text-xs text-[#78716C]">{savedAddress}</p>
+															</div>
+														</label>
+														<label className="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all mt-2 ${!shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}">
+															<input type="radio" checked={!shippingInfo.useSavedAddress}
+																onChange={() => setShippingInfo({ useSavedAddress: false, address: '' })}
+																className="w-4 h-4 accent-accent" />
+															<div>
+																<p className="text-sm font-display text-[#1C1917]">Nova morada</p>
+															</div>
+														</label>
+													</div>
+												)}
+
 												<div>
 													<label className="block text-sm font-body text-[#78716C] mb-1">Endereço Completo *</label>
 													<input type="text" value={shippingInfo.address}
-														onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
-														className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.address ? 'border-red-500' : 'border-accent/20'}`}
+														onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value, useSavedAddress: false })}
+														readOnly={shippingInfo.useSavedAddress && !!savedAddress}
+														className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.address ? 'border-red-500' : 'border-accent/20'} ${shippingInfo.useSavedAddress && savedAddress ? 'bg-sand/50 text-[#78716C]' : ''}`}
 														placeholder="Rua da Independência, Prédio 123, Apt 4B" />
 													{errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
 												</div>
-
-												<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-													<div>
-														<label className="block text-sm font-body text-[#78716C] mb-1">Município *</label>
-														<input type="text" value={shippingInfo.municipality}
-															onChange={(e) => setShippingInfo({ ...shippingInfo, municipality: e.target.value })}
-															className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.municipality ? 'border-red-500' : 'border-accent/20'}`}
-															placeholder="Luanda" />
-														{errors.municipality && <p className="text-xs text-red-500 mt-1">{errors.municipality}</p>}
-													</div>
-													<div>
-														<label className="block text-sm font-body text-[#78716C] mb-1">Província *</label>
-														<select value={shippingInfo.province}
-															onChange={(e) => setShippingInfo({ ...shippingInfo, province: e.target.value })}
-															className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.province ? 'border-red-500' : 'border-accent/20'}`}>
-															<option value="">Selecione uma província</option>
-															<option value="Luanda">Luanda</option>
-															<option value="Bengo">Bengo</option>
-															<option value="Benguela">Benguela</option>
-															<option value="Bié">Bié</option>
-															<option value="Cabinda">Cabinda</option>
-															<option value="Cuando Cubango">Cuando Cubango</option>
-															<option value="Cuanza Norte">Cuanza Norte</option>
-															<option value="Cuanza Sul">Cuanza Sul</option>
-															<option value="Cunene">Cunene</option>
-															<option value="Huambo">Huambo</option>
-															<option value="Huíla">Huíla</option>
-															<option value="Lunda Norte">Lunda Norte</option>
-															<option value="Lunda Sul">Lunda Sul</option>
-															<option value="Malanje">Malanje</option>
-															<option value="Moxico">Moxico</option>
-															<option value="Namibe">Namibe</option>
-															<option value="Uíge">Uíge</option>
-															<option value="Zaire">Zaire</option>
-														</select>
-														{errors.province && <p className="text-xs text-red-500 mt-1">{errors.province}</p>}
-													</div>
-												</div>
-											</>
-										)}
-
-										{deliveryOption === 'pickup' && (
-											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
-												<p className="text-sm text-accent">
-													<strong>Levantamento na Sede</strong>
-												</p>
-												<p className="text-xs text-[#78716C] mt-1">
-													Receberá um email quando a encomenda estiver pronta para levantamento.
-													Os vendedores são responsáveis por fazer chegar os produtos à nossa sede.
-												</p>
 											</div>
-										)}
-									</div>
+										</>
+									)}
+
+									{deliveryOption === 'pickup' && (
+										<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
+											<p className="text-sm text-accent">
+												<strong>Levantamento na Sede</strong>
+											</p>
+											<p className="text-xs text-[#78716C] mt-1">
+												Receberá um email quando a encomenda estiver pronta para levantamento.
+												Os vendedores são responsáveis por fazer chegar os produtos à nossa sede.
+											</p>
+										</div>
+									)}
 								</div>
 							)}
 
@@ -429,7 +394,7 @@ const Checkout = () => {
 
 									<div className="space-y-3 mb-6">
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProof: null, paymentProofUrl: '' })}
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProofFile: null })}
 											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
 												? 'border-accent bg-accent/5'
 												: 'border-accent/10 hover:border-accent/30'
@@ -439,7 +404,7 @@ const Checkout = () => {
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'multicaixa'}
-													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProof: null, paymentProofUrl: '' })}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProofFile: null })}
 													className="w-4 h-4 accent-accent"
 												/>
 												<div>
@@ -450,7 +415,7 @@ const Checkout = () => {
 										</div>
 
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProof: null, paymentProofUrl: '' })}
+											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProofFile: null })}
 											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'transfer'
 												? 'border-accent bg-accent/5'
 												: 'border-accent/10 hover:border-accent/30'
@@ -460,7 +425,7 @@ const Checkout = () => {
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'transfer'}
-													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProof: null, paymentProofUrl: '' })}
+													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProofFile: null })}
 													className="w-4 h-4 accent-accent"
 												/>
 												<div>
@@ -476,7 +441,7 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Multicaixa Express</strong></p>
 												<p className="text-xs text-[#78716C]">
-													Faça o pagamento via Multicaixa Express para o número <strong>+244 923 456 789</strong> (Kusumba) e faça upload do comprovativo (print do ecrã).
+													Faça o pagamento via Multicaixa Express para o número <strong>+244 923 456 789</strong> (Kusumba).
 												</p>
 											</div>
 										)}
@@ -494,55 +459,55 @@ const Checkout = () => {
 
 										<div>
 											<label className="block text-sm font-body text-[#78716C] mb-2">
-												Comprovativo de Pagamento *
+												Comprovativo de Pagamento (opcional)
 											</label>
+											<p className="text-xs text-[#78716C]/60 mb-2">
+												Se já efectuou o pagamento, faça upload do comprovativo. Caso contrário, pode enviar depois pelo seu painel.
+											</p>
 
-											{!paymentInfo.paymentProofUrl ? (
+											{!paymentInfo.paymentProofFile ? (
 												<div
 													onClick={() => document.getElementById('proof-upload').click()}
-													className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all hover:border-accent hover:bg-accent/5 ${errors.paymentProof ? 'border-red-500' : 'border-accent/20'}`}
+													className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all hover:border-accent hover:bg-accent/5 border-accent/20"
 												>
 													<input
 														id="proof-upload"
 														type="file"
-														accept="image/*"
+														accept="image/*,application/pdf,.pdf"
 														className="hidden"
 														onChange={(e) => {
 															const file = e.target.files?.[0];
-															if (file) handleProofUpload(file);
+															if (file) handleProofFileSelect(file);
 														}}
 													/>
 													<IoCloudUploadOutline className="w-10 h-10 mx-auto mb-2 text-[#78716C]" />
 													<p className="text-sm text-[#78716C] font-medium">
-														{uploadingProof ? 'A carregar...' : 'Clique para fazer upload do comprovativo'}
+														Clique para seleccionar o comprovativo
 													</p>
-													<p className="text-xs text-[#78716C]/60 mt-1">JPG, PNG (max. 5MB)</p>
+													<p className="text-xs text-[#78716C]/60 mt-1">JPG, PNG, PDF</p>
 												</div>
 											) : (
 												<div className="bg-accent/5 border border-accent/20 rounded-xl p-3 flex items-center gap-3">
-													<img
-														src={paymentInfo.paymentProofUrl}
-														alt="Comprovativo"
-														className="w-16 h-16 object-cover rounded-lg border border-accent/10"
-													/>
+													<div className="w-12 h-12 rounded-lg border border-accent/10 flex items-center justify-center bg-white">
+														{paymentInfo.paymentProofFile.type === 'application/pdf' ? (
+															<IoDocumentOutline className="w-6 h-6 text-red-500" />
+														) : (
+															<img
+																src={URL.createObjectURL(paymentInfo.paymentProofFile)}
+																alt="Comprovativo"
+																className="w-full h-full object-cover rounded-lg"
+															/>
+														)}
+													</div>
 													<div className="flex-1 min-w-0">
-														<p className="text-sm text-[#1C1917] font-medium truncate">Comprovativo carregado</p>
-														<p className="text-xs text-[#78716C]">Clique no olho para ver</p>
+														<p className="text-sm text-[#1C1917] font-medium truncate">{paymentInfo.paymentProofFile.name}</p>
+														<p className="text-xs text-[#78716C]">Será enviado ao confirmar o pedido</p>
 													</div>
-													<div className="flex gap-2">
-														<a href={paymentInfo.paymentProofUrl} target="_blank" rel="noopener noreferrer"
-															className="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors">
-															<IoEyeOutline className="w-5 h-5" />
-														</a>
-														<button onClick={removeProof}
-															className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
-															<IoTrashOutline className="w-5 h-5" />
-														</button>
-													</div>
+													<button onClick={removeProofFile}
+														className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer shrink-0">
+														<IoTrashOutline className="w-5 h-5" />
+													</button>
 												</div>
-											)}
-											{errors.paymentProof && (
-												<p className="text-xs text-red-500 mt-1">{errors.paymentProof}</p>
 											)}
 										</div>
 									</div>
@@ -556,21 +521,27 @@ const Checkout = () => {
 									</h2>
 
 									<div className="mb-6">
-										<h3 className="font-display text-[#1C1917] mb-3">Informações de Envio</h3>
+										<h3 className="font-display text-[#1C1917] mb-3">Cliente</h3>
 										<div className="bg-accent/5 rounded-xl p-4 space-y-1">
 											<p className="text-sm text-[#1C1917]">
-												<strong>Nome:</strong> {shippingInfo.fullName}
+												<strong>Nome:</strong> {user?.name} {user?.surname}
 											</p>
 											<p className="text-sm text-[#1C1917]">
-												<strong>Email:</strong> {shippingInfo.email}
+												<strong>Email:</strong> {user?.email}
 											</p>
 											<p className="text-sm text-[#1C1917]">
-												<strong>Telefone:</strong> {shippingInfo.phone}
+												<strong>Telefone:</strong> {user?.phone || '—'}
 											</p>
+										</div>
+									</div>
+
+									<div className="mb-6">
+										<h3 className="font-display text-[#1C1917] mb-3">Informações de Envio</h3>
+										<div className="bg-accent/5 rounded-xl p-4 space-y-1">
 											{deliveryOption === 'delivery' ? (
 												<>
 													<p className="text-sm text-[#1C1917]">
-														<strong>Endereço:</strong> {shippingInfo.address}, {shippingInfo.municipality} - {shippingInfo.province}
+														<strong>Endereço:</strong> {shippingInfo.address}
 													</p>
 													{selectedZonePrice > 0 && (
 														<p className="text-sm text-[#1C1917]">
@@ -599,11 +570,11 @@ const Checkout = () => {
 												{paymentInfo.method === 'multicaixa' && 'Multicaixa Express'}
 												{paymentInfo.method === 'transfer' && 'Transferência Bancária'}
 											</p>
-											{paymentInfo.paymentProofUrl && (
-												<div className="flex items-center gap-2">
-													<img src={paymentInfo.paymentProofUrl} alt="Comprovativo" className="w-12 h-12 object-cover rounded-lg border border-accent/10" />
-													<a href={paymentInfo.paymentProofUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline">Ver comprovativo</a>
-												</div>
+											{paymentInfo.paymentProofFile && (
+												<p className="text-xs text-green-600">✓ Comprovativo seleccionado (será enviado ao confirmar)</p>
+											)}
+											{!paymentInfo.paymentProofFile && (
+												<p className="text-xs text-[#78716C]">Nenhum comprovativo — pode enviar depois pelo painel.</p>
 											)}
 										</div>
 										<button
@@ -649,9 +620,10 @@ const Checkout = () => {
 								) : (
 									<button
 										onClick={handlePlaceOrder}
-										className="flex-1 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg cursor-pointer"
+										disabled={creatingOrder || uploadingProof}
+										className="flex-1 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-display font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50"
 									>
-										Finalizar Pedido
+										{creatingOrder || uploadingProof ? 'A processar...' : 'Finalizar Pedido'}
 									</button>
 								)}
 							</div>

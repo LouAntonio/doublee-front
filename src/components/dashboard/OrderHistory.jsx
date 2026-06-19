@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoBagHandleOutline, IoCloudUploadOutline, IoEyeOutline, IoTrashOutline } from 'react-icons/io5';
+import { IoBagHandleOutline, IoCloudUploadOutline, IoEyeOutline, IoTrashOutline, IoDocumentOutline } from 'react-icons/io5';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { uploadToCloudinary } from '../../services/cloudinary';
@@ -76,13 +76,19 @@ const ProofUploadModal = ({ order, onClose }) => {
 					<label className="block text-sm font-body text-[#78716C] mb-2">Comprovativo</label>
 					{!proofUrl ? (
 						<div onClick={() => document.getElementById('modal-proof-upload').click()} className="border-2 border-dashed border-accent/20 rounded-xl p-4 text-center cursor-pointer hover:border-accent hover:bg-accent/5">
-							<input id="modal-proof-upload" type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }} />
+							<input id="modal-proof-upload" type="file" accept="image/*,application/pdf,.pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }} />
 							<IoCloudUploadOutline className="w-8 h-8 mx-auto mb-1 text-[#78716C]" />
 							<p className="text-xs text-[#78716C]">{uploading ? 'A carregar...' : 'Clique para fazer upload'}</p>
 						</div>
 					) : (
 						<div className="flex items-center gap-3 bg-accent/5 rounded-xl p-3">
-							<img src={proofUrl} alt="Proof" className="w-14 h-14 object-cover rounded-lg border" />
+							<div className="w-14 h-14 rounded-lg border border-accent/10 flex items-center justify-center bg-white shrink-0">
+								{proofUrl.match(/\.pdf/i) ? (
+									<IoDocumentOutline className="w-6 h-6 text-red-500" />
+								) : (
+									<img src={proofUrl} alt="Proof" className="w-full h-full object-cover rounded-lg" />
+								)}
+							</div>
 							<a href={proofUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline flex items-center gap-1"><IoEyeOutline /> Ver</a>
 							<button onClick={() => setProofUrl('')} className="text-xs text-red-500 ml-auto"><IoTrashOutline /></button>
 						</div>
@@ -164,7 +170,13 @@ const OrderHistory = () => {
 								</div>
 								{order.paymentProof && order.paymentStatus === 'awaiting_confirmation' && (
 									<div className="mt-3 flex items-center gap-2 text-xs text-[#78716C]">
-										<img src={order.paymentProof} alt="Comprovativo" className="w-10 h-10 object-cover rounded-lg border" />
+										<div className="w-10 h-10 rounded-lg border border-accent/10 flex items-center justify-center bg-white shrink-0">
+											{order.paymentProof.match(/\.pdf/i) ? (
+												<IoDocumentOutline className="w-5 h-5 text-red-500" />
+											) : (
+												<img src={order.paymentProof} alt="Comprovativo" className="w-full h-full object-cover rounded-lg" />
+											)}
+										</div>
 										<a href={order.paymentProof} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline flex items-center gap-1"><IoEyeOutline /> Ver comprovativo enviado</a>
 									</div>
 								)}
