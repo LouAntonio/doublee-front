@@ -137,40 +137,39 @@ const OrderDetailsModal = ({ order, onClose }) => {
 
 const PaymentModal = ({ order, onClose }) => {
 	const [method, setMethod] = useState('multicaixa_express');
-	const [proofUrl, setProofUrl] = useState('');
-	const [uploading, setUploading] = useState(false);
-	const { mutateAsync: submitProof, isPending } = useSubmitPaymentProof();
+	const [proofFile, setProofFile] = useState(null);
+	const [submitting, setSubmitting] = useState(false);
+	const { mutateAsync: submitProof } = useSubmitPaymentProof();
 	const coords = PAYMENT_COORDINATES[method];
 
-	const handleUpload = async (file) => {
-		setUploading(true);
-		try {
-			const result = await uploadToCloudinary(file, 'payment_proofs');
-			if (result.success) {
-				setProofUrl(result.url);
-				notyf.success('Comprovativo carregado!');
-			} else {
-				notyf.error(result.msg || 'Erro ao fazer upload.');
-			}
-		} catch {
-			notyf.error('Erro ao fazer upload.');
-		} finally {
-			setUploading(false);
-		}
+	const handleFileSelect = (file) => {
+		setProofFile(file);
 	};
 
 	const handleSubmit = async () => {
-		if (!proofUrl) {
-			notyf.error('Faça upload do comprovativo primeiro.');
+		if (!proofFile) {
+			notyf.error('Seleccione o comprovativo primeiro.');
 			return;
 		}
+		setSubmitting(true);
 		try {
-			await submitProof({ orderId: order.id, paymentMethod: method, paymentProof: proofUrl });
+			const result = await uploadToCloudinary(proofFile, 'payment_proofs');
+			if (!result.success) {
+				notyf.error(result.msg || 'Erro ao fazer upload.');
+				setSubmitting(false);
+				return;
+			}
+			await submitProof({ orderId: order.id, paymentMethod: method, paymentProof: result.url });
 			onClose();
 		} catch {
-			// handled by mutation
+			notyf.error('Erro ao submeter comprovativo.');
+			setSubmitting(false);
 		}
 	};
+
+	const isPdf = proofFile?.type === 'application/pdf';
+	const isSubmitting = submitting;
+	const objectUrl = proofFile ? URL.createObjectURL(proofFile) : null;
 
 	return (
 		<DashboardModal isOpen={true} onClose={onClose} size="sm">
@@ -220,32 +219,35 @@ const PaymentModal = ({ order, onClose }) => {
 
 				<div>
 					<p className="text-sm font-medium text-[#1C1917] mb-2">Comprovativo de Pagamento</p>
-					{!proofUrl ? (
+					{!proofFile ? (
 						<div onClick={() => document.getElementById('modal-proof-upload').click()} className="border-2 border-dashed border-accent/20 rounded-xl p-4 text-center cursor-pointer hover:border-accent hover:bg-accent/5">
-							<input id="modal-proof-upload" type="file" accept="image/*,application/pdf,.pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }} />
+							<input id="modal-proof-upload" type="file" accept="image/*,application/pdf,.pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} />
 							<IoCloudUploadOutline className="w-8 h-8 mx-auto mb-1 text-[#78716C]" />
-							<p className="text-xs text-[#78716C]">{uploading ? 'A carregar...' : 'Clique para fazer upload'}</p>
+							<p className="text-xs text-[#78716C]">Clique para seleccionar o comprovativo</p>
 							<p className="text-xs text-[#78716C]/60 mt-0.5">JPG, PNG, PDF</p>
 						</div>
 					) : (
 						<div className="flex items-center gap-3 bg-accent/5 rounded-xl p-3">
 							<div className="w-14 h-14 rounded-lg border border-accent/10 flex items-center justify-center bg-white shrink-0">
-								{proofUrl.match(/\.pdf/i) ? (
+								{isPdf ? (
 									<IoDocumentOutline className="w-6 h-6 text-red-500" />
 								) : (
-									<img src={proofUrl} alt="Proof" className="w-full h-full object-cover rounded-lg" />
+									<img src={objectUrl} alt="Proof" className="w-full h-full object-cover rounded-lg" />
 								)}
 							</div>
-							<a href={proofUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:underline flex items-center gap-1"><IoEyeOutline /> Ver</a>
-							<button onClick={() => setProofUrl('')} className="text-xs text-red-500 ml-auto"><IoTrashOutline /></button>
+							<div className="flex-1 min-w-0">
+								<p className="text-xs text-[#1C1917] font-medium truncate">{proofFile.name}</p>
+								<p className="text-xs text-[#78716C]">Será enviado ao submeter</p>
+							</div>
+							<button onClick={() => setProofFile(null)} className="text-xs text-red-500 ml-auto shrink-0"><IoTrashOutline /></button>
 						</div>
 					)}
 				</div>
 
 				<div className="flex gap-3 pt-2">
 					<button onClick={onClose} className="flex-1 px-4 py-2.5 border border-accent/20 rounded-xl text-sm text-[#78716C] hover:bg-sand cursor-pointer">Cancelar</button>
-					<button onClick={handleSubmit} disabled={!proofUrl || isPending} className="flex-1 px-4 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-accent-dark disabled:opacity-50 cursor-pointer">
-						{isPending ? 'A enviar...' : 'Submeter'}
+					<button onClick={handleSubmit} disabled={!proofFile || isSubmitting} className="flex-1 px-4 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-accent-dark disabled:opacity-50 cursor-pointer">
+						{isSubmitting ? 'A enviar...' : 'Submeter'}
 					</button>
 				</div>
 			</div>

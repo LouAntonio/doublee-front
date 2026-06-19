@@ -7,16 +7,15 @@ export const uploadToCloudinary = async (file, folder = 'products') => {
 		const res = await http.get(`${endpoint}?folder=${folder}`, { admin: isAdmin });
 		if (!res?.success) throw new Error(res?.msg || 'Erro ao obter autenticação cloudinary');
 
-		const d = res.data;
 		const formData = new FormData();
 		formData.append('file', file);
-		formData.append('api_key', d.apiKey);
-		formData.append('timestamp', d.timestamp);
-		formData.append('signature', d.signature);
+		formData.append('api_key', res.apikey);
+		formData.append('timestamp', res.timestamp);
+		formData.append('signature', res.signature);
 		formData.append('folder', folder);
 
 		const cloudinaryResponse = await fetch(
-			`https://api.cloudinary.com/v1_1/${d.cloudName}/image/upload`,
+			`https://api.cloudinary.com/v1_1/${res.cloudname}/image/upload`,
 			{ method: 'POST', body: formData }
 		);
 
