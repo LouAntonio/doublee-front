@@ -5,6 +5,19 @@ import { formatCurrency } from '../../../utils/currency';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
 import EmptyState from './ui/EmptyState';
 
+const SELLER_TRANSITIONS = {
+	pending: ['processing', 'cancelled'],
+	processing: ['shipped'],
+	shipped: ['delivered'],
+	delivered: [],
+	received_at_sede: [],
+	out_for_delivery: [],
+	delivered_to_customer: [],
+	ready_for_pickup: [],
+	picked_up: [],
+	cancelled: [],
+};
+
 const OrdersTab = ({ orders, onRefresh }) => {
 	const [updatingId, setUpdatingId] = useState(null);
 
@@ -38,6 +51,8 @@ const OrdersTab = ({ orders, onRefresh }) => {
 				<div className="space-y-3">
 					{orders.map((order, idx) => {
 						const st = ORDER_STATUS_MAP[order.status] || ORDER_STATUS_MAP.pending;
+						const paymentPaid = order.order?.paymentStatus === 'paid';
+						const allowedNext = SELLER_TRANSITIONS[order.status] || [];
 						return (
 							<div key={order.id} className="bg-white rounded-2xl border border-accent/10 shadow-md p-4 space-y-3 hover:shadow-lg transition-shadow duration-300 opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.1 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
 								<div className="flex items-center justify-between">
@@ -73,25 +88,40 @@ const OrdersTab = ({ orders, onRefresh }) => {
 									</div>
 								)}
 
-								{/* Status Changer */}
-								<div className="flex items-center gap-2 pt-1">
-									<span className="text-xs text-[#78716C] font-medium">Alterar estado:</span>
-									<div className="flex flex-wrap gap-1.5">
-										{Object.entries(ORDER_STATUS_MAP).map(([key, val]) => (
-											<button
-												key={key}
-												onClick={() => order.status !== key && handleStatusChange(order.id, key)}
-												disabled={order.status === key || updatingId === order.id}
-												className={`text-xs px-2.5 py-1 rounded-full font-medium transition-all border cursor-pointer disabled:cursor-not-allowed ${order.status === key
-													? `${STATUS_COLOR[val.color]} opacity-100`
-													: 'bg-white text-[#78716C] border-accent/20 hover:bg-sand opacity-60 hover:opacity-100'
-												}`}
-											>
-												{updatingId === order.id && order.status !== key ? '...' : val.label}
-											</button>
-										))}
+								{/* Payment Status Warning */}
+								{!paymentPaid && (
+									<div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+										<p className="text-xs text-amber-700">
+											Aguardar confirmação de pagamento para alterar o estado da encomenda.
+										</p>
 									</div>
-								</div>
+								)}
+
+								{/* Status Changer */}
+								{allowedNext.length > 0 && (
+									<div className="flex items-center gap-2 pt-1">
+										<span className="text-xs text-[#78716C] font-medium shrink-0">Alterar estado:</span>
+										<div className="flex flex-wrap gap-1.5">
+											{allowedNext.map((key) => {
+												const val = ORDER_STATUS_MAP[key];
+												if (!val) return null;
+												return (
+													<button
+														key={key}
+														onClick={() => handleStatusChange(order.id, key)}
+														disabled={!paymentPaid || updatingId === order.id}
+														className={`text-xs px-2.5 py-1 rounded-full font-medium transition-all border cursor-pointer disabled:cursor-not-allowed ${!paymentPaid
+															? 'bg-gray-50 text-gray-400 border-gray-200'
+															: 'bg-white text-[#78716C] border-accent/20 hover:bg-sand opacity-60 hover:opacity-100'
+														}`}
+													>
+														{updatingId === order.id ? '...' : val.label}
+													</button>
+												);
+											})}
+										</div>
+									</div>
+								)}
 							</div>
 						);
 					})}

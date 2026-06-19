@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { IoCheckmarkCircle, IoCloseCircle, IoDocumentOutline, IoEyeOutline, IoSearchOutline } from 'react-icons/io5';
+import { IoCheckmarkCircle, IoCloseCircle, IoDocumentOutline, IoEyeOutline, IoSearchOutline, IoBusinessOutline, IoLocateOutline, IoHomeOutline, IoFlagOutline, IoHandLeftOutline, IoCarOutline } from 'react-icons/io5';
 import { useAdminOrders, useConfirmPayment, useRejectPayment } from '../../hooks/queries/useOrders';
 import { formatCurrency } from '../../utils/currency';
+import http from '../../services/http';
+import { notyf } from '../../utils/notyf';
+import { ORDER_STATUS_MAP, STATUS_COLOR } from '../../components/dashboard/store/constants';
 
 const PAYMENT_STATUS_MAP = {
 	pending: { label: 'Pendente', class: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -16,11 +19,28 @@ const PAYMENT_LABELS = {
 	transferencia_bancaria: 'Transferência Bancária',
 };
 
+const ADMIN_DELIVERY_ACTIONS = {
+	delivered: [
+		{ status: 'received_at_sede', label: 'Receber na Sede', icon: IoBusinessOutline, color: 'bg-teal-600 hover:bg-teal-700' },
+	],
+	received_at_sede: [
+		{ status: 'out_for_delivery', label: 'Iniciar Entrega', icon: IoCarOutline, color: 'bg-indigo-600 hover:bg-indigo-700' },
+		{ status: 'ready_for_pickup', label: 'Pronto p/ Levantar', icon: IoFlagOutline, color: 'bg-cyan-600 hover:bg-cyan-700' },
+	],
+	out_for_delivery: [
+		{ status: 'delivered_to_customer', label: 'Entregue ao Cliente', icon: IoHomeOutline, color: 'bg-green-600 hover:bg-green-700' },
+	],
+	ready_for_pickup: [
+		{ status: 'picked_up', label: 'Cliente Levantou', icon: IoHandLeftOutline, color: 'bg-emerald-600 hover:bg-emerald-700' },
+	],
+};
+
 const ProofModal = ({ order, onClose }) => {
 	const { mutateAsync: confirmPayment, isPending: confirming } = useConfirmPayment();
 	const { mutateAsync: rejectPayment, isPending: rejecting } = useRejectPayment();
 	const [rejectReason, setRejectReason] = useState('');
 	const [showRejectInput, setShowRejectInput] = useState(false);
+	const [updatingDelivery, setUpdatingDelivery] = useState(null);
 
 	const handleConfirm = async () => {
 		await confirmPayment(order.id);
@@ -30,6 +50,23 @@ const ProofModal = ({ order, onClose }) => {
 	const handleReject = async () => {
 		await rejectPayment({ orderId: order.id, reason: rejectReason });
 		onClose();
+	};
+
+	const handleDeliveryUpdate = async (storeOrderId, status) => {
+		setUpdatingDelivery(storeOrderId);
+		try {
+			const data = await http.patch(`/admin/store-orders/${storeOrderId}/delivery-status`, { status });
+			if (data?.success) {
+				notyf.success('Estado de entrega actualizado!');
+				onClose();
+			} else {
+				notyf.error(data?.msg || 'Erro ao actualizar estado.');
+				setUpdatingDelivery(null);
+			}
+		} catch {
+			notyf.error('Erro ao conectar com o servidor.');
+			setUpdatingDelivery(null);
+		}
 	};
 
 	const badge = PAYMENT_STATUS_MAP[order.paymentStatus] || PAYMENT_STATUS_MAP.pending;
@@ -117,34 +154,55 @@ const ProofModal = ({ order, onClose }) => {
 						</div>
 					)}
 
-					{/* Store Orders / Items */}
+					{/* Store Orders / Items + Delivery Status */}
 					{order.storeOrders?.length > 0 && (
 						<div className="bg-white border border-accent/10 rounded-xl p-4">
-							<h4 className="text-sm font-semibold text-[#1C1917] mb-3">Itens da Encomenda</h4>
+							<h4 className="text-sm font-semibold text-[#1C1917] mb-3">Itens e Entrega</h4>
 							<div className="space-y-3">
-								{order.storeOrders.map((so) => (
-									<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
-										<div className="flex items-center gap-2 px-3 py-2 bg-sand text-sm font-medium text-[#1C1917] border-b border-accent/10">
-											{so.store?.logo && (
-												<img src={so.store.logo} alt="" className="w-5 h-5 rounded-full object-cover" />
-											)}
-											{so.store?.name || 'Loja'}
-											<span className="ml-auto text-xs text-[#78716C] font-normal">{so.status || '-'}</span>
-										</div>
-										<div className="divide-y divide-accent/5">
-											{so.items?.map((item) => (
-												<div key={item.id} className="flex items-center gap-3 px-3 py-2 text-sm text-[#1C1917]">
-													{item.product?.image && (
-														<img src={item.product.image} alt="" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
-													)}
-													<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
-													<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
-													<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
+								{order.storeOrders.map((so) => {
+									const st = ORDER_STATUS_MAP[so.status] || ORDER_STATUS_MAP.pending;
+									const actions = ADMIN_DELIVERY_ACTIONS[so.status] || [];
+									return (
+										<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
+											<div className="flex items-center gap-2 px-3 py-2 bg-sand text-sm font-medium text-[#1C1917] border-b border-accent/10">
+												{so.store?.logo && (
+													<img src={so.store.logo} alt="" className="w-5 h-5 rounded-full object-cover" />
+												)}
+												{so.store?.name || 'Loja'}
+												<span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[st.color]}`}>
+													<st.Icon className="w-3 h-3 inline mr-1" />{st.label}
+												</span>
+											</div>
+											<div className="divide-y divide-accent/5">
+												{so.items?.map((item) => (
+													<div key={item.id} className="flex items-center gap-3 px-3 py-2 text-sm text-[#1C1917]">
+														{item.product?.image && (
+															<img src={item.product.image} alt="" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
+														)}
+														<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
+														<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
+														<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
+													</div>
+												))}
+											</div>
+											{order.paymentStatus === 'paid' && actions.length > 0 && (
+												<div className="flex flex-wrap gap-2 px-3 py-2 border-t border-accent/10 bg-sand/50">
+													{actions.map((action) => (
+														<button
+															key={action.status}
+															onClick={() => handleDeliveryUpdate(so.id, action.status)}
+															disabled={updatingDelivery === so.id}
+															className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white rounded-full transition-all cursor-pointer disabled:opacity-50 ${action.color}`}
+														>
+															<action.icon className="w-3.5 h-3.5" />
+															{updatingDelivery === so.id ? 'A actualizar...' : action.label}
+														</button>
+													))}
 												</div>
-											))}
+											)}
 										</div>
-									</div>
-								))}
+									);
+								})}
 							</div>
 						</div>
 					)}
@@ -157,7 +215,7 @@ const ProofModal = ({ order, onClose }) => {
 						</div>
 					)}
 
-					{/* Actions */}
+					{/* Payment Actions */}
 					{order.paymentStatus === 'awaiting_confirmation' && (
 						<div className="space-y-3 pt-2">
 							<div className="flex gap-3">
