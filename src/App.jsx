@@ -33,6 +33,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminIdentityVerification from './pages/admin/AdminIdentityVerification';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminPromotions from './pages/admin/AdminPromotions';
+import AdminDeliveryZones from './pages/admin/AdminDeliveryZones';
 import Vender from './pages/Vender';
 import ComoFunciona from './pages/ComoFunciona';
 
@@ -91,6 +92,7 @@ function AppRoutes() {
 					<Route path="identity" element={<AdminIdentityVerification />} />
 					<Route path="analytics" element={<AdminAnalytics />} />
 					<Route path="promotions" element={<AdminPromotions />} />
+					<Route path="delivery-zones" element={<AdminDeliveryZones />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />
 			</Routes>
