@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { IoBagHandleOutline, IoCloudUploadOutline, IoEyeOutline, IoTrashOutline, IoDocumentOutline, IoCloseOutline } from 'react-icons/io5';
-import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { uploadToCloudinary } from '../../services/cloudinary';
-import { useSubmitPaymentProof } from '../../hooks/queries/useOrders';
+import { useMyOrders, useSubmitPaymentProof } from '../../hooks/queries/useOrders';
 import { formatCurrency } from '../../utils/currency';
 import { PAYMENT_COORDINATES } from '../../utils/payment';
 import DashboardModal from './DashboardModal';
@@ -81,31 +81,31 @@ const OrderDetailsModal = ({ order, onClose }) => {
 							{order.storeOrders.map((so) => {
 								const st = ORDER_STATUS_MAP[so.status];
 								return (
-								<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
-									<div className="flex items-center gap-2 px-3 py-1.5 bg-sand text-xs font-medium text-[#1C1917] border-b border-accent/10">
-										{so.store?.logo && (
-											<img src={so.store.logo} alt="" className="w-4 h-4 rounded-full object-cover" />
-										)}
-										{so.store?.name || 'Loja'}
-										{st && (
-											<span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 ${STATUS_COLOR[st.color]}`}>
-												<st.Icon className="w-3 h-3" /> {st.label}
-											</span>
-										)}
+									<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
+										<div className="flex items-center gap-2 px-3 py-1.5 bg-sand text-xs font-medium text-[#1C1917] border-b border-accent/10">
+											{so.store?.logo && (
+												<img src={so.store.logo} alt="" className="w-4 h-4 rounded-full object-cover" />
+											)}
+											{so.store?.name || 'Loja'}
+											{st && (
+												<span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 ${STATUS_COLOR[st.color]}`}>
+													<st.Icon className="w-3 h-3" /> {st.label}
+												</span>
+											)}
+										</div>
+										<div className="divide-y divide-accent/5">
+											{so.items?.map((item) => (
+												<div key={item.id} className="flex items-center gap-2 px-3 py-1.5 text-xs text-[#1C1917]">
+													{item.product?.image && (
+														<img src={item.product.image} alt="" className="w-7 h-7 rounded-lg object-cover border border-accent/10 shrink-0" />
+													)}
+													<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
+													<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
+													<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
+												</div>
+											))}
+										</div>
 									</div>
-									<div className="divide-y divide-accent/5">
-										{so.items?.map((item) => (
-											<div key={item.id} className="flex items-center gap-2 px-3 py-1.5 text-xs text-[#1C1917]">
-												{item.product?.image && (
-													<img src={item.product.image} alt="" className="w-7 h-7 rounded-lg object-cover border border-accent/10 shrink-0" />
-												)}
-												<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
-												<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
-												<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
-											</div>
-										))}
-									</div>
-								</div>
 								);
 							})}
 						</div>
@@ -265,25 +265,10 @@ const PaymentModal = ({ order, onClose }) => {
 };
 
 const OrderHistory = () => {
-	const [orders, setOrders] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const queryClient = useQueryClient();
+	const { data: orders = [], isLoading } = useMyOrders();
 	const [detailsModalOrder, setDetailsModalOrder] = useState(null);
 	const [paymentModalOrder, setPaymentModalOrder] = useState(null);
-
-	const fetchOrders = async () => {
-		try {
-			const data = await http.get('/orders');
-			if (data?.success) {
-				setOrders(data.data?.orders || []);
-			}
-		} catch {
-			notyf.error('Erro ao carregar pedidos.');
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	useEffect(() => { fetchOrders(); }, []);
 
 	if (isLoading) {
 		return <div className="flex items-center justify-center h-64 text-[#78716C] font-body">Carregando seus pedidos...</div>;
@@ -375,7 +360,7 @@ const OrderHistory = () => {
 				<OrderDetailsModal order={detailsModalOrder} onClose={() => setDetailsModalOrder(null)} />
 			)}
 			{paymentModalOrder && (
-				<PaymentModal order={paymentModalOrder} onClose={() => { setPaymentModalOrder(null); fetchOrders(); }} />
+				<PaymentModal order={paymentModalOrder} onClose={() => { setPaymentModalOrder(null); queryClient.invalidateQueries({ queryKey: ['orders', 'mine'] }); }} />
 			)}
 		</div>
 	);

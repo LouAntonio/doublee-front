@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { IoArrowBack, IoCheckmarkCircle, IoCloudUploadOutline, IoTrashOutline, IoDocumentOutline } from 'react-icons/io5';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
@@ -16,7 +16,6 @@ import http from '../services/http';
 
 const Checkout = () => {
 	useDocumentTitle('Checkout - Kusumba');
-	const navigate = useNavigate();
 	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const { user } = useAuthStore();
 	const [currentStep, setCurrentStep] = useState(1);
@@ -35,7 +34,6 @@ const Checkout = () => {
 
 	// User saved address
 	const [savedAddress, setSavedAddress] = useState('');
-	const [profileLoaded, setProfileLoaded] = useState(false);
 
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
@@ -75,11 +73,9 @@ const Checkout = () => {
 				if (res?.success && res.user?.details?.shippingAddress) {
 					setSavedAddress(res.user.details.shippingAddress);
 				}
-			} catch { } finally {
-				setProfileLoaded(true);
-			}
+			} catch { }
 		};
-		if (user) fetchProfile(); else setProfileLoaded(true);
+		if (user) fetchProfile();
 	}, [user]);
 
 	// Update price when zone changes
