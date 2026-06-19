@@ -7,6 +7,7 @@ import { useSubmitPaymentProof } from '../../hooks/queries/useOrders';
 import { formatCurrency } from '../../utils/currency';
 import { PAYMENT_COORDINATES } from '../../utils/payment';
 import DashboardModal from './DashboardModal';
+import { ORDER_STATUS_MAP, STATUS_COLOR } from './store/constants';
 
 const getPaymentStatusBadge = (status) => {
 	const map = {
@@ -77,13 +78,20 @@ const OrderDetailsModal = ({ order, onClose }) => {
 					<div className="bg-white border border-accent/10 rounded-xl p-3">
 						<p className="text-xs font-medium text-[#78716C] mb-2">Itens</p>
 						<div className="space-y-2">
-							{order.storeOrders.map((so) => (
+							{order.storeOrders.map((so) => {
+								const st = ORDER_STATUS_MAP[so.status];
+								return (
 								<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
 									<div className="flex items-center gap-2 px-3 py-1.5 bg-sand text-xs font-medium text-[#1C1917] border-b border-accent/10">
 										{so.store?.logo && (
 											<img src={so.store.logo} alt="" className="w-4 h-4 rounded-full object-cover" />
 										)}
 										{so.store?.name || 'Loja'}
+										{st && (
+											<span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 ${STATUS_COLOR[st.color]}`}>
+												<st.Icon className="w-3 h-3" /> {st.label}
+											</span>
+										)}
 									</div>
 									<div className="divide-y divide-accent/5">
 										{so.items?.map((item) => (
@@ -98,7 +106,8 @@ const OrderDetailsModal = ({ order, onClose }) => {
 										))}
 									</div>
 								</div>
-							))}
+								);
+							})}
 						</div>
 					</div>
 				)}
@@ -342,6 +351,20 @@ const OrderHistory = () => {
 										</div>
 									)}
 								</div>
+								{order.storeOrders?.length > 0 && (
+									<div className="mt-3 flex flex-wrap gap-1.5">
+										{order.storeOrders.map(so => {
+											const st = ORDER_STATUS_MAP[so.status];
+											if (!st) return null;
+											return (
+												<span key={so.id} className={`text-xs px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 ${STATUS_COLOR[st.color]}`}>
+													<st.Icon className="w-3 h-3" />
+													{so.store?.name}: {st.label}
+												</span>
+											);
+										})}
+									</div>
+								)}
 							</div>
 						);
 					})}
