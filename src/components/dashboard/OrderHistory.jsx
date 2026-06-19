@@ -54,6 +54,12 @@ const OrderDetailsModal = ({ order, onClose }) => {
 							<span>{order.deliveryZone.name}</span>
 						</div>
 					)}
+					{order.deliveryOption === 'delivery' && order.deliveryPrice != null && (
+						<div className="flex items-center justify-between">
+							<span className="text-[#78716C] text-xs font-medium">Taxa de Entrega</span>
+							<span className="font-medium">{formatCurrency(order.deliveryPrice)}</span>
+						</div>
+					)}
 					<div className="flex items-center justify-between">
 						<span className="text-[#78716C] text-xs font-medium">Data</span>
 						<span>{new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
