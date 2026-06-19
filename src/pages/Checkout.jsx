@@ -9,6 +9,7 @@ import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import { notyf } from '../utils/notyf';
 import { formatCurrency } from '../utils/currency';
+import { PAYMENT_COORDINATES } from '../utils/payment';
 import { useCreateOrder } from '../hooks/queries/useOrders';
 import { uploadToCloudinary } from '../services/cloudinary';
 import http from '../services/http';
@@ -441,7 +442,7 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Multicaixa Express</strong></p>
 												<p className="text-xs text-[#78716C]">
-													Faça o pagamento via Multicaixa Express para o número <strong>+244 923 456 789</strong> (Kusumba).
+													Faça o pagamento via Multicaixa Express para o número <strong>{PAYMENT_COORDINATES.multicaixa_express.phone}</strong> ({PAYMENT_COORDINATES.multicaixa_express.name}).
 												</p>
 											</div>
 										)}
@@ -450,9 +451,9 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Transferência Bancária</strong></p>
 												<div className="space-y-1 text-xs text-[#78716C]">
-													<p><strong>Banco:</strong> Banco Angolano de Investimentos (BAI)</p>
-													<p><strong>Titular:</strong> Kusumba</p>
-													<p><strong>IBAN:</strong> AO06 0000 0123 4567 8901 2345 6</p>
+													<p><strong>Banco:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.bank}</p>
+													<p><strong>Titular:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.titular}</p>
+													<p><strong>IBAN:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.iban}</p>
 												</div>
 											</div>
 										)}

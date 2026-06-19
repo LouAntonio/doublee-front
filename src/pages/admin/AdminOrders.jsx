@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IoCheckmarkCircle, IoCloseCircle, IoEyeOutline, IoSearchOutline, IoChevronDown } from 'react-icons/io5';
+import { IoCheckmarkCircle, IoCloseCircle, IoDocumentOutline, IoEyeOutline, IoSearchOutline } from 'react-icons/io5';
 import { useAdminOrders, useConfirmPayment, useRejectPayment } from '../../hooks/queries/useOrders';
 import { formatCurrency } from '../../utils/currency';
 
@@ -9,6 +9,11 @@ const PAYMENT_STATUS_MAP = {
 	paid: { label: 'Pago', class: 'bg-green-50 text-green-700 border-green-200' },
 	failed: { label: 'Falhou', class: 'bg-red-50 text-red-700 border-red-200' },
 	refunded: { label: 'Reembolsado', class: 'bg-purple-50 text-purple-700 border-purple-200' },
+};
+
+const PAYMENT_LABELS = {
+	multicaixa_express: 'Multicaixa Express',
+	transferencia_bancaria: 'Transferência Bancária',
 };
 
 const ProofModal = ({ order, onClose }) => {
@@ -27,56 +32,158 @@ const ProofModal = ({ order, onClose }) => {
 		onClose();
 	};
 
+	const badge = PAYMENT_STATUS_MAP[order.paymentStatus] || PAYMENT_STATUS_MAP.pending;
+
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
 			<div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-				<div className="flex items-center justify-between mb-4">
+				<div className="flex items-center justify-between mb-6">
 					<h3 className="text-lg font-display font-semibold text-[#1C1917]">Detalhes da Encomenda</h3>
-					<button onClick={onClose} className="text-[#78716C] hover:text-[#1C1917] cursor-pointer text-xl">&times;</button>
+					<button onClick={onClose} className="text-[#78716C] hover:text-[#1C1917] cursor-pointer text-xl leading-none">&times;</button>
 				</div>
 
-				<div className="space-y-3 text-sm">
-					<p><strong>Pedido:</strong> #{order.id.slice(0, 8).toUpperCase()}</p>
-					<p><strong>Cliente:</strong> {order.user?.name} {order.user?.surname} ({order.user?.email})</p>
-					<p><strong>Valor:</strong> {formatCurrency(order.totalAmount)}</p>
-					<p><strong>Método:</strong> {order.paymentMethod === 'multicaixa_express' ? 'Multicaixa Express' : order.paymentMethod === 'transferencia_bancaria' ? 'Transferência Bancária' : '-'}</p>
-					<p><strong>Data:</strong> {new Date(order.createdAt).toLocaleString('pt-AO')}</p>
-				</div>
+				<div className="space-y-4">
 
-				{order.paymentProof && (
-					<div className="mt-4">
-						<p className="text-sm font-semibold text-[#1C1917] mb-2">Comprovativo de Pagamento:</p>
-						<a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
-							<img src={order.paymentProof} alt="Comprovativo" className="max-w-full max-h-96 rounded-xl border border-accent/10 object-contain bg-sand" />
-						</a>
+					{/* Order Info */}
+					<div className="bg-sand rounded-xl p-4 space-y-1 text-sm text-[#1C1917]">
+						<p><strong>Pedido:</strong> #{order.id.slice(0, 8).toUpperCase()}</p>
+						<p><strong>Cliente:</strong> {order.user?.name} {order.user?.surname}</p>
+						<p className="text-[#78716C]">{order.user?.email}{order.user?.phone ? ` \u2022 ${order.user.phone}` : ''}</p>
+						<p><strong>Data:</strong> {new Date(order.createdAt).toLocaleString('pt-AO')}</p>
+						<p>
+							<strong>Opção:</strong>{' '}
+							{order.deliveryOption === 'pickup' ? 'Levantar na Sede' : 'Entrega ao Domicílio'}
+							{order.deliveryOption === 'delivery' && order.deliveryZone && (
+								<> &mdash; {order.deliveryZone.name}</>
+							)}
+						</p>
 					</div>
-				)}
 
-				{order.paymentStatus === 'awaiting_confirmation' && (
-					<div className="mt-6 space-y-3">
-						<div className="flex gap-3">
-							<button onClick={handleConfirm} disabled={confirming}
-								className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2">
-								<IoCheckmarkCircle className="w-4 h-4" /> {confirming ? 'A confirmar...' : 'Confirmar Pagamento'}
-							</button>
-							<button onClick={() => setShowRejectInput(!showRejectInput)} disabled={rejecting}
-								className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2">
-								<IoCloseCircle className="w-4 h-4" /> Rejeitar
-							</button>
+					{/* Payment Details */}
+					<div className="bg-white border border-accent/10 rounded-xl p-4">
+						<div className="flex items-center justify-between mb-3">
+							<h4 className="text-sm font-semibold text-[#1C1917]">Dados do Pagamento</h4>
+							<span className={`text-xs px-2.5 py-1 rounded-full font-medium ${badge.class}`}>{badge.label}</span>
 						</div>
-						{showRejectInput && (
-							<div className="space-y-2">
-								<textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
-									placeholder="Motivo da rejeição (opcional)"
-									className="w-full px-4 py-2 border border-accent/20 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent/30" rows={2} />
-								<button onClick={handleReject} disabled={rejecting}
-									className="px-4 py-2 bg-red-500 text-white rounded-xl text-xs font-semibold hover:bg-red-600 cursor-pointer">
-									{rejecting ? 'A rejeitar...' : 'Confirmar Rejeição'}
+						<div className="space-y-1.5 text-sm text-[#1C1917]">
+							<div className="flex justify-between">
+								<span className="text-[#78716C]">Método</span>
+								<span className="font-medium">{PAYMENT_LABELS[order.paymentMethod] || '-'}</span>
+							</div>
+							<div className="flex justify-between">
+								<span className="text-[#78716C]">Valor</span>
+								<span className="font-semibold">{formatCurrency(order.totalAmount)}</span>
+							</div>
+							{order.paymentProofSubmittedAt && (
+								<div className="flex justify-between">
+									<span className="text-[#78716C]">Comprovativo submetido</span>
+									<span>{new Date(order.paymentProofSubmittedAt).toLocaleString('pt-AO')}</span>
+								</div>
+							)}
+							{order.paymentConfirmedAt && (
+								<div className="flex justify-between">
+									<span className="text-[#78716C]">Pagamento confirmado</span>
+									<span>{new Date(order.paymentConfirmedAt).toLocaleString('pt-AO')}</span>
+								</div>
+							)}
+							{order.confirmedBy && (
+								<div className="flex justify-between">
+									<span className="text-[#78716C]">Confirmado por</span>
+									<span>{order.confirmedBy.name}</span>
+								</div>
+							)}
+						</div>
+					</div>
+
+					{/* Payment Proof */}
+					{order.paymentProof && (
+						<div className="bg-white border border-accent/10 rounded-xl p-4">
+							<h4 className="text-sm font-semibold text-[#1C1917] mb-3">Comprovativo de Pagamento</h4>
+							{order.paymentProof.match(/\.pdf/i) ? (
+								<a href={order.paymentProof} target="_blank" rel="noopener noreferrer"
+									className="flex items-center gap-3 p-4 bg-red-50 rounded-xl border border-red-200 hover:bg-red-100 transition-colors">
+									<IoDocumentOutline className="w-8 h-8 text-red-500 shrink-0" />
+									<div className="text-sm">
+										<p className="font-medium text-[#1C1917]">Documento PDF</p>
+										<p className="text-xs text-[#78716C]">Clique para abrir o comprovativo</p>
+									</div>
+									<IoEyeOutline className="w-5 h-5 text-red-500 ml-auto shrink-0" />
+								</a>
+							) : (
+								<a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
+									<img src={order.paymentProof} alt="Comprovativo" className="max-w-full max-h-96 rounded-xl border border-accent/10 object-contain bg-sand" />
+								</a>
+							)}
+						</div>
+					)}
+
+					{/* Store Orders / Items */}
+					{order.storeOrders?.length > 0 && (
+						<div className="bg-white border border-accent/10 rounded-xl p-4">
+							<h4 className="text-sm font-semibold text-[#1C1917] mb-3">Itens da Encomenda</h4>
+							<div className="space-y-3">
+								{order.storeOrders.map((so) => (
+									<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
+										<div className="flex items-center gap-2 px-3 py-2 bg-sand text-sm font-medium text-[#1C1917] border-b border-accent/10">
+											{so.store?.logo && (
+												<img src={so.store.logo} alt="" className="w-5 h-5 rounded-full object-cover" />
+											)}
+											{so.store?.name || 'Loja'}
+											<span className="ml-auto text-xs text-[#78716C] font-normal">{so.status || '-'}</span>
+										</div>
+										<div className="divide-y divide-accent/5">
+											{so.items?.map((item) => (
+												<div key={item.id} className="flex items-center gap-3 px-3 py-2 text-sm text-[#1C1917]">
+													{item.product?.image && (
+														<img src={item.product.image} alt="" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
+													)}
+													<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
+													<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
+													<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
+												</div>
+											))}
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* Delivery Address */}
+					{order.deliveryOption !== 'pickup' && order.shippingAddress && (
+						<div className="bg-white border border-accent/10 rounded-xl p-4 text-sm text-[#1C1917]">
+							<h4 className="font-semibold mb-1">Morada de Entrega</h4>
+							<p className="text-[#78716C]">{order.shippingAddress}</p>
+						</div>
+					)}
+
+					{/* Actions */}
+					{order.paymentStatus === 'awaiting_confirmation' && (
+						<div className="space-y-3 pt-2">
+							<div className="flex gap-3">
+								<button onClick={handleConfirm} disabled={confirming}
+									className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2">
+									<IoCheckmarkCircle className="w-4 h-4" /> {confirming ? 'A confirmar...' : 'Confirmar Pagamento'}
+								</button>
+								<button onClick={() => setShowRejectInput(!showRejectInput)} disabled={rejecting}
+									className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2">
+									<IoCloseCircle className="w-4 h-4" /> Rejeitar
 								</button>
 							</div>
-						)}
-					</div>
-				)}
+							{showRejectInput && (
+								<div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-2">
+									<textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
+										placeholder="Motivo da rejeição (opcional)"
+										className="w-full px-4 py-2 border border-accent/20 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-300" rows={2} />
+									<button onClick={handleReject} disabled={rejecting}
+										className="px-4 py-2 bg-red-500 text-white rounded-xl text-xs font-semibold hover:bg-red-600 cursor-pointer">
+										{rejecting ? 'A rejeitar...' : 'Confirmar Rejeição'}
+									</button>
+								</div>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
