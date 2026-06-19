@@ -308,8 +308,6 @@ const AdminUsers = () => {
 								<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
 									<h5 className="font-bold text-[#1C1917] mb-2">Morada / Localização</h5>
 									<ul className="text-sm text-[#78716C] space-y-1">
-										<li><span className="font-semibold text-[#1C1917]">País:</span> {selectedUserDetails.details.country || 'Não informado'}</li>
-										<li><span className="font-semibold text-[#1C1917]">Província:</span> {selectedUserDetails.details.province || 'Não informado'}</li>
 										<li><span className="font-semibold text-[#1C1917]">Endereço:</span> {selectedUserDetails.details.shippingAddress || 'Não informado'}</li>
 									</ul>
 								</div>
