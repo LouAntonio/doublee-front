@@ -62,7 +62,7 @@ const AdminLogin = () => {
 					</div>
 					<div className="text-center mb-10">
 						<h2 className="text-3xl font-display font-bold text-accent mb-2">
-							Kusumba
+							Kuvangana
 						</h2>
 						<p className="text-[#78716C] text-sm">
 							Oainel de Administração
@@ -84,7 +84,7 @@ const AdminLogin = () => {
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 									className="block w-full pl-10 pr-3 py-2 border border-accent/20 focus:border-accent rounded-lg bg-sand/50 text-[#1C1917] placeholder-[#78716C] focus:outline-none transition"
-									placeholder="admin@Kusumba.com"
+									placeholder="admin@Kuvangana.com"
 								/>
 							</div>
 						</div>
@@ -119,7 +119,7 @@ const AdminLogin = () => {
 					</form>
 
 					<div className="mt-8 text-center text-xs text-[#78716C]">
-						&copy; {new Date().getFullYear()} Kusumba. Todos os direitos reservados.
+						&copy; {new Date().getFullYear()} Kuvangana. Todos os direitos reservados.
 					</div>
 				</div>
 			</div>

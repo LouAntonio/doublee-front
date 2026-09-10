@@ -51,7 +51,7 @@ const LojaDetails = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [showShareMenu, setShowShareMenu] = useState(false);
 
-	useDocumentTitle(store ? `${store.name} – Kusumba` : 'Detalhes da Loja – Kusumba');
+	useDocumentTitle(store ? `${store.name} – Kuvangana` : 'Detalhes da Loja – Kuvangana');
 
 	useEffect(() => {
 		let mounted = true;
@@ -169,7 +169,7 @@ const LojaDetails = () => {
 	const currentUrl = window.location.href;
 
 	const handleShare = (network) => {
-		const text = `Confira a loja ${store?.name} na Kusumba!`;
+		const text = `Confira a loja ${store?.name} na Kuvangana!`;
 		if (network === 'facebook') {
 			window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, '_blank');
 		} else if (network === 'whatsapp') {
@@ -611,7 +611,7 @@ const LojaDetails = () => {
 
 										<div className="mt-5 pt-4 border-t border-[#E8E2DA] flex items-center gap-2">
 											<IoShieldCheckmarkOutline className="text-emerald-500 text-lg" />
-											<p className="font-body text-xs text-[#78716C]">Loja verificada e aprovada pela Kusumba</p>
+											<p className="font-body text-xs text-[#78716C]">Loja verificada e aprovada pela Kuvangana</p>
 										</div>
 									</div>
 								</div>

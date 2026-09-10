@@ -30,7 +30,7 @@ const sortProducts = (items, option) => {
 };
 
 const Produtos = () => {
-	useDocumentTitle('Produtos - Kusumba');
+	useDocumentTitle('Produtos - Kuvangana');
 	const [searchParams] = useSearchParams();
 
 	const urlSearch = searchParams.get('search') || '';
@@ -125,7 +125,7 @@ const Produtos = () => {
 									<span className="text-orange-400">Disponíveis</span>
 								</h1>
 								<p className="text-orange-100/80 text-base md:text-lg max-w-xl leading-relaxed">
-									Explore todos os produtos disponíveis na Kusumba. Encontre o que precisa para o seu dia a dia.
+									Explore todos os produtos disponíveis na Kuvangana. Encontre o que precisa para o seu dia a dia.
 								</p>
 							</div>
 

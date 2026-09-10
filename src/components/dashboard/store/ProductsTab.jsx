@@ -399,7 +399,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 							<div>
 								<p className="text-sm font-semibold text-amber-800">Aviso: Responsabilidade de Entrega</p>
 								<p className="text-xs text-amber-700 mt-1">
-									Como vendedor, é da sua responsabilidade fazer o produto chegar até à sede da plataforma Kusumba (quando forem comprados).
+									Como vendedor, é da sua responsabilidade fazer o produto chegar até à sede da plataforma Kuvangana (quando forem comprados).
 									Os custos de transporte até à sede são por sua conta. A plataforma trata da entrega final ao cliente.
 								</p>
 							</div>

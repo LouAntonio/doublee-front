@@ -119,7 +119,7 @@ const Dashboard = () => {
 									{getGreeting()}, {user?.name || 'Cliente'}
 								</h1>
 								<p className="text-sm text-[#78716C] mt-1 font-body">
-                                    Bem-vindo(a) à sua área pessoal — <span className="text-accent font-semibold">Kusumba Angola</span>
+                                    Bem-vindo(a) à sua área pessoal — <span className="text-accent font-semibold">Kuvangana Angola</span>
 								</p>
 							</div>
 							{!isVerified && (

@@ -27,7 +27,7 @@ const CategorySkeleton = () => (
 );
 
 const Categorias = () => {
-	useDocumentTitle('Categorias - Kusumba');
+	useDocumentTitle('Categorias - Kuvangana');
 
 	const { data: categories, isLoading, isError, refetch } = useCategories();
 	const [searchQuery, setSearchQuery] = useState('');

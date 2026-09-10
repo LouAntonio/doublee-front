@@ -15,7 +15,7 @@ import { uploadToCloudinary } from '../services/cloudinary';
 import http from '../services/http';
 
 const Checkout = () => {
-	useDocumentTitle('Checkout - Kusumba');
+	useDocumentTitle('Checkout - Kuvangana');
 	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const { user } = useAuthStore();
 	const [currentStep, setCurrentStep] = useState(1);

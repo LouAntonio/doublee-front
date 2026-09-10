@@ -7,7 +7,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import useWishlistStore from '../stores/wishlistStore';
 
 const Wishlist = () => {
-	useDocumentTitle('Wishlist - Kusumba');
+	useDocumentTitle('Wishlist - Kuvangana');
 	const { wishlistItems, isLoading, loadWishlist } = useWishlistStore();
 
 	useEffect(() => {

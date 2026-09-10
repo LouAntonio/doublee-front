@@ -16,7 +16,7 @@ import './lojas.css';
 const ITEMS_PER_PAGE = 8;
 
 const Lojas = () => {
-	useDocumentTitle('Lojas - Kusumba');
+	useDocumentTitle('Lojas - Kuvangana');
 
 	const [searchParams] = useSearchParams();
 	const search = searchParams.get('search') || '';

@@ -11,7 +11,7 @@ const AdminDashboardLayout = () => {
 	});
 	const location = useLocation();
 
-	useDocumentTitle('Kusumba | Painel Administrativo');
+	useDocumentTitle('Kuvangana | Painel Administrativo');
 
 	if (isLoading) {
 		return (
@@ -54,7 +54,7 @@ const AdminDashboardLayout = () => {
 					{sidebarOpen && (
 						<div className="flex items-center gap-3 overflow-hidden">
 							<img
-								src="/images/logo/logo.png" alt="Kusumba Logo"
+								src="/images/logo/logo.png" alt="Kuvangana Logo"
 								className="w-20 object-contain"
 							/>
 						</div>

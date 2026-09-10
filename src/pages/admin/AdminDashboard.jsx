@@ -105,7 +105,7 @@ const AdminDashboard = () => {
 			{/* Page Title */}
 			<div>
 				<h2 className="text-3xl font-display font-bold text-[#1C1917] tracking-tight">Visão Geral</h2>
-				<p className="text-[#78716C] mt-1 font-body">Bem-vindo ao painel de administração da Kusumba.</p>
+				<p className="text-[#78716C] mt-1 font-body">Bem-vindo ao painel de administração da Kuvangana.</p>
 			</div>
 
 			{/* Overview Cards */}

@@ -10,7 +10,7 @@ import LatestProductsSection from '../components/LatestProductsSection';
 
 
 const Home = () => {
-	useDocumentTitle('Home - Kusumba');
+	useDocumentTitle('Home - Kuvangana');
 
 	return (
 		<div style={{ backgroundColor: '#ededed' }}>

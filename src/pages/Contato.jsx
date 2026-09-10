@@ -20,7 +20,7 @@ const INITIAL_ERRORS = { name: '', email: '', subject: '', message: '' };
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 const Contato = () => {
-	useDocumentTitle('Contato - Kusumba');
+	useDocumentTitle('Contato - Kuvangana');
 
 	const [form, setForm] = useState(INITIAL_FORM);
 	const [errors, setErrors] = useState(INITIAL_ERRORS);
@@ -102,8 +102,8 @@ const Contato = () => {
 		{
 			icon: <FaEnvelope />,
 			title: 'E-mail',
-			content: 'contato@Kusumba.ao',
-			action: { label: 'Enviar e-mail', href: 'mailto:contato@Kusumba.ao' },
+			content: 'contato@kuvangana.com',
+			action: { label: 'Enviar e-mail', href: 'mailto:contato@kuvangana.com' },
 		},
 	];
 
@@ -131,7 +131,7 @@ const Contato = () => {
 							className="text-lg md:text-xl text-white/80 max-w-xl leading-relaxed animate-fade-in-up"
 							style={{ animationDelay: '0.15s' }}
 						>
-							Estamos aqui para ajudar. Dúvidas, sugestões ou parcerias - a Kusumba está pronta para ouvir.
+							Estamos aqui para ajudar. Dúvidas, sugestões ou parcerias - a Kuvangana está pronta para ouvir.
 						</p>
 					</div>
 				</div>
@@ -366,7 +366,7 @@ const Contato = () => {
 								allowFullScreen
 								loading="lazy"
 								referrerPolicy="no-referrer-when-downgrade"
-								title="Localização da Kusumba"
+								title="Localização da Kuvangana"
 							/>
 						</div>
 

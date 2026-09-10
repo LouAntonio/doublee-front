@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getPublicCoupons } from '../services/coupons';
 
 const Cupoes = () => {
-	useDocumentTitle('Cupões - Kusumba');
+	useDocumentTitle('Cupões - Kuvangana');
 
 	const { data: coupons = [], isLoading, isError, refetch } = useQuery({
 		queryKey: ['coupons', 'public'],

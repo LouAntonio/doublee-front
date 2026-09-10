@@ -46,7 +46,7 @@ const CategoryProducts = () => {
 	const categoryName = category?.name || '';
 
 	useDocumentTitle(
-		categoryName ? `${categoryName} - Kusumba` : 'Categoria - Kusumba'
+		categoryName ? `${categoryName} - Kuvangana` : 'Categoria - Kuvangana'
 	);
 
 	const queryParams = useMemo(
