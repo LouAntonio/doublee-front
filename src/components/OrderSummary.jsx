@@ -6,8 +6,9 @@ import { Link } from 'react-router-dom';
 import { notyf } from '../utils/notyf';
 import { useValidateCoupon } from '../hooks/queries/useProfile';
 
-const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0, deliveryZoneName }) => {
-	const { cartItems, getSubtotal, getTax, appliedCoupon, setAppliedCoupon, getDiscount } = useCartStore();
+const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0, deliveryZoneName, items: itemsProp }) => {
+	const { cartItems, getTax, appliedCoupon, setAppliedCoupon } = useCartStore();
+	const items = itemsProp || cartItems;
 	const [promoCode, setPromoCode] = useState('');
 	const [error, setError] = useState('');
 	const { mutateAsync: validateCoupon } = useValidateCoupon();
@@ -20,7 +21,7 @@ const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0,
 			const res = await validateCoupon(promoCode.toUpperCase());
 
 			if (res?.success) {
-				const hasItemsFromStore = cartItems.some(item =>
+				const hasItemsFromStore = items.some(item =>
 					(item.store?.id === res.data.storeId) || (item.product?.storeId === res.data.storeId)
 				);
 
@@ -40,9 +41,13 @@ const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0,
 		}
 	};
 
-	const subtotal = getSubtotal();
+	const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0);
 	const tax = getTax();
-	const discountAmount = getDiscount();
+	const discountAmount = appliedCoupon
+		? items
+			.filter(item => (item.store?.id === appliedCoupon.storeId) || (item.product?.storeId === appliedCoupon.storeId))
+			.reduce((sum, item) => sum + item.price * item.quantity, 0) * (appliedCoupon.discount / 100)
+		: 0;
 	const shipping = deliveryOption === 'delivery' ? deliveryPrice : 0;
 	const total = subtotal + shipping + tax - discountAmount;
 
@@ -51,7 +56,7 @@ const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0,
 			<h2 className="font-display text-lg text-[#1C1917] mb-4">Resumo do Pedido</h2>
 
 			<div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
-				{cartItems.map((item) => (
+				{items.map((item) => (
 					<div key={item.id} className="flex justify-between text-sm">
 						<div className="flex-1">
 							<p className="text-[#1C1917] font-body line-clamp-1">{item.name || item.title || 'Produto'}</p>

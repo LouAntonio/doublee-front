@@ -35,6 +35,7 @@ const useCartStore = create(
 	persist(
 		(set, get) => ({
 			cartItems: [],
+			checkoutItems: [],
 			addingProductIds: [],
 			removingItemIds: [],
 			updatingItemIds: [],
@@ -100,7 +101,7 @@ const useCartStore = create(
 			},
 
 			addToCart: async (product, quantity = 1, showNotification = true) => {
-				if (!product?.id) return;
+				if (!product?.id) return false;
 				const { setProductAdding, loadCartFromApi } = get();
 				setProductAdding(product.id, true);
 				try {
@@ -110,13 +111,13 @@ const useCartStore = create(
 							if (res?.success) {
 								await loadCartFromApi();
 								if (showNotification) notyf.success(res.msg || 'Produto adicionado ao carrinho!');
-								return;
+								return true;
 							}
 							notyf.error(res?.msg || 'Não foi possível adicionar ao carrinho.');
-							return;
+							return false;
 						} catch {
 							notyf.error('Erro ao adicionar ao carrinho.');
-							return;
+							return false;
 						}
 					}
 
@@ -134,6 +135,7 @@ const useCartStore = create(
 						return { cartItems: [...state.cartItems, normalizeCartItem({ ...product, quantity })] };
 					});
 					if (showNotification) notyf.success('Produto adicionado ao carrinho!');
+					return true;
 				} finally {
 					setProductAdding(product.id, false);
 				}
@@ -219,6 +221,9 @@ const useCartStore = create(
 			},
 
 			resetCart: () => set({ cartItems: [] }),
+
+			setCheckoutItems: (items) => set({ checkoutItems: (items || []).map(normalizeCartItem) }),
+			clearCheckoutItems: () => set({ checkoutItems: [] }),
 
 			getCartTotal: () => get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
 			getCartCount: () => get().cartItems.reduce((count, item) => count + item.quantity, 0),

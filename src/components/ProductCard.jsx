@@ -7,9 +7,11 @@ import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import useWishlistStore from '../stores/wishlistStore';
 import { notyf } from '../utils/notyf';
+import useBuyNow from '../hooks/useBuyNow';
 
 const ProductCard = ({ product, onClick }) => {
 	const { addToCart, isAddingProduct } = useCartStore();
+	const buyNow = useBuyNow();
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
 	const navigate = useNavigate();
@@ -67,6 +69,11 @@ const ProductCard = ({ product, onClick }) => {
 			price: displayPrice,
 			image: productImage
 		});
+	};
+
+	const handleBuyNow = (e) => {
+		e?.stopPropagation();
+		buyNow({ ...product, price: displayPrice }, 1);
 	};
 
 	const handleToggleWishlist = async (e) => {
@@ -160,18 +167,27 @@ const ProductCard = ({ product, onClick }) => {
 					)}
 				</div>
 
-				<button
-					onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
-					disabled={isAdding}
-					className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-[#F97316] text-xs font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer mt-auto ${isAdding ? 'opacity-70 cursor-not-allowed' : ''}`}
-				>
-					{isAdding ? (
-						<span className="w-4 h-4 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" aria-label="Adicionando" />
-					) : (
-						<IoCartOutline />
-					)}
-					{isAdding ? 'Adicionando...' : 'Adicionar'}
-				</button>
+				<div className="grid grid-cols-2 gap-2 mt-auto">
+					<button
+						onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+						disabled={isAdding}
+						className={`w-full flex items-center justify-center gap-1 py-1.5 rounded-xl bg-orange-50 text-[#F97316] text-[11px] font-semibold hover:bg-[#F97316] hover:text-white border border-orange-100 hover:border-[#F97316] transition-colors cursor-pointer ${isAdding ? 'opacity-70 cursor-not-allowed' : ''}`}
+					>
+						{isAdding ? (
+							<span className="w-3.5 h-3.5 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" aria-label="Adicionando" />
+						) : (
+							<IoCartOutline size={14} />
+						)}
+						{isAdding ? 'Adicionando...' : 'Adicionar'}
+					</button>
+
+					<button
+						onClick={handleBuyNow}
+						className="w-full flex items-center justify-center py-1.5 rounded-xl bg-[#F97316] text-white text-[11px] font-semibold hover:bg-orange-600 border border-[#F97316] transition-colors cursor-pointer"
+					>
+						Comprar
+					</button>
+				</div>
 			</div>
 		</div>
 	);

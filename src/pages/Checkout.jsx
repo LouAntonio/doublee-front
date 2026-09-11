@@ -20,9 +20,16 @@ const FALLBACK_PAYMENT = {
 
 const Checkout = () => {
 	useDocumentTitle('Checkout - Kuvangana');
-	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
+	const { cartItems, checkoutItems, clearCart, clearCheckoutItems, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const { user } = useAuthStore();
 	const [currentStep, setCurrentStep] = useState(1);
+
+	const activeItems = checkoutItems.length ? checkoutItems : cartItems;
+
+	// Fluxo "Comprar Agora": ao sair do checkout sem concluir, limpa os itens efémeros
+	useEffect(() => {
+		return () => clearCheckoutItems();
+	}, [clearCheckoutItems]);
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderId, setOrderId] = useState('');
@@ -201,7 +208,7 @@ const Checkout = () => {
 			}
 
 			const payload = {
-				items: cartItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
+				items: activeItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
 				shippingAddress: deliveryOption === 'delivery' ? shippingInfo.address : 'Levantar na Sede',
 				couponCode: appliedCoupon?.code,
 				deliveryOption,
@@ -220,6 +227,7 @@ const Checkout = () => {
 				setOrderPlaced(true);
 				setOrderId(res?.data?.orderId || '');
 				clearCart();
+				clearCheckoutItems();
 				setAppliedCoupon(null);
 			} else {
 				notyf.error(res?.msg || 'Erro ao realizar pedido.');
@@ -738,6 +746,7 @@ const Checkout = () => {
 
 					<div className="lg:col-span-1">
 						<OrderSummary showPromoCode={false}
+							items={activeItems}
 							deliveryOption={deliveryOption}
 							deliveryPrice={selectedZonePrice}
 							deliveryZoneName={deliveryZones.find(z => z.id === selectedZoneId)?.name} />

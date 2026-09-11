@@ -10,6 +10,7 @@ import { isPromotionActive } from '../utils/date';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
 import { useProduct } from '../hooks/queries/useProducts';
+import useBuyNow from '../hooks/useBuyNow';
 
 const parseSpecs = (p) => {
 	if (!p?.characteristics) return [];
@@ -59,6 +60,7 @@ const ProductDetails = () => {
 	const { slug } = useParams();
 	const navigate = useNavigate();
 	const { addToCart, isAddingProduct } = useCartStore();
+	const buyNow = useBuyNow();
 	const { isAuthenticated } = useAuthStore();
 	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
 	const [selectedImage, setSelectedImage] = useState(0);
@@ -138,6 +140,12 @@ const ProductDetails = () => {
 		if (product) {
 			addToCart(product, quantity);
 		}
+	};
+
+	const handleBuyNow = () => {
+		if (!product) return;
+		if (product.stock === 0) return;
+		buyNow(product, quantity);
 	};
 
 	const incrementQuantity = () => {
@@ -432,16 +440,26 @@ const ProductDetails = () => {
 								</div>
 							</div>
 
-							<button
-								onClick={handleAddToCart}
-								disabled={product.stock === 0 || isAdding}
-								className="w-full py-3.5 bg-accent text-white rounded-full font-display text-base font-bold tracking-wide shadow-lg hover:bg-accent-dark hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg flex items-center justify-center gap-2"
-							>
-								{isAdding && (
-									<span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full inline-block animate-spin" aria-label="Adicionando" />
-								)}
-								{isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
-							</button>
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+								<button
+									onClick={handleAddToCart}
+									disabled={product.stock === 0 || isAdding}
+									className="w-full py-2.5 bg-accent text-white rounded-xl font-display text-sm font-bold tracking-wide shadow-md hover:bg-accent-dark hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md flex items-center justify-center gap-2"
+								>
+									{isAdding && (
+										<span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full inline-block animate-spin" aria-label="Adicionando" />
+									)}
+									{isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
+								</button>
+
+								<button
+									onClick={handleBuyNow}
+									disabled={product.stock === 0 || isAdding}
+									className="w-full py-2.5 bg-white text-accent border-2 border-accent rounded-xl font-display text-sm font-bold tracking-wide hover:bg-accent hover:text-white hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+								>
+									Comprar Agora
+								</button>
+							</div>
 
 							<div className="pt-4 border-t border-[#1C1917]/10 mt-4 space-y-3">
 								<div className="flex items-center gap-3">
