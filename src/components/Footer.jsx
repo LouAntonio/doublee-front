@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
+import { FaInstagram } from 'react-icons/fa';
 
 const footerLinks = {
 	empresa: {
@@ -34,11 +34,7 @@ const footerLinks = {
 };
 
 const socialLinks = [
-	{ icon: FaFacebookF, href: '#', label: 'Facebook' },
-	{ icon: FaInstagram, href: '#', label: 'Instagram' },
-	{ icon: FaYoutube, href: '#', label: 'YouTube' },
-	{ icon: FaLinkedinIn, href: '#', label: 'LinkedIn' },
-	{ icon: FaTiktok, href: '#', label: 'TikTok' },
+	{ icon: FaInstagram, href: 'https://www.instagram.com/kuvangana_ao?stkn=MXNvb3h1eGtzYjRqNg%3D%3D&utm_source=qr', label: 'Instagram' },
 ];
 
 const Footer = () => {

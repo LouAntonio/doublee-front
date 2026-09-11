@@ -91,19 +91,19 @@ const Contato = () => {
 		{
 			icon: <FaMapMarkerAlt />,
 			title: 'Endereço',
-			content: 'Centralidade do Kilamba, Ed. B15, Apt. 33, Luanda - Angola',
+			content: 'Urbanização Kk5000, Bloco F12-A',
 		},
 		{
 			icon: <FaPhoneAlt />,
 			title: 'Telefone',
-			content: '+244 923 000 000',
-			action: { label: 'Ligar agora', href: 'tel:+244923000000' },
+			content: '+244 939 540 184',
+			action: { label: 'Ligar agora', href: 'tel:+244939540184' },
 		},
 		{
 			icon: <FaEnvelope />,
 			title: 'E-mail',
-			content: 'contato@kuvangana.com',
-			action: { label: 'Enviar e-mail', href: 'mailto:contato@kuvangana.com' },
+			content: 'kuvanganalda@gmail.com',
+			action: { label: 'Enviar e-mail', href: 'mailto:kuvanganalda@gmail.com' },
 		},
 	];
 
@@ -296,7 +296,7 @@ const Contato = () => {
 					<div className="lg:col-span-2 flex flex-col gap-6">
 
 						<a
-							href="https://wa.me/244923000000?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20com%20a%20Double%20E."
+							href="https://wa.me/244939540184?text=Ol%C3%A1%21%20Gostaria%20de%20falar%20com%20a%20Kuvangana."
 							target="_blank"
 							rel="noreferrer"
 							className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#25D366] to-[#128C7E] p-6 text-white animate-fade-in-up"

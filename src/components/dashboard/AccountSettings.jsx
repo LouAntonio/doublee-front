@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
-import { IoMailOutline, IoCheckmarkCircleOutline, IoLogoGoogle } from 'react-icons/io5';
+import { IoMailOutline, IoCheckmarkCircleOutline, IoLogoGoogle, IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import useAuthStore from '../../stores/authStore';
 import { unlinkGoogle } from '../../services/auth';
 import { GoogleLinkButton } from '../GoogleButton';
@@ -23,6 +23,11 @@ const AccountSettings = () => {
 		confirmPassword: '',
 	});
 
+	const [showEmailPassword, setShowEmailPassword] = useState(false);
+	const [showCurrentPass, setShowCurrentPass] = useState(false);
+	const [showNewPass, setShowNewPass] = useState(false);
+	const [showConfirmPass, setShowConfirmPass] = useState(false);
+
 	// Passo 1: solicitar OTP
 	const handleEmailRequest = async (e) => {
 		e.preventDefault();
@@ -35,8 +40,8 @@ const AccountSettings = () => {
 			} else {
 				notyf.error(data?.msg || 'Erro ao solicitar alteração.');
 			}
-		} catch {
-			notyf.error('Erro ao conectar com o servidor.');
+		} catch (err) {
+			notyf.error(err?.message || 'Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoadingEmail(false);
 		}
@@ -56,8 +61,8 @@ const AccountSettings = () => {
 			} else {
 				notyf.error(data?.msg || 'Código inválido ou expirado.');
 			}
-		} catch {
-			notyf.error('Erro ao conectar com o servidor.');
+		} catch (err) {
+			notyf.error(err?.message || 'Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoadingEmail(false);
 		}
@@ -88,8 +93,8 @@ const AccountSettings = () => {
 			} else {
 				notyf.error(data?.msg || 'Erro ao actualizar palavra-passe.');
 			}
-		} catch {
-			notyf.error('Erro ao conectar com o servidor.');
+		} catch (err) {
+			notyf.error(err?.message || 'Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoadingPass(false);
 		}
@@ -148,14 +153,24 @@ const AccountSettings = () => {
 							{user?.hasPassword && (
 								<div className="space-y-2">
 									<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
-									<input
-										type="password"
-										value={emailData.password}
-										onChange={(e) => setEmailData({ ...emailData, password: e.target.value })}
-										required
-										className={inputClass}
-										placeholder="Confirme a sua palavra-passe"
-									/>
+									<div className="relative">
+										<input
+											type={showEmailPassword ? 'text' : 'password'}
+											value={emailData.password}
+											onChange={(e) => setEmailData({ ...emailData, password: e.target.value })}
+											required
+											className={`${inputClass} pr-12`}
+											placeholder="Confirme a sua palavra-passe"
+										/>
+										<button
+											type="button"
+											onClick={() => setShowEmailPassword(!showEmailPassword)}
+											className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-accent transition-colors cursor-pointer"
+											aria-label={showEmailPassword ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+										>
+											{showEmailPassword ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
+										</button>
+									</div>
 								</div>
 							)}
 							<button
@@ -223,35 +238,65 @@ const AccountSettings = () => {
 					{user?.hasPassword && (
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-[#1C1917]">Palavra-passe Actual</label>
-							<input
-								type="password"
-								value={passData.currentPassword}
-								onChange={(e) => setPassData({ ...passData, currentPassword: e.target.value })}
-								required
-								className={inputClass}
-							/>
+							<div className="relative">
+								<input
+									type={showCurrentPass ? 'text' : 'password'}
+									value={passData.currentPassword}
+									onChange={(e) => setPassData({ ...passData, currentPassword: e.target.value })}
+									required
+									className={`${inputClass} pr-12`}
+								/>
+								<button
+									type="button"
+									onClick={() => setShowCurrentPass(!showCurrentPass)}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-accent transition-colors cursor-pointer"
+									aria-label={showCurrentPass ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+								>
+									{showCurrentPass ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
+								</button>
+							</div>
 						</div>
 					)}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-[#1C1917]">Nova Palavra-passe</label>
-							<input
-								type="password"
-								value={passData.newPassword}
-								onChange={(e) => setPassData({ ...passData, newPassword: e.target.value })}
-								required
-								className={inputClass}
-							/>
+							<div className="relative">
+								<input
+									type={showNewPass ? 'text' : 'password'}
+									value={passData.newPassword}
+									onChange={(e) => setPassData({ ...passData, newPassword: e.target.value })}
+									required
+									className={`${inputClass} pr-12`}
+								/>
+								<button
+									type="button"
+									onClick={() => setShowNewPass(!showNewPass)}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-accent transition-colors cursor-pointer"
+									aria-label={showNewPass ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+								>
+									{showNewPass ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
+								</button>
+							</div>
 						</div>
 						<div className="space-y-2">
 							<label className="text-sm font-medium text-[#1C1917]">Confirmar Nova Palavra-passe</label>
-							<input
-								type="password"
-								value={passData.confirmPassword}
-								onChange={(e) => setPassData({ ...passData, confirmPassword: e.target.value })}
-								required
-								className={inputClass}
-							/>
+							<div className="relative">
+								<input
+									type={showConfirmPass ? 'text' : 'password'}
+									value={passData.confirmPassword}
+									onChange={(e) => setPassData({ ...passData, confirmPassword: e.target.value })}
+									required
+									className={`${inputClass} pr-12`}
+								/>
+								<button
+									type="button"
+									onClick={() => setShowConfirmPass(!showConfirmPass)}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-accent transition-colors cursor-pointer"
+									aria-label={showConfirmPass ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+								>
+									{showConfirmPass ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
+								</button>
+							</div>
 						</div>
 					</div>
 					<button

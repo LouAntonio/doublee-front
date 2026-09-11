@@ -1,11 +1,13 @@
 ﻿import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import useAuthStore from '../../stores/authStore';
 import { notyf } from '../../utils/notyf';
 
 const AdminLogin = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 	const { adminLogin, isAdmin, isLoading } = useAuthStore();
 	const navigate = useNavigate();
 
@@ -98,13 +100,21 @@ const AdminLogin = () => {
 								</div>
 								<input
 									id="password"
-									type="password"
+									type={showPassword ? 'text' : 'password'}
 									required
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}
-									className="block w-full pl-10 pr-3 py-2 border border-accent/20 focus:border-accent rounded-lg bg-sand/50 text-[#1C1917] placeholder-[#78716C] focus:outline-none transition"
+									className="block w-full pl-10 pr-10 py-2 border border-accent/20 focus:border-accent rounded-lg bg-sand/50 text-[#1C1917] placeholder-[#78716C] focus:outline-none transition"
 									placeholder="••••••••"
 								/>
+								<button
+									type="button"
+									onClick={() => setShowPassword(!showPassword)}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-accent transition-colors cursor-pointer"
+									aria-label={showPassword ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+								>
+									{showPassword ? <IoEyeOffOutline className="w-5 h-5" /> : <IoEyeOutline className="w-5 h-5" />}
+								</button>
 							</div>
 						</div>
 
