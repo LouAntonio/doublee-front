@@ -4,7 +4,6 @@ import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 const BannerCarousel = () => {
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-	const [headerHeight, setHeaderHeight] = useState(0);
 
 	const banners = [
 		{
@@ -40,19 +39,6 @@ const BannerCarousel = () => {
 		return () => clearInterval(interval);
 	}, [isAutoPlaying, banners.length]);
 
-	// Measure header height so carousel can fill remaining viewport
-	useEffect(() => {
-		const updateHeaderHeight = () => {
-			if (typeof document === 'undefined') return;
-			const header = document.querySelector('header');
-			setHeaderHeight(header ? header.offsetHeight : 0);
-		};
-
-		updateHeaderHeight();
-		window.addEventListener('resize', updateHeaderHeight);
-		return () => window.removeEventListener('resize', updateHeaderHeight);
-	}, []);
-
 	const nextSlide = () => {
 		setCurrentSlide((prev) => (prev + 1) % banners.length);
 		setIsAutoPlaying(false);
@@ -69,10 +55,7 @@ const BannerCarousel = () => {
 	};
 
 	return (
-		<div
-			className="banner-carousel relative overflow-hidden"
-			style={{ '--header-h': `${headerHeight}px` }}
-		>
+		<div className="banner-carousel relative overflow-hidden">
 			{/* Carrossel Container */}
 			<div className="relative mx-auto h-full">
 				{/* Slides */}
@@ -139,17 +122,17 @@ const BannerCarousel = () => {
 					))}
 				</div>
 
-				{/* Navigation Arrows — positioned with consistent inset so they never overlap text */}
+				{/* Navigation Arrows */}
 				<button
 					onClick={prevSlide}
-					className="absolute left-2 sm:left-3 md:left-4 lg:left-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-20 group cursor-pointer hover:scale-110 active:scale-95"
+					className="absolute left-2 sm:left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-20 group cursor-pointer hover:scale-110 active:scale-95"
 					aria-label="Banner anterior"
 				>
 					<IoChevronBack className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
 				</button>
 				<button
 					onClick={nextSlide}
-					className="absolute right-2 sm:right-3 md:right-4 lg:right-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-20 group cursor-pointer hover:scale-110 active:scale-95"
+					className="absolute right-2 sm:right-4 md:right-6 lg:right-8 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 sm:p-2.5 md:p-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 z-20 group cursor-pointer hover:scale-110 active:scale-95"
 					aria-label="Próximo banner"
 				>
 					<IoChevronForward className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-gray-900 transition-colors" />
@@ -157,7 +140,7 @@ const BannerCarousel = () => {
 
 				{/* Bottom fade overlay */}
 				<div
-					className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10"
+					className="absolute bottom-0 left-0 right-0 h-14 sm:h-20 md:h-28 pointer-events-none z-10"
 					style={{ background: 'linear-gradient(to bottom, transparent, #ededed)' }}
 				/>
 
