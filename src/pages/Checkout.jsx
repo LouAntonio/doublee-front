@@ -41,6 +41,8 @@ const Checkout = () => {
 
 	// Payment settings (from API)
 	const [paymentSettings, setPaymentSettings] = useState(null);
+	const [paymentSettingsLoading, setPaymentSettingsLoading] = useState(true);
+	const [paymentSettingsError, setPaymentSettingsError] = useState(false);
 
 	// Phone (for checkout update)
 	const [phone, setPhone] = useState('');
@@ -67,14 +69,22 @@ const Checkout = () => {
 	// Fetch payment settings
 	useEffect(() => {
 		const fetchPaymentSettings = async () => {
+			setPaymentSettingsLoading(true);
 			try {
 				const res = await http.get('/payments/settings');
 				if (res?.success && res.data?.settings) {
 					const map = {};
 					res.data.settings.forEach(s => { map[s.method] = s; });
 					setPaymentSettings(map);
+					setPaymentSettingsError(false);
+				} else {
+					setPaymentSettingsError(true);
 				}
-			} catch { }
+			} catch {
+				setPaymentSettingsError(true);
+			} finally {
+				setPaymentSettingsLoading(false);
+			}
 		};
 		fetchPaymentSettings();
 	}, []);
@@ -150,6 +160,11 @@ const Checkout = () => {
 	};
 
 	const validateStep2 = () => {
+		const selectedEnabled = paymentInfo.method === 'multicaixa' ? multiEnabled : transferEnabled;
+		if (!selectedEnabled) {
+			notyf.error('O método de pagamento seleccionado está indisponível. Escolha outro.');
+			return false;
+		}
 		return true;
 	};
 
@@ -221,6 +236,8 @@ const Checkout = () => {
 
 	const multi = paymentSettings?.multicaixa_express ?? FALLBACK_PAYMENT.multicaixa_express;
 	const transfer = paymentSettings?.transferencia_bancaria ?? FALLBACK_PAYMENT.transferencia_bancaria;
+	const multiEnabled = paymentSettings ? paymentSettings.multicaixa_express?.isActive !== false : true;
+	const transferEnabled = paymentSettings ? paymentSettings.transferencia_bancaria?.isActive !== false : true;
 
 	if (orderPlaced) {
 		return (
@@ -453,44 +470,77 @@ const Checkout = () => {
 										Método de Pagamento
 									</h2>
 
+									{paymentSettingsError && (
+										<div className="bg-amber-50 border border-amber-300 rounded-xl p-3 mb-4 flex items-start gap-2">
+											<svg className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+												<path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+											</svg>
+											<p className="text-xs text-amber-800">
+												Não foi possível carregar as coordenadas de pagamento. Os dados abaixo podem estar desactualizados.
+											</p>
+										</div>
+									)}
+
 									<div className="space-y-3 mb-6">
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProofFile: null })}
-											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'multicaixa'
-												? 'border-accent bg-accent/5'
-												: 'border-accent/10 hover:border-accent/30'
+											onClick={() => {
+												if (!multiEnabled) return;
+												setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProofFile: null });
+											}}
+											className={`p-4 border-2 rounded-xl transition-all ${!multiEnabled
+												? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+												: paymentInfo.method === 'multicaixa'
+													? 'border-accent bg-accent/5 cursor-pointer'
+													: 'border-accent/10 hover:border-accent/30 cursor-pointer'
 											}`}
 										>
 											<div className="flex items-center gap-3">
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'multicaixa'}
+													disabled={!multiEnabled}
 													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'multicaixa', paymentProofFile: null })}
-													className="w-4 h-4 accent-accent"
+													className="w-4 h-4 accent-accent disabled:opacity-40"
 												/>
-												<div>
-													<p className="font-display text-[#1C1917]">Multicaixa Express</p>
+												<div className="flex-1">
+													<div className="flex items-center gap-2">
+														<p className={`font-display ${multiEnabled ? 'text-[#1C1917]' : 'text-[#78716C]'}`}>Multicaixa Express</p>
+														{!multiEnabled && (
+															<span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gray-200 text-gray-600 uppercase">Indisponível</span>
+														)}
+													</div>
 													<p className="text-xs text-[#78716C]">Pagamento via telemóvel</p>
 												</div>
 											</div>
 										</div>
 
 										<div
-											onClick={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProofFile: null })}
-											className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentInfo.method === 'transfer'
-												? 'border-accent bg-accent/5'
-												: 'border-accent/10 hover:border-accent/30'
+											onClick={() => {
+												if (!transferEnabled) return;
+												setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProofFile: null });
+											}}
+											className={`p-4 border-2 rounded-xl transition-all ${!transferEnabled
+												? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+												: paymentInfo.method === 'transfer'
+													? 'border-accent bg-accent/5 cursor-pointer'
+													: 'border-accent/10 hover:border-accent/30 cursor-pointer'
 											}`}
 										>
 											<div className="flex items-center gap-3">
 												<input
 													type="radio"
 													checked={paymentInfo.method === 'transfer'}
+													disabled={!transferEnabled}
 													onChange={() => setPaymentInfo({ ...paymentInfo, method: 'transfer', paymentProofFile: null })}
-													className="w-4 h-4 accent-accent"
+													className="w-4 h-4 accent-accent disabled:opacity-40"
 												/>
-												<div>
-													<p className="font-display text-[#1C1917]">Transferência Bancária</p>
+												<div className="flex-1">
+													<div className="flex items-center gap-2">
+														<p className={`font-display ${transferEnabled ? 'text-[#1C1917]' : 'text-[#78716C]'}`}>Transferência Bancária</p>
+														{!transferEnabled && (
+															<span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-gray-200 text-gray-600 uppercase">Indisponível</span>
+														)}
+													</div>
 													<p className="text-xs text-[#78716C]">Pagamento no Balcão, ATM e Apps de Online Banking</p>
 												</div>
 											</div>
@@ -502,7 +552,7 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Multicaixa Express</strong></p>
 												<p className="text-xs text-[#78716C]">
-													Faça o pagamento via Multicaixa Express para o número <strong>{multi.phone}</strong> ({multi.name}).
+													Faça o pagamento via Multicaixa Express para o número <strong>{multi.phone || '—'}</strong> ({multi.name || '—'}).
 												</p>
 											</div>
 										)}
@@ -511,9 +561,9 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Transferência Bancária</strong></p>
 												<div className="space-y-1 text-xs text-[#78716C]">
-													<p><strong>Banco:</strong> {transfer.bank}</p>
-													<p><strong>Titular:</strong> {transfer.name}</p>
-													<p><strong>IBAN:</strong> {transfer.iban}</p>
+													<p><strong>Banco:</strong> {transfer.bank || '—'}</p>
+													<p><strong>Titular:</strong> {transfer.name || '—'}</p>
+													<p><strong>IBAN:</strong> {transfer.iban || '—'}</p>
 												</div>
 											</div>
 										)}
