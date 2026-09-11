@@ -4,7 +4,7 @@ import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } fro
 import { notyf } from '../utils/notyf';
 import useAuthStore from '../stores/authStore';
 import { loginUser, checkEmail } from '../services/auth';
-import { hasBuyNowIntent } from '../utils/buyNow';
+import { hasBuyNowIntent, lockAuthRedirect, unlockAuthRedirect } from '../utils/buyNow';
 import GoogleButton from './GoogleButton';
 
 const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
@@ -32,9 +32,11 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 			try {
 				const res = await loginUser(formData.email, formData.password);
 				if (res.success) {
+					lockAuthRedirect();
 					login(res.user, res.token);
 					notyf.success('Login realizado com sucesso!');
 					navigate(hasBuyNowIntent() ? '/checkout' : '/');
+					setTimeout(unlockAuthRedirect, 0);
 					return;
 				}
 				throw new Error(res.msg || 'Erro ao fazer login.');

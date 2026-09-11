@@ -19,6 +19,7 @@ import NotFound from './pages/NotFound';
 import ProductDetails from './pages/ProductDetails';
 import Footer from '../src/components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import { isAuthRedirectLocked } from './utils/buyNow';
 import Promocoes from './pages/Promocoes';
 import Produtos from './pages/Produtos';
 import Lojas from './pages/lojas';
@@ -55,7 +56,7 @@ const ConditionalFooter = () => {
 const AuthRoute = () => {
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 	const isLoading = useAuthStore((s) => s.isLoading);
-	if (!isLoading && isAuthenticated) return <Navigate to="/" replace />;
+	if (!isLoading && isAuthenticated && !isAuthRedirectLocked()) return <Navigate to="/" replace />;
 	return <Auth />;
 };
 

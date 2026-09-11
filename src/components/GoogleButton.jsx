@@ -3,7 +3,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import { googleAuth, linkGoogle } from '../services/auth';
-import { hasBuyNowIntent } from '../utils/buyNow';
+import { hasBuyNowIntent, lockAuthRedirect, unlockAuthRedirect } from '../utils/buyNow';
 import { notyf } from '../utils/notyf';
 
 const GoogleButton = ({ onSuccessMessage = 'Login realizado com sucesso!', onLoginSuccess }) => {
@@ -14,10 +14,12 @@ const GoogleButton = ({ onSuccessMessage = 'Login realizado com sucesso!', onLog
 		try {
 			const data = await googleAuth(credentialResponse.credential);
 			if (data.success) {
+				lockAuthRedirect();
 				login(data.user, data.token);
 				notyf.success(onSuccessMessage);
 				if (onLoginSuccess) onLoginSuccess(data.user);
 				else navigate(hasBuyNowIntent() ? '/checkout' : '/');
+				setTimeout(unlockAuthRedirect, 0);
 			} else {
 				notyf.error(data.msg || 'Erro ao fazer login com Google.');
 			}
@@ -43,9 +45,11 @@ export const GoogleRegisterButton = () => {
 		try {
 			const data = await googleAuth(credentialResponse.credential);
 			if (data.success) {
+				lockAuthRedirect();
 				login(data.user, data.token);
 				notyf.success('Conta criada com sucesso!');
 				navigate(hasBuyNowIntent() ? '/checkout' : '/');
+				setTimeout(unlockAuthRedirect, 0);
 			} else {
 				notyf.error(data.msg || 'Erro ao criar conta com Google.');
 			}

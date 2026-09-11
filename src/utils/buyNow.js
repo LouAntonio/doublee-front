@@ -22,3 +22,15 @@ export const takeBuyNowItems = () => {
 export const clearBuyNowIntent = () => {
 	sessionStorage.removeItem(KUV_BUYNOW_KEY);
 };
+
+let authRedirectLocked = false;
+
+export const lockAuthRedirect = () => {
+	authRedirectLocked = true;
+};
+
+export const unlockAuthRedirect = () => {
+	authRedirectLocked = false;
+};
+
+export const isAuthRedirectLocked = () => authRedirectLocked;
