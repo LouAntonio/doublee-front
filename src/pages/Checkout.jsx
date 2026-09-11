@@ -8,6 +8,7 @@ import OrderSummary from '../components/OrderSummary';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import { notyf } from '../utils/notyf';
+import { clearBuyNowIntent, takeBuyNowItems } from '../utils/buyNow';
 import { formatCurrency } from '../utils/currency';
 import { useCreateOrder } from '../hooks/queries/useOrders';
 import { uploadToCloudinary } from '../services/cloudinary';
@@ -20,16 +21,18 @@ const FALLBACK_PAYMENT = {
 
 const Checkout = () => {
 	useDocumentTitle('Checkout - Kuvangana');
-	const { cartItems, checkoutItems, clearCart, clearCheckoutItems, appliedCoupon, setAppliedCoupon } = useCartStore();
+	const { cartItems, clearCart, appliedCoupon, setAppliedCoupon } = useCartStore();
 	const { user } = useAuthStore();
 	const [currentStep, setCurrentStep] = useState(1);
 
-	const activeItems = checkoutItems.length ? checkoutItems : cartItems;
+	// "Comprar Agora": consome os itens efémeros (leitura pura no mount)
+	const [buyNowItems] = useState(takeBuyNowItems);
 
-	// Fluxo "Comprar Agora": ao sair do checkout sem concluir, limpa os itens efémeros
 	useEffect(() => {
-		return () => clearCheckoutItems();
-	}, [clearCheckoutItems]);
+		clearBuyNowIntent();
+	}, []);
+
+	const activeItems = buyNowItems?.length ? buyNowItems : cartItems;
 
 	const [orderPlaced, setOrderPlaced] = useState(false);
 	const [orderId, setOrderId] = useState('');
@@ -227,7 +230,6 @@ const Checkout = () => {
 				setOrderPlaced(true);
 				setOrderId(res?.data?.orderId || '');
 				clearCart();
-				clearCheckoutItems();
 				setAppliedCoupon(null);
 			} else {
 				notyf.error(res?.msg || 'Erro ao realizar pedido.');

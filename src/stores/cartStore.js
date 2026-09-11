@@ -35,7 +35,6 @@ const useCartStore = create(
 	persist(
 		(set, get) => ({
 			cartItems: [],
-			checkoutItems: [],
 			addingProductIds: [],
 			removingItemIds: [],
 			updatingItemIds: [],
@@ -221,9 +220,6 @@ const useCartStore = create(
 			},
 
 			resetCart: () => set({ cartItems: [] }),
-
-			setCheckoutItems: (items) => set({ checkoutItems: (items || []).map(normalizeCartItem) }),
-			clearCheckoutItems: () => set({ checkoutItems: [] }),
 
 			getCartTotal: () => get().cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
 			getCartCount: () => get().cartItems.reduce((count, item) => count + item.quantity, 0),

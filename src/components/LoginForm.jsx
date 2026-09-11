@@ -4,13 +4,12 @@ import { IoMailOutline, IoLockClosedOutline, IoEyeOutline, IoEyeOffOutline } fro
 import { notyf } from '../utils/notyf';
 import useAuthStore from '../stores/authStore';
 import { loginUser, checkEmail } from '../services/auth';
-import useCartStore from '../stores/cartStore';
+import { hasBuyNowIntent } from '../utils/buyNow';
 import GoogleButton from './GoogleButton';
 
 const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 	const navigate = useNavigate();
 	const login = useAuthStore((s) => s.login);
-	const setCheckoutItems = useCartStore((s) => s.setCheckoutItems);
 
 	const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
 	const [errors, setErrors] = useState({});
@@ -35,18 +34,7 @@ const LoginForm = ({ onSwitchToRegister, onSwitchToRecovery }) => {
 				if (res.success) {
 					login(res.user, res.token);
 					notyf.success('Login realizado com sucesso!');
-					const buyNowIntent = sessionStorage.getItem('kuv_buynow');
-					if (buyNowIntent) {
-						sessionStorage.removeItem('kuv_buynow');
-						try {
-							setCheckoutItems([JSON.parse(buyNowIntent)]);
-						} catch {
-							// ignore intent corrompido
-						}
-						navigate('/checkout');
-						return;
-					}
-					navigate('/');
+					navigate(hasBuyNowIntent() ? '/checkout' : '/');
 					return;
 				}
 				throw new Error(res.msg || 'Erro ao fazer login.');
