@@ -9,10 +9,14 @@ import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import { notyf } from '../utils/notyf';
 import { formatCurrency } from '../utils/currency';
-import { PAYMENT_COORDINATES } from '../utils/payment';
 import { useCreateOrder } from '../hooks/queries/useOrders';
 import { uploadToCloudinary } from '../services/cloudinary';
 import http from '../services/http';
+
+const FALLBACK_PAYMENT = {
+	multicaixa_express: { phone: '+244 923 456 789', name: 'Kuvangana' },
+	transferencia_bancaria: { bank: 'Banco Angolano de Investimentos (BAI)', name: 'Kuvangana', iban: 'AO06 0000 0123 4567 8901 2345 6' },
+};
 
 const Checkout = () => {
 	useDocumentTitle('Checkout - Kuvangana');
@@ -35,6 +39,12 @@ const Checkout = () => {
 	// User saved address
 	const [savedAddress, setSavedAddress] = useState('');
 
+	// Payment settings (from API)
+	const [paymentSettings, setPaymentSettings] = useState(null);
+
+	// Phone (for checkout update)
+	const [phone, setPhone] = useState('');
+
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
 		useSavedAddress: true,
@@ -48,6 +58,26 @@ const Checkout = () => {
 	const [uploadingProof, setUploadingProof] = useState(false);
 
 	const [errors, setErrors] = useState({});
+
+	// Initialise phone from user profile
+	useEffect(() => {
+		if (user) setPhone(user.phone || '');
+	}, [user]);
+
+	// Fetch payment settings
+	useEffect(() => {
+		const fetchPaymentSettings = async () => {
+			try {
+				const res = await http.get('/payments/settings');
+				if (res?.success && res.data?.settings) {
+					const map = {};
+					res.data.settings.forEach(s => { map[s.method] = s; });
+					setPaymentSettings(map);
+				}
+			} catch { }
+		};
+		fetchPaymentSettings();
+	}, []);
 
 	// Fetch delivery zones
 	useEffect(() => {
@@ -101,10 +131,20 @@ const Checkout = () => {
 
 	const validateStep1 = () => {
 		const newErrors = {};
+
+		// Telefone obrigatório
+		if (!phone.trim()) {
+			newErrors.phone = 'O telefone é obrigatório para realizar a compra.';
+		}
+
 		if (deliveryOption === 'delivery') {
-			if (!shippingInfo.address.trim()) newErrors.address = 'Endereço é obrigatório';
+			// Validar morada apenas se não estiver a usar a guardada
+			if (!shippingInfo.useSavedAddress || !savedAddress) {
+				if (!shippingInfo.address.trim()) newErrors.address = 'Endereço é obrigatório';
+			}
 			if (!selectedZoneId) newErrors.deliveryZone = 'Seleccione uma zona de entrega';
 		}
+
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
@@ -161,6 +201,8 @@ const Checkout = () => {
 			if (deliveryOption === 'delivery' && selectedZoneId) {
 				payload.deliveryZoneId = selectedZoneId;
 			}
+			// Enviar telefone para o backend (actualiza perfil se necessário)
+			if (phone.trim()) payload.phone = phone.trim();
 
 			const res = await createOrder(payload);
 
@@ -176,6 +218,9 @@ const Checkout = () => {
 			notyf.error('Erro ao conectar ao servidor.');
 		}
 	};
+
+	const multi = paymentSettings?.multicaixa_express ?? FALLBACK_PAYMENT.multicaixa_express;
+	const transfer = paymentSettings?.transferencia_bancaria ?? FALLBACK_PAYMENT.transferencia_bancaria;
 
 	if (orderPlaced) {
 		return (
@@ -256,6 +301,25 @@ const Checkout = () => {
 										Informações de Envio
 									</h2>
 
+									{/* Telefone de contacto */}
+									<div className="mb-6">
+										<h3 className="text-sm font-semibold text-[#1C1917] mb-3">Telefone de Contacto</h3>
+										<p className="text-xs text-[#78716C] mb-2">Necessário para acompanhamento do pedido e entregas.</p>
+										<div className="flex">
+											<span className="inline-flex items-center px-3 py-3 rounded-l-xl border border-r-0 border-accent/20 bg-sand text-[#78716C] text-sm font-medium select-none">
+												+244
+											</span>
+											<input
+												type="tel"
+												value={phone}
+												onChange={(e) => { setPhone(e.target.value); if (errors.phone) setErrors(prev => ({ ...prev, phone: '' })); }}
+												className={`w-full px-4 py-3 rounded-r-xl border focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white ${errors.phone ? 'border-red-500' : 'border-accent/20'}`}
+												placeholder="9xx xxx xxx"
+											/>
+										</div>
+										{errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+									</div>
+
 									{/* Delivery Option */}
 									<div className="mb-6">
 										<h3 className="text-sm font-semibold text-[#1C1917] mb-3">Opção de Entrega</h3>
@@ -305,8 +369,7 @@ const Checkout = () => {
 												<select
 													value={selectedZoneId}
 													onChange={(e) => handleZoneChange(e.target.value)}
-													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.deliveryZone ? 'border-red-500' : 'border-accent/20'
-													}`}
+													className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] font-body ${errors.deliveryZone ? 'border-red-500' : 'border-accent/20'}`}
 												>
 													<option value="">Seleccione a zona de entrega</option>
 													{zonesLoading ? (
@@ -336,7 +399,7 @@ const Checkout = () => {
 
 												{savedAddress && (
 													<div className="mb-3">
-														<label className="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all ${shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}">
+														<label className={`flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all ${shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}`}>
 															<input type="radio" checked={shippingInfo.useSavedAddress}
 																onChange={() => setShippingInfo({ useSavedAddress: true, address: savedAddress })}
 																className="w-4 h-4 accent-accent" />
@@ -345,7 +408,7 @@ const Checkout = () => {
 																<p className="text-xs text-[#78716C]">{savedAddress}</p>
 															</div>
 														</label>
-														<label className="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all mt-2 ${!shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}">
+														<label className={`flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer transition-all mt-2 ${!shippingInfo.useSavedAddress ? 'border-accent bg-accent/5' : 'border-accent/10'}`}>
 															<input type="radio" checked={!shippingInfo.useSavedAddress}
 																onChange={() => setShippingInfo({ useSavedAddress: false, address: '' })}
 																className="w-4 h-4 accent-accent" />
@@ -356,15 +419,16 @@ const Checkout = () => {
 													</div>
 												)}
 
-												<div>
-													<label className="block text-sm font-body text-[#78716C] mb-1">Endereço Completo *</label>
-													<input type="text" value={shippingInfo.address}
-														onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value, useSavedAddress: false })}
-														readOnly={shippingInfo.useSavedAddress && !!savedAddress}
-														className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.address ? 'border-red-500' : 'border-accent/20'} ${shippingInfo.useSavedAddress && savedAddress ? 'bg-sand/50 text-[#78716C]' : ''}`}
-														placeholder="Rua da Independência, Prédio 123, Apt 4B" />
-													{errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
-												</div>
+												{(!savedAddress || !shippingInfo.useSavedAddress) && (
+													<div>
+														<label className="block text-sm font-body text-[#78716C] mb-1">Endereço Completo *</label>
+														<input type="text" value={shippingInfo.address}
+															onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value, useSavedAddress: false })}
+															className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-[#1C1917] placeholder:text-[#78716C]/60 font-body ${errors.address ? 'border-red-500' : 'border-accent/20'}`}
+															placeholder="Rua da Independência, Prédio 123, Apt 4B" />
+														{errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
+													</div>
+												)}
 											</div>
 										</>
 									)}
@@ -438,7 +502,7 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Multicaixa Express</strong></p>
 												<p className="text-xs text-[#78716C]">
-													Faça o pagamento via Multicaixa Express para o número <strong>{PAYMENT_COORDINATES.multicaixa_express.phone}</strong> ({PAYMENT_COORDINATES.multicaixa_express.name}).
+													Faça o pagamento via Multicaixa Express para o número <strong>{multi.phone}</strong> ({multi.name}).
 												</p>
 											</div>
 										)}
@@ -447,9 +511,9 @@ const Checkout = () => {
 											<div className="bg-accent/5 border border-accent/20 rounded-xl p-4 mb-4">
 												<p className="text-sm text-accent mb-2"><strong>Transferência Bancária</strong></p>
 												<div className="space-y-1 text-xs text-[#78716C]">
-													<p><strong>Banco:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.bank}</p>
-													<p><strong>Titular:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.titular}</p>
-													<p><strong>IBAN:</strong> {PAYMENT_COORDINATES.transferencia_bancaria.iban}</p>
+													<p><strong>Banco:</strong> {transfer.bank}</p>
+													<p><strong>Titular:</strong> {transfer.name}</p>
+													<p><strong>IBAN:</strong> {transfer.iban}</p>
 												</div>
 											</div>
 										)}
@@ -527,7 +591,7 @@ const Checkout = () => {
 												<strong>Email:</strong> {user?.email}
 											</p>
 											<p className="text-sm text-[#1C1917]">
-												<strong>Telefone:</strong> {user?.phone || '—'}
+												<strong>Telefone:</strong> {phone || '—'}
 											</p>
 										</div>
 									</div>

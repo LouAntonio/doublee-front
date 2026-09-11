@@ -18,16 +18,16 @@ const Home = () => {
 			<BannerCarousel />
 			<FeaturedProductsSection />
 			
-			<div style={{ maxWidth: '1200px', margin: '30px auto', padding: '0 15px' }}>
-				<img src="/images/ads/1.png" alt="Anúncio 1" style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'cover' }} />
+			<div className="max-w-[1200px] mx-auto px-6 my-8">
+				<img src="/images/ads/1.png" alt="Anúncio 1" className="w-full h-auto rounded-lg object-cover" />
 			</div>
 
 			<CategoriesSection />
 			<NewProductsSection />
 			<BestSellersSection />
 			
-			<div style={{ maxWidth: '1200px', margin: '30px auto', padding: '0 15px' }}>
-				<img src="/images/ads/2.png" alt="Anúncio 2" style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'cover' }} />
+			<div className="max-w-[1200px] mx-auto px-6 my-8">
+				<img src="/images/ads/2.png" alt="Anúncio 2" className="w-full h-auto rounded-lg object-cover" />
 			</div>
 
 			<LatestProductsSection />

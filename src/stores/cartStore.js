@@ -3,18 +3,31 @@ import { persist } from 'zustand/middleware';
 import { getCart, addToCartApi, removeFromCartApi, updateCartItem, clearCartApi } from '../services/cart';
 import { notyf } from '../utils/notyf';
 
-const mapApiItem = (item) => ({
-	id: item.id,
-	productId: item.product?.id ?? item.productId,
-	name: item.product?.name ?? item.name,
-	price: (item.product?.promotionalPrice && Number(item.product.promotionalPrice) > 0)
-		? Number(item.product.promotionalPrice)
-		: Number(item.product?.price ?? item.price ?? 0),
-	image: item.product?.image ?? item.image,
-	quantity: item.quantity,
-	stock: item.product?.stock ?? item.stock,
-	store: item.product?.store ?? item.store,
-});
+const FALLBACK_IMAGE = '/images/produto.png';
+
+const normalizeCartItem = (item = {}) => {
+	const p = item.product ?? {};
+	const image =
+		item.image ??
+		p.image ??
+		(Array.isArray(item.images) ? item.images[0] : null) ??
+		(Array.isArray(p.gallery) ? p.gallery[0] : null) ??
+		FALLBACK_IMAGE;
+	const price = Number(item.price ?? p.price ?? 0);
+	const promo = Number(p.promotionalPrice ?? item.promotionalPrice ?? 0);
+	return {
+		id: item.id ?? item.productId ?? p.id,
+		productId: item.productId ?? item.id ?? p.id,
+		name: item.name ?? p.name ?? item.title ?? p.title ?? 'Produto',
+		price: promo > 0 ? promo : price,
+		image,
+		quantity: Number(item.quantity) || 1,
+		stock: item.stock ?? p.stock,
+		store: item.store ?? p.store,
+	};
+};
+
+const mapApiItem = normalizeCartItem;
 
 const hasToken = () => Boolean(localStorage.getItem('Kusumba_token'));
 
@@ -108,17 +121,17 @@ const useCartStore = create(
 					}
 
 					set((state) => {
-						const existingItem = state.cartItems.find((item) => item.id === product.id);
+						const existingItem = state.cartItems.find((item) => item.id === product.id || item.productId === product.id);
 						if (existingItem) {
 							return {
 								cartItems: state.cartItems.map((item) =>
-									item.id === product.id
+									item.id === existingItem.id || item.productId === product.id
 										? { ...item, quantity: item.quantity + quantity }
 										: item
 								),
 							};
 						}
-						return { cartItems: [...state.cartItems, { ...product, quantity }] };
+						return { cartItems: [...state.cartItems, normalizeCartItem({ ...product, quantity })] };
 					});
 					if (showNotification) notyf.success('Produto adicionado ao carrinho!');
 				} finally {
@@ -232,6 +245,11 @@ const useCartStore = create(
 		{
 			name: 'cart',
 			partialize: (state) => ({ cartItems: state.cartItems }),
+			onRehydrateStorage: () => (state) => {
+				if (state?.cartItems && state.cartItems.length > 0) {
+					state.cartItems = state.cartItems.map(normalizeCartItem);
+				}
+			},
 		}
 	)
 );

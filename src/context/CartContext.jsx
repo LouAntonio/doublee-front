@@ -31,18 +31,27 @@ export const CartProvider = ({ children }) => {
 
 	const hasToken = () => Boolean(localStorage.getItem('Kusumba_token'));
 
-	const mapApiItem = useCallback((item) => ({
-		id: item.id,
-		productId: item.product?.id ?? item.productId,
-		name: item.product?.name ?? item.name,
-		price: (item.product?.promotionalPrice && Number(item.product.promotionalPrice) > 0) 
-			? Number(item.product.promotionalPrice) 
-			: Number(item.product?.price ?? item.price ?? 0),
-		image: item.product?.image ?? item.image,
-		quantity: item.quantity,
-		stock: item.product?.stock ?? item.stock,
-		store: item.product?.store ?? item.store,
-	}), []);
+	const mapApiItem = useCallback((item) => {
+		const p = item.product ?? {};
+		const image =
+			item.image ??
+			p.image ??
+			(Array.isArray(item.images) ? item.images[0] : null) ??
+			(Array.isArray(p.gallery) ? p.gallery[0] : null) ??
+			'/images/produto.png';
+		const price = Number(item.price ?? p.price ?? 0);
+		const promo = Number(p.promotionalPrice ?? item.promotionalPrice ?? 0);
+		return {
+			id: item.id ?? item.productId ?? p.id,
+			productId: item.productId ?? item.id ?? p.id,
+			name: item.name ?? p.name ?? item.title ?? p.title ?? 'Produto',
+			price: promo > 0 ? promo : price,
+			image,
+			quantity: item.quantity,
+			stock: item.stock ?? p.stock,
+			store: item.store ?? p.store,
+		};
+	}, []);
 
 	useEffect(() => {
 		if (apiCartItems !== undefined) {

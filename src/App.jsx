@@ -34,6 +34,7 @@ import AdminIdentityVerification from './pages/admin/AdminIdentityVerification';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminPromotions from './pages/admin/AdminPromotions';
 import AdminDeliveryZones from './pages/admin/AdminDeliveryZones';
+import AdminPaymentSettings from './pages/admin/AdminPaymentSettings';
 import AdminOrders from './pages/admin/AdminOrders';
 import Vender from './pages/Vender';
 import ComoFunciona from './pages/ComoFunciona';
@@ -76,7 +77,7 @@ function AppRoutes() {
 				<Route path="/como-funciona" element={<ComoFunciona />} />
 				<Route path="/cart" element={<Cart />} />
 				<Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-				<Route path="/checkout" element={<Checkout />} />
+				<Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
 				<Route path="/produto/:id" element={<ProductDetails />} />
 				<Route path="/promocoes" element={<Promocoes />} />
 				<Route path="/lojas" element={<Lojas />} />
@@ -94,6 +95,7 @@ function AppRoutes() {
 					<Route path="analytics" element={<AdminAnalytics />} />
 					<Route path="promotions" element={<AdminPromotions />} />
 					<Route path="delivery-zones" element={<AdminDeliveryZones />} />
+					<Route path="payments" element={<AdminPaymentSettings />} />
 					<Route path="orders" element={<AdminOrders />} />
 				</Route>
 				<Route path="*" element={<NotFound />} />

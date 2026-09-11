@@ -54,7 +54,7 @@ const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0,
 				{cartItems.map((item) => (
 					<div key={item.id} className="flex justify-between text-sm">
 						<div className="flex-1">
-							<p className="text-[#1C1917] font-body line-clamp-1">{item.name}</p>
+							<p className="text-[#1C1917] font-body line-clamp-1">{item.name || item.title || 'Produto'}</p>
 							<p className="text-[#78716C] font-body text-xs">Qtd: {item.quantity}</p>
 						</div>
 						<p className="font-medium text-[#1C1917] ml-2">
