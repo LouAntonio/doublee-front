@@ -54,7 +54,7 @@ const StoreCard = ({ store }) => {
 
 				<div className="mt-auto">
 					<Link
-						to={`/loja/${store.id}`}
+						to={`/loja/${store.slug ?? store.id}`}
 						className="lojas-arrow-btn inline-flex items-center justify-center w-full py-2 rounded-xl text-sm font-semibold border border-[var(--lojas-accent)] text-[var(--lojas-accent)] hover:bg-[var(--lojas-accent)] hover:text-white transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/20"
 						aria-label={`Ver loja ${store.name}`}
 					>

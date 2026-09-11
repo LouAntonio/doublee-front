@@ -14,7 +14,7 @@ const buildQuery = (params) => {
 
 export const getProducts = (params = {}) => http.get(`/products${buildQuery(params)}`);
 
-export const getProduct = (id) => http.get(`/products/${id}`);
+export const getProduct = (slug) => http.get(`/products/${slug}`);
 
 export const getFeaturedProducts = () => http.get('/products/featured');
 

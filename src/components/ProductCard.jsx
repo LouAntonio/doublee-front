@@ -13,7 +13,7 @@ const ProductCard = ({ product, onClick }) => {
 	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 	const { isWishlisted, checkInWishlist, toggleWishlist, isToggling } = useWishlistStore();
 	const navigate = useNavigate();
-	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.id}`));
+	const handleProductClick = onClick ?? (() => navigate(`/produto/${product.slug ?? product.id}`));
 	const productId = product?.id;
 	const productTitle = product?.title ?? product?.name ?? '';
 	const productPrice = product?.price ?? 0;

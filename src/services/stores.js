@@ -13,7 +13,7 @@ const buildQuery = (params) => {
 
 export const getStores = (params = {}) => http.get(`/stores${buildQuery(params)}`);
 
-export const getStore = (id) => http.get(`/stores/${id}`);
+export const getStore = (slug) => http.get(`/stores/${slug}`);
 
 export const getFeaturedStores = () => http.get('/stores/featured');
 

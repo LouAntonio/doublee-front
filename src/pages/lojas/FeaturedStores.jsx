@@ -67,7 +67,7 @@ const FeaturedStores = ({ stores = [], isLoading = false }) => {
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 					{stores.map((store) => (
 						<Link
-							to={`/loja/${store.id}`}
+							to={`/loja/${store.slug ?? store.id}`}
 							key={store.id}
 							className="group relative overflow-hidden rounded-2xl border border-[var(--lojas-border)] shadow-sm hover:shadow-xl transition-all duration-500 lojas-card-hover block"
 						>

@@ -14,7 +14,7 @@ const ProductGrid = ({ products }) => {
 				>
 					<ProductCard
 						product={product}
-						onClick={() => navigate(`/produto/${product.id}`)}
+						onClick={() => navigate(`/produto/${product.slug ?? product.id}`)}
 					/>
 				</div>
 			))}

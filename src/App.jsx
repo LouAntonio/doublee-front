@@ -78,10 +78,10 @@ function AppRoutes() {
 				<Route path="/cart" element={<Cart />} />
 				<Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
 				<Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-				<Route path="/produto/:id" element={<ProductDetails />} />
+				<Route path="/produto/:slug" element={<ProductDetails />} />
 				<Route path="/promocoes" element={<Promocoes />} />
 				<Route path="/lojas" element={<Lojas />} />
-				<Route path="/loja/:id" element={<LojaDetails />} />
+				<Route path="/loja/:slug" element={<LojaDetails />} />
 				<Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 				<Route path="/loja/dashboard" element={<ProtectedRoute><StoreDashboardPage /></ProtectedRoute>} />
 				<Route path="/dbe/login" element={<AdminLogin />} />

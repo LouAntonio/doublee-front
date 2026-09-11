@@ -38,10 +38,11 @@ const RatingBar = ({ label, count, total }) => {
 
 /* ─── Main Component ──────────────────────────────────────────────────── */
 const LojaDetails = () => {
-	const { id } = useParams();
+	const { slug } = useParams();
 	const navigate = useNavigate();
 
 	const [store, setStore] = useState(null);
+	const [resolvedStoreId, setResolvedStoreId] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('produtos');
 	const [productSearch, setProductSearch] = useState('');
@@ -58,7 +59,7 @@ const LojaDetails = () => {
 		const load = async () => {
 			setLoading(true);
 			try {
-				const resp = await http.get(`/stores/${id}`);
+				const resp = await http.get(`/stores/${slug}`);
 
 				if (!mounted) return;
 				if (resp?.success) {
@@ -86,6 +87,7 @@ const LojaDetails = () => {
 
 					const mapped = {
 						id: s.id,
+						slug: s.slug,
 						name: s.name,
 						description: s.description || '',
 						logo: s.logo || '/images/logo/default-store.png',
@@ -108,6 +110,7 @@ const LojaDetails = () => {
 					};
 
 					setStore(mapped);
+					setResolvedStoreId(s.id);
 				} else {
 					setStore(null);
 					notyf.error(resp?.msg || 'Erro ao obter a loja.');
@@ -126,15 +129,15 @@ const LojaDetails = () => {
 		load();
 
 		return () => { mounted = false; };
-	}, [id]);
+	}, [slug]);
 
 	// Separate effect for product loading with pagination
 	useEffect(() => {
-		if (!id) return;
+		if (!resolvedStoreId) return;
 		let mounted = true;
 		const loadProducts = async () => {
 			try {
-				const prodResp = await http.get(`/products?storeId=${id}&page=${page}&limit=24`);
+				const prodResp = await http.get(`/products?storeId=${resolvedStoreId}&page=${page}&limit=24`);
 				if (!mounted) return;
 				const apiProducts = (prodResp?.success && prodResp.data?.products) ? prodResp.data.products : [];
 				const pag = prodResp?.success && prodResp.data?.pagination ? prodResp.data.pagination : null;
@@ -164,7 +167,7 @@ const LojaDetails = () => {
 		loadProducts();
 
 		return () => { mounted = false; };
-	}, [id, page]);
+	}, [resolvedStoreId, page]);
 
 	const currentUrl = window.location.href;
 

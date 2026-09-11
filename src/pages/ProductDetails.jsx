@@ -47,6 +47,7 @@ const mapProduct = (p) => {
 		opinions: [],
 		seller: {
 			id: p.store?.id || null,
+			slug: p.store?.slug || null,
 			name: p.store?.name || 'Loja Desconhecida',
 			logo: p.store?.logo || 'https://via.placeholder.com/100x60/1a6e1a/fff?text=LOJA',
 			rating: p.store?.rating || 0,
@@ -55,7 +56,7 @@ const mapProduct = (p) => {
 };
 
 const ProductDetails = () => {
-	const { id } = useParams();
+	const { slug } = useParams();
 	const navigate = useNavigate();
 	const { addToCart, isAddingProduct } = useCartStore();
 	const { isAuthenticated } = useAuthStore();
@@ -64,7 +65,7 @@ const ProductDetails = () => {
 	const [quantity, setQuantity] = useState(1);
 	const [countdown, setCountdown] = useState(null);
 
-	const { data: rawData, isLoading } = useProduct(id);
+	const { data: rawData, isLoading } = useProduct(slug);
 	const product = useMemo(() => mapProduct(rawData?.product ?? rawData), [rawData]);
 
 	useEffect(() => {
@@ -465,7 +466,7 @@ const ProductDetails = () => {
 										<div className="font-display text-sm font-semibold text-[#1C1917] truncate">{product.seller.name}</div>
 									</div>
 									<button
-										onClick={() => product?.seller?.id && navigate(`/loja/${product.seller.id}`)}
+										onClick={() => product?.seller?.slug ? navigate(`/loja/${product.seller.slug}`) : product?.seller?.id && navigate(`/loja/${product.seller.id}`)}
 										className="shrink-0 px-3 py-1.5 bg-transparent text-accent border border-accent/30 rounded-full font-display text-xs font-bold hover:bg-accent/5 hover:border-accent transition-all cursor-pointer"
 									>
 										Ver Mais
