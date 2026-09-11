@@ -10,6 +10,8 @@ import Cupoes from './pages/Cupoes';
 import Auth from './pages/Auth';
 import Contato from './pages/Contato';
 import Sobre from './pages/Sobre';
+import Privacidade from './pages/Privacidade';
+import Termos from './pages/Termos';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import Checkout from './pages/Checkout';
@@ -78,6 +80,8 @@ function AppRoutes() {
 				<Route path="/auth" element={<AuthRoute />} />
 				<Route path="/contato" element={<Contato />} />
 				<Route path="/sobre" element={<Sobre />} />
+				<Route path="/privacidade" element={<Privacidade />} />
+				<Route path="/termos" element={<Termos />} />
 				<Route path="/vender" element={<Vender />} />
 				<Route path="/como-funciona" element={<ComoFunciona />} />
 				<Route path="/cart" element={<Cart />} />

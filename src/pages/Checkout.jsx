@@ -694,13 +694,13 @@ const Checkout = () => {
 									<div className="bg-accent/5 border border-accent/20 rounded-xl p-4">
 										<p className="text-xs text-[#78716C]">
 											Ao finalizar a compra, você concorda com nossos{' '}
-											<a href="#" className="text-accent hover:underline">
+											<Link to="/termos" className="text-accent hover:underline">
 												Termos de Uso
-											</a>{' '}
+											</Link>{' '}
 											e{' '}
-											<a href="#" className="text-accent hover:underline">
+											<Link to="/privacidade" className="text-accent hover:underline">
 												Política de Privacidade
-											</a>
+											</Link>
 											.
 										</p>
 									</div>

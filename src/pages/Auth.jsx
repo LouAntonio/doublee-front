@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import LoginForm from '../components/LoginForm';
@@ -87,13 +88,13 @@ const Auth = () => {
 						<div className="mt-6 text-center opacity-0 animate-fade-in-up" style={{ animationDelay: '0.45s', animationFillMode: 'forwards' }}>
 							<p className="font-body text-sm text-[#78716C]">
 								Ao continuar, você concorda com nossos{' '}
-								<a href="#" className="text-accent hover:text-accent-dark font-display font-semibold">
+								<Link to="/termos" className="text-accent hover:text-accent-dark font-display font-semibold">
 									Termos de Uso
-								</a>{' '}
+								</Link>{' '}
 								e{' '}
-								<a href="#" className="text-accent hover:text-accent-dark font-display font-semibold">
+								<Link to="/privacidade" className="text-accent hover:text-accent-dark font-display font-semibold">
 									Política de Privacidade
-								</a>
+								</Link>
 							</p>
 						</div>
 					</div>

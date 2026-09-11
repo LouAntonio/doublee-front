@@ -10,6 +10,8 @@ const footerLinks = {
 			{ label: 'Como Funciona', to: '/como-funciona' },
 			{ label: 'Vender na Kuvangana', to: '/vender' },
 			{ label: 'Contacto', to: '/contato' },
+			{ label: 'Política de Privacidade', to: '/privacidade' },
+			{ label: 'Termos de Uso', to: '/termos' },
 		],
 	},
 	comprar: {
