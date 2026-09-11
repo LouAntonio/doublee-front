@@ -69,16 +69,6 @@ const CategoryProducts = () => {
 		categoryName ? `${categoryName} - Kuvangana` : 'Categoria - Kuvangana'
 	);
 
-	// Reset de filtros/ordenação/pagina ao mudar de categoria
-	useEffect(() => {
-		setCurrentPage(1);
-		setSearchQuery('');
-		setPriceRange({ min: '', max: '' });
-		setFeaturedOnly(false);
-		setSortOption('relevance');
-		setSelectedCategories(categoryId ? [categoryId] : []);
-	}, [categoryId]);
-
 	// Scroll suave até aos resultados quando a pesquisa é acionada
 	useEffect(() => {
 		if (resultsRef.current && (searchQuery || fetchTrigger > 0)) {

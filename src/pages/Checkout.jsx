@@ -41,11 +41,11 @@ const Checkout = () => {
 
 	// Payment settings (from API)
 	const [paymentSettings, setPaymentSettings] = useState(null);
-	const [paymentSettingsLoading, setPaymentSettingsLoading] = useState(true);
+	const [, setPaymentSettingsLoading] = useState(true);
 	const [paymentSettingsError, setPaymentSettingsError] = useState(false);
 
-	// Phone (for checkout update)
-	const [phone, setPhone] = useState('');
+	// Phone (for checkout update), prefill from user profile
+	const [phone, setPhone] = useState(user?.phone || '');
 
 	// Form states
 	const [shippingInfo, setShippingInfo] = useState({
@@ -60,11 +60,6 @@ const Checkout = () => {
 	const [uploadingProof, setUploadingProof] = useState(false);
 
 	const [errors, setErrors] = useState({});
-
-	// Initialise phone from user profile
-	useEffect(() => {
-		if (user) setPhone(user.phone || '');
-	}, [user]);
 
 	// Fetch payment settings
 	useEffect(() => {

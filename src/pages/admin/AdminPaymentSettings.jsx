@@ -32,7 +32,19 @@ const AdminPaymentSettings = () => {
 		}
 	};
 
-	useEffect(() => { fetchSettings(); }, []);
+	const refreshSettings = () => fetchSettings();
+
+	useEffect(() => {
+		const loadSettings = async () => {
+			try {
+				const res = await http.get('/admin/payment-settings', { admin: true });
+				if (res?.success) setSettings(res.data?.settings || []);
+			} catch { } finally {
+				setLoading(false);
+			}
+		};
+		loadSettings();
+	}, []);
 
 	const fetchPlatformSettings = async () => {
 		setPlatformLoading(true);
@@ -50,7 +62,25 @@ const AdminPaymentSettings = () => {
 		}
 	};
 
-	useEffect(() => { fetchPlatformSettings(); }, []);
+	const refreshPlatformSettings = () => fetchPlatformSettings();
+
+	useEffect(() => {
+		const loadPlatformSettings = async () => {
+			try {
+				const res = await http.get('/admin/platform-settings', { admin: true });
+				if (res?.success) {
+					const s = res.data?.settings || res.data;
+					setPlatformSettings({
+						platformRetentionFee: s?.platformRetentionFee ?? '',
+						payoutRetentionDays: s?.payoutRetentionDays ?? '',
+					});
+				}
+			} catch { } finally {
+				setPlatformLoading(false);
+			}
+		};
+		loadPlatformSettings();
+	}, []);
 
 	const openEdit = (setting) => {
 		setEditingMethod(setting.method);
@@ -72,7 +102,7 @@ const AdminPaymentSettings = () => {
 			if (res?.success) {
 				notyf.success('Configuração guardada com sucesso!');
 				setModalOpen(false);
-				fetchSettings();
+				refreshSettings();
 			} else {
 				notyf.error(res?.msg || 'Erro ao guardar.');
 			}
@@ -88,7 +118,7 @@ const AdminPaymentSettings = () => {
 			const res = await http.put(`/admin/payment-settings/${setting.method}`, { isActive: !setting.isActive }, { admin: true });
 			if (res?.success) {
 				notyf.success(setting.isActive ? 'Desactivado.' : 'Activado.');
-				fetchSettings();
+				refreshSettings();
 			}
 		} catch {
 			notyf.error('Erro ao actualizar.');
@@ -115,7 +145,7 @@ const AdminPaymentSettings = () => {
 			if (res?.success) {
 				notyf.success('Configurações da plataforma guardadas com sucesso!');
 				setPlatformModalOpen(false);
-				fetchPlatformSettings();
+				refreshPlatformSettings();
 			} else {
 				notyf.error(res?.msg || 'Erro ao guardar.');
 			}

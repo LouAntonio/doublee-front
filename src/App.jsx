@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import useAuthStore from './stores/authStore';
 import useCartStore from './stores/cartStore';
 import useWishlistStore from './stores/wishlistStore';
@@ -39,6 +39,11 @@ import AdminOrders from './pages/admin/AdminOrders';
 import Vender from './pages/Vender';
 import ComoFunciona from './pages/ComoFunciona';
 
+const CategoryProductsPage = () => {
+	const { slug } = useParams();
+	return <CategoryProducts key={slug} />;
+};
+
 const ConditionalFooter = () => {
 	const location = useLocation();
 	if (location.pathname.startsWith('/dbe')) return null;
@@ -67,7 +72,7 @@ function AppRoutes() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/categorias" element={<Categorias />} />
-				<Route path="/categorias/:slug" element={<CategoryProducts />} />
+				<Route path="/categorias/:slug" element={<CategoryProductsPage />} />
 				<Route path="/produtos" element={<Produtos />} />
 				<Route path="/cupoes" element={<Cupoes />} />
 				<Route path="/auth" element={<AuthRoute />} />
