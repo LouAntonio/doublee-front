@@ -64,7 +64,7 @@ const ComoFunciona = () => {
 		{
 			icon: <FaIdCard className="text-xl" />,
 			title: 'Verifica a identidade',
-			description: 'Submete o BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova antes de criares a tua loja.'
+			description: 'Submete o BI (frente e verso) ou Passaporte e 3 selfies. A equipa analisa e aprova antes de criares a tua loja.'
 		},
 		{
 			icon: <FaStore className="text-xl" />,

@@ -74,7 +74,7 @@ const Vender = () => {
 		{
 			number: '02',
 			title: 'Verifique a identidade',
-			description: 'Submeta os seus documentos — BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova antes de poder criar a loja.',
+			description: 'Submeta o BI (frente e verso) ou Passaporte e 3 selfies. A equipa analisa e aprova antes de poder criar a loja.',
 			icon: <FaIdCard className="text-xl" />
 		},
 		{
@@ -98,10 +98,8 @@ const Vender = () => {
 	];
 
 	const requirements = [
-		'Cópia do BI ou Passaporte válido',
-		'NUIT (Número de Identificação Fiscal)',
-		'Comprovativo de morada atualizado',
-		'Conta bancária para recebimentos',
+		'Cópia do BI (frente e verso) ou Passaporte válido',
+		'3 selfies para verificação',
 		'Produtos em conformidade com a lei angolana'
 	];
 
@@ -200,7 +198,7 @@ const Vender = () => {
 
 						{/* Preview Panel */}
 						<div className="vender-stagger flex flex-col gap-3 w-full md:w-auto" style={{ animationDelay: '250ms' }}>
-							{['Crie a loja no painel de vendedor', 'Verificação de identidade pela equipa', 'Produtos aprovados antes de ficarem visíveis', 'Pagamento validado via comprovativo'].map((item) => (
+							{['Verificação de identidade pela equipa', 'Crie a loja no painel de vendedor', 'Produtos aprovados antes de ficarem visíveis', 'Pagamento validado via comprovativo'].map((item) => (
 								<div key={item} className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm text-orange-100/80 flex items-start gap-3 min-w-[240px]">
 									<FaCheckCircle className="text-orange-400 mt-0.5 flex-shrink-0" />
 									{item}
@@ -367,13 +365,13 @@ const Vender = () => {
 							Pronto para começar a vender?
 						</h2>
 						<p className="text-lg mb-8 text-orange-100/80 max-w-2xl mx-auto leading-relaxed">
-							Crie a sua loja, verifique a identidade e comece a receber pedidos.
+							Verifique a sua identidade, crie a loja e comece a receber pedidos.
 						</p>
 						<button
 							onClick={handleComecarVender}
 							className="bg-white text-orange-600 hover:bg-orange-50 active:bg-gray-100 px-10 py-4 rounded-xl font-bold text-base transition-all duration-300 shadow-lg shadow-black/10 hover:shadow-xl hover:scale-[1.02] inline-flex items-center gap-2 cursor-pointer"
 						>
-							Criar minha loja grátis
+							Começar a vender grátis
 							<FaArrowRight />
 						</button>
 					</div>
