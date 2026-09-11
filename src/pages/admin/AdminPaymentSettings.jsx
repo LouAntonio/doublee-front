@@ -16,6 +16,12 @@ const AdminPaymentSettings = () => {
 	const [form, setForm] = useState({ name: '', phone: '', bank: '', iban: '', isActive: true });
 	const [saving, setSaving] = useState(false);
 
+	const [platformSettings, setPlatformSettings] = useState({ platformRetentionFee: '', payoutRetentionDays: '' });
+	const [platformLoading, setPlatformLoading] = useState(true);
+	const [platformSaving, setPlatformSaving] = useState(false);
+	const [platformModalOpen, setPlatformModalOpen] = useState(false);
+	const [platformForm, setPlatformForm] = useState({ platformRetentionFee: '', payoutRetentionDays: '' });
+
 	const fetchSettings = async () => {
 		setLoading(true);
 		try {
@@ -27,6 +33,24 @@ const AdminPaymentSettings = () => {
 	};
 
 	useEffect(() => { fetchSettings(); }, []);
+
+	const fetchPlatformSettings = async () => {
+		setPlatformLoading(true);
+		try {
+			const res = await http.get('/admin/platform-settings', { admin: true });
+			if (res?.success) {
+				const s = res.data?.settings || res.data;
+				setPlatformSettings({
+					platformRetentionFee: s?.platformRetentionFee ?? '',
+					payoutRetentionDays: s?.payoutRetentionDays ?? '',
+				});
+			}
+		} catch { } finally {
+			setPlatformLoading(false);
+		}
+	};
+
+	useEffect(() => { fetchPlatformSettings(); }, []);
 
 	const openEdit = (setting) => {
 		setEditingMethod(setting.method);
@@ -68,6 +92,37 @@ const AdminPaymentSettings = () => {
 			}
 		} catch {
 			notyf.error('Erro ao actualizar.');
+		}
+	};
+
+	const openPlatformEdit = () => {
+		setPlatformForm({
+			platformRetentionFee: platformSettings.platformRetentionFee ?? '',
+			payoutRetentionDays: platformSettings.payoutRetentionDays ?? '',
+		});
+		setPlatformModalOpen(true);
+	};
+
+	const handlePlatformSubmit = async (e) => {
+		e.preventDefault();
+		setPlatformSaving(true);
+		try {
+			const payload = {
+				platformRetentionFee: platformForm.platformRetentionFee === '' ? 0 : parseFloat(platformForm.platformRetentionFee),
+				payoutRetentionDays: platformForm.payoutRetentionDays === '' ? 0 : parseInt(platformForm.payoutRetentionDays, 10),
+			};
+			const res = await http.put('/admin/platform-settings', payload, { admin: true });
+			if (res?.success) {
+				notyf.success('Configurações da plataforma guardadas com sucesso!');
+				setPlatformModalOpen(false);
+				fetchPlatformSettings();
+			} else {
+				notyf.error(res?.msg || 'Erro ao guardar.');
+			}
+		} catch {
+			notyf.error('Erro ao conectar ao servidor.');
+		} finally {
+			setPlatformSaving(false);
 		}
 	};
 
@@ -199,6 +254,81 @@ const AdminPaymentSettings = () => {
 						<button type="submit" disabled={saving}
 							className="px-6 py-2.5 text-sm font-display font-semibold text-white bg-accent hover:bg-accent-dark rounded-xl transition-all disabled:bg-[#78716C]/50 cursor-pointer">
 							{saving ? 'A guardar...' : 'Guardar Alterações'}
+						</button>
+					</div>
+				</form>
+			</Modal>
+
+			{/* Platform Settings Section */}
+			<div className="bg-white rounded-2xl shadow-sm border border-accent/10 overflow-hidden">
+				<div className="p-6 border-b border-accent/10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+					<div>
+						<h2 className="text-2xl font-display font-bold text-[#1C1917] tracking-tight flex items-center gap-2">
+							<svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+							</svg>
+							Configurações da Plataforma
+						</h2>
+						<p className="text-sm text-[#78716C] mt-1 font-body">Taxas de retenção e prazos de pagamento.</p>
+					</div>
+					<button onClick={openPlatformEdit}
+						className="px-4 py-2 text-sm font-display font-semibold rounded-lg bg-sand/50 text-[#1C1917] hover:bg-accent/20 border border-accent/20 transition-all cursor-pointer">
+						Editar
+					</button>
+				</div>
+				<div className="p-6">
+					{platformLoading ? (
+						<div className="animate-pulse space-y-3">
+							<div className="h-4 bg-accent/20 rounded w-1/2" />
+							<div className="h-4 bg-accent/20 rounded w-1/3" />
+						</div>
+					) : (
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="p-4 bg-sand/30 rounded-xl border border-accent/10">
+								<p className="text-xs text-[#78716C] uppercase tracking-wider font-display font-bold mb-1">Taxa de Retenção da Plataforma</p>
+								<p className="text-lg font-bold text-[#1C1917]">{platformSettings.platformRetentionFee ?? '0'}%</p>
+							</div>
+							<div className="p-4 bg-sand/30 rounded-xl border border-accent/10">
+								<p className="text-xs text-[#78716C] uppercase tracking-wider font-display font-bold mb-1">Dias de Retenção (Payout)</p>
+								<p className="text-lg font-bold text-[#1C1917]">{platformSettings.payoutRetentionDays ?? '0'} dias</p>
+							</div>
+						</div>
+					)}
+				</div>
+			</div>
+
+			<Modal isOpen={platformModalOpen} onClose={() => setPlatformModalOpen(false)} size="sm">
+				<div className="p-6 border-b border-accent/10 flex justify-between items-center bg-sand/30">
+					<h3 className="text-lg font-display font-bold text-[#1C1917]">
+						Editar Configurações da Plataforma
+					</h3>
+					<button onClick={() => setPlatformModalOpen(false)} className="text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer">
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+					</button>
+				</div>
+				<form onSubmit={handlePlatformSubmit} className="p-6 space-y-4">
+					<div>
+						<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Taxa de Retenção da Plataforma (%)</label>
+						<input type="number" value={platformForm.platformRetentionFee} onChange={(e) => setPlatformForm({ ...platformForm, platformRetentionFee: e.target.value })} min="0" max="100" step="0.01"
+							className="w-full px-4 py-2.5 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all outline-none"
+							placeholder="Ex: 5" />
+						<p className="text-xs text-[#78716C] mt-1">Percentagem retida pela plataforma em cada venda.</p>
+					</div>
+					<div>
+						<label className="block text-sm font-display font-semibold text-[#1C1917] mb-2">Dias de Retenção (Payout)</label>
+						<input type="number" value={platformForm.payoutRetentionDays} onChange={(e) => setPlatformForm({ ...platformForm, payoutRetentionDays: e.target.value })} min="0" step="1"
+							className="w-full px-4 py-2.5 rounded-xl border border-accent/20 bg-sand/50 text-sm focus:bg-white focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all outline-none"
+							placeholder="Ex: 7" />
+						<p className="text-xs text-[#78716C] mt-1">Número de dias que o valor fica retido antes do pagamento ao vendedor.</p>
+					</div>
+					<div className="pt-4 flex justify-end gap-3">
+						<button type="button" onClick={() => setPlatformModalOpen(false)}
+							className="px-5 py-2.5 text-sm font-display font-semibold text-[#78716C] hover:text-[#1C1917] hover:bg-sand rounded-xl transition-colors cursor-pointer">
+							Cancelar
+						</button>
+						<button type="submit" disabled={platformSaving}
+							className="px-6 py-2.5 text-sm font-display font-semibold text-white bg-accent hover:bg-accent-dark rounded-xl transition-all disabled:bg-[#78716C]/50 cursor-pointer">
+							{platformSaving ? 'A guardar...' : 'Guardar Alterações'}
 						</button>
 					</div>
 				</form>

@@ -26,16 +26,6 @@ const BannerCarousel = () => {
 			title: 'Grandes promoções',
 			subtitle: 'Descontos especiais em eletrónicos e acessórios.',
 			cta: 'Aproveitar'
-		},
-		{
-			id: 3,
-			image: './images/slider/3.png',
-			alt: 'Moda e acessórios',
-			bgColor: '#FF6F00',
-			badge: 'Moda',
-			title: 'Tendências de Moda',
-			subtitle: 'Peças e acessórios para renovar seu guarda-roupa.',
-			cta: 'Explorar'
 		}
 	];
 

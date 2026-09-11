@@ -62,14 +62,14 @@ const ComoFunciona = () => {
 			description: 'Regista-te na Kuvangana para aceder ao painel de vendedor.'
 		},
 		{
-			icon: <FaStore className="text-xl" />,
-			title: 'Cria a tua loja',
-			description: 'Regista os dados do teu negócio no painel de vendedor.'
-		},
-		{
 			icon: <FaIdCard className="text-xl" />,
 			title: 'Verifica a identidade',
-			description: 'Submete o BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova.'
+			description: 'Submete o BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova antes de criares a tua loja.'
+		},
+		{
+			icon: <FaStore className="text-xl" />,
+			title: 'Cria a tua loja',
+			description: 'Regista os dados do teu negócio no painel de vendedor, após verificação concluída.'
 		},
 		{
 			icon: <FaBoxOpen className="text-xl" />,

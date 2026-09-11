@@ -9,6 +9,7 @@ import {
 	IoChevronBack,
 	IoChevronForward,
 } from 'react-icons/io5';
+import { useQuery } from '@tanstack/react-query';
 import http from '../../../services/http';
 import { notyf } from '../../../utils/notyf';
 import { formatCurrency } from '../../../utils/currency';
@@ -18,6 +19,18 @@ import ImagePicker from './ui/ImagePicker';
 import EmptyState from './ui/EmptyState';
 import SectionTitle from './ui/SectionTitle';
 import DashboardModal from '../DashboardModal';
+
+const usePlatformSettings = () =>
+	useQuery({
+		queryKey: ['platform-settings'],
+		queryFn: async () => {
+			const res = await http.get('/platform/settings');
+			if (!res?.success) throw new Error('Erro ao carregar configurações da plataforma');
+			return res.data || {};
+		},
+		staleTime: 1000 * 60 * 10,
+		refetchOnMount: 'always',
+	});
 
 const EMPTY_PRODUCT = {
 	name: '', description: '', price: '', promotionalPrice: '',
@@ -53,6 +66,9 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 	const [editingProduct, setEditingProduct] = useState(null);
 	const [page, setPage] = useState(1);
 	const pageSize = 12;
+
+	const { data: platformSettings } = usePlatformSettings();
+	const retentionFee = platformSettings?.platformRetentionFee ?? 0;
 
 	// Categories
 	const [allCategories, setAllCategories] = useState([]);
@@ -318,6 +334,11 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 												</>
 											) : (
 												<span className="text-sm font-bold text-[#1C1917]">{formatCurrency(product.price)}</span>
+											)}
+											{retentionFee > 0 && (
+												<p className="text-[10px] text-[#78716C] mt-0.5">
+													Taxa {retentionFee}% • Recebe {formatCurrency((product.promotionalPrice && isPromoValid(product) ? product.promotionalPrice : product.price) * ((100 - retentionFee) / 100))}
+												</p>
 											)}
 										</div>
 										<span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${product.stock > 0 ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'

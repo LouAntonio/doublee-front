@@ -73,15 +73,15 @@ const Vender = () => {
 		},
 		{
 			number: '02',
-			title: 'Crie a sua loja',
-			description: 'Preencha os dados do seu negócio no painel de vendedor.',
-			icon: <FaStore className="text-xl" />
+			title: 'Verifique a identidade',
+			description: 'Submeta os seus documentos — BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova antes de poder criar a loja.',
+			icon: <FaIdCard className="text-xl" />
 		},
 		{
 			number: '03',
-			title: 'Verifique a identidade',
-			description: 'Submeta os seus documentos — BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova.',
-			icon: <FaIdCard className="text-xl" />
+			title: 'Crie a sua loja',
+			description: 'Preencha os dados do seu negócio no painel de vendedor, após verificação concluída.',
+			icon: <FaStore className="text-xl" />
 		},
 		{
 			number: '04',
