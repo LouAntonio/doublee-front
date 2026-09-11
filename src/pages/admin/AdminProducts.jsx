@@ -459,7 +459,9 @@ const AdminProducts = () => {
 								<div className="flex-1 space-y-4">
 									<div>
 										<h4 className="text-2xl font-display font-bold text-[#1C1917]">{selectedProductDetails.name}</h4>
-										<p className="text-sm text-[#78716C] mt-1">{selectedProductDetails.description || 'Sem descrição.'}</p>
+										<p className="text-sm text-[#78716C] mt-1" dangerouslySetInnerHTML={{
+											__html: selectedProductDetails.description?.replace(/(\r\n|\n\r|\r|\n)/g, '<br>') || 'Sem descrição.'
+										}} />
 									</div>
 
 									<div className="grid grid-cols-2 gap-4">

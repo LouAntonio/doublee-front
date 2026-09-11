@@ -328,6 +328,16 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 									{product.promotionalPrice && !isPromoValid(product) && (
 										<p className="text-xs text-amber-600 mt-1">⚠ Promoção expirada</p>
 									)}
+									<div className="flex items-center gap-2 mt-3 pt-3 border-t border-accent/10">
+										<button type="button" onClick={() => openEdit(product)}
+											className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border border-accent/20 text-xs font-semibold text-[#78716C] hover:text-accent hover:bg-orange-50 transition-colors cursor-pointer">
+											<IoPencilOutline className="w-3.5 h-3.5" /> Editar
+										</button>
+										<button type="button" onClick={() => handleDelete(product.id)} disabled={deleting === product.id}
+											className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border border-red-200 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+											<IoTrashOutline className="w-3.5 h-3.5" /> {deleting === product.id ? '...' : 'Eliminar'}
+										</button>
+									</div>
 								</div>
 							</div>
 						))}

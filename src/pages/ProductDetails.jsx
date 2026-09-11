@@ -484,9 +484,9 @@ const ProductDetails = () => {
 				{/* Descrição */}
 				<div className="bg-white rounded-xl shadow-sm border border-[#1C1917]/5 p-8 mb-4 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
 					<h2 className="font-display text-xl text-[#1C1917] mb-6">Descrição</h2>
-					<p className="font-body text-base text-[#78716C] leading-relaxed mb-0">
-						{product.description}
-					</p>
+					<p className="font-body text-base text-[#78716C] leading-relaxed mb-0" dangerouslySetInnerHTML={{
+						__html: product.description?.replace(/(\r\n|\n\r|\r|\n)/g, '<br>') || ''
+					}} />
 				</div>
 
 				{/* Características Técnicas */}
