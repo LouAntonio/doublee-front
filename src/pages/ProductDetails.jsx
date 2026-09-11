@@ -264,13 +264,13 @@ const ProductDetails = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-[auto_1fr_320px] bg-white rounded-xl shadow-sm border border-[#1C1917]/5 overflow-hidden mb-8 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
 
 					{/* Coluna Esquerda — Imagens */}
-					<div className="flex gap-3 p-6 border-r border-[#1C1917]/10 items-start">
-						<div className="flex flex-col gap-2">
+					<div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 p-4 sm:p-6 sm:border-r border-[#1C1917]/10 min-w-0 max-w-full">
+						<div className="flex sm:flex-col gap-2 w-full sm:w-auto justify-center order-2 sm:order-1">
 							{product.images.map((img, index) => (
 								<button
 									key={index}
 									onClick={() => setSelectedImage(index)}
-									className={`w-14 h-14 rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all duration-200 ${
+									className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all duration-200 ${
 										selectedImage === index
 											? 'ring-2 ring-accent ring-offset-1'
 											: 'border border-[#1C1917]/10 hover:border-accent/40'
@@ -286,7 +286,7 @@ const ProductDetails = () => {
 							))}
 						</div>
 
-						<div className="relative w-[340px] flex-shrink-0">
+						<div className="relative w-full max-w-full sm:w-[340px] lg:w-[380px] flex-shrink-0 order-1 sm:order-2">
 							<button
 								onClick={handleToggleWishlist}
 								title={wishlisted ? 'Remover da wishlist' : 'Adicionar à wishlist'}
@@ -304,7 +304,7 @@ const ProductDetails = () => {
 							<img
 								src={product.images[selectedImage]}
 								alt={product.title}
-								className="w-full h-[400px] object-contain"
+								className="w-full h-[260px] sm:h-[380px] lg:h-[400px] object-contain"
 								onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 							/>
 						</div>

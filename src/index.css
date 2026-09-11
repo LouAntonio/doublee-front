@@ -496,15 +496,12 @@
 	}
 }
 
-/* ── BannerCarousel altura responsiva ── */
+/* ── BannerCarousel altura proporcional à imagem (1920x500 ≈ 3.84:1) ── */
 .banner-carousel {
-	--banner-vh: 35vh;
-	height: calc(var(--banner-vh) - 56px);
-	min-height: 180px;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 20 / 5.2;
 }
-@media (width >= 640px) { .banner-carousel { --banner-vh: 50vh; min-height: 260px; } }
-@media (width >= 768px) { .banner-carousel { --banner-vh: 60vh; min-height: 320px; } }
-@media (width >= 1024px) { .banner-carousel { --banner-vh: 70vh; min-height: 400px; } }
 
 /* Empty state illustration */
 .promocoes-empty-icon {

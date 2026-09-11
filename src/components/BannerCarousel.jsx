@@ -64,11 +64,12 @@ const BannerCarousel = () => {
 						<div
 							key={banner.id}
 							className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+							style={{ backgroundColor: banner.bgColor }}
 						>
 							<img
 								src={banner.image}
 								alt={banner.alt}
-								className="w-full h-full object-cover"
+								className="w-full h-full object-contain"
 								onError={(e) => {
 									e.target.src = 'https://images.unsplash.com/photo-1503602642458-232111445657?w=1600&q=80&auto=format&fit=crop';
 								}}
