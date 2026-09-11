@@ -2,19 +2,20 @@ import React from 'react';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import {
+	FaUserPlus,
 	FaSearch,
 	FaShoppingCart,
-	FaCreditCard,
-	FaTruck,
-	FaCheckCircle,
-	FaStore,
-	FaUpload,
-	FaBoxOpen,
+	FaClipboardCheck,
 	FaMoneyBillWave,
-	FaStar,
-	FaShieldAlt,
-	FaHeadset,
-	FaMobileAlt,
+	FaTruck,
+	FaStore,
+	FaIdCard,
+	FaBoxOpen,
+	FaHandshake,
+	FaWarehouse,
+	FaCreditCard,
+	FaFileUpload,
+	FaCheckCircle,
 	FaArrowRight
 } from 'react-icons/fa';
 
@@ -23,129 +24,110 @@ const ComoFunciona = () => {
 
 	const buyerSteps = [
 		{
+			icon: <FaUserPlus className="text-xl" />,
+			title: 'Cria a tua conta',
+			description: 'Regista-te ou inicia sessão — precisas de conta para finalizar compras.'
+		},
+		{
 			icon: <FaSearch className="text-xl" />,
-			title: 'Busque produtos',
-			description: 'Explore milhares de produtos das melhores lojas de Angola.'
+			title: 'Explora o catálogo',
+			description: 'Pesquisa produtos, navega por categorias, promoções, cupões e lojas verificadas.'
 		},
 		{
 			icon: <FaShoppingCart className="text-xl" />,
-			title: 'Adicione ao carrinho',
-			description: 'Selecione os produtos desejados e revise seu pedido.'
+			title: 'Adiciona ao carrinho',
+			description: 'Reúne os produtos num pedido e revê quantidades antes de avançar.'
 		},
 		{
-			icon: <FaCreditCard className="text-xl" />,
-			title: 'Pagamento seguro',
-			description: 'Pague com segurança usando múltiplas formas de pagamento.'
+			icon: <FaClipboardCheck className="text-xl" />,
+			title: 'Finaliza a compra',
+			description: 'No checkout escolhes a entrega à morada (com custo por zona) ou o levantamento na sede.'
+		},
+		{
+			icon: <FaMoneyBillWave className="text-xl" />,
+			title: 'Paga com segurança',
+			description: 'Multicaixa Express ou Transferência Bancária, com coordenadas fornecidas na página de pagamento.'
 		},
 		{
 			icon: <FaTruck className="text-xl" />,
-			title: 'Receba em casa',
-			description: 'Acompanhe sua entrega e receba no conforto da sua casa.'
+			title: 'Recebe e acompanha',
+			description: 'No painel de cliente segues o estado do pagamento e da entrega do teu pedido.'
 		}
 	];
 
 	const sellerSteps = [
 		{
-			icon: <FaStore className="text-xl" />,
-			title: 'Crie sua loja',
-			description: 'Registe-se e configure sua loja virtual gratuitamente.'
+			icon: <FaUserPlus className="text-xl" />,
+			title: 'Cria a tua conta',
+			description: 'Regista-te na Kuvangana para aceder ao painel de vendedor.'
 		},
 		{
-			icon: <FaUpload className="text-xl" />,
-			title: 'Cadastre produtos',
-			description: 'Adicione fotos, descrições e preços dos seus produtos.'
+			icon: <FaStore className="text-xl" />,
+			title: 'Cria a tua loja',
+			description: 'Regista os dados do teu negócio no painel de vendedor.'
+		},
+		{
+			icon: <FaIdCard className="text-xl" />,
+			title: 'Verifica a identidade',
+			description: 'Submete o BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova.'
 		},
 		{
 			icon: <FaBoxOpen className="text-xl" />,
-			title: 'Receba pedidos',
-			description: 'Gerencie pedidos e prepare para envio.'
+			title: 'Adiciona produtos',
+			description: 'Cadastra fotos, preços e descrições. Os produtos são aprovados antes de ficarem visíveis.'
+		},
+		{
+			icon: <FaHandshake className="text-xl" />,
+			title: 'Gere pedidos e recebe',
+			description: 'Recebes pedidos, fazes a entrega (zona ou sede) e recebes o pagamento confirmado.'
+		}
+	];
+
+	const deliveryItems = [
+		{
+			icon: <FaTruck className="text-xl" />,
+			title: 'Entrega ao Domicílio',
+			description: 'Escolhes a tua zona de entrega no checkout e o custo é calculado por zona.'
+		},
+		{
+			icon: <FaWarehouse className="text-xl" />,
+			title: 'Levantamento na Sede',
+			description: 'Os vendedores fazem chegar os produtos à sede da Kuvangana e tu levantas pessoalmente.'
+		}
+	];
+
+	const paymentItems = [
+		{
+			icon: <FaCreditCard className="text-xl" />,
+			title: 'Multicaixa Express',
+			description: 'Pagamento rápido a partir do teu telemóvel.'
 		},
 		{
 			icon: <FaMoneyBillWave className="text-xl" />,
-			title: 'Receba pagamentos',
-			description: 'Receba o valor das vendas na sua conta bancária.'
+			title: 'Transferência Bancária',
+			description: 'Pagamento por IBAN via balcão, ATM ou aplicações de internet banking.'
+		},
+		{
+			icon: <FaFileUpload className="text-xl" />,
+			title: 'Comprovativo',
+			description: 'Envias o comprovativo no checkout ou depois pelo painel para a equipa validar o pagamento.'
 		}
-	];
-
-	const features = [
-		{
-			icon: <FaShieldAlt className="text-2xl text-orange-500" />,
-			title: 'Compra protegida',
-			description: 'Seu dinheiro só é liberado ao vendedor após confirmar o recebimento.'
-		},
-		{
-			icon: <FaHeadset className="text-2xl text-orange-500" />,
-			title: 'Suporte dedicado',
-			description: 'Equipe disponível para ajudar em caso de dúvidas ou problemas.'
-		},
-		{
-			icon: <FaMobileAlt className="text-2xl text-orange-500" />,
-			title: 'App mobile',
-			description: 'Compre e venda de qualquer lugar através do nosso aplicativo.'
-		},
-		{
-			icon: <FaStar className="text-2xl text-orange-500" />,
-			title: 'Avaliações reais',
-			description: 'Sistema de avaliações para garantir transparência nas negociações.'
-		}
-	];
-
-	const protectedSteps = [
-		{
-			number: '1',
-			title: 'Você paga',
-			description: 'O valor fica guardado em nossa plataforma'
-		},
-		{
-			number: '2',
-			title: 'Vendedor envia',
-			description: 'O vendedor é notificado e envia o produto'
-		},
-		{
-			number: '3',
-			title: 'Você confirma',
-			description: 'Após receber, confirma e o vendedor recebe'
-		}
-	];
-
-	const stats = [
-		{ value: '50K+', label: 'Usuários cadastrados' },
-		{ value: '100K+', label: 'Produtos disponíveis' },
-		{ value: '5K+', label: 'Vendedores ativos' },
-		{ value: '98%', label: 'Avaliação positiva' }
 	];
 
 	const buyerTips = [
-		'Verifique a avaliação do vendedor antes de comprar',
-		'Leia as descrições dos produtos atentamente',
-		'Use sempre o sistema de mensagens da plataforma',
-		'Confirme o recebimento antes de liberar o pagamento',
-		'Em caso de problemas, contacte nosso suporte'
+		'Verifica a avaliação e o estado da loja antes de comprar',
+		'Lê atentamente a descrição e as fotografias do produto',
+		'Confirma os dados de contacto da loja',
+		'Guarda o comprovativo de pagamento',
+		'Em caso de dúvida, contacta o nosso suporte'
 	];
 
 	const sellerTips = [
-		'Seja honesto nas descrições dos produtos',
-		'Use fotos reais e de qualidade',
-		'Envie os produtos dentro do prazo combinado',
-		'Mantenha comunicação clara com os compradores',
-		'Embale bem os produtos para evitar danos'
-	];
-
-	const sellerAdvantages = [
-		'Acesso a mais de 50.000 clientes',
-		'Painel de gestão completo',
-		'Pagamentos garantidos',
-		'Sem custo fixo mensal',
-		'Suporte especializado'
-	];
-
-	const categories = [
-		{ name: 'Tecnologia', icon: '💻', count: '5.000+' },
-		{ name: 'Moda', icon: '👕', count: '3.500+' },
-		{ name: 'Casa & Móveis', icon: '🏠', count: '2.800+' },
-		{ name: 'Beleza & Saúde', icon: '💄', count: '2.200+' },
-		{ name: 'Esportes', icon: '⚽', count: '1.500+' },
-		{ name: 'Livros', icon: '📚', count: '1.000+' }
+		'Mantém descrições e fotos fiéis aos produtos',
+		'Cumpre os prazos e as zonas de entrega combinadas',
+		'Actualiza o teu stock regularmente',
+		'Comunica claramente com os compradores',
+		'Responde à equipa durante o processo de verificação'
 	];
 
 	return (
@@ -175,7 +157,7 @@ const ComoFunciona = () => {
 							Como Funciona a <span className="text-orange-400">Kuvangana</span>
 						</h1>
 						<p className="vender-stagger text-orange-100/80 text-base md:text-lg max-w-2xl leading-relaxed" style={{ animationDelay: '200ms' }}>
-							Descubra como comprar e vender de forma simples, segura e rápida na maior plataforma de e-commerce de Angola.
+							Comprar e vender de forma simples e segura: um mercado digital angolano com lojas verificadas e pagamento validado.
 						</p>
 					</div>
 				</section>
@@ -213,20 +195,6 @@ const ComoFunciona = () => {
 								</div>
 							</div>
 						))}
-						<div className="bg-white rounded-xl border border-orange-100/40 shadow-sm p-5" style={{ animationDelay: '500ms' }}>
-							<h4 className="font-bold text-gray-900 mb-3 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>Categorias disponíveis</h4>
-							<div className="grid grid-cols-2 gap-2">
-								{categories.map((cat, index) => (
-									<div key={index} className="flex items-center gap-2 p-2.5 bg-orange-50/50 rounded-lg">
-										<span className="text-base">{cat.icon}</span>
-										<div>
-											<div className="text-xs font-medium text-gray-800">{cat.name}</div>
-											<div className="text-[10px] text-gray-400">{cat.count}</div>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
 					</div>
 
 					{/* Vendedores */}
@@ -248,82 +216,71 @@ const ComoFunciona = () => {
 								</div>
 							</div>
 						))}
-						<div className="bg-white rounded-xl border border-orange-100/40 shadow-sm p-5" style={{ animationDelay: '600ms' }}>
-							<h4 className="font-bold text-gray-900 mb-3 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>Vantagens de vender</h4>
-							<ul className="space-y-2">
-								{sellerAdvantages.map((item, index) => (
-									<li key={index} className="flex items-center gap-2">
-										<FaCheckCircle className="text-green-500 flex-shrink-0 text-xs" />
-										<span className="text-gray-600 text-xs">{item}</span>
-									</li>
-								))}
-							</ul>
-						</div>
 					</div>
 				</div>
 			</section>
 
-			{/* ═══ Benefits Section ═══ */}
+			{/* ═══ Entrega & Pagamento ═══ */}
 			<section className="bg-[#f5f0eb] py-20">
 				<div className="max-w-[1200px] mx-auto px-4">
 					<div className="text-center mb-14">
-						<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Porquê Nós</span>
+						<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Entrega &amp; Pagamento</span>
 						<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Por que usar a Kuvangana?
+							Como recebes e pagas
 						</h2>
 						<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-							Recursos que tornam sua experiência única e segura
+							Entrega ao domicílio ou levantamento na sede, com pagamento validado pela equipa.
 						</p>
 					</div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-						{features.map((feature, index) => (
-							<div
-								key={index}
-								className="vender-stagger vender-card-hover bg-white rounded-xl border border-orange-100/50 p-8 text-center shadow-sm"
-								style={{ animationDelay: `${index * 100}ms` }}
-							>
-								<div className="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-5 shadow-sm">
-									{feature.icon}
-								</div>
-								<h3 className="text-lg font-bold text-gray-900 mb-3" style={{ fontFamily: '"Fredoka", sans-serif' }}>{feature.title}</h3>
-								<p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
-							</div>
-						))}
-					</div>
-				</div>
-			</section>
-
-			{/* ═══ Compra Protegida ═══ */}
-			<section className="relative bg-gradient-to-br from-orange-600 to-orange-700 py-16 md:py-20 overflow-hidden">
-				<div className="vender-stats-pattern absolute inset-0 pointer-events-none" />
-				<div className="max-w-[1200px] mx-auto px-4 relative z-10">
-					<div className="text-center mb-12">
-						<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-							Compra Protegida Kuvangana
-						</h2>
-						<p className="vender-stagger text-orange-100/70 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-							Seu dinheiro fica seguro até você receber o produto
-						</p>
-					</div>
-
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-						{protectedSteps.map((step, index) => (
-							<div
-								key={index}
-								className="vender-stagger relative bg-white/10 backdrop-blur-md rounded-xl border border-white/10 p-7 text-center vender-card-hover"
-								style={{ animationDelay: `${index * 120 + 300}ms` }}
-							>
-								<span className="vender-step-number text-orange-300/50">{step.number}</span>
-								<div className="relative z-10">
-									<div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-5">
-										<span className="text-white font-bold text-xl">{step.number}</span>
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+						{/* Entrega */}
+						<div className="vender-stagger bg-white rounded-xl border border-orange-100/50 shadow-sm p-8" style={{ animationDelay: '100ms' }}>
+							<h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+								<FaTruck className="text-orange-500 text-xl" />
+								Entrega
+							</h3>
+							<div className="space-y-5">
+								{deliveryItems.map((item, index) => (
+									<div key={index} className="flex gap-4 p-4 bg-orange-50/50 rounded-xl">
+										<div className="flex-shrink-0 w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-500 shadow-sm">
+											{item.icon}
+										</div>
+										<div>
+											<h4 className="font-bold text-gray-800 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>{item.title}</h4>
+											<p className="text-gray-500 text-xs leading-relaxed mt-1">{item.description}</p>
+										</div>
 									</div>
-									<h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>{step.title}</h3>
-									<p className="text-orange-100/70 text-sm leading-relaxed">{step.description}</p>
+								))}
+							</div>
+						</div>
+
+						{/* Pagamento */}
+						<div className="vender-stagger bg-white rounded-xl border border-orange-100/50 shadow-sm p-8" style={{ animationDelay: '200ms' }}>
+							<h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+								<FaCreditCard className="text-orange-500 text-xl" />
+								Pagamento
+							</h3>
+							<div className="space-y-5">
+								{paymentItems.map((item, index) => (
+									<div key={index} className="flex gap-4 p-4 bg-orange-50/50 rounded-xl">
+										<div className="flex-shrink-0 w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-500 shadow-sm">
+											{item.icon}
+										</div>
+										<div>
+											<h4 className="font-bold text-gray-800 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>{item.title}</h4>
+											<p className="text-gray-500 text-xs leading-relaxed mt-1">{item.description}</p>
+										</div>
+									</div>
+								))}
+								<div className="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+									<FaCheckCircle className="text-emerald-500 mt-0.5 flex-shrink-0 text-sm" />
+									<p className="text-xs text-emerald-800 leading-relaxed">
+										O pedido só é confirmado quando o pagamento é validado pela equipa.
+									</p>
 								</div>
 							</div>
-						))}
+						</div>
 					</div>
 				</div>
 			</section>
@@ -377,23 +334,8 @@ const ComoFunciona = () => {
 				</div>
 			</section>
 
-			{/* ═══ Statistics Section ═══ */}
-			<section className="relative bg-gradient-to-br from-orange-600 to-orange-700 py-16 md:py-20 overflow-hidden">
-				<div className="vender-stats-pattern absolute inset-0 pointer-events-none" />
-				<div className="max-w-[1200px] mx-auto px-4 relative z-10">
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-						{stats.map((stat, i) => (
-							<div key={i} className="vender-stagger" style={{ animationDelay: `${i * 100}ms` }}>
-								<div className="text-4xl md:text-5xl font-bold mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>{stat.value}</div>
-								<div className="text-orange-100/70 text-sm font-medium tracking-wide">{stat.label}</div>
-							</div>
-						))}
-					</div>
-				</div>
-			</section>
-
 			{/* ═══ Final CTA ═══ */}
-			<section className="max-w-[1200px] mx-auto px-4 py-20">
+			<section className="max-w-[1200px] mx-auto px-4 pb-20">
 				<div className="vender-stagger relative bg-gradient-to-br from-orange-600 via-orange-600 to-orange-700 text-white rounded-2xl p-12 md:p-16 text-center shadow-xl overflow-hidden" style={{ animationDelay: '0ms' }}>
 					<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-orange-400/20 rounded-full blur-[100px] pointer-events-none" />
 					<div className="vender-hero-pattern absolute inset-0 pointer-events-none" />
@@ -403,7 +345,7 @@ const ComoFunciona = () => {
 							Comece agora mesmo
 						</h2>
 						<p className="text-lg mb-8 text-orange-100/80 max-w-2xl mx-auto leading-relaxed">
-							Junte-se à Kuvangana e faça parte da maior comunidade de compras e vendas de Angola.
+							Junte-se à Kuvangana e faça parte da comunidade de compras e vendas de Angola.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<a

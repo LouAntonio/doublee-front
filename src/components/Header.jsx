@@ -5,7 +5,6 @@ import {
 	IoCartOutline,
 	IoMenuOutline,
 	IoCloseOutline,
-	IoChevronForward,
 	IoPricetagOutline,
 	IoStorefrontOutline,
 	IoShirtOutline,
@@ -21,6 +20,7 @@ import { MdKeyboardArrowDown, MdCategory } from 'react-icons/md';
 import useCartStore from '../stores/cartStore';
 import useAuthStore from '../stores/authStore';
 import { useStoreStatus } from '../hooks/queries/useDashboard';
+import { useCategories } from '../hooks/queries/useCategories';
 
 const Header = () => {
 	const cartCount = useCartStore((s) => s.getCartCount());
@@ -34,6 +34,7 @@ const Header = () => {
 	const searchInputRef = useRef(null);
 	const userMenuRef = useRef(null);
 	const { data: storeStatus } = useStoreStatus(user?.id, { enabled: isAuthenticated });
+	const { data: dbCategories, isLoading: catLoading } = useCategories();
 	const hasApprovedStore = storeStatus === 'approved';
 
 	// Close user menu when clicking outside
@@ -76,72 +77,6 @@ const Header = () => {
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [categoriesOpen, setCategoriesOpen] = useState(false);
-	const [activeCategory, setActiveCategory] = useState(null);
-
-	const categories = [
-		{
-			name: 'Tecnologia',
-			columns: [
-				{
-					title: 'Celulares e Telefones',
-					items: [
-						{ text: 'Acessórios para Celulares' },
-						{ text: 'Peças para Celular' }
-					]
-				},
-				{
-					title: 'Informática',
-					items: [
-						{ text: 'Componentes para PC' },
-						{ text: 'Computadores' },
-						{ text: 'Tablets e Acessórios' }
-					]
-				},
-				{
-					title: 'Eletrônicos, Áudio e Vídeo',
-					items: [
-						{ text: 'Acessórios para Áudio e Vídeo' },
-						{ text: 'Áudio Portátil e Acessórios' }
-					]
-				}
-			]
-		},
-		{
-			name: 'Casa e Móveis',
-			columns: [
-				{
-					title: 'Móveis',
-					items: [
-						{ text: 'Sofás' },
-						{ text: 'Camas' },
-						{ text: 'Mesas' }
-					]
-				},
-				{
-					title: 'Decoração',
-					items: [
-						{ text: 'Quadros' },
-						{ text: 'Tapetes' }
-					]
-				}
-			]
-		},
-		{
-			name: 'Esportes e Fitness',
-			columns: [
-				{
-					title: 'Fitness',
-					items: [
-						{ text: 'Esteiras' },
-						{ text: 'Halteres' }
-					]
-				}
-			]
-		},
-		{ name: 'Beleza e Saúde', columns: [] },
-		{ name: 'Moda', columns: [] },
-		{ name: 'Produtos', columns: [] },
-	];
 
 	return (
 		<header className="shadow-sm">
@@ -314,7 +249,7 @@ const Header = () => {
 						{/* Categories Dropdown Trigger */}
 						<div
 							className="relative"
-							onMouseLeave={() => { setCategoriesOpen(false); setActiveCategory(null); }}
+							onMouseLeave={() => setCategoriesOpen(false)}
 						>
 							<button
 								onMouseEnter={() => setCategoriesOpen(true)}
@@ -330,75 +265,39 @@ const Header = () => {
 								<>
 									<div className="absolute top-full left-0 w-full h-2 bg-transparent" />
 									<div
-										className={`absolute top-[calc(100%+0.4rem)] left-0 ${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
-											? 'w-[680px]'
-											: 'w-[240px]'
-										} bg-white shadow-xl rounded-lg flex z-50 overflow-hidden animate-fade-in-up`}
+										className="absolute top-[calc(100%+0.4rem)] left-0 w-[240px] bg-white shadow-xl rounded-lg flex z-50 overflow-hidden animate-fade-in-up"
 										style={{ animationDuration: '0.2s' }}
 									>
 										{/* Main list */}
-										<div className={`${activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0
-											? 'w-1/3'
-											: 'w-full'
-										} bg-[#1C1917] text-white`}>
+										<div className="w-full bg-[#1C1917] text-white">
 											<ul>
-												{categories.map((category) => (
-													<li
-														key={category.name}
-														className={`cursor-pointer text-sm font-body ${activeCategory === category.name
-															? 'bg-accent'
-															: 'hover:bg-[#1C1917]/80'
-														}`}
-														onMouseEnter={() => setActiveCategory(category.name)}
-													>
-														<Link
-															to={`/categorias/${slugify(category.name)}`}
-															className="flex items-center justify-between px-4 py-3 w-full"
-														>
-															<span>{category.name}</span>
-															{category.columns?.length > 0 && (
-																<IoChevronForward className="w-3.5 h-3.5 opacity-60" />
-															)}
-														</Link>
+												{catLoading ? (
+													Array.from({ length: 6 }).map((_, i) => (
+														<li key={i} className="px-4 py-3">
+															<div className="h-3.5 w-24 rounded bg-white/20 animate-pulse" />
+														</li>
+													))
+												) : dbCategories?.length === 0 ? (
+													<li className="px-4 py-3 text-sm font-body text-white/70">
+														Sem categorias disponíveis
 													</li>
-												))}
+												) : (
+													dbCategories?.map((category) => (
+														<li
+															key={category.id}
+															className="cursor-pointer text-sm font-body hover:bg-accent transition-colors"
+														>
+															<Link
+																to={`/categorias/${slugify(category.name)}`}
+																className="flex items-center justify-between px-4 py-3 w-full"
+															>
+																<span>{category.name}</span>
+															</Link>
+														</li>
+													))
+												)}
 											</ul>
 										</div>
-
-										{/* Sub-categories */}
-										{activeCategory && categories.find(c => c.name === activeCategory)?.columns?.length > 0 && (
-											<div className="w-2/3 p-5">
-												<h3 className="text-base font-display font-semibold text-[#1C1917] mb-3">
-													{activeCategory}
-												</h3>
-												<div className="grid grid-cols-2 gap-x-6 gap-y-3">
-													{categories
-														.find((c) => c.name === activeCategory)
-														?.columns.map((col) => (
-															<div key={col.title}>
-																<h4 className="font-semibold text-[#78716C] mb-1.5 text-xs uppercase tracking-wide font-display">
-																	{col.title}
-																</h4>
-																<ul className="space-y-1">
-																	{col.items.map((item, i) => {
-																		const text = typeof item === 'string' ? item : item.text;
-																		return (
-																			<li key={i}>
-																				<Link
-																					to={`/categorias/${slugify(activeCategory)}/${slugify(text)}`}
-																					className="text-xs font-body text-[#78716C] hover:text-accent transition-colors"
-																				>
-																					{text}
-																				</Link>
-																			</li>
-																		);
-																	})}
-																</ul>
-															</div>
-														))}
-												</div>
-											</div>
-										)}
 									</div>
 								</>
 							)}

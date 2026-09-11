@@ -7,7 +7,8 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import Header from '../components/Header';
 import ProductGrid from '../components/ProductGrid';
 import ProductSkeleton from '../components/ProductSkeleton';
-import { IoChevronBack, IoChevronForward, IoArrowBack } from 'react-icons/io5';
+import FilterSidebar from '../components/FilterSidebar';
+import { IoChevronBack, IoChevronForward, IoArrowBack, IoFilter, IoClose, IoSearchOutline } from 'react-icons/io5';
 import './categorias/categorias.css';
 
 const slugify = (s) =>
@@ -25,11 +26,29 @@ const normalizeProduct = (p) => ({
 	reviewCount: p.qtdRatings,
 });
 
+const sortProducts = (items, option) => {
+	if (option === 'lowest') return [...items].sort((a, b) => (a.price || 0) - (b.price || 0));
+	if (option === 'highest') return [...items].sort((a, b) => (b.price || 0) - (a.price || 0));
+	if (option === 'name') return [...items].sort((a, b) => String(a.title).localeCompare(String(b.title)));
+	if (option === 'best-sellers') return items;
+	return items;
+};
+
 const CategoryProducts = () => {
 	const { slug } = useParams();
 	const itemsPerPage = 12;
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [sortOption, setSortOption] = useState('relevance');
 	const resultsRef = useRef(null);
+
+	const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+	const [selectedCategories, setSelectedCategories] = useState([]);
+	const [rating, setRating] = useState(null);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedBrand, setSelectedBrand] = useState('');
+	const [featuredOnly, setFeaturedOnly] = useState(false);
+	const [fetchTrigger, setFetchTrigger] = useState(0);
 
 	const {
 		data: categories,
@@ -49,13 +68,39 @@ const CategoryProducts = () => {
 		categoryName ? `${categoryName} - Kuvangana` : 'Categoria - Kuvangana'
 	);
 
+	// Reset de filtros/ordenação/pagina ao mudar de categoria
+	useEffect(() => {
+		setCurrentPage(1);
+		setSearchQuery('');
+		setPriceRange({ min: '', max: '' });
+		setFeaturedOnly(false);
+		setSortOption('relevance');
+		setSelectedCategories(categoryId ? [categoryId] : []);
+	}, [categoryId]);
+
+	// Scroll suave até aos resultados quando a pesquisa é acionada
+	useEffect(() => {
+		if (resultsRef.current && (searchQuery || fetchTrigger > 0)) {
+			resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	}, [fetchTrigger, searchQuery]);
+
 	const queryParams = useMemo(
 		() => ({
 			page: currentPage,
 			limit: itemsPerPage,
-			...(categoryId && { categoryIds: String(categoryId) }),
+			...(selectedCategories?.length
+				? { categoryIds: selectedCategories.join(',') }
+				: categoryId && { categoryIds: String(categoryId) }),
+			...(searchQuery ? { search: searchQuery } : {}),
+			...(priceRange.min ? { minPrice: priceRange.min } : {}),
+			...(priceRange.max ? { maxPrice: priceRange.max } : {}),
+			...(featuredOnly ? { featured: 'true' } : {}),
+			...(sortOption === 'best-sellers'
+				? { orderBy: JSON.stringify({ salesCount: 'desc' }) }
+				: {}),
 		}),
-		[currentPage, categoryId]
+		[currentPage, selectedCategories, categoryId, searchQuery, priceRange, featuredOnly, sortOption]
 	);
 
 	const {
@@ -63,7 +108,19 @@ const CategoryProducts = () => {
 		isLoading: productsLoading,
 		isError: productsError,
 	} = useQuery({
-		queryKey: ['products', 'by-category', queryParams],
+		queryKey: [
+			'products',
+			'by-category',
+			currentPage,
+			itemsPerPage,
+			fetchTrigger,
+			selectedCategories.join(','),
+			searchQuery,
+			priceRange.min,
+			priceRange.max,
+			featuredOnly,
+			sortOption,
+		],
 		queryFn: async () => {
 			const res = await getProducts(queryParams);
 			if (!res.success) throw new Error(res.msg || 'Erro ao carregar produtos');
@@ -79,21 +136,18 @@ const CategoryProducts = () => {
 		refetchOnMount: 'always',
 	});
 
-	const products = productsData?.products || [];
+	const rawProducts = productsData?.products || [];
+	const products = sortProducts(rawProducts, sortOption);
 	const totalResults = productsData?.total || 0;
 	const totalPages = productsData?.totalPages || 1;
 
-	useEffect(() => {
-		if (resultsRef.current) {
-			resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		}
-	}, [currentPage]);
-
-	const startResult = totalResults > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
-	const endResult = Math.min(currentPage * itemsPerPage, totalResults);
+	const triggerSearch = () => { setCurrentPage(1); setFetchTrigger((t) => t + 1); };
 
 	const isLoading = catLoading || (categoryId && productsLoading);
 	const isNotFound = !catLoading && !catError && categories && !category;
+
+	const startResult = totalResults > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+	const endResult = Math.min(currentPage * itemsPerPage, totalResults);
 
 	if (isNotFound) {
 		return (
@@ -168,7 +222,7 @@ const CategoryProducts = () => {
 								<>
 									<div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-400/20 rounded-full px-4 py-1.5 text-orange-200 text-xs font-semibold uppercase tracking-wider mb-4">
 										<span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping-soft" />
-										{category?.products?.length || totalResults} produto{(category?.products?.length || totalResults) !== 1 ? 's' : ''}
+										{totalResults} produto{totalResults !== 1 ? 's' : ''}
 									</div>
 									<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 tracking-tight" style={{ fontFamily: '"Fredoka", sans-serif' }}>
 										{categoryName}
@@ -185,131 +239,224 @@ const CategoryProducts = () => {
 				</section>
 
 				{/* ── Products ── */}
-				<section ref={resultsRef} className="flex-1 max-w-[1200px] mx-auto px-6 py-10 w-full">
-					{/* Header */}
-					<div className="flex items-center justify-between mb-8">
-						<div>
-							<h2 className="text-xl font-bold text-[var(--cat-page-charcoal)]" style={{ fontFamily: '"Fredoka", sans-serif' }}>
-								{categoryName || 'Produtos'}
-							</h2>
-							<div className="cat-page-ornament mt-2" />
+				<section className="flex-1 max-w-[1200px] mx-auto px-4 w-full">
+					<div ref={resultsRef} className="flex gap-6 py-8 relative">
+						{/* Desktop sidebar */}
+						<div className="hidden lg:block">
+							<FilterSidebar
+								priceRange={priceRange}
+								setPriceRange={setPriceRange}
+								selectedCategories={selectedCategories}
+								setSelectedCategories={setSelectedCategories}
+								rating={rating}
+								setRating={setRating}
+								searchQuery={searchQuery}
+								setSearchQuery={setSearchQuery}
+								selectedBrand={selectedBrand}
+								setSelectedBrand={setSelectedBrand}
+								featuredOnly={featuredOnly}
+								setFeaturedOnly={setFeaturedOnly}
+								onSearch={triggerSearch}
+								onClear={triggerSearch}
+							/>
 						</div>
-						{!productsLoading && totalResults > 0 && (
-							<span className="text-sm text-[var(--cat-page-muted)] font-medium">
-								Mostrando {startResult}-{endResult} de {totalResults}
-							</span>
+
+						{/* Mobile drawer overlay */}
+						{drawerOpen && (
+							<div className="promocoes-drawer-overlay open lg:hidden" onClick={() => setDrawerOpen(false)} />
 						)}
-					</div>
 
-					{/* Loading state */}
-					{isLoading ? (
-						<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
-							{Array.from({ length: itemsPerPage }).map((_, i) => (
-								<div key={i} className="promocoes-skeleton rounded-xl p-0" style={{ animationDelay: `${(i % 8) * 50}ms` }}>
-									<ProductSkeleton />
-								</div>
-							))}
-						</div>
-					) : productsError ? (
-						<div className="flex flex-col items-center justify-center py-20 text-center">
-							<div className="cat-page-empty-float mb-6">
-								<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<circle cx="40" cy="40" r="36" stroke="#F97316" strokeWidth="2.5" fill="#FFF7ED" opacity="0.5" />
-									<path d="M40 28V44" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
-									<circle cx="40" cy="52" r="2" fill="#F97316" />
-								</svg>
+						{/* Mobile drawer */}
+						<div className={`promocoes-drawer lg:hidden ${drawerOpen ? 'open' : ''}`}>
+							<div className="flex items-center justify-between p-4 border-b border-gray-100">
+								<h3 className="text-lg font-bold text-gray-800" style={{ fontFamily: '"Fredoka", sans-serif' }}>Filtros</h3>
+								<button
+									onClick={() => setDrawerOpen(false)}
+									className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors cursor-pointer"
+								>
+									<IoClose size={20} />
+								</button>
 							</div>
-							<p className="text-base font-semibold text-[var(--cat-page-charcoal)] mb-1">
-								Erro ao carregar produtos
-							</p>
-							<p className="text-sm text-[var(--cat-page-muted)]">
-								Tenta novamente mais tarde.
-							</p>
+							<div className="p-4">
+								<FilterSidebar
+									priceRange={priceRange}
+									setPriceRange={setPriceRange}
+									selectedCategories={selectedCategories}
+									setSelectedCategories={setSelectedCategories}
+									rating={rating}
+									setRating={setRating}
+									searchQuery={searchQuery}
+									setSearchQuery={setSearchQuery}
+									selectedBrand={selectedBrand}
+									setSelectedBrand={setSelectedBrand}
+									featuredOnly={featuredOnly}
+									setFeaturedOnly={setFeaturedOnly}
+									onSearch={() => { setDrawerOpen(false); triggerSearch(); }}
+									onClear={() => { setDrawerOpen(false); triggerSearch(); }}
+								/>
+							</div>
 						</div>
-					) : products.length > 0 ? (
-						<>
-							<ProductGrid products={products} />
 
-							{/* Pagination */}
-							{totalPages > 1 && (
-								<div className="flex justify-center items-center mt-10 gap-2">
+						{/* Product area */}
+						<div className="flex-1 min-w-0">
+							{/* Sort header */}
+							<div className="flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+								<div className="flex items-center gap-3">
 									<button
-										onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-										disabled={currentPage === 1}
-										className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
-											currentPage === 1
-												? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-												: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
-										}`}
+										onClick={() => setDrawerOpen(true)}
+										className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors cursor-pointer"
 									>
-										<IoChevronBack size={18} />
+										<IoFilter size={18} />
 									</button>
-									{Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => {
-										const pageNum =
-											totalPages <= 7
-												? i + 1
-												: (() => {
-													if (currentPage <= 3) return i + 1;
-													if (currentPage >= totalPages - 2)
-														return totalPages - 6 + i;
-													return currentPage - 3 + i;
-												  })();
-										const isActive = currentPage === pageNum;
-										return (
+									<div className="flex items-center gap-2">
+										<span className="w-1.5 h-8 bg-orange-500 rounded-full inline-block" />
+										<div>
+											<h2 className="text-xl font-bold text-[var(--cat-page-charcoal)]" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+												{categoryName || 'Produtos'}
+											</h2>
+											<span className="text-xs text-[var(--cat-page-muted)] font-medium">
+												{totalResults > 0
+													? `Mostrando ${startResult}-${endResult} de ${totalResults} resultados`
+													: 'Nenhum resultado'}
+											</span>
+										</div>
+									</div>
+								</div>
+								<div className="flex items-center gap-3">
+									<span className="text-sm text-gray-500 hidden sm:inline">Ordenar por:</span>
+									<select
+										value={sortOption}
+										onChange={(e) => setSortOption(e.target.value)}
+										className="p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 bg-white text-gray-700"
+									>
+										<option value="relevance">Relevância</option>
+										<option value="best-sellers">Mais Vendidos</option>
+										<option value="lowest">Menor Preço</option>
+										<option value="highest">Maior Preço</option>
+										<option value="name">Nome (A-Z)</option>
+									</select>
+								</div>
+							</div>
+
+							{/* Loading state */}
+							{isLoading ? (
+								<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
+									{Array.from({ length: itemsPerPage }).map((_, i) => (
+										<div key={i} className="promocoes-skeleton rounded-xl p-0" style={{ animationDelay: `${(i % 8) * 50}ms` }}>
+											<ProductSkeleton />
+										</div>
+									))}
+								</div>
+							) : productsError ? (
+								<div className="flex flex-col items-center justify-center py-20 text-center">
+									<div className="cat-page-empty-float mb-6">
+										<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<circle cx="40" cy="40" r="36" stroke="#F97316" strokeWidth="2.5" fill="#FFF7ED" opacity="0.5" />
+											<path d="M40 28V44" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
+											<circle cx="40" cy="52" r="2" fill="#F97316" />
+										</svg>
+									</div>
+									<p className="text-base font-semibold text-[var(--cat-page-charcoal)] mb-1">
+										Erro ao carregar produtos
+									</p>
+									<p className="text-sm text-[var(--cat-page-muted)]">
+										Tenta novamente mais tarde.
+									</p>
+								</div>
+							) : products.length > 0 ? (
+								<>
+									<ProductGrid products={products} />
+
+									{/* Pagination */}
+									{totalPages > 1 && (
+										<div className="flex justify-center items-center mt-10 gap-2">
 											<button
-												key={pageNum}
-												onClick={() => setCurrentPage(pageNum)}
-												className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-semibold cursor-pointer text-sm ${
-													isActive
-														? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20 scale-105'
-														: 'bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+												disabled={currentPage === 1}
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
+													currentPage === 1
+														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
 												}`}
 											>
-												{pageNum}
+												<IoChevronBack size={18} />
 											</button>
-										);
-									})}
+											{Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => {
+												const pageNum =
+													totalPages <= 7
+														? i + 1
+														: (() => {
+															if (currentPage <= 3) return i + 1;
+															if (currentPage >= totalPages - 2)
+																return totalPages - 6 + i;
+															return currentPage - 3 + i;
+														  })();
+												const isActive = currentPage === pageNum;
+												return (
+													<button
+														key={pageNum}
+														onClick={() => setCurrentPage(pageNum)}
+														className={`w-10 h-10 flex items-center justify-center rounded-lg border shadow-sm transition-all font-semibold cursor-pointer text-sm ${
+															isActive
+																? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/20 scale-105'
+																: 'bg-white text-gray-600 border-gray-200 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+														}`}
+													>
+														{pageNum}
+													</button>
+												);
+											})}
+											<button
+												onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+												disabled={currentPage === totalPages}
+												className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
+													currentPage === totalPages
+														? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+														: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
+												}`}
+											>
+												<IoChevronForward size={18} />
+											</button>
+										</div>
+									)}
+								</>
+							) : (
+								/* Empty state */
+								<div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+									<div className="cat-page-empty-float mb-6">
+										<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<rect x="12" y="16" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
+											<rect x="12" y="28" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
+											<rect x="12" y="40" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
+											<circle cx="40" cy="60" r="8" stroke="#9a8c82" strokeWidth="2" fill="none" />
+											<path d="M36 60H44M40 56V64" stroke="#9a8c82" strokeWidth="1.5" strokeLinecap="round" />
+										</svg>
+									</div>
+									<h3 className="text-xl font-bold text-[var(--cat-page-charcoal)] mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>
+										Nenhum produto disponível
+									</h3>
+									<p className="text-sm text-[var(--cat-page-muted)] max-w-md mb-8">
+										Nenhum produto corresponde aos filtros selecionados. Tenta ajustar os critérios de busca.
+									</p>
 									<button
-										onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-										disabled={currentPage === totalPages}
-										className={`w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 shadow-sm transition-all cursor-pointer ${
-											currentPage === totalPages
-												? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-												: 'bg-white text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200'
-										}`}
+										onClick={() => {
+											setSelectedCategories([]);
+											setSearchQuery('');
+											setPriceRange({ min: '', max: '' });
+											setFeaturedOnly(false);
+											setSortOption('relevance');
+											setCurrentPage(1);
+											setFetchTrigger((t) => t + 1);
+										}}
+										className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold text-sm py-2.5 px-6 rounded-lg transition-colors cursor-pointer"
 									>
-										<IoChevronForward size={18} />
+										<IoSearchOutline size={16} />
+										Limpar Filtros
 									</button>
 								</div>
 							)}
-						</>
-					) : (
-						/* Empty state */
-						<div className="flex flex-col items-center justify-center py-20 text-center">
-							<div className="cat-page-empty-float mb-6">
-								<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<rect x="12" y="16" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
-									<rect x="12" y="28" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
-									<rect x="12" y="40" width="56" height="8" rx="3" stroke="#9a8c82" strokeWidth="1.5" fill="#f5f0eb" />
-									<circle cx="40" cy="60" r="8" stroke="#9a8c82" strokeWidth="2" fill="none" />
-									<path d="M36 60H44M40 56V64" stroke="#9a8c82" strokeWidth="1.5" strokeLinecap="round" />
-								</svg>
-							</div>
-							<h3 className="text-xl font-bold text-[var(--cat-page-charcoal)] mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>
-								Nenhum produto disponível
-							</h3>
-							<p className="text-sm text-[var(--cat-page-muted)] max-w-md mb-8">
-								Ainda não existem produtos nesta categoria. Volta mais tarde.
-							</p>
-							<Link
-								to="/categorias"
-								className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[var(--cat-page-accent)] hover:bg-[var(--cat-page-accent-dark)] transition-all duration-300"
-							>
-								<IoArrowBack size={16} />
-								Explorar categorias
-							</Link>
 						</div>
-					)}
+					</div>
 				</section>
 			</div>
 		</>

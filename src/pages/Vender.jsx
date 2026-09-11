@@ -5,17 +5,16 @@ import useAuthStore from '../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import {
 	FaStore,
-	FaPercent,
 	FaShieldAlt,
 	FaChartLine,
 	FaUsers,
 	FaMoneyBillWave,
 	FaTruck,
 	FaCheckCircle,
-	FaStar,
 	FaRocket,
 	FaBoxOpen,
 	FaHandshake,
+	FaIdCard,
 	FaArrowRight
 } from 'react-icons/fa';
 
@@ -36,65 +35,64 @@ const Vender = () => {
 		{
 			icon: <FaStore className="text-3xl text-orange-500" />,
 			title: 'Sua Loja Virtual',
-			description: 'Tenha sua própria loja dentro da maior plataforma de e-commerce de Angola.'
+			description: 'Tenha a sua própria loja dentro do mercado digital da Kuvangana.'
 		},
 		{
 			icon: <FaUsers className="text-3xl text-orange-500" />,
-			title: 'Milhões de Clientes',
-			description: 'Acesse uma base com mais de 50.000 clientes ativos a procura dos seus produtos.'
+			title: 'Visibilidade',
+			description: 'Os seus produtos aparecem nas pesquisas, categorias e promoções da plataforma.'
 		},
 		{
 			icon: <FaShieldAlt className="text-3xl text-orange-500" />,
-			title: 'Segurança Total',
-			description: 'Transações seguras e proteção contra fraudes para vender com total tranquilidade.'
+			title: 'Verificação de Identidade',
+			description: 'Lojas e produtos verificados pela equipa inspiram confiança ao comprador.'
 		},
 		{
 			icon: <FaChartLine className="text-3xl text-orange-500" />,
-			title: 'Ferramentas de Gestão',
-			description: 'Dashboard completo para gerir produtos, vendas e desempenho da sua loja.'
+			title: 'Painel de Gestão',
+			description: 'Dashboard completo para gerir a loja, os produtos e os pedidos.'
 		},
 		{
 			icon: <FaMoneyBillWave className="text-3xl text-orange-500" />,
-			title: 'Pagamento Garantido',
-			description: 'Receba as suas vendas de forma rápida e segura, sem burocracia nem surpresas.'
+			title: 'Pagamento Validado',
+			description: 'Os pagamentos dos clientes são confirmados pela equipa antes de cada pedido avançar.'
 		},
 		{
 			icon: <FaTruck className="text-3xl text-orange-500" />,
-			title: 'Logística Simplificada',
-			description: 'Você cuida da entrega e nós tratamos de conectar os seus produtos aos clientes certos.'
+			title: 'Entrega Flexível',
+			description: 'Combine com o comprador a entrega à morada ou o levantamento na sede.'
 		}
-	];
-
-	const stats = [
-		{ value: '50K+', label: 'Clientes Ativos' },
-		{ value: '5K+', label: 'Vendedores' },
-		{ value: '100K+', label: 'Produtos Vendidos' },
-		{ value: '98%', label: 'Satisfação' }
 	];
 
 	const steps = [
 		{
 			number: '01',
-			title: 'Crie sua conta',
-			description: 'Registe-se na Kuvangana e aceda ao painal do vendedor gratuitamente.',
+			title: 'Crie a sua conta',
+			description: 'Registe-se na Kuvangana e aceda ao painel de vendedor.',
 			icon: <FaCheckCircle className="text-xl" />
 		},
 		{
 			number: '02',
-			title: 'Cadastre sua loja',
-			description: 'Preencha as informações do seu negócio e aguarde a aprovação da equipa.',
+			title: 'Crie a sua loja',
+			description: 'Preencha os dados do seu negócio no painel de vendedor.',
 			icon: <FaStore className="text-xl" />
 		},
 		{
 			number: '03',
-			title: 'Adicione produtos',
-			description: 'Cadastre os seus produtos com fotos, descrições detalhadas e preços competitivos.',
-			icon: <FaBoxOpen className="text-xl" />
+			title: 'Verifique a identidade',
+			description: 'Submeta os seus documentos — BI ou Passaporte, NUIT, morada e IBAN. A equipa analisa e aprova.',
+			icon: <FaIdCard className="text-xl" />
 		},
 		{
 			number: '04',
-			title: 'Comece a vender',
-			description: 'Receba pedidos, faça as entregas e receba os pagamentos direto na sua conta.',
+			title: 'Adicione produtos',
+			description: 'Cadastre fotos, descrições e preços. Os produtos são aprovados antes de ficarem visíveis.',
+			icon: <FaBoxOpen className="text-xl" />
+		},
+		{
+			number: '05',
+			title: 'Gere pedidos e receba',
+			description: 'Receba pedidos, faça as entregas (zona ou sede) e receba o pagamento confirmado.',
 			icon: <FaRocket className="text-xl" />
 		}
 	];
@@ -107,55 +105,45 @@ const Vender = () => {
 		'Produtos em conformidade com a lei angolana'
 	];
 
-	const commissions = [
-		{ category: 'Eletrônicos', rate: '8%' },
-		{ category: 'Moda & Acessórios', rate: '12%' },
-		{ category: 'Casa & Decoração', rate: '10%' },
-		{ category: 'Beleza & Saúde', rate: '10%' },
-		{ category: 'Outros', rate: '15%' }
-	];
-
-	const testimonials = [
+	const paymentInfo = [
 		{
-			name: 'Carlos Mendes',
-			store: 'TechMundo Angola',
-			text: 'A Kuvangana transformou o meu negócio. Em 6 meses tripliquei as minhas vendas e alcancei clientes em todo o país.',
-			rating: 5
+			title: 'Sem taxas de adesão',
+			description: 'Criar a conta e a loja é gratuito. As condições de venda são apresentadas no momento do registo da loja.'
 		},
 		{
-			name: 'Ana Paula Soares',
-			store: 'Moda & Estilo',
-			text: 'A plataforma é intuitiva e o suporte é simplesmente excelente. Recomendo a qualquer empreendedor que queira crescer.',
-			rating: 5
+			title: 'Comprovativos validados',
+			description: 'Recebe pedidos, faz a entrega combinada e o pagamento é confirmado quando o comprovativo é validado pela equipa.'
 		},
 		{
-			name: 'João Baptista',
-			store: 'Casa & Decoração',
-			text: 'Comecei sozinho e hoje tenho uma equipa dedicada. A Kuvangana foi fundamental em cada etapa dessa travessia.',
-			rating: 5
+			title: 'Um único mercado',
+			description: 'Todos os pedidos e pagamentos são acompanhados no painel de vendedor, num só lugar.'
 		}
 	];
 
 	const faqs = [
 		{
 			question: 'Quanto custa vender na Kuvangana?',
-			answer: 'O cadastro é totalmente gratuito! Cobramos apenas uma pequena comissão quando realiza uma venda. As taxas variam por categoria de produto.'
+			answer: 'Criar a conta e a loja é totalmente gratuito. As condições e taxas de venda são apresentadas no momento do registo da loja.'
 		},
 		{
-			question: 'Quanto tempo leva a aprovação da loja?',
-			answer: 'Após enviar toda a documentação necessária, a nossa equipa analisa e aprova em até 48 horas úteis.'
+			question: 'Quanto tempo demora a verificação?',
+			answer: 'Após enviar a documentação, a nossa equipa analisa o pedido. Enquanto a verificação estiver em análise, não é possível vender.'
 		},
 		{
 			question: 'Como recebo os pagamentos?',
-			answer: 'Os pagamentos são depositados na sua conta bancária cadastrada em até 5 dias úteis após a confirmação da entrega ao cliente.'
+			answer: 'O cliente paga por Multicaixa Express ou Transferência Bancária e envia o comprovativo. Quando o pagamento é validado pela equipa, o pedido é confirmado.'
 		},
 		{
 			question: 'Posso vender qualquer tipo de produto?',
-			answer: 'Os produtos devem estar em conformidade com a legislação angolana. Não permitimos artigos ilegais, falsificados ou proibidos pela lei.'
+			answer: 'Os produtos devem estar em conformidade com a legislação angolana. Não permitimos artigos ilegais, falsificados ou proibidos pela lei, e cada produto passa por aprovação.'
+		},
+		{
+			question: 'Como são feitas as entregas?',
+			answer: 'A entrega pode ser à morada do comprador dentro da zona de entrega escolhida, ou através do levantamento na sede da Kuvangana, conforme combinado.'
 		},
 		{
 			question: 'Preciso de ter stock próprio?',
-			answer: 'Sim, você é responsável pelo seu stock e pelo envio dos produtos aos clientes após a confirmação da venda.'
+			answer: 'Sim, é responsável pelo seu stock e pelo envio dos produtos aos clientes após a confirmação do pedido.'
 		}
 	];
 
@@ -183,7 +171,7 @@ const Vender = () => {
 					<div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-orange-500/20 rounded-full blur-[150px] pointer-events-none" />
 					<div className="vender-hero-pattern absolute inset-0 pointer-events-none" />
 
-					<div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-10 md:py-14 gap-6">
+					<div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 md:px-10 py-10 md:py-14 gap-8">
 						<div className="flex-1 text-center md:text-left">
 							<div className="vender-stagger inline-flex items-center gap-2 bg-orange-500/15 border border-orange-400/20 rounded-full px-4 py-1.5 text-orange-200 text-xs font-semibold uppercase tracking-wider mb-5" style={{ animationDelay: '0ms' }}>
 								<span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping-soft" />
@@ -193,7 +181,7 @@ const Vender = () => {
 							Venda na  <span className="text-orange-400">Kuvangana</span>
 							</h1>
 							<p className="vender-stagger text-orange-100/80 text-base md:text-lg max-w-xl leading-relaxed mb-8" style={{ animationDelay: '200ms' }}>
-							Junte-se a milhares de vendedores e transforme o seu negócio com a maior plataforma de e-commerce de Angola.
+							Transforme o seu negócio com uma loja verificada, produtos aprovados e pagamentos controlados.
 							</p>
 							<div className="vender-stagger flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start" style={{ animationDelay: '300ms' }}>
 								<button
@@ -205,21 +193,19 @@ const Vender = () => {
 								</button>
 								<div className="flex items-center gap-2 text-orange-200/70 text-sm">
 									<FaCheckCircle className="text-orange-400" />
-									<span>Cadastro 100% gratuito</span>
+									<span>Cadastro gratuito</span>
 								</div>
 							</div>
 						</div>
 
-						{/* Stats Preview */}
+						{/* Preview Panel */}
 						<div className="vender-stagger flex flex-col gap-3 w-full md:w-auto" style={{ animationDelay: '250ms' }}>
-							<div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-5 text-center min-w-[220px]">
-								<div className="text-3xl font-bold text-orange-300" style={{ fontFamily: '"Fredoka", sans-serif' }}>5K+</div>
-								<div className="text-orange-100/60 text-xs uppercase tracking-widest mt-1">Vendedores Ativos</div>
-							</div>
-							<div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-5 text-center min-w-[220px]">
-								<div className="text-3xl font-bold text-orange-300" style={{ fontFamily: '"Fredoka", sans-serif' }}>50K+</div>
-								<div className="text-orange-100/60 text-xs uppercase tracking-widest mt-1">Clientes na Plataforma</div>
-							</div>
+							{['Crie a loja no painel de vendedor', 'Verificação de identidade pela equipa', 'Produtos aprovados antes de ficarem visíveis', 'Pagamento validado via comprovativo'].map((item) => (
+								<div key={item} className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm text-orange-100/80 flex items-start gap-3 min-w-[240px]">
+									<FaCheckCircle className="text-orange-400 mt-0.5 flex-shrink-0" />
+									{item}
+								</div>
+							))}
 						</div>
 					</div>
 				</section>
@@ -233,7 +219,7 @@ const Vender = () => {
 						Por que vender na Kuvangana?
 					</h2>
 					<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-						Oferecemos tudo o que precisa para levar o seu negócio ao próximo nível
+						Tudo o que precisa para levar o seu negócio para o mercado digital angolano
 					</p>
 				</div>
 
@@ -254,34 +240,19 @@ const Vender = () => {
 				</div>
 			</section>
 
-			{/* ═══ Statistics Section ═══ */}
-			<section className="relative bg-gradient-to-br from-orange-600 to-orange-700 py-16 md:py-20 overflow-hidden">
-				<div className="vender-stats-pattern absolute inset-0 pointer-events-none" />
-				<div className="max-w-[1200px] mx-auto px-4 relative z-10">
-					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-						{stats.map((stat, i) => (
-							<div key={i} className="vender-stagger" style={{ animationDelay: `${i * 100}ms` }}>
-								<div className="text-4xl md:text-5xl font-bold mb-2" style={{ fontFamily: '"Fredoka", sans-serif' }}>{stat.value}</div>
-								<div className="text-orange-100/70 text-sm font-medium tracking-wide">{stat.label}</div>
-							</div>
-						))}
-					</div>
-				</div>
-			</section>
-
 			{/* ═══ How It Works ═══ */}
-			<section className="max-w-[1200px] mx-auto px-4 py-20">
+			<section className="max-w-[1200px] mx-auto px-4 pb-20">
 				<div className="text-center mb-14">
 					<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Passo a Passo</span>
 					<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-						Comece a vender em 4 passos
+						Comece a vender em 5 passos
 					</h2>
 					<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-						Um processo simples e rápido para lançar o seu negócio online
+						Do registo da conta até ao primeiro pedido confirmado
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
 					{steps.map((step, index) => (
 						<div key={index} className="vender-stagger relative" style={{ animationDelay: `${index * 120}ms` }}>
 							{index < steps.length - 1 && (
@@ -303,7 +274,7 @@ const Vender = () => {
 				</div>
 			</section>
 
-			{/* ═══ Requirements + Commission ═══ */}
+			{/* ═══ Requirements + Payment Info ═══ */}
 			<section className="bg-[#f5f0eb] py-20">
 				<div className="max-w-[1200px] mx-auto px-4">
 					<div className="text-center mb-14">
@@ -334,71 +305,29 @@ const Vender = () => {
 
 						<div className="vender-stagger bg-white rounded-xl border border-orange-100/40 shadow-sm p-8" style={{ animationDelay: '200ms' }}>
 							<h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-3" style={{ fontFamily: '"Fredoka", sans-serif' }}>
-								<FaPercent className="text-orange-500 text-xl" />
-								Comissão por venda
+								<FaMoneyBillWave className="text-orange-500 text-xl" />
+								Como funciona a venda
 							</h3>
-							<div className="space-y-1">
-								{commissions.map((item, i) => (
-									<div
-										key={i}
-										className={`flex justify-between items-center py-3 ${i < commissions.length - 1 ? 'border-b border-gray-100' : ''}`}
-									>
-										<span className="text-gray-600 text-sm">{item.category}</span>
-										<span className="font-bold text-gray-900" style={{ fontFamily: '"Fredoka", sans-serif' }}>{item.rate}</span>
+							<div className="space-y-5">
+								{paymentInfo.map((item, i) => (
+									<div key={i} className="flex gap-4 p-4 bg-orange-50/50 rounded-xl">
+										<div className="flex-shrink-0 w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-500 shadow-sm">
+											<FaCheckCircle className="text-sm" />
+										</div>
+										<div>
+											<h4 className="font-bold text-gray-800 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>{item.title}</h4>
+											<p className="text-gray-500 text-xs leading-relaxed mt-1">{item.description}</p>
+										</div>
 									</div>
 								))}
 							</div>
-							<p className="text-xs text-gray-400 mt-6 leading-relaxed">
-								* Valores sujeitos a alteração. Consulte os termos completos no momento do cadastro.
-							</p>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			{/* ═══ Testimonials ═══ */}
-			<section className="max-w-[1200px] mx-auto px-4 py-20">
-				<div className="text-center mb-14">
-					<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>Depoimentos</span>
-					<h2 className="vender-stagger text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: '"Fredoka", sans-serif', animationDelay: '100ms' }}>
-						Histórias de sucesso
-					</h2>
-					<p className="vender-stagger text-gray-500 text-base md:text-lg max-w-2xl mx-auto" style={{ animationDelay: '200ms' }}>
-						Vendedores que cresceram connosco e transformaram os seus negócios
-					</p>
-				</div>
-
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-					{testimonials.map((testimonial, index) => (
-						<div
-							key={index}
-							className="vender-stagger vender-card-hover bg-white rounded-xl border border-orange-100/40 shadow-sm p-8 relative"
-							style={{ animationDelay: `${index * 120}ms` }}
-						>
-							{/* Decorative quote */}
-							<div className="absolute top-4 right-5 text-orange-200/30 text-6xl leading-none select-none" style={{ fontFamily: '"Fredoka", sans-serif' }}>"</div>
-							<div className="flex text-yellow-400 mb-4 relative z-10">
-								{[...Array(testimonial.rating)].map((_, i) => (
-									<FaStar key={i} className="text-sm" />
-								))}
-							</div>
-							<p className="text-gray-600 mb-6 italic leading-relaxed text-sm relative z-10">"{testimonial.text}"</p>
-							<div className="flex items-center relative z-10">
-								<div className="w-11 h-11 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-base mr-3 shadow-sm">
-									{testimonial.name.charAt(0)}
-								</div>
-								<div>
-									<div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: '"Fredoka", sans-serif' }}>{testimonial.name}</div>
-									<div className="text-xs text-gray-400">{testimonial.store}</div>
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
-			</section>
-
 			{/* ═══ FAQ ═══ */}
-			<section className="bg-[#f5f0eb] py-20">
+			<section className="bg-[#f5f0eb] pb-20">
 				<div className="max-w-[800px] mx-auto px-4">
 					<div className="text-center mb-14">
 						<span className="vender-stagger inline-block text-orange-500 font-semibold text-sm uppercase tracking-[0.2em] mb-3" style={{ animationDelay: '0ms' }}>FAQ</span>
@@ -438,7 +367,7 @@ const Vender = () => {
 							Pronto para começar a vender?
 						</h2>
 						<p className="text-lg mb-8 text-orange-100/80 max-w-2xl mx-auto leading-relaxed">
-							Junte-se à maior comunidade de compradores e vendedores de Angola e leve o seu negócio para o próximo nível.
+							Crie a sua loja, verifique a identidade e comece a receber pedidos.
 						</p>
 						<button
 							onClick={handleComecarVender}
