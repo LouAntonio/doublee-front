@@ -6,8 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getOnSaleProducts } from '../services/products';
 
 const normalizeForCard = (product) => ({
-	id: product.id,
-	title: product.name ?? product.title,
+id: product.id,
+		slug: product.slug ?? null,
+		title: product.name ?? product.title,
 	price: product.promotionalPrice ?? product.price,
 	oldPrice: product.promotionalPrice ? product.price : product.oldPrice,
 	promotionalPrice: product.promotionalPrice,

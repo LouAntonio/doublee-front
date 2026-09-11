@@ -145,6 +145,7 @@ const LojaDetails = () => {
 				setTotalPages(pag ? pag.totalPages : 1);
 				const mappedProducts = apiProducts.map(p => ({
 					id: p.id,
+					slug: p.slug ?? null,
 					title: p.name,
 					price: p.price,
 					promotionalPrice: p.promotionalPrice,

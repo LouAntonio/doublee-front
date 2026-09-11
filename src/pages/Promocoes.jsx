@@ -27,6 +27,7 @@ const pad = (n) => n.toString().padStart(2, '0');
 
 const normalizeProduct = (p) => ({
 	id: p.id,
+	slug: p.slug ?? null,
 	title: p.name,
 	price: p.promotionalPrice ?? p.price,
 	oldPrice: p.promotionalPrice ? p.price : undefined,

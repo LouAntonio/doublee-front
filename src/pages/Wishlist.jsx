@@ -18,6 +18,7 @@ const Wishlist = () => {
 		const product = item.product || {};
 		return {
 			id: product.id || item.productId,
+			slug: product.slug ?? null,
 			title: product.name || '',
 			price: product.promotionalPrice ?? product.price ?? 0,
 			oldPrice: product.promotionalPrice ? product.price : undefined,

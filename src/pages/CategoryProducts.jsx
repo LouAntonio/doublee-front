@@ -16,6 +16,7 @@ const slugify = (s) =>
 
 const normalizeProduct = (p) => ({
 	id: p.id,
+	slug: p.slug ?? null,
 	title: p.name,
 	price: p.promotionalPrice ?? p.price,
 	oldPrice: p.promotionalPrice ? p.price : undefined,

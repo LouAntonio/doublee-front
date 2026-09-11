@@ -4,6 +4,7 @@ import HorizontalProductSlider from './HorizontalProductSlider';
 
 const normalizeForCard = (product) => ({
 	id: product.id,
+	slug: product.slug ?? null,
 	title: product.name ?? product.title,
 	price: product.promotionalPrice ?? product.price,
 	oldPrice: product.promotionalPrice ? product.price : product.oldPrice,
