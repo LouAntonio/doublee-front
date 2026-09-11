@@ -36,16 +36,6 @@ const BannerCarousel = () => {
 			title: 'Tendências de Moda',
 			subtitle: 'Peças e acessórios para renovar seu guarda-roupa.',
 			cta: 'Explorar'
-		},
-		{
-			id: 4,
-			image: './images/slider/4.png',
-			alt: 'Casa e decoração',
-			bgColor: '#00A650',
-			badge: 'Casa',
-			title: 'Ideias para Sua Casa',
-			subtitle: 'Decoração, utilidades e móveis com estilo.',
-			cta: 'Ver Coleção'
 		}
 	];
 

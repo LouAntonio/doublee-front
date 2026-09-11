@@ -24,10 +24,15 @@ const Home = () => {
 
 			<CategoriesSection />
 			<NewProductsSection />
+
+			<div className="max-w-[1200px] mx-auto px-6 my-8">
+				<img src="/images/ads/2.png" alt="Anúncio 2" className="w-full h-auto rounded-lg object-cover" />
+			</div>
+
 			<BestSellersSection />
 			
 			<div className="max-w-[1200px] mx-auto px-6 my-8">
-				<img src="/images/ads/2.png" alt="Anúncio 2" className="w-full h-auto rounded-lg object-cover" />
+				<img src="/images/ads/3.png" alt="Anúncio 3" className="w-full h-auto rounded-lg object-cover" />
 			</div>
 
 			<LatestProductsSection />

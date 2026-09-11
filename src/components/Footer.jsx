@@ -1,101 +1,82 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
+
+const footerLinks = {
+	empresa: {
+		title: 'Empresa',
+		links: [
+			{ label: 'Sobre Nós', to: '/sobre' },
+			{ label: 'Como Funciona', to: '/como-funciona' },
+			{ label: 'Vender na Kuvangana', to: '/vender' },
+			{ label: 'Contacto', to: '/contato' },
+		],
+	},
+	comprar: {
+		title: 'Comprar',
+		links: [
+			{ label: 'Produtos', to: '/produtos' },
+			{ label: 'Promoções', to: '/promocoes' },
+			{ label: 'Cupões', to: '/cupoes' },
+			{ label: 'Categorias', to: '/categorias' },
+			{ label: 'Lojas', to: '/lojas' },
+		],
+	},
+	conta: {
+		title: 'Minha Conta',
+		links: [
+			{ label: 'Dashboard', to: '/dashboard' },
+			{ label: 'Favoritos', to: '/wishlist' },
+			{ label: 'Carrinho', to: '/cart' },
+			{ label: 'Criar Conta', to: '/auth' },
+		],
+	},
+};
+
+const socialLinks = [
+	{ icon: FaFacebookF, href: '#', label: 'Facebook' },
+	{ icon: FaInstagram, href: '#', label: 'Instagram' },
+	{ icon: FaYoutube, href: '#', label: 'YouTube' },
+	{ icon: FaLinkedinIn, href: '#', label: 'LinkedIn' },
+	{ icon: FaTiktok, href: '#', label: 'TikTok' },
+];
 
 const Footer = () => {
-	const footerSections = [
-		{
-			title: 'Sobre nós',
-			links: [
-				{ name: 'Institucional', url: '/sobre' },
-				{ name: 'Trabalhe conosco', url: '/carreiras' },
-				{ name: 'Imprensa', url: '/imprensa' },
-				{ name: 'Investidores', url: '/investidores' },
-				{ name: 'Sustentabilidade', url: '/sustentabilidade' }
-			]
-		},
-		{
-			title: 'Ajuda',
-			links: [
-				{ name: 'Comprar', url: '/ajuda/comprar' },
-				{ name: 'Vender', url: '/ajuda/vender' },
-				{ name: 'Entregas e prazos', url: '/ajuda/entregas' },
-				{ name: 'Devoluções e reembolsos', url: '/ajuda/devolucoes' },
-				{ name: 'Central de atendimento', url: '/contato' }
-			]
-		},
-		{
-			title: 'Minha conta',
-			links: [
-				{ name: 'Resumo', url: '/conta' },
-				{ name: 'Minhas compras', url: '/compras' },
-				{ name: 'Favoritos', url: '/favoritos' },
-				{ name: 'Meus cupons', url: '/cupons' },
-				{ name: 'Configurações', url: '/configuracoes' }
-			]
-		},
-		{
-			title: 'Pagamento',
-			links: [
-				{ name: 'Formas de pagamento', url: '/pagamento' },
-				{ name: 'Cartão Kuvangana', url: '/cartao' }
-			]
-		}
-	];
-
-	const socialLinks = [
-		{ icon: <FaFacebookF />, url: 'https://facebook.com', label: 'Facebook' },
-		{ icon: <FaTwitter />, url: 'https://twitter.com', label: 'Twitter' },
-		{ icon: <FaInstagram />, url: 'https://instagram.com', label: 'Instagram' },
-		{ icon: <FaYoutube />, url: 'https://youtube.com', label: 'YouTube' },
-		{ icon: <FaLinkedinIn />, url: 'https://linkedin.com', label: 'LinkedIn' }
-	];
-
 	return (
-		<footer style={{ backgroundColor: '#fff', marginTop: '40px' }}>
-			{/* Main Footer Content */}
-			<div style={{
-				maxWidth: '1200px',
-				margin: '0 auto',
-				padding: '40px 24px'
-			}}>
-				{/* Footer Links Grid */}
-				<div style={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-					gap: '32px',
-					marginBottom: '32px'
-				}}>
-					{footerSections.map((section, index) => (
-						<div key={index}>
-							<h3 style={{
-								fontSize: '14px',
-								fontWeight: '600',
-								color: '#333',
-								marginBottom: '16px',
-								textTransform: 'uppercase'
-							}}>
+		<footer className="bg-[#1C1917]">
+			<div className="max-w-[1200px] mx-auto px-4 pt-12 pb-8">
+
+				{/* ── Link columns ── */}
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10">
+
+					{/* Brand */}
+					<div className="col-span-2 md:col-span-1">
+						<Link to="/" className="inline-block mb-4">
+							<img
+								src="/images/logo/logoBranco.png"
+								alt="Kuvangana"
+								className="h-8 w-auto"
+							/>
+						</Link>
+						<p className="text-sm text-stone-400 font-body leading-relaxed max-w-[240px]">
+							Marketplace angolano de confiança. Compre, venda e descubra produtos de qualidade.
+						</p>
+					</div>
+
+					{/* Link columns */}
+					{Object.values(footerLinks).map((section) => (
+						<div key={section.title}>
+							<h3 className="text-sm font-display font-semibold text-[#F5F0EB] uppercase tracking-wider mb-4">
 								{section.title}
 							</h3>
-							<ul style={{
-								listStyle: 'none',
-								padding: 0,
-								margin: 0
-							}}>
-								{section.links.map((link, linkIndex) => (
-									<li key={linkIndex} style={{ marginBottom: '12px' }}>
+							<ul className="space-y-2.5">
+								{section.links.map((link) => (
+									<li key={link.to}>
 										<Link
-											to={link.url}
-											style={{
-												fontSize: '13px',
-												color: '#666',
-												textDecoration: 'none',
-												transition: 'color 0.2s'
-											}}
-											onMouseEnter={(e) => e.currentTarget.style.color = '#3483fa'}
-											onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
+											to={link.to}
+											className="text-sm text-stone-400 font-body hover:text-[#F97316] transition-colors duration-200"
 										>
-											{link.name}
+											{link.label}
 										</Link>
 									</li>
 								))}
@@ -104,178 +85,69 @@ const Footer = () => {
 					))}
 				</div>
 
-				{/* Divider */}
-				<div style={{
-					height: '1px',
-					backgroundColor: '#e5e5e5',
-					margin: '32px 0'
-				}} />
+				{/* ── Divider ── */}
+				<hr className="border-white/10 mb-8" />
 
-				{/* Social Media and Additional Info */}
-				<div style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					flexWrap: 'wrap',
-					gap: '24px'
-				}}>
-					{/* Social Media Links */}
-					<div>
-						<h4 style={{
-							fontSize: '13px',
-							fontWeight: '600',
-							color: '#666',
-							marginBottom: '12px'
-						}}>
-							Siga-nos nas redes sociais
-						</h4>
-						<div style={{
-							display: 'flex',
-							gap: '12px'
-						}}>
-							{socialLinks.map((social, index) => (
-								<a
-									key={index}
-									href={social.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label={social.label}
-									style={{
-										width: '36px',
-										height: '36px',
-										borderRadius: '50%',
-										backgroundColor: '#f5f5f5',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										color: '#666',
-										fontSize: '16px',
-										textDecoration: 'none',
-										transition: 'all 0.2s'
-									}}
-									onMouseEnter={(e) => {
-										e.currentTarget.style.backgroundColor = '#3483fa';
-										e.currentTarget.style.color = '#fff';
-									}}
-									onMouseLeave={(e) => {
-										e.currentTarget.style.backgroundColor = '#f5f5f5';
-										e.currentTarget.style.color = '#666';
-									}}
-								>
-									{social.icon}
-								</a>
-							))}
-						</div>
-					</div>
-
-					{/* Payment Methods */}
-					<div>
-						<h4 style={{
-							fontSize: '13px',
-							fontWeight: '600',
-							color: '#666',
-							marginBottom: '12px'
-						}}>
-							Formas de pagamento
-						</h4>
-						<div style={{
-							display: 'flex',
-							gap: '8px',
-							flexWrap: 'wrap'
-						}}>
-							{['💳', '🏦', '🔐', '📱'].map((icon, index) => (
-								<div
-									key={index}
-									style={{
-										width: '48px',
-										height: '32px',
-										backgroundColor: '#f5f5f5',
-										borderRadius: '4px',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										fontSize: '18px'
-									}}
-								>
-									{icon}
-								</div>
-							))}
-						</div>
+				{/* ── Payment methods ── */}
+				<div className="mb-8">
+					<h4 className="text-xs font-display font-semibold text-stone-400 uppercase tracking-wider mb-3">
+						Métodos de Pagamento
+					</h4>
+					<div className="flex flex-wrap gap-2">
+						<span className="inline-flex items-center px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-xs text-stone-300 font-body">
+							Multicaixa Express
+						</span>
+						<span className="inline-flex items-center px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-xs text-stone-300 font-body">
+							Transferência Bancária
+						</span>
 					</div>
 				</div>
 
-				{/* Divider */}
-				<div style={{
-					height: '1px',
-					backgroundColor: '#e5e5e5',
-					margin: '32px 0'
-				}} />
+				{/* ── Divider ── */}
+				<hr className="border-white/10 mb-8" />
 
-				{/* Bottom Footer */}
-				<div style={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					flexWrap: 'wrap',
-					gap: '16px',
-					fontSize: '12px',
-					color: '#999'
-				}}>
+				{/* ── Social + bottom bar ── */}
+				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+
+					{/* Social */}
 					<div>
-						© 2026 Kuvangana. Todos os direitos reservados.
+						<h4 className="text-xs font-display font-semibold text-stone-400 uppercase tracking-wider mb-3">
+							Siga-nos
+						</h4>
+						<div className="flex items-center gap-2">
+							{socialLinks.map((s) => {
+								const Icon = s.icon;
+								return (
+									<a
+										key={s.label}
+										href={s.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label={s.label}
+										className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-stone-400 hover:bg-[#F97316] hover:border-[#F97316] hover:text-white transition-all duration-200"
+									>
+										<Icon className="w-4 h-4" />
+									</a>
+								);
+							})}
+						</div>
 					</div>
-					<div style={{
-						display: 'flex',
-						gap: '16px',
-						flexWrap: 'wrap'
-					}}>
-						<Link
-							to="/termos"
-							style={{
-								color: '#999',
-								textDecoration: 'none'
-							}}
-							onMouseEnter={(e) => e.currentTarget.style.color = '#3483fa'}
-							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
-						>
-							Termos e condições
-						</Link>
-						<Link
-							to="/privacidade"
-							style={{
-								color: '#999',
-								textDecoration: 'none'
-							}}
-							onMouseEnter={(e) => e.currentTarget.style.color = '#3483fa'}
-							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
-						>
-							Política de privacidade
-						</Link>
-						<Link
-							to="/cookies"
-							style={{
-								color: '#999',
-								textDecoration: 'none'
-							}}
-							onMouseEnter={(e) => e.currentTarget.style.color = '#3483fa'}
-							onMouseLeave={(e) => e.currentTarget.style.color = '#999'}
-						>
-							Cookies
-						</Link>
-					</div>
-				</div>
-			</div>
 
-			{/* Company Info Bar */}
-			<div style={{
-				backgroundColor: '#f5f5f5',
-				padding: '16px 24px',
-				textAlign: 'center',
-				fontSize: '11px',
-				color: '#999'
-			}}>
-				<div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-					Kuvangana Comércio Eletrônico Angola - NUIT: 000000000 | Endereço: Luanda, Angola
+					{/* Copyright + credit */}
+					<div className="text-xs text-stone-400 font-body space-y-1 sm:text-right">
+						<p>© 2026 Kuvangana. Todos os direitos reservados.</p>
+						<p>
+							Desenvolvido por{' '}
+							<a
+								href="https://louantonio-me.vercel.app/"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-[#F97316] hover:text-[#EA580C] transition-colors duration-200"
+							>
+								Lourenço António
+							</a>
+						</p>
+					</div>
 				</div>
 			</div>
 		</footer>
