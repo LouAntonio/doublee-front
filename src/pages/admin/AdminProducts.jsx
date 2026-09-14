@@ -2,6 +2,7 @@
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminProductsList, useAdminAllStores, useUpdateProductStatus } from '../../hooks/queries/useAdminProducts';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 import Modal from '../../components/admin/Modal';
 import { isPromotionActive } from '../../utils/date';
 
@@ -251,7 +252,7 @@ const AdminProducts = () => {
 											<td className="px-6 py-4 whitespace-nowrap">
 												<div className="flex items-center gap-4">
 													{product.image ? (
-														<img src={product.image} alt={product.name} className="w-10 h-10 rounded-xl object-cover border border-accent/20 shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+														<OptimizedImage src={product.image} alt={product.name} w={160} fit="fill" loading="lazy" decoding="async" className="w-10 h-10 rounded-xl object-cover border border-accent/20 shadow-sm" />
 													) : (
 														<div className="w-10 h-10 rounded-xl bg-sand text-[#78716C] font-bold flex items-center justify-center uppercase shadow-sm border border-accent/20/50">
 															<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -451,7 +452,7 @@ const AdminProducts = () => {
 						<div className="space-y-6">
 							<div className="flex flex-col md:flex-row gap-6 items-start">
 								{selectedProductDetails.image ? (
-									<img src={selectedProductDetails.image} alt={selectedProductDetails.name} className="w-full md:w-48 h-48 object-cover rounded-xl shadow-sm border border-accent/20" />
+									<OptimizedImage src={selectedProductDetails.image} alt={selectedProductDetails.name} w={640} h={640} fit="fill" className="w-full md:w-48 h-48 object-cover rounded-xl shadow-sm border border-accent/20" />
 								) : (
 									<div className="w-full md:w-48 h-48 bg-accent/20 rounded-xl flex items-center justify-center text-[#78716C]">Sem Imagem</div>
 								)}
@@ -492,7 +493,7 @@ const AdminProducts = () => {
 									<h5 className="font-bold text-[#1C1917] mb-2">Galeria de Imagens</h5>
 									<div className="flex gap-2 overflow-x-auto pb-2">
 										{selectedProductDetails.gallery.map((img, i) => (
-											<img key={i} src={img} alt={`${selectedProductDetails.name} ${i + 1}`} className="w-24 h-24 object-cover rounded-xl border border-accent/20 flex-shrink-0" />
+											<OptimizedImage key={i} src={img} alt={`${selectedProductDetails.name} ${i + 1}`} w={240} fit="fill" loading="lazy" decoding="async" className="w-24 h-24 object-cover rounded-xl border border-accent/20 flex-shrink-0" />
 										))}
 									</div>
 								</div>

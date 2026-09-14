@@ -13,6 +13,7 @@ import ProductCard from '../components/ProductCard';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
 import http from '../services/http';
+import OptimizedImage from '../components/ui/OptimizedImage';
 
 /* ─── Helper components ───────────────────────────────────────────────── */
 const StarRow = ({ rating, size = 'text-sm' }) => (
@@ -282,9 +283,11 @@ const LojaDetails = () => {
 
 			{/* ── Hero banner ── */}
 			<div className="relative h-64 sm:h-80 md:h-96 overflow-hidden">
-				<img
+				<OptimizedImage
 					src={store.image}
 					alt={store.name}
+					w={1600}
+					fit="contain"
 					className="w-full h-full object-cover"
 				/>
 				<div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-[#1C1917]/80" />
@@ -336,9 +339,14 @@ const LojaDetails = () => {
 					<div className="flex flex-col sm:flex-row gap-5 sm:items-start">
 						{/* Logo */}
 						<div className="flex-shrink-0">
-							<img
+							<OptimizedImage
 								src={store.logo}
 								alt={store.name}
+								w={160}
+								h={160}
+								fit="fill"
+								loading="lazy"
+								decoding="async"
 								className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-white shadow-md"
 							/>
 						</div>

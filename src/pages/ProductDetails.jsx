@@ -11,6 +11,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import { notyf } from '../utils/notyf';
 import { useProduct } from '../hooks/queries/useProducts';
 import useBuyNow from '../hooks/useBuyNow';
+import OptimizedImage from '../components/ui/OptimizedImage';
 
 const parseSpecs = (p) => {
 	if (!p?.characteristics) return [];
@@ -353,11 +354,14 @@ const ProductDetails = () => {
 											: 'border border-[#1C1917]/10 hover:border-accent/40'
 									}`}
 								>
-									<img
+									<OptimizedImage
 										src={img}
 										alt={`${product.title} ${index + 1}`}
+										w={240}
+										fit="fill"
+										loading="lazy"
+										decoding="async"
 										className="w-full h-full object-cover"
-										onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 									/>
 								</button>
 							))}
@@ -378,11 +382,12 @@ const ProductDetails = () => {
 									<IoHeartOutline size={20} className="text-[#78716C]" />
 								)}
 							</button>
-							<img
+							<OptimizedImage
 								src={effective.images[selectedImage] || product.images[0]}
 								alt={product.title}
+								w={1280}
+								fit="contain"
 								className="w-full h-[260px] sm:h-[380px] lg:h-[400px] object-contain"
-								onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 							/>
 						</div>
 					</div>
@@ -584,7 +589,7 @@ const ProductDetails = () => {
 							</div>
 							<div className="p-4">
 								<div className="flex items-center gap-3 mb-2">
-									<img src={product.seller.logo} alt={product.seller.name} className="w-9 h-9 object-contain rounded-full border border-[#1C1917]/10" />
+									<OptimizedImage src={product.seller.logo} alt={product.seller.name} w={120} h={120} fit="fill" loading="lazy" decoding="async" className="w-9 h-9 object-contain rounded-full border border-[#1C1917]/10" />
 									<div className="flex-1 min-w-0">
 										<div className="font-display text-sm font-semibold text-[#1C1917] truncate">{product.seller.name}</div>
 									</div>

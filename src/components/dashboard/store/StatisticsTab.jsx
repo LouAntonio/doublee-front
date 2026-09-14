@@ -8,6 +8,7 @@ import {
 	IoChevronDownOutline,
 } from 'react-icons/io5';
 import { formatCurrency } from '../../../utils/currency';
+import OptimizedImage from '../../ui/OptimizedImage';
 import StatCard from './ui/StatCard';
 import EmptyState from './ui/EmptyState';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
@@ -136,7 +137,7 @@ const StatisticsTab = ({ orders = [] }) => {
 								<div key={index} className="flex items-center gap-3">
 									<div className="w-10 h-10 rounded-lg bg-sand border border-accent/10 overflow-hidden shrink-0">
 										{product.image ? (
-											<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+											<OptimizedImage src={product.image} alt={product.name} w={140} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover" />
 										) : (
 											<div className="w-full h-full flex items-center justify-center text-[#78716C]">
 												<IoBasketOutline className="w-6 h-6" />

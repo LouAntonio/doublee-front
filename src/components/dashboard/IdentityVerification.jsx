@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
+import { cleanupUploads } from '../../utils/cleanupUploads';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -17,6 +18,7 @@ const uploadToCloudinary = async (file, folder) => {
 	formData.append('timestamp', auth.timestamp);
 	formData.append('signature', auth.signature);
 	formData.append('folder', auth.folder);
+	if (auth.transformation) formData.append('transformation', auth.transformation);
 
 	const response = await fetch(
 		`https://api.cloudinary.com/v1_1/${auth.cloudname}/image/upload`,
@@ -106,16 +108,20 @@ const IdentityVerification = () => {
 		setIsLoading(true);
 		setProgress({ current: 0, total: 5, label: 'A preparar uploads...' });
 
+		const uploadedPublicIds = [];
+
 		try {
 			// ── Passo 1: upload frente do BI ────────────────────────────────
 			setProgress({ current: 1, total: 5, label: 'A carregar frente do BI...' });
 			const biFrontUpload = await uploadToCloudinary(files.biFront, 'bis');
 			const biFrontUrl = biFrontUpload.url;
+			uploadedPublicIds.push(biFrontUpload.publicId);
 
 			// ── Passo 2: upload verso do BI ──────────────────────────────────
 			setProgress({ current: 2, total: 5, label: 'A carregar verso do BI...' });
 			const biBackUpload = await uploadToCloudinary(files.biBack, 'bis');
 			const biBackUrl = biBackUpload.url;
+			uploadedPublicIds.push(biBackUpload.publicId);
 
 			// ── Passos 3-5: upload das 3 selfies ────────────────────────────
 			const picUrls = [];
@@ -125,6 +131,7 @@ const IdentityVerification = () => {
 				const upload = await uploadToCloudinary(files.selfies[i], 'photos');
 				picUrls.push(upload.url);
 				picIds.push(upload.publicId);
+				uploadedPublicIds.push(upload.publicId);
 			}
 
 			// ── Passo final: actualizar BD ───────────────────────────────────
@@ -143,6 +150,7 @@ const IdentityVerification = () => {
 				notyf.error(result?.msg || 'Erro ao guardar documentos.');
 			}
 		} catch {
+			cleanupUploads(uploadedPublicIds);
 			notyf.error('Erro inesperado durante o envio.');
 		} finally {
 			setIsLoading(false);

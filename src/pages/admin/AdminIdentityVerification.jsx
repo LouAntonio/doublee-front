@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { notyf } from '../../utils/notyf';
 import { useSellerVerifications, useApproveSeller, useRejectSeller } from '../../hooks/queries/useAdminIdentityVerification';
 import Modal from '../../components/admin/Modal';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) => {
@@ -30,7 +31,7 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
 							</svg>
 						</button>
-						<img src={lightboxSrc} alt="Documento" className="w-full rounded-2xl shadow-2xl object-contain max-h-[80vh]" />
+						<OptimizedImage src={lightboxSrc} alt="Documento" w={1600} fit="fill" className="w-full rounded-2xl shadow-2xl object-contain max-h-[80vh]" />
 					</div>
 				</div>,
 				document.body
@@ -125,7 +126,7 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 										<div className="grid grid-cols-2 gap-3">
 											{docs.bi.map((src, i) => (
 												<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
-													<img src={src} alt={`BI ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
+													<OptimizedImage src={src} alt={`BI ${i + 1}`} w={800} fit="fill" loading="lazy" decoding="async" className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
 													<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
 														<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 													</div>
@@ -147,7 +148,7 @@ const DetailModal = ({ user, onClose, onApprove, onReject, initialActionMode }) 
 										<div className="grid grid-cols-2 gap-3">
 											{docs.pics.map((src, i) => (
 												<div key={i} className="relative group rounded-xl overflow-hidden border border-accent/20 cursor-zoom-in shadow-sm hover:shadow-md transition-shadow" onClick={() => setLightboxSrc(src)}>
-													<img src={src} alt={`Selfie ${i + 1}`} className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
+													<OptimizedImage src={src} alt={`Selfie ${i + 1}`} w={800} fit="fill" loading="lazy" decoding="async" className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300" />
 													<div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
 														<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 													</div>

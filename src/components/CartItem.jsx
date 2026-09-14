@@ -2,6 +2,7 @@ import React from 'react';
 import { IoTrashOutline, IoAddOutline, IoRemoveOutline } from 'react-icons/io5';
 import useCartStore, { formatVariantLabel } from '../stores/cartStore';
 import { formatCurrency } from '../utils/currency';
+import OptimizedImage from './ui/OptimizedImage';
 
 const CartItem = ({ item }) => {
 	const { updateQuantity, removeFromCart, isUpdatingItem, isRemovingItem } = useCartStore();
@@ -26,11 +27,14 @@ const CartItem = ({ item }) => {
 	return (
 		<div className="flex gap-4 p-4 bg-white rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
 			<div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-xl overflow-hidden">
-				<img
+				<OptimizedImage
 					src={item.image || (Array.isArray(item.images) ? item.images[0] : null) || '/images/produto.png'}
 					alt={item.name || item.title || 'Produto'}
+					w={240}
+					fit="fill"
+					loading="lazy"
+					decoding="async"
 					className="w-full h-full object-cover"
-					onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
 				/>
 			</div>
 

@@ -55,6 +55,7 @@ export const uploadToCloudinary = async (file, folder) => {
 	formData.append('timestamp', auth.timestamp);
 	formData.append('signature', auth.signature);
 	formData.append('folder', auth.folder);
+	if (auth.transformation) formData.append('transformation', auth.transformation);
 	const response = await fetch(
 		`https://api.cloudinary.com/v1_1/${auth.cloudname}/image/upload`,
 		{ method: 'POST', body: formData }

@@ -1,6 +1,8 @@
+import OptimizedImage from '../../components/ui/OptimizedImage';
+
 const StoreLogo = ({ logo, name, className = '' }) => {
 	if (logo) {
-		return <img src={logo} alt={name} className={`w-full h-full object-cover ${className}`} />;
+		return <OptimizedImage src={logo} alt={name} w={160} h={160} fit="fill" loading="lazy" decoding="async" className={`w-full h-full object-cover ${className}`} />;
 	}
 	const initials = name ? name.slice(0, 2).toUpperCase() : '??';
 	return (

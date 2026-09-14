@@ -4,6 +4,7 @@ import { useAdminOrders, useConfirmPayment, useRejectPayment } from '../../hooks
 import { formatCurrency } from '../../utils/currency';
 import { formatVariantLabel } from '../../stores/cartStore';
 import http from '../../services/http';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 import { notyf } from '../../utils/notyf';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from '../../components/dashboard/store/constants';
 
@@ -149,7 +150,7 @@ const ProofModal = ({ order, onClose }) => {
 								</a>
 							) : (
 								<a href={order.paymentProof} target="_blank" rel="noopener noreferrer">
-									<img src={order.paymentProof} alt="Comprovativo" className="max-w-full max-h-96 rounded-xl border border-accent/10 object-contain bg-sand" />
+									<OptimizedImage src={order.paymentProof} alt="Comprovativo" w={1200} fit="fill" loading="lazy" decoding="async" className="max-w-full max-h-96 rounded-xl border border-accent/10 object-contain bg-sand" />
 								</a>
 							)}
 						</div>
@@ -167,7 +168,7 @@ const ProofModal = ({ order, onClose }) => {
 										<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
 											<div className="flex items-center gap-2 px-3 py-2 bg-sand text-sm font-medium text-[#1C1917] border-b border-accent/10">
 												{so.store?.logo && (
-													<img src={so.store.logo} alt="" className="w-5 h-5 rounded-full object-cover" />
+													<OptimizedImage src={so.store.logo} alt="" w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-5 h-5 rounded-full object-cover" />
 												)}
 												{so.store?.name || 'Loja'}
 												<span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLOR[st.color]}`}>
@@ -178,7 +179,7 @@ const ProofModal = ({ order, onClose }) => {
 												{so.items?.map((item) => (
 													<div key={item.id} className="flex items-center gap-3 px-3 py-2 text-sm text-[#1C1917]">
 														{item.product?.image && (
-															<img src={item.product.image} alt="" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
+															<OptimizedImage src={item.product.image} alt="" w={140} fit="fill" loading="lazy" decoding="async" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
 														)}
 														<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
 														{item.variantOptions?.options && (

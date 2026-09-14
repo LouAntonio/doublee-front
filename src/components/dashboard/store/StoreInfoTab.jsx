@@ -4,6 +4,7 @@ import { notyf } from '../../../utils/notyf';
 import { ANGOLA_PROVINCES, uploadToCloudinary } from './constants';
 import SectionTitle from './ui/SectionTitle';
 import ImagePicker from './ui/ImagePicker';
+import { cleanupUploads } from '../../../utils/cleanupUploads';
 
 const StoreInfoTab = ({ store, onUpdated }) => {
 	const [saving, setSaving] = useState(false);
@@ -40,6 +41,7 @@ const StoreInfoTab = ({ store, onUpdated }) => {
 		if (!form.bankName.trim()) return notyf.error('O nome da conta bancária é obrigatório.');
 
 		setSaving(true);
+		const uploadedPublicIds = [];
 		try {
 			const payload = { ...form };
 
@@ -48,12 +50,14 @@ const StoreInfoTab = ({ store, onUpdated }) => {
 				const logoUpload = await uploadToCloudinary(images.logo, 'storeLogos');
 				payload.logo = logoUpload.url;
 				payload.logoCloudinaryId = logoUpload.publicId;
+				uploadedPublicIds.push(logoUpload.publicId);
 			}
 			if (images.banner) {
 				setProgress('A carregar banner...');
 				const bannerUpload = await uploadToCloudinary(images.banner, 'storeBanners');
 				payload.banner = bannerUpload.url;
 				payload.bannerCloudinaryId = bannerUpload.publicId;
+				uploadedPublicIds.push(bannerUpload.publicId);
 			}
 
 			setProgress('A guardar alterações...');
@@ -66,6 +70,7 @@ const StoreInfoTab = ({ store, onUpdated }) => {
 				notyf.error(data?.msg || 'Erro ao actualizar loja.');
 			}
 		} catch {
+			cleanupUploads(uploadedPublicIds);
 			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setSaving(false);

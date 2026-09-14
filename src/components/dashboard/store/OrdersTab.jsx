@@ -5,6 +5,7 @@ import { formatCurrency } from '../../../utils/currency';
 import { formatVariantLabel } from '../../../stores/cartStore';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
 import EmptyState from './ui/EmptyState';
+import OptimizedImage from '../../ui/OptimizedImage';
 
 const SELLER_TRANSITIONS = {
 	pending: ['processing', 'cancelled'],
@@ -78,7 +79,7 @@ const OrdersTab = ({ orders, onRefresh }) => {
 											<div key={item.id} className="flex items-center justify-between text-xs">
 												<div className="flex items-center gap-2">
 													{item.product?.image && (
-														<img src={item.product.image} alt={item.product?.name} className="w-7 h-7 rounded-lg object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+														<OptimizedImage src={item.product.image} alt={item.product?.name} w={140} fit="fill" loading="lazy" decoding="async" className="w-7 h-7 rounded-lg object-cover" />
 													)}
 													<span className="text-[#1C1917] font-medium">{item.product?.name || 'Produto'}</span>
 													{item.variantOptions?.options && (

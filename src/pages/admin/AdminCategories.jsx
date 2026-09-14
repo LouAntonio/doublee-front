@@ -3,6 +3,7 @@ import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminCategoriesList, useCreateCategory, useUpdateCategory } from '../../hooks/queries/useAdminCategories';
 import Modal from '../../components/admin/Modal';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 const uploadToCloudinary = async (file, folder) => {
 	const auth = await http.get(`/cloudinary/authorize-upload-admin?folder=${folder}`, { admin: true });
@@ -14,6 +15,7 @@ const uploadToCloudinary = async (file, folder) => {
 	formData.append('timestamp', auth.timestamp);
 	formData.append('signature', auth.signature);
 	formData.append('folder', auth.folder);
+	if (auth.transformation) formData.append('transformation', auth.transformation);
 
 	const response = await fetch(
 		`https://api.cloudinary.com/v1_1/${auth.cloudname}/image/upload`,
@@ -232,7 +234,7 @@ const AdminCategories = () => {
 									<tr key={category.id} className="hover:bg-sand/50 transition-colors group">
 										<td className="px-6 py-4 whitespace-nowrap">
 											{category.image ? (
-												<img src={category.image} alt={category.name} className="w-12 h-12 rounded-lg object-cover border border-accent/20 shadow-sm" />
+												<OptimizedImage src={category.image} alt={category.name} w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-accent/20 shadow-sm" />
 											) : (
 												<div className="w-12 h-12 rounded-lg bg-sand border border-accent/20 flex items-center justify-center text-[#78716C]">
 													<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>

@@ -8,6 +8,7 @@ import useAuthStore from '../stores/authStore';
 import useWishlistStore from '../stores/wishlistStore';
 import { notyf } from '../utils/notyf';
 import useBuyNow from '../hooks/useBuyNow';
+import OptimizedImage from './ui/OptimizedImage';
 
 const ProductCard = ({ product, onClick }) => {
 	const { addToCart, isAddingProduct } = useCartStore();
@@ -153,7 +154,7 @@ const ProductCard = ({ product, onClick }) => {
 				)}
 
 				<div className="w-full h-full">
-					<img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+					<OptimizedImage src={product.image} alt={product.title} w={600} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
 				</div>
 			</div>
 

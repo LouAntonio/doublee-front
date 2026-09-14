@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { IoStarSharp } from 'react-icons/io5';
 import StoreLogo from './StoreLogo';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 const StoreCard = ({ store }) => {
 	const rating = Math.round(store.rating ?? 0);
@@ -9,9 +10,14 @@ const StoreCard = ({ store }) => {
 		<article className="group bg-white rounded-2xl overflow-hidden border border-[var(--lojas-border)] flex flex-col lojas-card-hover shadow-sm hover:shadow-lg">
 			<div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200">
 				{store.banner ? (
-					<img
+					<OptimizedImage
 						src={store.banner}
 						alt={store.name}
+						w={600}
+						h={450}
+						fit="fill"
+						loading="lazy"
+						decoding="async"
 						className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 					/>
 				) : (

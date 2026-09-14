@@ -8,6 +8,7 @@ import {
 	IoStarOutline,
 } from 'react-icons/io5';
 import { formatCurrency } from '../../../utils/currency';
+import OptimizedImage from '../../ui/OptimizedImage';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
 import StatCard from './ui/StatCard';
 import EmptyState from './ui/EmptyState';
@@ -45,13 +46,13 @@ const OverviewTab = ({ store, products, orders }) => {
 			{store && (
 				<div className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
 					{store.banner ? (
-						<img src={store.banner} alt="Banner" className="w-full h-32 object-cover" />
+						<OptimizedImage src={store.banner} alt="Banner" w={1600} fit="contain" loading="lazy" decoding="async" className="w-full h-32 object-cover" />
 					) : (
 						<div className="w-full h-32 bg-gradient-to-r from-accent to-accent-dark" />
 					)}
 					<div className="px-5 py-4 flex items-center gap-4">
 						{store.logo ? (
-							<img src={store.logo} alt="Logo" className="w-14 h-14 rounded-xl object-cover border border-accent/10 shadow-sm -mt-9" />
+							<OptimizedImage src={store.logo} alt="Logo" w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-14 h-14 rounded-xl object-cover border border-accent/10 shadow-sm -mt-9" />
 						) : (
 							<div className="w-14 h-14 rounded-xl bg-white border border-accent/10 shadow-sm -mt-9 flex items-center justify-center">
 								<IoStorefrontOutline className="w-7 h-7 text-[#78716C]" />

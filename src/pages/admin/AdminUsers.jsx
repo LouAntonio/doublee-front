@@ -2,6 +2,7 @@
 import { notyf } from '../../utils/notyf';
 import { useAdminUsersList, useToggleUserStatus, useToggleUserRole } from '../../hooks/queries/useAdminUsers';
 import Modal from '../../components/admin/Modal';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 const UserSkeleton = () => (
 	<tr className="animate-pulse border-b border-accent/10 last:border-0">
@@ -261,7 +262,7 @@ const AdminUsers = () => {
 						<>
 							<div className="flex items-center gap-4">
 								{selectedUserDetails.avatar ? (
-									<img src={selectedUserDetails.avatar} alt="" className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
+									<OptimizedImage src={selectedUserDetails.avatar} alt="" w={240} h={240} fit="fill" loading="lazy" decoding="async" className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
 								) : (
 									<div className="w-16 h-16 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/30">
 										{selectedUserDetails.name.charAt(0)}

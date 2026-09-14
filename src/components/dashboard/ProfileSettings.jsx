@@ -4,6 +4,7 @@ import { notyf } from '../../utils/notyf';
 import { useUpdateProfile, useUpdateAvatar } from '../../hooks/queries/useProfile';
 import { IoCameraOutline } from 'react-icons/io5';
 import { API_URL } from '../../services/http';
+import OptimizedImage from '../ui/OptimizedImage';
 
 const ProfileSettings = () => {
 	const user = useAuthStore((s) => s.user);
@@ -63,6 +64,7 @@ const ProfileSettings = () => {
 			form.append('timestamp', authData.timestamp);
 			form.append('signature', authData.signature);
 			form.append('folder', authData.folder);
+			if (authData.transformation) form.append('transformation', authData.transformation);
 
 			const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${authData.cloudname}/image/upload`, {
 				method: 'POST',
@@ -99,7 +101,7 @@ const ProfileSettings = () => {
 						onClick={handleAvatarClick}
 					>
 						{avatarPreview ? (
-							<img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+							<OptimizedImage src={avatarPreview} alt="Avatar" w={240} h={240} fit="fill" className="w-full h-full object-cover" />
 						) : (
 							<span className="text-2xl font-bold text-accent">
 								{user?.name?.charAt(0)?.toUpperCase() || '?'}

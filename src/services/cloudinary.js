@@ -13,6 +13,7 @@ export const uploadToCloudinary = async (file, folder = 'products') => {
 		formData.append('timestamp', res.timestamp);
 		formData.append('signature', res.signature);
 		formData.append('folder', folder);
+		if (res.transformation) formData.append('transformation', res.transformation);
 
 		const cloudinaryResponse = await fetch(
 			`https://api.cloudinary.com/v1_1/${res.cloudname}/image/upload`,

@@ -8,6 +8,7 @@ import { formatCurrency } from '../../utils/currency';
 import { formatVariantLabel } from '../../stores/cartStore';
 import { PAYMENT_COORDINATES } from '../../utils/payment';
 import DashboardModal from './DashboardModal';
+import OptimizedImage from '../ui/OptimizedImage';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './store/constants';
 
 const getPaymentStatusBadge = (status) => {
@@ -85,7 +86,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
 									<div key={so.id} className="border border-accent/10 rounded-xl overflow-hidden">
 										<div className="flex items-center gap-2 px-3 py-1.5 bg-sand text-xs font-medium text-[#1C1917] border-b border-accent/10">
 											{so.store?.logo && (
-												<img src={so.store.logo} alt="" className="w-4 h-4 rounded-full object-cover" />
+												<OptimizedImage src={so.store.logo} alt="" w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-4 h-4 rounded-full object-cover" />
 											)}
 											{so.store?.name || 'Loja'}
 											{st && (
@@ -98,7 +99,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
 											{so.items?.map((item) => (
 												<div key={item.id} className="flex items-center gap-2 px-3 py-1.5 text-xs text-[#1C1917]">
 													{item.product?.image && (
-														<img src={item.product.image} alt="" className="w-7 h-7 rounded-lg object-cover border border-accent/10 shrink-0" />
+														<OptimizedImage src={item.product.image} alt="" w={140} fit="fill" loading="lazy" decoding="async" className="w-7 h-7 rounded-lg object-cover border border-accent/10 shrink-0" />
 													)}
 													<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
 													{item.variantOptions?.options && (
@@ -127,7 +128,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
 										{order.paymentProof.match(/\.pdf/i) ? (
 											<IoDocumentOutline className="w-4 h-4 text-red-500" />
 										) : (
-											<img src={order.paymentProof} alt="" className="w-full h-full object-cover rounded-lg" />
+											<OptimizedImage src={order.paymentProof} alt="" w={1200} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover rounded-lg" />
 										)}
 									</div>
 									<a href={order.paymentProof} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline text-xs">Ver comprovativo</a>
@@ -333,7 +334,7 @@ const OrderHistory = () => {
 												{order.paymentProof.match(/\.pdf/i) ? (
 													<IoDocumentOutline className="w-4 h-4 text-red-500" />
 												) : (
-													<img src={order.paymentProof} alt="" className="w-full h-full object-cover rounded-lg" />
+													<OptimizedImage src={order.paymentProof} alt="" w={1200} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover rounded-lg" />
 												)}
 											</div>
 											<a href={order.paymentProof} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline flex items-center gap-1"><IoEyeOutline /> Ver comprovativo</a>

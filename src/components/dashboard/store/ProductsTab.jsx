@@ -22,6 +22,8 @@ import ImagePicker from './ui/ImagePicker';
 import EmptyState from './ui/EmptyState';
 import SectionTitle from './ui/SectionTitle';
 import DashboardModal from '../DashboardModal';
+import OptimizedImage from '../../ui/OptimizedImage';
+import { cleanupUploads } from '../../../utils/cleanupUploads';
 
 const usePlatformSettings = () =>
 	useQuery({
@@ -297,6 +299,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 			return notyf.error('O preço promocional deve ser inferior ao preço normal.');
 
 		setSaving(true);
+		const uploadedPublicIds = [];
 		try {
 			const payload = {
 				name: form.name.trim(),
@@ -316,6 +319,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				const imageUpload = await uploadToCloudinary(imageFile, 'products');
 				payload.image = imageUpload.url;
 				payload.imageCloudinaryId = imageUpload.publicId;
+				uploadedPublicIds.push(imageUpload.publicId);
 			} else {
 				payload.image = imagePreview || null;
 				payload.imageCloudinaryId = payload.image ? imageCloudinaryId : null;
@@ -329,6 +333,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				const upload = await uploadToCloudinary(galleryFiles[i], 'products');
 				uploadedGallery.push(upload.url);
 				uploadedGalleryIds.push(upload.publicId);
+				uploadedPublicIds.push(upload.publicId);
 			}
 			payload.gallery = [...existingGallery, ...uploadedGallery];
 			payload.galleryCloudinaryIds = [...existingGalleryIds.slice(0, existingGallery.length), ...uploadedGalleryIds];
@@ -378,6 +383,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 						const imageUpload = await uploadToCloudinary(v.imageFile, 'products');
 						image = imageUpload.url;
 						imageCloudinaryId = imageUpload.publicId;
+						uploadedPublicIds.push(imageUpload.publicId);
 					}
 					variantPayloads.push({
 						options: v.options,
@@ -409,6 +415,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				notyf.error(data?.msg || 'Erro ao guardar produto.');
 			}
 		} catch {
+			cleanupUploads(uploadedPublicIds);
 			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setSaving(false);
@@ -474,7 +481,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 							<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
 								<div className="relative h-40 bg-sand">
 									{product.image ? (
-										<img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
+										<OptimizedImage src={product.image} alt={product.name} w={600} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover" />
 									) : (
 										<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
 											<IoImageOutline className="w-12 h-12" />
@@ -627,7 +634,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 									{/* Existing uploaded images */}
 									{existingGallery.map((url, idx) => (
 										<div key={`ex-${idx}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-accent/10 group/thumb">
-											<img src={url} alt="" className="w-full h-full object-cover" />
+											<OptimizedImage src={url} alt="" w={240} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover" />
 											<button type="button" onClick={() => removeExistingGalleryImage(idx)}
 												className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity text-white">
 												<IoTrashOutline className="w-4 h-4" />
@@ -805,7 +812,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 															<td className="px-2 py-2">
 																<div className="relative w-12 h-12 rounded-lg overflow-hidden border border-accent/10 bg-sand">
 																	{v.image ? (
-																		<img src={v.image} alt="" className="w-full h-full object-cover" />
+																		<OptimizedImage src={v.image} alt="" w={140} fit="fill" loading="lazy" decoding="async" className="w-full h-full object-cover" />
 																	) : (
 																		<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
 																			<IoImageOutline className="w-5 h-5" />

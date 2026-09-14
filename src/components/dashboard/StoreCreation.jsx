@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
+import { cleanupUploads } from '../../utils/cleanupUploads';
 
 // ─── Provinces ───────────────────────────────────────────────────────────────
 const ANGOLA_PROVINCES = [
@@ -21,6 +22,7 @@ const uploadToCloudinary = async (file, folder) => {
 	formData.append('timestamp', auth.timestamp);
 	formData.append('signature', auth.signature);
 	formData.append('folder', auth.folder);
+	if (auth.transformation) formData.append('transformation', auth.transformation);
 
 	const response = await fetch(
 		`https://api.cloudinary.com/v1_1/${auth.cloudname}/image/upload`,
@@ -119,6 +121,7 @@ const StoreCreation = ({ verificationStatus }) => {
 
 		setIsLoading(true);
 
+		const uploadedPublicIds = [];
 		try {
 			const payload = { ...formData };
 
@@ -127,6 +130,7 @@ const StoreCreation = ({ verificationStatus }) => {
 				const logoUpload = await uploadToCloudinary(images.logo, 'storeLogos');
 				payload.logo = logoUpload.url;
 				payload.logoCloudinaryId = logoUpload.publicId;
+				uploadedPublicIds.push(logoUpload.publicId);
 			}
 
 			if (images.banner) {
@@ -134,6 +138,7 @@ const StoreCreation = ({ verificationStatus }) => {
 				const bannerUpload = await uploadToCloudinary(images.banner, 'storeBanners');
 				payload.banner = bannerUpload.url;
 				payload.bannerCloudinaryId = bannerUpload.publicId;
+				uploadedPublicIds.push(bannerUpload.publicId);
 			}
 
 			setProgress('A criar loja...');
@@ -146,6 +151,7 @@ const StoreCreation = ({ verificationStatus }) => {
 				notyf.error(data?.msg || 'Erro ao criar loja.');
 			}
 		} catch {
+			cleanupUploads(uploadedPublicIds);
 			notyf.error('Erro ao conectar com o servidor.');
 		} finally {
 			setIsLoading(false);

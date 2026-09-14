@@ -3,6 +3,7 @@ import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { useAdminStoresList, useUpdateStoreStatus } from '../../hooks/queries/useAdminStores';
 import Modal from '../../components/admin/Modal';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 const StoreSkeleton = () => (
 	<tr className="animate-pulse border-b border-accent/10 last:border-0">
@@ -157,7 +158,7 @@ const AdminStores = () => {
 										<td className="px-6 py-4 whitespace-nowrap">
 											<div className="flex items-center gap-4">
 												{store.logo ? (
-													<img src={store.logo} alt={store.name} className="w-10 h-10 rounded-full object-cover border border-accent/20 shadow-sm" />
+													<OptimizedImage src={store.logo} alt={store.name} w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-10 h-10 rounded-full object-cover border border-accent/20 shadow-sm" />
 												) : (
 													<div className="w-10 h-10 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center uppercase shadow-sm border border-accent/20">
 														{store.name.charAt(0)}
@@ -260,7 +261,7 @@ const AdminStores = () => {
 						<div className="space-y-6">
 							<div className="flex items-start gap-4">
 								{storeDetails.logo ? (
-									<img src={storeDetails.logo} alt={storeDetails.name} className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
+									<OptimizedImage src={storeDetails.logo} alt={storeDetails.name} w={160} h={160} fit="fill" loading="lazy" decoding="async" className="w-16 h-16 rounded-full object-cover border border-accent/20 shadow-sm" />
 								) : (
 									<div className="w-16 h-16 rounded-full bg-accent/10 text-accent font-bold flex items-center justify-center text-xl uppercase shadow-sm border border-accent/20">
 										{storeDetails.name.charAt(0)}
@@ -285,7 +286,7 @@ const AdminStores = () => {
 							{storeDetails.banner && (
 								<div>
 									<h5 className="text-sm font-display font-bold text-[#1C1917] mb-2">Banner da Loja</h5>
-									<img src={storeDetails.banner} alt="Banner da loja" className="w-full h-32 object-cover rounded-xl border border-accent/20 shadow-sm" />
+									<OptimizedImage src={storeDetails.banner} alt="Banner da loja" w={1600} fit="fill" loading="lazy" decoding="async" className="w-full h-32 object-cover rounded-xl border border-accent/20 shadow-sm" />
 								</div>
 							)}
 
