@@ -257,6 +257,10 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		setVariants(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
 	};
 
+	const handleRemoveVariant = idx => {
+		setVariants(prev => prev.filter((_, i) => i !== idx));
+	};
+
 	const handleVariantImageChange = (idx, e) => {
 		const file = e.target.files[0];
 		if (!file) return;
@@ -747,8 +751,14 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 									<button type="button" onClick={generateCombinations}
 										className="w-full px-4 py-3 rounded-xl border-2 border-dashed border-accent/30 text-sm font-semibold text-accent hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
 										<IoGitBranchOutline className="inline-block w-4 h-4 mr-1.5 -mt-0.5" />
-										Gerar combinações de variantes
+									Gerar combinações de variantes
 									</button>
+
+									{variants.length > 0 && (
+										<p className="text-xs text-[#78716C]">
+											{variants.length} {variants.length === 1 ? 'combinação gerada' : 'combinações geradas'} — apague as que não existem.
+										</p>
+									)}
 
 									{/* Tabela de variantes */}
 									{variants.length > 0 && (
@@ -763,6 +773,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 														<th className="px-2 py-2">Promo</th>
 														<th className="px-2 py-2">Fim promo</th>
 														<th className="px-2 py-2">Stock</th>
+														<th className="px-2 py-2"></th>
 													</tr>
 												</thead>
 												<tbody>
@@ -807,6 +818,13 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 															<td className="px-2 py-2">
 																<input type="number" value={v.stock} onChange={e => handleVariantFieldChange(idx, 'stock', e.target.value)} min="0"
 																	className="w-20 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" />
+															</td>
+															<td className="px-2 py-2 text-center">
+																<button type="button" onClick={() => handleRemoveVariant(idx)}
+																	title="Remover esta combinação"
+																	className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer">
+																	<IoTrashOutline className="w-4 h-4" />
+																</button>
 															</td>
 														</tr>
 													))}
