@@ -1,12 +1,13 @@
 import React from 'react';
 import { IoTrashOutline, IoAddOutline, IoRemoveOutline } from 'react-icons/io5';
-import useCartStore from '../stores/cartStore';
+import useCartStore, { formatVariantLabel } from '../stores/cartStore';
 import { formatCurrency } from '../utils/currency';
 
 const CartItem = ({ item }) => {
 	const { updateQuantity, removeFromCart, isUpdatingItem, isRemovingItem } = useCartStore();
 	const isUpdating = isUpdatingItem(item.id);
 	const isRemoving = isRemovingItem(item.id);
+	const variantLabel = formatVariantLabel(item);
 
 	const handleIncrement = () => {
 		updateQuantity(item.id, item.quantity + 1);
@@ -38,6 +39,11 @@ const CartItem = ({ item }) => {
 					<h3 className="font-display text-[#1C1917] text-sm lg:text-base line-clamp-2">
 						{item.name || item.title || 'Produto'}
 					</h3>
+					{variantLabel && (
+						<p className="text-xs text-accent mt-0.5 font-medium">
+							{variantLabel}
+						</p>
+					)}
 					{item.description && (
 						<p className="text-xs text-[#78716C] mt-1 line-clamp-1 font-body">
 							{item.description}

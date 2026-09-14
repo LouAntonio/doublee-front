@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useCartStore from '../stores/cartStore';
+import useCartStore, { formatVariantLabel } from '../stores/cartStore';
 import { formatCurrency } from '../utils/currency';
 import { IoTicketOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
@@ -57,9 +57,12 @@ const OrderSummary = ({ showPromoCode = true, deliveryOption, deliveryPrice = 0,
 
 			<div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
 				{items.map((item) => (
-					<div key={item.id} className="flex justify-between text-sm">
+					<div key={item.key ?? item.id} className="flex justify-between text-sm">
 						<div className="flex-1">
 							<p className="text-[#1C1917] font-body line-clamp-1">{item.name || item.title || 'Produto'}</p>
+							{formatVariantLabel(item) && (
+								<p className="text-accent font-body text-xs">{formatVariantLabel(item)}</p>
+							)}
 							<p className="text-[#78716C] font-body text-xs">Qtd: {item.quantity}</p>
 						</div>
 						<p className="font-medium text-[#1C1917] ml-2">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import http from '../../../services/http';
 import { notyf } from '../../../utils/notyf';
 import { formatCurrency } from '../../../utils/currency';
+import { formatVariantLabel } from '../../../stores/cartStore';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from './constants';
 import EmptyState from './ui/EmptyState';
 
@@ -80,6 +81,9 @@ const OrdersTab = ({ orders, onRefresh }) => {
 														<img src={item.product.image} alt={item.product?.name} className="w-7 h-7 rounded-lg object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }} />
 													)}
 													<span className="text-[#1C1917] font-medium">{item.product?.name || 'Produto'}</span>
+													{item.variantOptions?.options && (
+														<span className="text-[#78716C] italic">— {formatVariantLabel(item.variantOptions)}</span>
+													)}
 													<span className="text-[#78716C]">x{item.quantity}</span>
 												</div>
 												<span className="text-[#1C1917] font-semibold">{formatCurrency(item.unitPrice * item.quantity)}</span>

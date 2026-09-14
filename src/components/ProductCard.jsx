@@ -21,6 +21,7 @@ const ProductCard = ({ product, onClick }) => {
 	const productPrice = product?.price ?? 0;
 	const productOldPrice = product?.oldPrice;
 	const productImage = product?.image;
+	const variantCount = Number(product?._count?.variants ?? product?.variantsCount ?? 0);
 
 	const basePrice = productOldPrice ?? productPrice;
 	const promotionalPrice = product?.promotionalPrice;
@@ -63,6 +64,10 @@ const ProductCard = ({ product, onClick }) => {
 
 	const handleAddToCart = (e) => {
 		e?.stopPropagation();
+		if (variantCount > 0) {
+			navigate(`/produto/${product.slug ?? product.id}`);
+			return;
+		}
 		addToCart({
 			id: productId,
 			name: productTitle,
@@ -73,6 +78,10 @@ const ProductCard = ({ product, onClick }) => {
 
 	const handleBuyNow = (e) => {
 		e?.stopPropagation();
+		if (variantCount > 0) {
+			navigate(`/produto/${product.slug ?? product.id}`);
+			return;
+		}
 		buyNow({ ...product, price: displayPrice }, 1);
 	};
 
@@ -134,6 +143,12 @@ const ProductCard = ({ product, onClick }) => {
 				{displayOldPrice && (
 					<span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
 						-{discountPercent}%
+					</span>
+				)}
+
+				{variantCount > 0 && !displayOldPrice && (
+					<span className="absolute top-2 left-2 bg-white/95 text-[#78716C] text-[10px] font-semibold px-2 py-0.5 rounded-md shadow-sm border border-black/5">
+						{variantCount} {variantCount === 1 ? 'variação' : 'variações'}
 					</span>
 				)}
 

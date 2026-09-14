@@ -8,6 +8,9 @@ import {
 	IoCheckmarkOutline,
 	IoChevronBack,
 	IoChevronForward,
+	IoRemoveOutline,
+	IoGitBranchOutline,
+	IoCameraOutline,
 } from 'react-icons/io5';
 import { useQuery } from '@tanstack/react-query';
 import http from '../../../services/http';
@@ -95,6 +98,11 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 	// Characteristics
 	const [chars, setChars] = useState([{ key: '', value: '' }]);
 
+	// Variantes
+	const [hasVariants, setHasVariants] = useState(false);
+	const [optionGroups, setOptionGroups] = useState([]); // [{ name: '', values: [''] }]
+	const [variants, setVariants] = useState([]);        // [{ options, sku, price, promotionalPrice, promotionalEndDate, stock, image, imageFile }]
+
 	const resetModal = () => {
 		setForm(EMPTY_PRODUCT);
 		setImageFile(null);
@@ -104,6 +112,9 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		setExistingGallery([]);
 		setChars([{ key: '', value: '' }]);
 		setSelectedCategoryIds([]);
+		setHasVariants(false);
+		setOptionGroups([]);
+		setVariants([]);
 	};
 
 	const openNew = () => {
@@ -133,6 +144,30 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 			? normalizeChars(product.characteristics)
 			: [{ key: '', value: '' }]);
 		setSelectedCategoryIds(Array.isArray(product.categories) ? product.categories.map(c => c.id) : []);
+
+		// Variantes — carregar se o produto já tem
+		const productGroups = Array.isArray(product.optionGroups) ? product.optionGroups : [];
+		const productVariants = Array.isArray(product.variants) ? product.variants : [];
+		if (productGroups.length > 0 || productVariants.length > 0) {
+			setHasVariants(true);
+			setOptionGroups(productGroups.map(g => ({ name: g.name || '', values: g.values || [] })));
+			setVariants(productVariants.map(v => ({
+				id: v.id || null,
+				options: v.options || {},
+				sku: v.sku || '',
+				price: v.price !== null && v.price !== undefined ? v.price : '',
+				promotionalPrice: v.promotionalPrice || '',
+				promotionalEndDate: v.promotionalEndDate ? toDateInputValue(v.promotionalEndDate) : '',
+				stock: String(v.stock ?? '0'),
+				image: v.image || null,
+				imageFile: null,
+			})));
+		} else {
+			setHasVariants(false);
+			setOptionGroups([]);
+			setVariants([]);
+		}
+
 		setModalOpen(true);
 	};
 
@@ -171,6 +206,69 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 	const addChar = () => setChars(prev => [...prev, { key: '', value: '' }]);
 	const removeChar = idx => setChars(prev => prev.filter((_, i) => i !== idx));
 
+	// Variantes handlers
+	const handleGroupNameChange = (idx, value) => {
+		setOptionGroups(prev => prev.map((g, i) => i === idx ? { ...g, name: value } : g));
+	};
+	const handleGroupValueChange = (gIdx, vIdx, value) => {
+		setOptionGroups(prev => prev.map((g, i) => {
+			if (i !== gIdx) return g;
+			const values = g.values.map((val, j) => j === vIdx ? value : val);
+			return { ...g, values };
+		}));
+	};
+	const addOptionGroup = () => setOptionGroups(prev => [...prev, { name: '', values: [''] }]);
+	const addGroupValue = gIdx => setOptionGroups(prev => prev.map((g, i) => i === gIdx ? { ...g, values: [...g.values, ''] } : g));
+	const removeGroupValue = (gIdx, vIdx) => setOptionGroups(prev => prev.map((g, i) => i === gIdx ? { ...g, values: g.values.filter((_, j) => j !== vIdx) } : g));
+	const removeOptionGroup = gIdx => setOptionGroups(prev => prev.filter((_, i) => i !== gIdx));
+
+	const generateCombinations = () => {
+		const validGroups = optionGroups
+			.filter(g => g.name.trim())
+			.map(g => ({ name: g.name.trim(), values: g.values.filter(v => v.trim()).map(v => v.trim()) }))
+			.filter(g => g.values.length > 0);
+
+		if (validGroups.length === 0) {
+			notyf.error('Adicione pelo menos um grupo de opções com valores.');
+			return;
+		}
+
+		let combos = [{}];
+		for (const group of validGroups) {
+			combos = combos.flatMap(combo =>
+				group.values.map(value => ({ ...combo, [group.name]: value }))
+			);
+		}
+
+		setVariants(combos.map(options => ({
+			id: null,
+			options,
+			sku: '',
+			price: '',
+			promotionalPrice: '',
+			promotionalEndDate: '',
+			stock: '0',
+			image: null,
+			imageFile: null,
+		})));
+	};
+
+	const handleVariantFieldChange = (idx, field, value) => {
+		setVariants(prev => prev.map((v, i) => i === idx ? { ...v, [field]: value } : v));
+	};
+
+	const handleVariantImageChange = (idx, e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+		setVariants(prev => prev.map((v, i) => i === idx ? { ...v, imageFile: file, image: URL.createObjectURL(file) } : v));
+	};
+
+	const removeVariants = () => {
+		setHasVariants(false);
+		setOptionGroups([]);
+		setVariants([]);
+	};
+
 	// Category toggle
 	const toggleCategory = id => {
 		setSelectedCategoryIds(prev =>
@@ -182,7 +280,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		e.preventDefault();
 		if (!form.name.trim()) return notyf.error('O nome do produto é obrigatório.');
 		if (!form.price) return notyf.error('O preço é obrigatório.');
-		if (form.stock === '' || form.stock === null) return notyf.error('O stock é obrigatório.');
+		if (!hasVariants && (form.stock === '' || form.stock === null)) return notyf.error('O stock é obrigatório.');
 		if (form.promotionalPrice && parseFloat(form.promotionalPrice) >= parseFloat(form.price))
 			return notyf.error('O preço promocional deve ser inferior ao preço normal.');
 
@@ -194,8 +292,11 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				price: parseFloat(form.price),
 				promotionalPrice: form.promotionalPrice ? parseFloat(form.promotionalPrice) : null,
 				promotionalEndDate: form.promotionalEndDate || null,
-				stock: parseInt(form.stock),
 			};
+
+			// Se é com variantes, o stock do produto é a soma (backend recalcula);
+			// envia mesmo assim o stock do form como fallback quando desactiva variantes
+			if (!hasVariants) payload.stock = parseInt(form.stock);
 
 			// Cover image
 			if (imageFile) {
@@ -221,6 +322,57 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				: null;
 
 			payload.categoryIds = selectedCategoryIds;
+
+			// Variantes — enviar sempre (vazio ao desactivar, para o backend eliminar as antigas)
+			const validGroups = hasVariants
+				? optionGroups
+					.filter(g => g.name.trim())
+					.map(g => ({
+						name: g.name.trim(),
+						values: g.values.filter(v => v.trim()).map(v => v.trim()),
+					}))
+					.filter(g => g.values.length > 0)
+				: [];
+			payload.optionGroups = validGroups;
+
+			if (hasVariants) {
+				if (variants.length === 0) {
+					notyf.error('Crie as combinações de variantes antes de guardar.');
+					setSaving(false);
+					return;
+				}
+
+				for (const v of variants) {
+					if (v.promotionalPrice && v.price !== '' && parseFloat(v.promotionalPrice) >= parseFloat(v.price)) {
+						notyf.error(`O preço promocional da variante deve ser inferior ao preço dela.`);
+						setSaving(false);
+						return;
+					}
+				}
+
+				const variantPayloads = [];
+				for (let i = 0; i < variants.length; i++) {
+					const v = variants[i];
+					let image = v.image;
+					if (v.imageFile) {
+						setSavingProgress(`A carregar imagem da variante (${i + 1}/${variants.length})...`);
+						image = await uploadToCloudinary(v.imageFile, 'products');
+					}
+					variantPayloads.push({
+						options: v.options,
+						sku: v.sku || null,
+						price: v.price !== '' ? parseFloat(v.price) : null,
+						promotionalPrice: v.promotionalPrice ? parseFloat(v.promotionalPrice) : null,
+						promotionalEndDate: v.promotionalEndDate || null,
+						stock: parseInt(v.stock) || 0,
+						image: image || null,
+						gallery: [],
+					});
+				}
+				payload.variants = variantPayloads;
+			} else {
+				payload.variants = [];
+			}
 
 			setSavingProgress('A guardar produto...');
 			const data = editingProduct
@@ -528,9 +680,142 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 
 							<div className="space-y-1.5">
 								<label className="text-sm font-medium text-[#1C1917]">Stock <span className="text-red-500">*</span></label>
-								<input type="number" name="stock" value={form.stock} onChange={handleChange} required min="0"
-									className="w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white" placeholder="Quantidade disponível" />
+								<input type="number" name="stock" value={form.stock} onChange={handleChange} required={!hasVariants} min="0"
+									disabled={hasVariants}
+									className={`w-full px-4 py-3 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all bg-white ${hasVariants ? 'opacity-50 cursor-not-allowed' : ''}`} placeholder="Quantidade disponível" />
+								{hasVariants && (
+									<p className="text-xs text-accent mt-1">O stock do produto é a soma automática do stock de todas as variantes.</p>
+								)}
 							</div>
+						</div>
+					</div>
+
+					{/* Variantes */}
+					<div>
+						<SectionTitle>Variantes</SectionTitle>
+						<div className="space-y-4">
+							<label className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all bg-white ${hasVariants ? 'border-accent bg-accent/5' : 'border-accent/20 hover:border-accent/40'}`}>
+								<input type="checkbox" checked={hasVariants} onChange={e => {
+									if (!e.target.checked) removeVariants();
+									else setHasVariants(true);
+								}} className="w-4 h-4 accent-accent" />
+								<div>
+									<p className="text-sm font-semibold text-[#1C1917]">Este produto tem variações</p>
+									<p className="text-xs text-[#78716C]">Ex: Cor e Tamanho. Cada combinação terá o seu stock, preço e foto.</p>
+								</div>
+							</label>
+
+							{hasVariants && (
+								<>
+									{/* Grupos de opções */}
+									<div className="space-y-3">
+										{optionGroups.map((group, gIdx) => (
+											<div key={gIdx} className="bg-sand/50 rounded-2xl p-4 border border-accent/10 space-y-3">
+												<div className="flex items-center gap-2">
+													<input type="text" value={group.name} onChange={e => handleGroupNameChange(gIdx, e.target.value)}
+														className="flex-1 px-3 py-2.5 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Nome do grupo, ex: Cor" />
+													<button type="button" onClick={() => removeOptionGroup(gIdx)}
+														className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer">
+														<IoTrashOutline className="w-4 h-4" />
+													</button>
+												</div>
+												<div className="space-y-2">
+													{group.values.map((value, vIdx) => (
+														<div key={vIdx} className="flex items-center gap-2">
+															<input type="text" value={value} onChange={e => handleGroupValueChange(gIdx, vIdx, e.target.value)}
+																className="flex-1 px-3 py-2 rounded-xl border border-accent/20 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm transition-all bg-white" placeholder="Valor, ex: Vermelho" />
+															<button type="button" onClick={() => removeGroupValue(gIdx, vIdx)} disabled={group.values.length === 1}
+																className="p-2 rounded-xl text-[#78716C] hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+																<IoRemoveOutline className="w-4 h-4" />
+															</button>
+														</div>
+													))}
+													<button type="button" onClick={() => addGroupValue(gIdx)}
+														className="flex items-center gap-1.5 text-sm text-accent font-medium hover:text-accent-dark transition-colors cursor-pointer">
+														<IoAddOutline className="w-4 h-4" /> Adicionar valor
+													</button>
+												</div>
+											</div>
+										))}
+										<button type="button" onClick={addOptionGroup}
+											className="flex items-center gap-1.5 text-sm text-accent font-medium hover:text-accent-dark transition-colors cursor-pointer">
+											<IoAddOutline className="w-4 h-4" /> Adicionar grupo de opções
+										</button>
+									</div>
+
+									{/* Gerar combinações */}
+									<button type="button" onClick={generateCombinations}
+										className="w-full px-4 py-3 rounded-xl border-2 border-dashed border-accent/30 text-sm font-semibold text-accent hover:bg-accent/5 hover:border-accent transition-all cursor-pointer">
+										<IoGitBranchOutline className="inline-block w-4 h-4 mr-1.5 -mt-0.5" />
+										Gerar combinações de variantes
+									</button>
+
+									{/* Tabela de variantes */}
+									{variants.length > 0 && (
+										<div className="overflow-x-auto rounded-2xl border border-accent/10">
+											<table className="w-full text-sm">
+												<thead>
+													<tr className="bg-sand text-left text-xs uppercase tracking-wide text-[#78716C]">
+														<th className="px-3 py-2">Opções</th>
+														<th className="px-2 py-2">Foto</th>
+														<th className="px-2 py-2">SKU</th>
+														<th className="px-2 py-2">Preço (Kz)</th>
+														<th className="px-2 py-2">Promo</th>
+														<th className="px-2 py-2">Fim promo</th>
+														<th className="px-2 py-2">Stock</th>
+													</tr>
+												</thead>
+												<tbody>
+													{variants.map((v, idx) => (
+														<tr key={idx} className="border-t border-accent/10 align-middle">
+															<td className="px-3 py-2 font-medium text-[#1C1917] text-xs">
+																{Object.entries(v.options).map(([k, val]) => (
+																	<span key={k} className="block">{k}: <span className="text-accent">{val}</span></span>
+																))}
+															</td>
+															<td className="px-2 py-2">
+																<div className="relative w-12 h-12 rounded-lg overflow-hidden border border-accent/10 bg-sand">
+																	{v.image ? (
+																		<img src={v.image} alt="" className="w-full h-full object-cover" />
+																	) : (
+																		<div className="w-full h-full flex items-center justify-center text-[#78716C]/30">
+																			<IoImageOutline className="w-5 h-5" />
+																		</div>
+																	)}
+																	<label className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+																		<IoCameraOutline className="w-4 h-4 text-white" />
+																		<input type="file" accept="image/*" className="hidden" onChange={e => handleVariantImageChange(idx, e)} />
+																	</label>
+																</div>
+															</td>
+															<td className="px-2 py-2">
+																<input type="text" value={v.sku} onChange={e => handleVariantFieldChange(idx, 'sku', e.target.value)}
+																	className="w-20 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" placeholder="SKU" />
+															</td>
+															<td className="px-2 py-2">
+																<input type="number" value={v.price} onChange={e => handleVariantFieldChange(idx, 'price', e.target.value)} min="0" step="0.01"
+																	className="w-24 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" placeholder="Herda" />
+															</td>
+															<td className="px-2 py-2">
+																<input type="number" value={v.promotionalPrice} onChange={e => handleVariantFieldChange(idx, 'promotionalPrice', e.target.value)} min="0" step="0.01"
+																	className="w-24 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" placeholder="Opcional" />
+															</td>
+															<td className="px-2 py-2">
+																<input type="date" value={v.promotionalEndDate} onChange={e => handleVariantFieldChange(idx, 'promotionalEndDate', e.target.value)} min={minDateLuanda()}
+																	className="w-28 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" />
+															</td>
+															<td className="px-2 py-2">
+																<input type="number" value={v.stock} onChange={e => handleVariantFieldChange(idx, 'stock', e.target.value)} min="0"
+																	className="w-20 px-2 py-1.5 rounded-lg border border-accent/20 focus:outline-none focus:border-accent text-xs bg-white" />
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									)}
+								</>
+							)}
 						</div>
 					</div>
 

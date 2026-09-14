@@ -14,7 +14,7 @@ export const useCreateProduct = () => {
 				notyf.error(res?.msg || 'Erro ao guardar produto.');
 			}
 		},
-		onError: () => notyf.error('Erro ao conectar com o servidor.'),
+		onError: (error) => notyf.error(error?.response?.data?.msg || 'Erro ao conectar com o servidor.'),
 	});
 };
 
@@ -30,7 +30,7 @@ export const useUpdateProduct = () => {
 				notyf.error(res?.msg || 'Erro ao guardar produto.');
 			}
 		},
-		onError: () => notyf.error('Erro ao conectar com o servidor.'),
+		onError: (error) => notyf.error(error?.response?.data?.msg || 'Erro ao conectar com o servidor.'),
 	});
 };
 

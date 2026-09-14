@@ -7,24 +7,45 @@ const FALLBACK_IMAGE = '/images/produto.png';
 
 const normalizeCartItem = (item = {}) => {
 	const p = item.product ?? {};
+	const v = item.variant ?? item.variantOptions ?? null;
+	const vOptions = v?.options || v || null;
+	const variantEffectivePrice =
+		v && (v.promotionalPrice && v.promotionalEndDate && new Date(v.promotionalEndDate) > new Date()
+			? Number(v.promotionalPrice)
+			: v.price !== null && v.price !== undefined
+				? Number(v.price)
+				: null);
 	const image =
 		item.image ??
+		v?.image ??
 		p.image ??
 		(Array.isArray(item.images) ? item.images[0] : null) ??
 		(Array.isArray(p.gallery) ? p.gallery[0] : null) ??
 		FALLBACK_IMAGE;
-	const price = Number(item.price ?? p.price ?? 0);
-	const promo = Number(p.promotionalPrice ?? item.promotionalPrice ?? 0);
+	const price = variantEffectivePrice ?? Number(item.price ?? p.price ?? 0);
+	const promo = variantEffectivePrice ?? Number(p.promotionalPrice ?? item.promotionalPrice ?? 0);
+	const variantId = item.variantId ?? v?.id ?? null;
+	const variantKey = item.variantKey ?? (variantId ? variantId : 'default');
 	return {
 		id: item.id ?? item.productId ?? p.id,
 		productId: item.productId ?? item.id ?? p.id,
+		key: `${item.productId ?? item.id ?? p.id}:${variantKey}`,
 		name: item.name ?? p.name ?? item.title ?? p.title ?? 'Produto',
 		price: promo > 0 ? promo : price,
 		image,
 		quantity: Number(item.quantity) || 1,
-		stock: item.stock ?? p.stock,
+		stock: v?.stock ?? item.stock ?? p.stock,
 		store: item.store ?? p.store,
+		variantId,
+		variantKey,
+		variantOptions: vOptions && typeof vOptions === 'object' ? vOptions : null,
 	};
+};
+
+const formatVariantLabel = (item) => {
+	if (!item?.variantOptions) return null;
+	const values = Object.values(item.variantOptions);
+	return values.length ? values.filter(Boolean).join(' / ') : null;
 };
 
 const mapApiItem = normalizeCartItem;
@@ -99,14 +120,16 @@ const useCartStore = create(
 				}
 			},
 
-			addToCart: async (product, quantity = 1, showNotification = true) => {
+			addToCart: async (product, quantity = 1, showNotification = true, variant = null) => {
 				if (!product?.id) return false;
 				const { setProductAdding, loadCartFromApi } = get();
 				setProductAdding(product.id, true);
+				const variantId = variant?.id || null;
+				const variantKey = variantId ? variantId : 'default';
 				try {
 					if (hasToken()) {
 						try {
-							const res = await addToCartApi(product.id, quantity);
+							const res = await addToCartApi(product.id, quantity, variantId);
 							if (res?.success) {
 								await loadCartFromApi();
 								if (showNotification) notyf.success(res.msg || 'Produto adicionado ao carrinho!');
@@ -121,17 +144,23 @@ const useCartStore = create(
 					}
 
 					set((state) => {
-						const existingItem = state.cartItems.find((item) => item.id === product.id || item.productId === product.id);
+						const key = `${product.id}:${variantKey}`;
+						const existingItem = state.cartItems.find((item) => item.key === key || (item.productId === product.id && item.variantKey === variantKey));
 						if (existingItem) {
 							return {
 								cartItems: state.cartItems.map((item) =>
-									item.id === existingItem.id || item.productId === product.id
+									item.key === existingItem.key
 										? { ...item, quantity: item.quantity + quantity }
 										: item
 								),
 							};
 						}
-						return { cartItems: [...state.cartItems, normalizeCartItem({ ...product, quantity })] };
+						return {
+							cartItems: [
+								...state.cartItems,
+								normalizeCartItem({ ...product, variant: variant, variantId, variantKey, quantity }),
+							],
+						};
 					});
 					if (showNotification) notyf.success('Produto adicionado ao carrinho!');
 					return true;
@@ -256,3 +285,4 @@ const useCartStore = create(
 );
 
 export default useCartStore;
+export { formatVariantLabel };

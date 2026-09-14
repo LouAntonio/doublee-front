@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IoCheckmarkCircle, IoCloseCircle, IoDocumentOutline, IoEyeOutline, IoSearchOutline, IoBusinessOutline, IoLocateOutline, IoHomeOutline, IoFlagOutline, IoHandLeftOutline, IoCarOutline } from 'react-icons/io5';
 import { useAdminOrders, useConfirmPayment, useRejectPayment } from '../../hooks/queries/useOrders';
 import { formatCurrency } from '../../utils/currency';
+import { formatVariantLabel } from '../../stores/cartStore';
 import http from '../../services/http';
 import { notyf } from '../../utils/notyf';
 import { ORDER_STATUS_MAP, STATUS_COLOR } from '../../components/dashboard/store/constants';
@@ -180,6 +181,9 @@ const ProofModal = ({ order, onClose }) => {
 															<img src={item.product.image} alt="" className="w-8 h-8 rounded-lg object-cover border border-accent/10 shrink-0" />
 														)}
 														<span className="flex-1 truncate">{item.product?.name || 'Produto'}</span>
+														{item.variantOptions?.options && (
+															<span className="text-[#78716C] text-[11px] shrink-0 italic">— {formatVariantLabel(item.variantOptions)}</span>
+														)}
 														<span className="text-[#78716C] shrink-0">x{item.quantity}</span>
 														<span className="font-medium shrink-0">{formatCurrency(item.subtotal)}</span>
 													</div>

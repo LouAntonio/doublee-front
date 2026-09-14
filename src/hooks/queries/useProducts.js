@@ -6,24 +6,28 @@ const extractSuccess = (res, fallback = []) => {
 	return res.data ?? fallback;
 };
 
+const mapProductListItem = (p) => ({
+	id: p.id,
+	slug: p.slug ?? null,
+	title: p.name,
+	price: p.promotionalPrice ?? p.price,
+	oldPrice: p.promotionalPrice ? p.price : undefined,
+	promotionalPrice: p.promotionalPrice,
+	promotionalEndDate: p.promotionalEndDate,
+	image: p.image || '/images/produto.png',
+	rating: p.rating,
+	reviewCount: p.qtdRatings,
+	_count: p._count || undefined,
+	variantsCount: p._count?.variants ?? 0,
+});
+
 export const useProducts = (params = {}) =>
 	useQuery({
 		queryKey: ['products', params],
 		queryFn: async () => {
 			const res = await getProducts(params);
 			return {
-				products: (res.data?.products || []).map(p => ({
-					id: p.id,
-					slug: p.slug ?? null,
-					title: p.name,
-					price: p.promotionalPrice ?? p.price,
-					oldPrice: p.promotionalPrice ? p.price : undefined,
-					promotionalPrice: p.promotionalPrice,
-					promotionalEndDate: p.promotionalEndDate,
-					image: p.image || '/images/produto.png',
-					rating: p.rating,
-					reviewCount: p.qtdRatings,
-				})),
+				products: (res.data?.products || []).map(mapProductListItem),
 				total: res.data?.pagination?.total || 0,
 				totalPages: res.data?.pagination?.totalPages || 1,
 			};

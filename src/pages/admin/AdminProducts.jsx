@@ -525,6 +525,54 @@ const AdminProducts = () => {
 									</div>
 								</div>
 							)}
+
+							{selectedProductDetails.optionGroups?.length > 0 && (
+								<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
+									<h5 className="font-bold text-[#1C1917] mb-2">Grupos de Opções</h5>
+									<ul className="text-sm space-y-1">
+										{selectedProductDetails.optionGroups.map((g, i) => (
+											<li key={i}>
+												<span className="font-semibold text-[#1C1917]">{g.name}:</span>{' '}
+												<span className="text-[#78716C]">{(g.values || []).join(', ')}</span>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
+
+							{selectedProductDetails.variants?.length > 0 && (
+								<div className="bg-white p-4 rounded-xl border border-accent/10 shadow-sm">
+									<h5 className="font-bold text-[#1C1917] mb-3">Variantes ({selectedProductDetails.variants.length})</h5>
+									<div className="overflow-x-auto">
+										<table className="w-full text-xs border border-accent/10 rounded-xl overflow-hidden">
+											<thead>
+												<tr className="bg-sand text-left text-[#78716C] uppercase tracking-wider">
+													<th className="px-3 py-2">Opções</th>
+													<th className="px-3 py-2">SKU</th>
+													<th className="px-3 py-2">Preço</th>
+													<th className="px-3 py-2">Promo</th>
+													<th className="px-3 py-2">Stock</th>
+												</tr>
+											</thead>
+											<tbody>
+												{selectedProductDetails.variants.map((v, i) => (
+													<tr key={v.id || i} className="border-t border-accent/10">
+														<td className="px-3 py-2 font-medium text-[#1C1917] whitespace-nowrap">
+															{Object.entries(v.options || {}).map(([k, val]) => (
+																<span key={k} className="block">{k}: <span className="text-accent">{String(val)}</span></span>
+															))}
+														</td>
+														<td className="px-3 py-2 text-[#78716C]">{v.sku || '-'}</td>
+														<td className="px-3 py-2 text-[#78716C]">{v.price != null ? Number(v.price).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : 'Herda'}</td>
+														<td className="px-3 py-2 text-[#78716C]">{v.promotionalPrice != null ? Number(v.promotionalPrice).toLocaleString('pt-AO', { style: 'currency', currency: 'AOA' }) : '-'}</td>
+														<td className="px-3 py-2">{v.stock > 0 ? <span className="text-green-700">{v.stock}</span> : <span className="text-red-600">0</span>}</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							)}
 						</div>
 					) : (
 						<p className="text-center text-[#78716C] py-10">Não foi possível carregar os detalhes.</p>

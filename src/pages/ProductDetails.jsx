@@ -46,6 +46,8 @@ const mapProduct = (p) => {
 		features: [],
 		specs: parseSpecs(p),
 		opinions: [],
+		groups: p.optionGroups || [],
+		variants: p.variants || [],
 		seller: {
 			id: p.store?.id || null,
 			slug: p.store?.slug || null,
@@ -70,6 +72,68 @@ const ProductDetails = () => {
 	const { data: rawData, isLoading } = useProduct(slug);
 	const product = useMemo(() => mapProduct(rawData?.product ?? rawData), [rawData]);
 
+	const productId = product?.id;
+	const groups = product?.groups || [];
+	const variants = product?.variants || [];
+	const hasVariants = variants.length > 0;
+	const isWishToggling = productId ? isToggling(productId) : false;
+
+	// Selecção de variante (valores por grupo de opções)
+	const [selectedOptions, setSelectedOptions] = useState({});
+
+	useEffect(() => {
+		// Reset do estado quando muda de produto (slug)
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setSelectedOptions({});
+		 
+		setSelectedImage(0);
+	}, [productId]);
+
+	useEffect(() => {
+		if (groups.length > 0 && Object.keys(selectedOptions).length === 0) {
+			const initial = {};
+			groups.forEach(g => { initial[g.name] = g.values[0]; });
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setSelectedOptions(initial);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [groups]);
+
+	const currentVariant = useMemo(() => {
+		if (!hasVariants) return null;
+		return variants.find(v =>
+			groups.every(g => String(v.options?.[g.name] ?? '') === String(selectedOptions[g.name] ?? ''))
+		) || null;
+	}, [variants, groups, selectedOptions, hasVariants]);
+
+	const variantSelected = hasVariants ? Boolean(currentVariant) : true;
+
+	// Preço / stock / imagens efectivos (variante activa ou produto base)
+	const effective = useMemo(() => {
+		if (!hasVariants || !currentVariant) {
+			return {
+				price: product?.price ?? 0,
+				oldPrice: product?.oldPrice,
+				discount: product?.discount ?? 0,
+				stock: product?.stock ?? 0,
+				images: product?.images || ['/images/produto.png'],
+			};
+		}
+		const { price, promotionalPrice, promotionalEndDate } = currentVariant;
+		const promoActive = promotionalPrice && isPromotionActive(promotionalEndDate);
+		const basePrice = price != null ? Number(price) : Number(product.price);
+		const effPrice = promoActive ? Number(promotionalPrice) : basePrice;
+		const oldPrice = promoActive ? basePrice : undefined;
+		const discount = promoActive && basePrice ? Math.round(((basePrice - Number(promotionalPrice)) / basePrice) * 100) : 0;
+		const images = currentVariant.image ? [currentVariant.image, ...(product.images || [])] : (product.images || ['/images/produto.png']);
+		return { price: effPrice, oldPrice, discount, stock: currentVariant.stock ?? 0, images };
+	}, [hasVariants, currentVariant, product]);
+
+	const handleSelectOption = (groupName, value) => {
+		setSelectedOptions(prev => ({ ...prev, [groupName]: value }));
+		setSelectedImage(0);
+	};
+
 	useEffect(() => {
 		if (!product?.promotionEndDate) return;
 
@@ -93,9 +157,7 @@ const ProductDetails = () => {
 		return () => clearInterval(timer);
 	}, [product]);
 
-	const productId = product?.id;
 	const wishlisted = productId ? isWishlisted(productId) : false;
-	const isWishToggling = productId ? isToggling(productId) : false;
 
 	const handleToggleWishlist = async () => {
 		if (!isAuthenticated) {
@@ -137,19 +199,26 @@ const ProductDetails = () => {
 	}, [checkInWishlist, isAuthenticated, isWishlisted, productId]);
 
 	const handleAddToCart = () => {
-		if (product) {
-			addToCart(product, quantity);
+		if (!product) return;
+		if (hasVariants && !currentVariant) {
+			notyf.error('Seleccione uma variação do produto.');
+			return;
 		}
+		addToCart(product, quantity, true, currentVariant);
 	};
 
 	const handleBuyNow = () => {
 		if (!product) return;
-		if (product.stock === 0) return;
-		buyNow(product, quantity);
+		if (hasVariants && !currentVariant) {
+			notyf.error('Seleccione uma variação do produto.');
+			return;
+		}
+		if (effective.stock === 0) return;
+		buyNow(product, quantity, currentVariant);
 	};
 
 	const incrementQuantity = () => {
-		if (product && quantity < product.stock) {
+		if (product && quantity < effective.stock) {
 			setQuantity(prev => prev + 1);
 		}
 	};
@@ -274,7 +343,7 @@ const ProductDetails = () => {
 					{/* Coluna Esquerda — Imagens */}
 					<div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 p-4 sm:p-6 sm:border-r border-[#1C1917]/10 min-w-0 max-w-full">
 						<div className="flex sm:flex-col gap-2 w-full sm:w-auto justify-center order-2 sm:order-1">
-							{product.images.map((img, index) => (
+							{effective.images.map((img, index) => (
 								<button
 									key={index}
 									onClick={() => setSelectedImage(index)}
@@ -310,7 +379,7 @@ const ProductDetails = () => {
 								)}
 							</button>
 							<img
-								src={product.images[selectedImage]}
+								src={effective.images[selectedImage] || product.images[0]}
 								alt={product.title}
 								className="w-full h-[260px] sm:h-[380px] lg:h-[400px] object-contain"
 								onError={(e) => { e.target.onerror = null; e.target.src = '/images/produto.png'; }}
@@ -335,23 +404,55 @@ const ProductDetails = () => {
 							</span>
 						</div>
 
+						{/* Selecção de variantes */}
+						{hasVariants && (
+							<div className="mb-4 pt-4 border-t border-[#1C1917]/10">
+								{groups.map(group => (
+									<div key={group.name} className="mb-4">
+										<label className="block mb-2 font-display text-sm text-[#1C1917]">
+											{group.name}:
+										</label>
+										<div className="flex flex-wrap gap-2">
+											{group.values.map(value => {
+												const selected = selectedOptions[group.name] === value;
+												return (
+													<button
+														key={value}
+														type="button"
+														onClick={() => handleSelectOption(group.name, value)}
+														className={`px-4 py-2 rounded-xl text-sm font-body transition-all cursor-pointer
+															${selected
+														? 'bg-accent text-white shadow-md'
+														: 'bg-sand text-[#1C1917] border border-[#1C1917]/10 hover:border-accent/40'
+													}`}
+													>
+														{value}
+													</button>
+												);
+											})}
+										</div>
+									</div>
+								))}
+							</div>
+						)}
+
 						<div className="mb-4">
-							{product.oldPrice && (
+							{effective.oldPrice && (
 								<span className="font-body text-sm text-[#78716C] line-through">
-									{formatCurrency(product.oldPrice)}
+									{formatCurrency(effective.oldPrice)}
 								</span>
 							)}
 							<div className="flex items-baseline gap-2 mt-1 mb-1">
 								<span className="font-display text-4xl text-[#1C1917] leading-none font-bold">
-									{Math.floor(product.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+									{Math.floor(effective.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
 								</span>
 								<span className="font-display text-lg text-[#1C1917] self-start mt-1">
-									{`,${(product.price % 1).toFixed(2).slice(2)}`}
+									{`,${(effective.price % 1).toFixed(2).slice(2)}`}
 								</span>
 								<span className="font-body text-sm text-[#78716C] self-end mb-0.5">Kz</span>
-								{product.discount && (
+								{effective.discount && (
 									<span className="px-2.5 py-1 bg-accent/10 text-accent rounded-md font-display text-xs font-bold">
-										{product.discount}% OFF
+										{effective.discount}% OFF
 									</span>
 								)}
 							</div>
@@ -402,13 +503,17 @@ const ProductDetails = () => {
 
 						<div>
 							<div className={`px-4 py-3 rounded-xl font-body text-sm font-medium mb-4 ${
-								product.stock > 10
-									? 'bg-accent/5 text-accent'
-									: 'bg-orange-50 text-orange-700'
+								hasVariants && !variantSelected
+									? 'bg-amber-50 text-amber-700'
+									: effective.stock > 10
+										? 'bg-accent/5 text-accent'
+										: 'bg-orange-50 text-orange-700'
 							}`}>
-								{product.stock > 10
-									? '✓ Em estoque'
-									: `⚠ Últimas ${product.stock} unidades!`
+								{hasVariants && !variantSelected
+									? '⚠ Seleccione uma variação'
+									: effective.stock > 10
+										? '✓ Em estoque'
+										: `⚠ Últimas ${effective.stock} unidades!`
 								}
 							</div>
 
@@ -429,21 +534,21 @@ const ProductDetails = () => {
 									</div>
 									<button
 										onClick={incrementQuantity}
-										disabled={quantity >= product.stock}
+										disabled={quantity >= effective.stock}
 										className="w-9 h-9 flex items-center justify-center border-none bg-transparent font-body text-base cursor-pointer disabled:cursor-not-allowed disabled:text-[#D4CFC9] text-[#1C1917] hover:bg-sand transition-colors"
 									>
 										+
 									</button>
 								</div>
 								<div className="mt-1.5 font-body text-xs text-[#78716C]">
-									({product.stock} disponíveis)
+									({effective.stock} disponíveis)
 								</div>
 							</div>
 
 							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 								<button
 									onClick={handleAddToCart}
-									disabled={product.stock === 0 || isAdding}
+									disabled={effective.stock === 0 || !variantSelected || isAdding}
 									className="w-full py-2.5 bg-accent text-white rounded-xl font-display text-sm font-bold tracking-wide shadow-md hover:bg-accent-dark hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md flex items-center justify-center gap-2"
 								>
 									{isAdding && (
@@ -454,7 +559,7 @@ const ProductDetails = () => {
 
 								<button
 									onClick={handleBuyNow}
-									disabled={product.stock === 0 || isAdding}
+									disabled={effective.stock === 0 || !variantSelected || isAdding}
 									className="w-full py-2.5 bg-white text-accent border-2 border-accent rounded-xl font-display text-sm font-bold tracking-wide hover:bg-accent hover:text-white hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
 								>
 									Comprar Agora

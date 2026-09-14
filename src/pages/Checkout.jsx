@@ -211,7 +211,7 @@ const Checkout = () => {
 			}
 
 			const payload = {
-				items: activeItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
+				items: activeItems.map(i => ({ productId: i.productId, quantity: i.quantity, variantId: i.variantId || null })),
 				shippingAddress: deliveryOption === 'delivery' ? shippingInfo.address : 'Levantar na Sede',
 				couponCode: appliedCoupon?.code,
 				deliveryOption,
