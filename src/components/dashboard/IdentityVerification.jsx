@@ -30,7 +30,7 @@ const uploadToCloudinary = async (file, folder) => {
 		throw new Error(msg);
 	}
 
-	return result.secure_url;
+	return { url: result.secure_url, publicId: result.public_id };
 };
 
 // ─── Componente de input de ficheiro ─────────────────────────────────────────
@@ -109,23 +109,32 @@ const IdentityVerification = () => {
 		try {
 			// ── Passo 1: upload frente do BI ────────────────────────────────
 			setProgress({ current: 1, total: 5, label: 'A carregar frente do BI...' });
-			const biFrontUrl = await uploadToCloudinary(files.biFront, 'bis');
+			const biFrontUpload = await uploadToCloudinary(files.biFront, 'bis');
+			const biFrontUrl = biFrontUpload.url;
 
 			// ── Passo 2: upload verso do BI ──────────────────────────────────
 			setProgress({ current: 2, total: 5, label: 'A carregar verso do BI...' });
-			const biBackUrl = await uploadToCloudinary(files.biBack, 'bis');
+			const biBackUpload = await uploadToCloudinary(files.biBack, 'bis');
+			const biBackUrl = biBackUpload.url;
 
 			// ── Passos 3-5: upload das 3 selfies ────────────────────────────
 			const picUrls = [];
+			const picIds = [];
 			for (let i = 0; i < files.selfies.length; i++) {
 				setProgress({ current: 3 + i, total: 5, label: `A carregar selfie ${i + 1} de 3...` });
-				const url = await uploadToCloudinary(files.selfies[i], 'photos');
-				picUrls.push(url);
+				const upload = await uploadToCloudinary(files.selfies[i], 'photos');
+				picUrls.push(upload.url);
+				picIds.push(upload.publicId);
 			}
 
 			// ── Passo final: actualizar BD ───────────────────────────────────
 			setProgress({ current: 5, total: 5, label: 'A guardar documentos...' });
-			const result = await http.post('/users/verify-identity', { biUrls: [biFrontUrl, biBackUrl], picUrls });
+			const result = await http.post('/users/verify-identity', {
+				biUrls: [biFrontUrl, biBackUrl],
+				picUrls,
+				biCloudinaryIds: [biFrontUpload.publicId, biBackUpload.publicId],
+				picsCloudinaryIds: picIds,
+			});
 
 			if (result?.success) {
 				notyf.success('Documentos enviados com sucesso! Aguarde aprovação.');

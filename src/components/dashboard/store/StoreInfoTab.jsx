@@ -45,11 +45,15 @@ const StoreInfoTab = ({ store, onUpdated }) => {
 
 			if (images.logo) {
 				setProgress('A carregar logotipo...');
-				payload.logo = await uploadToCloudinary(images.logo, 'storeLogos');
+				const logoUpload = await uploadToCloudinary(images.logo, 'storeLogos');
+				payload.logo = logoUpload.url;
+				payload.logoCloudinaryId = logoUpload.publicId;
 			}
 			if (images.banner) {
 				setProgress('A carregar banner...');
-				payload.banner = await uploadToCloudinary(images.banner, 'storeBanners');
+				const bannerUpload = await uploadToCloudinary(images.banner, 'storeBanners');
+				payload.banner = bannerUpload.url;
+				payload.bannerCloudinaryId = bannerUpload.publicId;
 			}
 
 			setProgress('A guardar alterações...');

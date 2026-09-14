@@ -21,7 +21,7 @@ export const uploadToCloudinary = async (file, folder = 'products') => {
 
 		const cloudinaryData = await cloudinaryResponse.json();
 		if (cloudinaryData.secure_url) {
-			return { success: true, url: cloudinaryData.secure_url };
+			return { success: true, url: cloudinaryData.secure_url, publicId: cloudinaryData.public_id };
 		}
 		return { success: false, msg: 'Erro ao fazer upload para Cloudinary' };
 	} catch (error) {

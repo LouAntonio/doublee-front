@@ -94,6 +94,8 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 	const [galleryFiles, setGalleryFiles] = useState([]); // new File objects
 	const [galleryPreviews, setGalleryPreviews] = useState([]); // preview URLs (new files)
 	const [existingGallery, setExistingGallery] = useState([]); // already-uploaded URLs
+	const [existingGalleryIds, setExistingGalleryIds] = useState([]); // Cloudinary ids (paralelo) das imagens já carregadas
+	const [imageCloudinaryId, setImageCloudinaryId] = useState(null); // public_id da imagem principal
 
 	// Characteristics
 	const [chars, setChars] = useState([{ key: '', value: '' }]);
@@ -110,6 +112,8 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		setGalleryFiles([]);
 		setGalleryPreviews([]);
 		setExistingGallery([]);
+		setExistingGalleryIds([]);
+		setImageCloudinaryId(null);
 		setChars([{ key: '', value: '' }]);
 		setSelectedCategoryIds([]);
 		setHasVariants(false);
@@ -137,9 +141,11 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		});
 		setImageFile(null);
 		setImagePreview(product.image || '');
+		setImageCloudinaryId(product.imageCloudinaryId || null);
 		setGalleryFiles([]);
 		setGalleryPreviews([]);
 		setExistingGallery(Array.isArray(product.gallery) ? product.gallery : []);
+		setExistingGalleryIds(Array.isArray(product.galleryCloudinaryIds) ? product.galleryCloudinaryIds : []);
 		setChars(normalizeChars(product.characteristics).length > 0
 			? normalizeChars(product.characteristics)
 			: [{ key: '', value: '' }]);
@@ -160,6 +166,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				promotionalEndDate: v.promotionalEndDate ? toDateInputValue(v.promotionalEndDate) : '',
 				stock: String(v.stock ?? '0'),
 				image: v.image || null,
+				imageCloudinaryId: v.imageCloudinaryId || null,
 				imageFile: null,
 			})));
 		} else {
@@ -192,6 +199,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 
 	const removeExistingGalleryImage = idx => {
 		setExistingGallery(prev => prev.filter((_, i) => i !== idx));
+		setExistingGalleryIds(prev => prev.filter((_, i) => i !== idx));
 	};
 
 	const removeNewGalleryImage = idx => {
@@ -305,19 +313,25 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 			// Cover image
 			if (imageFile) {
 				setSavingProgress('A carregar imagem principal...');
-				payload.image = await uploadToCloudinary(imageFile, 'products');
+				const imageUpload = await uploadToCloudinary(imageFile, 'products');
+				payload.image = imageUpload.url;
+				payload.imageCloudinaryId = imageUpload.publicId;
 			} else {
 				payload.image = imagePreview || null;
+				payload.imageCloudinaryId = payload.image ? imageCloudinaryId : null;
 			}
 
 			// Gallery — upload new files
 			const uploadedGallery = [];
+			const uploadedGalleryIds = [];
 			for (let i = 0; i < galleryFiles.length; i++) {
 				setSavingProgress(`A carregar galeria (${i + 1}/${galleryFiles.length})...`);
-				const url = await uploadToCloudinary(galleryFiles[i], 'products');
-				uploadedGallery.push(url);
+				const upload = await uploadToCloudinary(galleryFiles[i], 'products');
+				uploadedGallery.push(upload.url);
+				uploadedGalleryIds.push(upload.publicId);
 			}
 			payload.gallery = [...existingGallery, ...uploadedGallery];
+			payload.galleryCloudinaryIds = [...existingGalleryIds.slice(0, existingGallery.length), ...uploadedGalleryIds];
 
 			// Characteristics — filter out blank rows, convert to object
 			const filledChars = chars.filter(c => c.key.trim() && c.value.trim());
@@ -358,9 +372,12 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 				for (let i = 0; i < variants.length; i++) {
 					const v = variants[i];
 					let image = v.image;
+					let imageCloudinaryId = v.imageCloudinaryId || null;
 					if (v.imageFile) {
 						setSavingProgress(`A carregar imagem da variante (${i + 1}/${variants.length})...`);
-						image = await uploadToCloudinary(v.imageFile, 'products');
+						const imageUpload = await uploadToCloudinary(v.imageFile, 'products');
+						image = imageUpload.url;
+						imageCloudinaryId = imageUpload.publicId;
 					}
 					variantPayloads.push({
 						options: v.options,
@@ -370,6 +387,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 						promotionalEndDate: v.promotionalEndDate || null,
 						stock: parseInt(v.stock) || 0,
 						image: image || null,
+						imageCloudinaryId: image ? imageCloudinaryId : null,
 						gallery: [],
 					});
 				}

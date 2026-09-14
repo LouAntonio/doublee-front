@@ -27,7 +27,7 @@ export const useUpdateProfile = () => {
 export const useUpdateAvatar = () => {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (avatarUrl) => http.put('/users/avatar', { avatar: avatarUrl }),
+		mutationFn: ({ avatar, avatarCloudinaryId }) => http.put('/users/avatar', { avatar, avatarCloudinaryId }),
 		onSuccess: (res) => {
 			if (res?.success) {
 				notyf.success('Avatar atualizado com sucesso!');

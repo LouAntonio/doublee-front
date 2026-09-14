@@ -74,7 +74,7 @@ const ProfileSettings = () => {
 			const avatarUrl = uploadData.secure_url;
 
 			// 3. Atualizar avatar no backend
-			const data = await updateAvatar(avatarUrl);
+			const data = await updateAvatar({ avatar: avatarUrl, avatarCloudinaryId: uploadData.public_id });
 			if (data?.success) {
 				setAvatarPreview(avatarUrl);
 				updateUser({ avatar: avatarUrl });

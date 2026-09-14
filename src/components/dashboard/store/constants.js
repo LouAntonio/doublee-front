@@ -61,5 +61,5 @@ export const uploadToCloudinary = async (file, folder) => {
 	);
 	const result = await response.json();
 	if (!response.ok) throw new Error(result?.error?.message || `Cloudinary error ${response.status}`);
-	return result.secure_url;
+	return { url: result.secure_url, publicId: result.public_id };
 };

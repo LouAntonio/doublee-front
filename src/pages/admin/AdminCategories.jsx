@@ -21,7 +21,7 @@ const uploadToCloudinary = async (file, folder) => {
 	);
 	const result = await response.json();
 	if (!response.ok) throw new Error(result?.error?.message || `Cloudinary error ${response.status}`);
-	return result.secure_url;
+	return { url: result.secure_url, publicId: result.public_id };
 };
 
 const CategorySkeleton = () => (
@@ -77,14 +77,17 @@ const AdminCategories = () => {
 
 		setIsCreating(true);
 		try {
-			let imageUrl = null;
+			let imageUpload = null;
 			if (imageFile) {
 				notyf.success('A carregar imagem...');
-				imageUrl = await uploadToCloudinary(imageFile, 'categories');
+				imageUpload = await uploadToCloudinary(imageFile, 'categories');
 			}
 
 			const payload = { name: newCategoryName.trim() };
-			if (imageUrl) payload.image = imageUrl;
+			if (imageUpload) {
+				payload.image = imageUpload.url;
+				payload.imageCloudinaryId = imageUpload.publicId;
+			}
 
 			await createCategory.mutateAsync(payload);
 			setNewCategoryName('');
@@ -129,27 +132,19 @@ const AdminCategories = () => {
 		setIsUpdating(true);
 		try {
 			let imageUrl = editingCategory.image;
+			let imagePublicId = editingCategory.imageCloudinaryId;
 			if (editImageFile) {
 				notyf.success('A carregar nova imagem...');
-				imageUrl = await uploadToCloudinary(editImageFile, 'categories');
-				
-				if (editingCategory.image && editingCategory.image.includes('cloudinary.com')) {
-					try {
-						const parts = editingCategory.image.split('/');
-						const filename = parts.pop().split('.')[0];
-						const folder = parts.pop();
-						const publicId = `${folder}/${filename}`;
-						await http.delete('/admin/cloudinary', { data: { publicId }, admin: true });
-					} catch (e) {
-						console.log('Erro ao apagar imagem antiga:', e);
-					}
-				}
+				const imageUpload = await uploadToCloudinary(editImageFile, 'categories');
+				imageUrl = imageUpload.url;
+				imagePublicId = imageUpload.publicId;
 			}
 
 			const payload = { 
 				id: editingCategory.id,
 				name: editCategoryName.trim(),
-				image: imageUrl
+				image: imageUrl,
+				imageCloudinaryId: imagePublicId || null
 			};
 
 			await updateCategory.mutateAsync(payload);
