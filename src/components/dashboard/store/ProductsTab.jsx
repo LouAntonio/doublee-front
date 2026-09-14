@@ -6,8 +6,6 @@ import {
 	IoCloseOutline,
 	IoImageOutline,
 	IoCheckmarkOutline,
-	IoChevronBack,
-	IoChevronForward,
 	IoRemoveOutline,
 	IoGitBranchOutline,
 	IoCameraOutline,
@@ -23,6 +21,7 @@ import EmptyState from './ui/EmptyState';
 import SectionTitle from './ui/SectionTitle';
 import DashboardModal from '../DashboardModal';
 import OptimizedImage from '../../ui/OptimizedImage';
+import Pagination from '../../ui/Pagination';
 import { cleanupUploads } from '../../../utils/cleanupUploads';
 
 const usePlatformSettings = () =>
@@ -63,14 +62,12 @@ const isPromoValid = product => {
 	return isPromotionActive(product.promotionalEndDate);
 };
 
-const ProductsTab = ({ products, pagination, onRefresh }) => {
+const ProductsTab = ({ products, pagination, onPageChange, onRefresh }) => {
 	const [saving, setSaving] = useState(false);
 	const [savingProgress, setSavingProgress] = useState('');
 	const [deleting, setDeleting] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingProduct, setEditingProduct] = useState(null);
-	const [page, setPage] = useState(1);
-	const pageSize = 12;
 
 	const { data: platformSettings } = usePlatformSettings();
 	const retentionFee = platformSettings?.platformRetentionFee ?? 0;
@@ -441,14 +438,6 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 		}
 	};
 
-	const totalPages = pagination?.totalPages ?? Math.ceil(products.length / pageSize);
-	const paginatedProducts = products.slice((page - 1) * pageSize, page * pageSize);
-
-	const handlePageChange = (newPage) => {
-		if (newPage < 1 || newPage > totalPages) return;
-		setPage(newPage);
-	};
-
 	const productLabel = () => {
 		const total = pagination?.total ?? products.length;
 		return `${total} produto${total !== 1 ? 's' : ''} na sua loja.`;
@@ -477,7 +466,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 			) : (
 				<>
 					<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-						{paginatedProducts.map((product, idx) => (
+						{products.map((product, idx) => (
 							<div key={product.id} className="bg-white rounded-2xl border border-accent/10 shadow-md overflow-hidden hover:border-accent/30 hover:shadow-lg transition-all group opacity-0 animate-fade-in-up" style={{ animationDelay: `${0.05 * (idx + 1)}s`, animationFillMode: 'forwards' }}>
 								<div className="relative h-40 bg-sand">
 									{product.image ? (
@@ -545,48 +534,7 @@ const ProductsTab = ({ products, pagination, onRefresh }) => {
 						))}
 					</div>
 
-					{totalPages > 1 && (
-						<div className="flex items-center justify-center gap-2 mt-8">
-							<button
-								onClick={() => handlePageChange(page - 1)}
-								disabled={page <= 1}
-								className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-							>
-								<IoChevronBack className="w-4 h-4" />
-							</button>
-							{Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-								let pageNum;
-								if (totalPages <= 7) {
-									pageNum = i + 1;
-								} else if (page <= 4) {
-									pageNum = i + 1;
-								} else if (page >= totalPages - 3) {
-									pageNum = totalPages - 6 + i;
-								} else {
-									pageNum = page - 3 + i;
-								}
-								return (
-									<button
-										key={pageNum}
-										onClick={() => handlePageChange(pageNum)}
-										className={`min-w-[36px] h-9 rounded-xl text-sm font-medium transition-all cursor-pointer ${page === pageNum
-											? 'bg-accent text-white shadow-md'
-											: 'border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent'
-										}`}
-									>
-										{pageNum}
-									</button>
-								);
-							})}
-							<button
-								onClick={() => handlePageChange(page + 1)}
-								disabled={page >= totalPages}
-								className="p-2 rounded-xl border border-accent/20 text-[#78716C] hover:bg-sand hover:text-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-							>
-								<IoChevronForward className="w-4 h-4" />
-							</button>
-						</div>
-					)}
+					<Pagination page={pagination?.page ?? 1} totalPages={pagination?.totalPages ?? 1} onChange={onPageChange} />
 				</>
 			)}
 

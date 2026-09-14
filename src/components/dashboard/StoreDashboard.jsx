@@ -10,7 +10,7 @@ import {
 } from 'react-icons/io5';
 
 import useAuthStore from '../../stores/authStore';
-import { useMyStore, useMyProducts, useMyStoreOrders } from '../../hooks/queries/useDashboard';
+import { useMyStore, useMyProducts, useMyProductsPage, useMyStoreOrders, useMyStoreOrdersPage } from '../../hooks/queries/useDashboard';
 import OverviewTab from './store/OverviewTab';
 import StoreInfoTab from './store/StoreInfoTab';
 import ProductsTab from './store/ProductsTab';
@@ -36,6 +36,8 @@ const StoreDashboard = () => {
 	const user = useAuthStore((s) => s.user);
 	const userId = user?.id;
 	const [activeTab, setActiveTab] = useState('overview');
+	const [productsPage, setProductsPage] = useState(1);
+	const [ordersPage, setOrdersPage] = useState(1);
 
 	const {
 		data: store,
@@ -50,12 +52,37 @@ const StoreDashboard = () => {
 	} = useMyProducts(userId);
 
 	const products = productsData?.products ?? [];
-	const productsPagination = productsData?.pagination;
+
+	const {
+		data: productsPageData,
+		refetch: refetchProductsPage,
+	} = useMyProductsPage(userId, productsPage);
+
+	const pageProducts = productsPageData?.products ?? [];
+	const pageProductsPagination = productsPageData?.pagination;
+
+	const safeProductsPage = pageProductsPagination?.totalPages > 0 ? Math.min(productsPage, pageProductsPagination.totalPages) : productsPage;
+	if (safeProductsPage !== productsPage) {
+		setProductsPage(safeProductsPage);
+	}
 
 	const {
 		data: orders = [],
 		refetch: refetchOrders,
 	} = useMyStoreOrders(userId);
+
+	const {
+		data: ordersPageData,
+		refetch: refetchOrdersPage,
+	} = useMyStoreOrdersPage(userId, ordersPage);
+
+	const pageOrders = ordersPageData?.orders ?? [];
+	const pageOrdersPagination = ordersPageData?.pagination;
+
+	const safeOrdersPage = pageOrdersPagination?.totalPages > 0 ? Math.min(ordersPage, pageOrdersPagination.totalPages) : ordersPage;
+	if (safeOrdersPage !== ordersPage) {
+		setOrdersPage(safeOrdersPage);
+	}
 
 	const loading = storeLoading;
 	const error = storeError;
@@ -63,6 +90,8 @@ const StoreDashboard = () => {
 		refetchStore();
 		refetchProducts();
 		refetchOrders();
+		refetchProductsPage();
+		refetchOrdersPage();
 	};
 
 	if (loading) {
@@ -106,8 +135,8 @@ const StoreDashboard = () => {
 			{/* Tab Content */}
 			{activeTab === 'overview' && <OverviewTab store={store} products={products} orders={orders} />}
 			{activeTab === 'info' && <StoreInfoTab store={store} onUpdated={fetchAll} />}
-			{activeTab === 'products' && <ProductsTab products={products} pagination={productsPagination} onRefresh={fetchAll} />}
-			{activeTab === 'orders' && <OrdersTab orders={orders} onRefresh={fetchAll} />}
+			{activeTab === 'products' && <ProductsTab products={pageProducts} pagination={pageProductsPagination} onPageChange={setProductsPage} onRefresh={fetchAll} />}
+			{activeTab === 'orders' && <OrdersTab orders={pageOrders} pagination={pageOrdersPagination} onPageChange={setOrdersPage} onRefresh={fetchAll} />}
 			{activeTab === 'statistics' && <StatisticsTab orders={orders} />}
 			{activeTab === 'promotions' && <PromotionsTab store={store} products={products} onRefresh={fetchAll} />}
 			{activeTab === 'coupons' && <CouponsTab />}

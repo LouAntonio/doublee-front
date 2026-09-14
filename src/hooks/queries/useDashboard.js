@@ -53,13 +53,39 @@ export const useMyProducts = (userId) =>
 		refetchOnMount: 'always',
 	});
 
+export const useMyProductsPage = (userId, page) =>
+	useQuery({
+		queryKey: ['products', 'mine', 'page', userId, page],
+		queryFn: async () => {
+			const res = await http.get(`/products/mine?page=${page}&limit=12`);
+			if (!res?.success) return { products: [], pagination: { total: 0, page, limit: 12, totalPages: 0 } };
+			return { products: res.data?.products || [], pagination: res.data?.pagination || { total: 0, page, limit: 12, totalPages: 0 } };
+		},
+		enabled: Boolean(userId),
+		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
+	});
+
 export const useMyStoreOrders = (userId) =>
 	useQuery({
 		queryKey: ['stores', 'orders', userId],
 		queryFn: async () => {
-			const res = await http.get('/orders/store/my-orders');
+			const res = await http.get('/orders/store/my-orders?limit=200');
 			if (!res?.success) return [];
 			return res.data?.orders || res.data || [];
+		},
+		enabled: Boolean(userId),
+		staleTime: 1000 * 60 * 2,
+		refetchOnMount: 'always',
+	});
+
+export const useMyStoreOrdersPage = (userId, page) =>
+	useQuery({
+		queryKey: ['stores', 'orders', 'page', userId, page],
+		queryFn: async () => {
+			const res = await http.get(`/orders/store/my-orders?page=${page}&limit=10`);
+			if (!res?.success) return { orders: [], pagination: { total: 0, page, limit: 10, totalPages: 0 } };
+			return { orders: res.data?.orders || [], pagination: res.data?.pagination || { total: 0, page, limit: 10, totalPages: 0 } };
 		},
 		enabled: Boolean(userId),
 		staleTime: 1000 * 60 * 2,
